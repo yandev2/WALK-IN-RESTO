@@ -6,6 +6,7 @@ use App\Filament\Widgets\AnalyticsPeriodSummaryWidget;
 use App\Filament\Widgets\AnalyticsRevenueBarWidget;
 use App\Filament\Widgets\AnalyticsSidebarWidget;
 use App\Models\User;
+use App\Support\RestaurantAnalyticsPeriod;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -109,26 +110,35 @@ class AnalyticsChartWidgetRenderTest extends TestCase
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
-        $from = now()->startOfMonth()->toDateString();
-        $to = now()->startOfMonth()->addDays(6)->toDateString();
-        $expectedStartLabel = now()->startOfMonth()->translatedFormat('j M');
-        $defaultStartLabel = now()->subDays(6)->translatedFormat('j M');
+        $defaults = RestaurantAnalyticsPeriod::defaultLocalDateRange($world['restaurant']);
+        $from = $defaults['from']->copy()->subMonth()->startOfMonth();
+        $to = $from->copy()->addDays(6);
+        $filteredStartLabel = $from->translatedFormat('j M');
+        $defaultStartLabel = $defaults['from']->translatedFormat('j M');
 
-        Livewire::test(AnalyticsRevenueBarWidget::class, [
+        $filtered = Livewire::test(AnalyticsRevenueBarWidget::class, [
             'pageFilters' => [
-                'date_from' => $from,
-                'date_to' => $to,
+                'date_from' => $from->toDateString(),
+                'date_to' => $to->toDateString(),
             ],
-        ])
-            ->assertOk()
-            ->assertSee($expectedStartLabel, false)
-            ->assertSee('wire:key="revenue-bar-'.$from.'-'.$to.'"', false);
+        ]);
 
-        if ($expectedStartLabel !== $defaultStartLabel) {
-            Livewire::test(AnalyticsRevenueBarWidget::class)
-                ->assertOk()
-                ->assertSee($defaultStartLabel, false)
-                ->assertDontSee($expectedStartLabel, false);
-        }
+        $filtered
+            ->assertOk()
+            ->assertSee('wire:key="revenue-bar-'.$from->toDateString().'-'.$to->toDateString().'"', false);
+
+        $this->assertContains($filteredStartLabel, $filtered->instance()->getChartData()['labels']);
+
+        $unfiltered = Livewire::test(AnalyticsRevenueBarWidget::class);
+
+        $unfiltered
+            ->assertOk()
+            ->assertSee(
+                'wire:key="revenue-bar-'.$defaults['from']->toDateString().'-'.$defaults['to']->toDateString().'"',
+                false,
+            );
+
+        $this->assertContains($defaultStartLabel, $unfiltered->instance()->getChartData()['labels']);
+        $this->assertNotContains($filteredStartLabel, $unfiltered->instance()->getChartData()['labels']);
     }
 }
