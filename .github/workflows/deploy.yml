@@ -157,10 +157,9 @@ jobs:
             sudo chmod -R 775 ${{ secrets.APP_DIR }}/shared/storage bootstrap/cache
 
             # --- JALANKAN COMPOSER (PHP 8.4) ---
-            # Default `php` on this VPS is still 8.2; lock file requires 8.4.
+            # Do not nest double quotes here: this whole SSH payload is already double-quoted.
             if ! command -v php8.4 >/dev/null 2>&1; then
-              echo "ERROR: php8.4 is not installed. Default php is: \$(php -r 'echo PHP_VERSION;')"
-              echo "Install php8.4-cli + php8.4-fpm (and extensions) before deploying."
+              echo 'ERROR: php8.4 is not installed. Install php8.4-cli + php8.4-fpm before deploying.'
               exit 1
             fi
             php8.4 -v
