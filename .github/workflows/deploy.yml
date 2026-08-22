@@ -157,17 +157,25 @@ jobs:
             sudo chmod -R 775 ${{ secrets.APP_DIR }}/shared/storage bootstrap/cache
 
             # --- JALANKAN COMPOSER (PHP 8.4) ---
-            composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+            # Default `php` on this VPS is still 8.2; lock file requires 8.4.
+            if ! command -v php8.4 >/dev/null 2>&1; then
+              echo "ERROR: php8.4 is not installed. Default php is: \$(php -r 'echo PHP_VERSION;')"
+              echo "Install php8.4-cli + php8.4-fpm (and extensions) before deploying."
+              exit 1
+            fi
+            php8.4 -v
+            export COMPOSER_ALLOW_SUPERUSER=1
+            php8.4 \$(command -v composer) install --no-dev --prefer-dist --no-interaction --optimize-autoloader
             
             # --- ARTISAN OPTIMIZATION ---
             # Jalankan sebagai www-data agar link di public dimiliki oleh web server
-            sudo -u www-data php artisan migrate --force
-            #sudo -u www-data php artisan migrate:fresh --force
-            sudo -u www-data php artisan storage:link || true
-            # sudo -u www-data php artisan key:generate
-            sudo -u www-data php artisan optimize:clear
-            sudo -u www-data php artisan config:cache
-            sudo -u www-data php artisan route:cache
+            sudo -u www-data php8.4 artisan migrate --force
+            #sudo -u www-data php8.4 artisan migrate:fresh --force
+            sudo -u www-data php8.4 artisan storage:link || true
+            # sudo -u www-data php8.4 artisan key:generate
+            sudo -u www-data php8.4 artisan optimize:clear
+            sudo -u www-data php8.4 artisan config:cache
+            sudo -u www-data php8.4 artisan route:cache
            
             # --- AKTIVASI ---
             ln -sfn ${{ secrets.APP_DIR }}/releases/$REL ${{ secrets.APP_DIR }}/current
@@ -177,12 +185,12 @@ jobs:
         run: |
           ssh -p "${{ secrets.SSH_PORT }}" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ${{ secrets.APP_DIR }}/current
-            php artisan migrate --force
-            php artisan queue:restart
+            php8.4 artisan migrate --force
+            php8.4 artisan queue:restart
            # Gunakan reload secara hati-hati agar tidak memutus sesi SSH
             echo 'Reloading services...'
             sudo systemctl reload php8.4-fpm || sudo systemctl restart php8.4-fpm || true
             sudo systemctl reload nginx || true
-            php artisan config:clear && php artisan route:clear && php artisan view:clear
+            php8.4 artisan config:clear && php8.4 artisan route:clear && php8.4 artisan view:clear
             echo 'Done!'
           "
