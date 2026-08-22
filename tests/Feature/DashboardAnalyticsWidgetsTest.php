@@ -25,7 +25,7 @@ class DashboardAnalyticsWidgetsTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
 
         $world = $this->createGuestRestaurant();
-        $user = $this->userWithPermissions($world['restaurant']->id, ['analytics.view']);
+        $user = $this->userWithPermissions($world['restaurant']->id, ['analytics.view'], 'Analis Uji');
 
         $this->actingAs($user);
 
@@ -56,7 +56,7 @@ class DashboardAnalyticsWidgetsTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
 
         $world = $this->createGuestRestaurant();
-        $user = $this->userWithPermissions($world['restaurant']->id, ['order.verify_payment']);
+        $user = $this->userWithPermissions($world['restaurant']->id, ['order.verify_payment'], 'Kasir Uji');
 
         $this->actingAs($user);
 
@@ -65,8 +65,9 @@ class DashboardAnalyticsWidgetsTest extends TestCase
 
         Livewire::test(Dashboard::class)
             ->assertOk()
-            ->assertDontSee('Dari')
-            ->assertDontSee('Ekspor omzet');
+            ->assertSee('Antrian kasir')
+            ->assertDontSee('Ekspor omzet')
+            ->assertDontSee('Omzet hari ini');
 
         $this->assertFalse(AnalyticsKpiWidget::canView());
         $this->assertTrue(PendingPaymentsWidget::canView());
@@ -75,11 +76,12 @@ class DashboardAnalyticsWidgetsTest extends TestCase
     /**
      * @param  list<string>  $permissions
      */
-    private function userWithPermissions(int $restaurantId, array $permissions): User
+    private function userWithPermissions(int $restaurantId, array $permissions, string $name = 'Staf Uji'): User
     {
         app(PermissionRegistrar::class)->setPermissionsTeamId($restaurantId);
 
         $user = User::factory()->create([
+            'name' => $name,
             'username' => 'dash-'.uniqid(),
         ]);
 
