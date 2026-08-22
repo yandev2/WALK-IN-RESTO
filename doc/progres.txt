@@ -1,0 +1,138 @@
+# Progres implementasi — post-booking-resto-app
+
+Terakhir diisi: 18 Agustus 2026.
+Spesifikasi: doc/plan.md (tahap 1 walk-in saja, tanpa booking).
+Tes terakhir: 60 tes lulus (8 tes baru LandingMenuCatalogTest).
+
+Gunakan file ini sebagai checkpoint. Jangan ulangi modul yang sudah “SELESAI”. Kerjakan hanya yang “BERIKUTNYA” atau bug dari uji lapangan.
+
+---
+
+## Produk (ingat ini)
+
+Laravel 12 + Filament 5. Tenant = Restaurant. Tahap 1 = walk-in:
+datang → duduk → scan QR meja → isi WA → menu → bayar QRIS/tunai → kasir approve → KDS → struk WA opsional (Fonnte).
+
+Tidak dikerjakan sekarang (sengaja): booking/DP/e-ticket, Midtrans, split bill, unapprove, runner app, layout builder, inventaris/HPP/P&L, tax inclusive, UI multi-outlet.
+
+---
+
+## Checkpoint terakhir (lanjut dari sini)
+
+Modul terakhir yang dieksekusi: **katalog menu lengkap landing (`/{slug}/menu`)**.
+
+Baru selesai (sesi terakhir):
+- Route `landing.menu` + Livewire `RestaurantMenuCatalog`.
+- Search judul (case/space insensitive via `MenuSearch`), filter kategori, sort harga asc/desc.
+- Pagination 12 item/halaman + view pagination customer.
+- Tombol “Lihat semua daftar menu” di section preview landing.
+- Nav header Menu → halaman katalog; anchor section lain tetap ke landing show.
+
+File kunci sesi ini:
+- app/Livewire/Landing/RestaurantMenuCatalog.php
+- app/Support/MenuSearch.php
+- resources/views/livewire/landing/restaurant-menu-catalog.blade.php
+- resources/views/vendor/pagination/customer.blade.php
+- routes/web.php
+- tests/Feature/LandingMenuCatalogTest.php
+
+---
+
+## Sesi sebelumnya (UI pelanggan Foody)
+
+Modul: **UI pelanggan Foody + warna brand CMS tenant**.
+
+Baru selesai:
+- Migration `cms_profiles.primary_color` / `accent_color` + helper `RestaurantTheme`.
+- CMS Filament Profil landing: section Warna brand (ColorPicker).
+- Tailwind v4 token dinamis (`primary`, `accent`, `primary-dark`) inject per tenant via CSS vars.
+- Redesign landing (`/`, `/r/{slug}`) + alur pesan tamu (scan → menu → keranjang → bayar → status).
+- Komponen Blade customer (btn, dish-card, section-heading, header/footer, bottom nav).
+- Data UI 100% dari DB: section disembunyikan jika kosong; tidak ada rating/testimonial/booking palsu.
+- DemoRestaurantSeeder: warna brand, logo, 6 menu item (grid landing terisi).
+
+File kunci sesi ini:
+- app/Support/RestaurantTheme.php
+- app/Filament/Pages/ManageCmsProfile.php
+- resources/css/app.css
+- resources/views/landing/*.blade.php
+- resources/views/livewire/guest/*.blade.php
+- resources/views/components/customer/*
+- resources/views/partials/customer/*
+- tests/Feature/CustomerLandingThemeTest.php
+
+---
+
+## Sesi sebelumnya (penutup gap tahap 1)
+
+Modul: **penutup gap tahap 1 + rapikan expire kasir**.
+
+Baru selesai:
+- Kasir ganti nomor WA visit (J6) lalu kirim ulang struk.
+- Approve/reject lockForUpdate (dua kasir tap bersamaan).
+- Tutup visit lewat VisitLifecycleService (keranjang dihapus, meja cleaning, copy E9 jika hidangan KDS masih jalan).
+- Denah meja: ordering vs occupied (bukan semua visit = occupied).
+- Timer warna HP tamu = KDS (hijau <10 m, kuning <20 m, merah).
+- CSV omzet harian di Dashboard + angka waste.
+- Modifier berbayar (model, Filament Extra/modifier, keranjang/API/kasir/checkout/KDS/struk). Seed demo: Extra Telur / Extra Sosis di Nasi Goreng.
+- Stiker QR PDF (kode meja, bukan table id) + PNG.
+- Jam operasional vs toggle Open: tamu cek jam; kasir di resto boleh order meski di luar jam. Tanpa baris jam hari itu → ikut toggle is_open.
+- OrderPaymentService expire awaiting: hanya batalkan jika payment terbaru awaiting_cashier dan TTL lewat; hold QRIS dilepas. Query TTL tanpa closure bertingkat (hindari false positive editor “Unclosed {”).
+
+File kunci sesi ini:
+- app/Services/OrderPaymentService.php
+- app/Services/TableOpsService.php
+- app/Services/VisitLifecycleService.php
+- app/Services/GuestCartService.php
+- app/Services/GuestCheckoutService.php
+- app/Services/MenuModifierService.php
+- app/Services/DailyOmzetService.php
+
+---
+
+## Status modul tahap 1 (plan §14)
+
+1. Auth staf + Shield + Open/Closed + pajak + GPS — SELESAI
+2. CMS landing publik (tanpa form booking) + tema Foody + warna per tenant — SELESAI
+3. Meja + signed QR + denah turunan (available / ordering / occupied / cleaning / OOS) — SELESAI
+4. Menu + katalog tamu + keranjang + snapshot harga + modifier — SELESAI
+5. Visit: scan QR → WA → PIN + TTL klaim — SELESAI
+6. Checkout QRIS (nominal unik) + tunai (geofence) + antrian kasir — SELESAI
+7. KDS item + timer + served + batch tampilan — SELESAI
+8. PDF struk + antrian Fonnte + kirim ulang — SELESAI
+9. Void (cut vs waste) + pindah meja + tutup/cleaning + override GPS + order kasir — SELESAI
+10. Audit log + omzet harian + CSV — SELESAI
+11. Uji matriks A–J sebagai penerimaan lapangan — BELUM (berikutnya: uji manual / catat SOP yang tidak bisa dicek mesin)
+
+Urutan §14 nomor 1–10 sudah di kode. Nomor 11 adalah penerimaan, bukan fitur baru.
+
+---
+
+## Demo lokal
+
+Seed: DemoRestaurantSeeder (admin@resto.test / owner@resto.test / kasir@resto.test / dapur@resto.test, password: password).
+Fonnte: Profil restoran (tenant) → WhatsApp (Fonnte). Kosong = struk tidak dikirim, order tetap paid.
+Ops wajib: `php artisan schedule:work` dan `php artisan queue:work` (TTL antrian 20 menit, klaim 10 menit, job WA).
+QR tamu: Filament Meja → Buka pemesanan / salin tautan / unduh PNG atau PDF.
+
+---
+
+## Perilaku yang sudah dikunci di kode (jangan diubah tanpa alasan)
+
+- Dapur hanya setelah order paid (bukan awaiting).
+- Void queued = cut omzet; void preparing/ready = waste (omzet tetap, tercatat waste).
+- Tutup visit diblokir jika masih awaiting_cashier / pending_payment. Item KDS belum served boleh ditutup (E9).
+- Tamu klaim/checkout mengikuti isOpenNow (toggle + jam + tanggal libur). Kasir buka visit/order hanya cek is_open/is_active, tidak dipaksa jam.
+- Expire awaiting: payment harus status awaiting_cashier dan (awaiting_expires_at <= now, atau null lalu created_at <= now-20 menit).
+- QR token signed (bukan /order/t/{table_id} mentah). Regenerasi QR mematikan token lama; visit terbuka tetap jalan.
+
+---
+
+## Berikutnya (prioritas)
+
+1. Uji penerimaan lapangan matriks plan §11 A–J (bukan coding kecuali ada gagal).
+2. Catat baris SOP yang tidak bisa dicek mesin (kasir harus lihat tamu / terima uang fisik).
+3. Pastikan queue + scheduler hidup di lingkungan demo (bukan fitur, ops).
+4. Jangan mulai tahap 2 (booking) sampai pemilik minta.
+
+Kalau ada bug dari uji: tulis di sini tanggal + gejala + file, lalu kerjakan bug itu — jangan buka modul baru.

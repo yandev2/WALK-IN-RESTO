@@ -1,0 +1,852 @@
+// Tahap 1 Walk-In — tanpa booking
+// Tenant SaaS = restaurants | Lokasi fisik = outlets (tahap 1: tepat 1 outlet per resto)
+// Setiap baris operasional: restaurant_id + outlet_id (keduanya wajib)
+// Role = Filament Shield / Spatie — jangan buat migration sendiri
+// Uang = bigint Rupiah | Waktu = UTC | Status denah DITURUNKAN
+
+Project resto_walkin_tahap1 {
+  database_type: "MySQL"
+  Note: '''
+    Scope query: restaurant_id wajib. Tulis operasional: restaurant_id + outlet_id, outlet.restaurant_id harus cocok.
+    Shield: permission.teams = true, team_foreign_key = restaurant_id (bukan outlet).
+    Jangan hard-delete order/visit/payment/audit. Catalog: is_active. Tenant: restaurants.is_active.
+  '''
+}
+
+Enum visit_status {
+  open
+  closed
+}
+
+Enum order_status {
+  pending_payment
+  awaiting_cashier
+  paid
+  rejected
+  cancelled
+  voided
+}
+
+Enum payment_method {
+  qris
+  cash
+}
+
+Enum payment_provider {
+  manual
+  midtrans
+  xendit
+}
+
+Enum payment_status {
+  pending
+  awaiting_cashier
+  paid
+  rejected
+  cancelled
+  expired
+  refunded
+}
+
+Enum order_source {
+  guest
+  cashier
+}
+
+Enum gps_check_status {
+  not_required
+  passed
+  outside_radius
+  low_accuracy
+  denied
+}
+
+Enum kds_status {
+  queued
+  preparing
+  ready
+  served
+  voided
+}
+
+Enum void_omzet_policy {
+  cut
+  waste
+}
+
+Enum audit_actor_type {
+  staff
+  guest
+  system
+}
+
+Enum whatsapp_message_kind {
+  receipt
+}
+
+Enum whatsapp_message_status {
+  queued
+  sending
+  sent
+  failed
+}
+
+// ===========================================================================
+// Tenant SaaS (bukan lokasi)
+// ===========================================================================
+
+Table restaurants {
+  id bigint [pk, increment]
+  public_id char(26) [unique, not null, note: "ULID untuk URL/subdomain internal"]
+  name varchar(120) [not null]
+  slug varchar(80) [unique, not null]
+  custom_domain varchar(191) [unique, note: "SaaS landing: resto.com. NULL = pakai slug di domain platform"]
+  legal_name varchar(191)
+  npwp varchar(32)
+  logo_path varchar(255)
+  timezone varchar(64) [not null, default: "Asia/Jakarta"]
+  currency char(3) [not null, default: "IDR"]
+  is_active boolean [not null, default: true]
+  plan_code varchar(32) [note: "stub billing; bukan modul P&L"]
+  fonnte_api_key_encrypted varchar(512) [note: "API key Fonnte per resto, diisi owner di restaurant settings. NULL/kosong = fitur kirim struk WA mati"]
+  settings json [note: "feature flag tanpa migration"]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: "Akun SaaS. Alamat/GPS/QRIS/pajak/jam buka ada di outlets. Fonnte di tingkat restaurant, bukan outlet."
+}
+
+Table restaurant_users {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  user_id bigint [not null, ref: > users.id]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, user_id) [unique]
+    (user_id)
+  }
+
+  Note: "Membership. User bisa staf di >1 resto nanti. Super admin tidak punya baris ini."
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(120) [not null]
+  email varchar(191) [unique, not null]
+  username varchar(64) [unique]
+  password varchar(255) [not null]
+  is_active boolean [not null, default: true]
+  remember_token varchar(100)
+  email_verified_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  Note: "Identitas global. Tenant lewat restaurant_users. Role lewat model_has_roles. Tamu tidak di sini."
+}
+
+// ===========================================================================
+// Lokasi fisik (cabang)
+// ===========================================================================
+
+Table outlets {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  public_id char(26) [unique, not null]
+  code varchar(32) [not null, note: "unik per resto, mis. MAIN"]
+  name varchar(120) [not null]
+  address text
+  phone varchar(32)
+  is_default boolean [not null, default: false]
+  is_open boolean [not null, default: true]
+  is_active boolean [not null, default: true]
+  latitude decimal(10,7)
+  longitude decimal(10,7)
+  geofence_radius_m int [not null, default: 30]
+  gps_accuracy_max_m int [not null, default: 50]
+  qris_image_path varchar(255)
+  pb1_pct decimal(5,2) [not null, default: 10]
+  service_pct decimal(5,2) [not null, default: 5]
+  tax_mode varchar(16) [not null, default: "exclusive"]
+  claim_ttl_minutes int [not null, default: 10]
+  awaiting_cashier_ttl_minutes int [not null, default: 20]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, code) [unique]
+  }
+
+  Note: "Tahap 1: insert 1 outlet is_default saat restaurant dibuat. GPS/QRIS/pajak di sini. App jaga maksimal satu is_default per restaurant_id."
+}
+
+Table outlet_users {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  user_id bigint [not null, ref: > users.id]
+  created_at timestamp
+
+  indexes {
+    (outlet_id, user_id) [unique]
+    (restaurant_id, user_id)
+  }
+
+  Note: "Tahap 1: semua staf resto di-assign ke outlet default. Nanti kasir bisa dibatasi per cabang."
+}
+
+Table outlet_operating_hours {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  day_of_week tinyint [not null, note: "0=Minggu .. 6=Sabtu"]
+  opens_at time
+  closes_at time
+  is_closed boolean [not null, default: false]
+
+  indexes {
+    (outlet_id, day_of_week) [unique]
+  }
+}
+
+Table outlet_closed_dates {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  closed_on date [not null]
+  reason varchar(191)
+  created_at timestamp
+
+  indexes {
+    (outlet_id, closed_on) [unique]
+  }
+
+  Note: "Libur khusus di luar jam mingguan."
+}
+
+Table outlet_sequences {
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  seq_key varchar(32) [not null, note: "order"]
+  next_value bigint [not null, default: 1]
+
+  indexes {
+    (outlet_id, seq_key) [pk]
+  }
+
+  Note: "Nomor order kasir, aman di bawah concurrent checkout."
+}
+
+Table kds_stations {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  slug varchar(32) [not null, note: "kitchen | bar | pastry nanti"]
+  name varchar(80) [not null]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, slug) [unique]
+  }
+
+  Note: "Jangan hardcode enum 2 stasiun. Seed kitchen+bar di tahap 1."
+}
+
+// ===========================================================================
+// Filament Shield / Spatie — publish plugin
+// permission.teams = true
+// team_foreign_key = restaurant_id
+// ===========================================================================
+
+Table permissions {
+  id bigint [pk, increment]
+  name varchar(125) [not null]
+  guard_name varchar(125) [not null, default: "web"]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (name, guard_name) [unique]
+  }
+
+  Note: "Milik Spatie. Permission GLOBAL."
+}
+
+Table roles {
+  id bigint [pk, increment]
+  restaurant_id bigint [ref: > restaurants.id, note: "NULL = super_admin platform"]
+  name varchar(125) [not null]
+  guard_name varchar(125) [not null, default: "web"]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, name, guard_name) [unique]
+  }
+
+  Note: "Milik Shield. Role per resto, bukan per outlet."
+}
+
+Table role_has_permissions {
+  permission_id bigint [not null, ref: > permissions.id]
+  role_id bigint [not null, ref: > roles.id]
+
+  indexes {
+    (permission_id, role_id) [pk]
+  }
+}
+
+Table model_has_roles {
+  role_id bigint [not null, ref: > roles.id]
+  model_type varchar(191) [not null]
+  model_id bigint [not null]
+  restaurant_id bigint [not null, default: 0]
+
+  indexes {
+    (restaurant_id, role_id, model_id, model_type) [pk]
+  }
+}
+
+Table model_has_permissions {
+  permission_id bigint [not null, ref: > permissions.id]
+  model_type varchar(191) [not null]
+  model_id bigint [not null]
+  restaurant_id bigint [not null, default: 0]
+
+  indexes {
+    (restaurant_id, permission_id, model_id, model_type) [pk]
+  }
+}
+
+// ===========================================================================
+// CMS — brand (restaurant). Multi-outlet: satu landing, lokasi dari outlets
+// ===========================================================================
+
+Table cms_profiles {
+  id bigint [pk, increment]
+  restaurant_id bigint [unique, not null, ref: > restaurants.id]
+  headline varchar(191)
+  about_html text
+  hero_image_path varchar(255)
+  map_embed_url varchar(500)
+  cta_label varchar(80)
+  cta_url varchar(500)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table cms_gallery_images {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  image_path varchar(255) [not null]
+  caption varchar(191)
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, sort_order)
+  }
+}
+
+Table cms_faqs {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  question varchar(255) [not null]
+  answer_html text [not null]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, sort_order)
+  }
+}
+
+Table cms_banners {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  title varchar(120)
+  image_path varchar(255) [not null]
+  link_url varchar(500)
+  starts_at timestamp [not null]
+  ends_at timestamp [not null]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, starts_at, ends_at)
+  }
+}
+
+// ===========================================================================
+// Meja + QR
+// ===========================================================================
+
+Table tables {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  code varchar(32) [not null]
+  capacity tinyint [not null, default: 2]
+  area varchar(64)
+  is_out_of_service boolean [not null, default: false]
+  needs_cleaning boolean [not null, default: false]
+  qr_version int [not null, default: 1]
+  qr_secret varchar(64) [not null, note: "signed_token = HMAC(restaurant, outlet, table, version)"]
+  open_visit_id bigint [unique, ref: - visits.id]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, code) [unique]
+    (restaurant_id, outlet_id)
+  }
+}
+
+// ===========================================================================
+// Visit
+// ===========================================================================
+
+Table visits {
+  id bigint [pk, increment]
+  public_id char(26) [unique, not null]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  table_id bigint [not null, ref: > tables.id]
+  status visit_status [not null, default: "open"]
+  join_pin char(4) [not null]
+  pin_fail_count tinyint [not null, default: 0]
+  join_locked_until timestamp
+  opened_by_user_id bigint [ref: > users.id]
+  customer_name varchar(120)
+  customer_wa varchar(20) [not null, note: "E.164 tanpa plus, wajib saat Visit dibuat. Contoh 62812..."]
+  claimed_at timestamp [not null]
+  claim_expires_at timestamp [not null]
+  closed_at timestamp
+  closed_by_user_id bigint [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, outlet_id, status)
+    (table_id, status)
+    (claim_expires_at)
+    (customer_wa)
+  }
+
+  Note: "customer_wa wajib diisi saat Visit dibuat (setelah scan atau kasir buka meja). Normalisasi 08… → 62…"
+}
+
+Table visit_devices {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  visit_id bigint [not null, ref: > visits.id]
+  device_token varchar(64) [unique, not null]
+  is_host boolean [not null, default: false]
+  user_agent varchar(255)
+  joined_at timestamp [not null]
+  last_seen_at timestamp
+
+  indexes {
+    (visit_id, is_host)
+    (restaurant_id, outlet_id)
+  }
+}
+
+Table visit_cart_items {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  visit_id bigint [not null, ref: > visits.id]
+  menu_item_id bigint [not null, ref: > menu_items.id]
+  menu_variant_id bigint [ref: > menu_variants.id]
+  qty smallint [not null]
+  notes varchar(255)
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (restaurant_id, visit_id)
+  }
+}
+
+Table visit_cart_item_modifiers {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  visit_cart_item_id bigint [not null, ref: > visit_cart_items.id]
+  modifier_id bigint [not null, ref: > modifiers.id]
+
+  indexes {
+    (visit_cart_item_id, modifier_id) [unique]
+  }
+}
+
+// ===========================================================================
+// Menu (per outlet — harga/OOS bisa beda antar cabang)
+// ===========================================================================
+
+Table menu_categories {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  name varchar(80) [not null]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, sort_order)
+  }
+}
+
+Table menu_items {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  category_id bigint [not null, ref: > menu_categories.id]
+  station_id bigint [not null, ref: > kds_stations.id]
+  name varchar(120) [not null]
+  description text
+  price bigint [not null]
+  photo_path varchar(255)
+  is_active boolean [not null, default: true]
+  is_out_of_stock boolean [not null, default: false]
+  sort_order int [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, is_active, is_out_of_stock)
+  }
+}
+
+Table menu_variants {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  menu_item_id bigint [not null, ref: > menu_items.id]
+  name varchar(80) [not null]
+  price_delta bigint [not null, default: 0]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+}
+
+Table modifier_groups {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  name varchar(80) [not null]
+  min_select tinyint [not null, default: 0]
+  max_select tinyint [not null, default: 1]
+  is_required boolean [not null, default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table modifiers {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  modifier_group_id bigint [not null, ref: > modifier_groups.id]
+  name varchar(80) [not null]
+  price bigint [not null, default: 0]
+  sort_order int [not null, default: 0]
+  is_active boolean [not null, default: true]
+}
+
+Table menu_item_modifier_groups {
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  menu_item_id bigint [not null, ref: > menu_items.id]
+  modifier_group_id bigint [not null, ref: > modifier_groups.id]
+
+  indexes {
+    (menu_item_id, modifier_group_id) [pk]
+  }
+}
+
+// ===========================================================================
+// Order (tagihan) + Payment (pergerakan uang) + KDS
+// ===========================================================================
+
+Table orders {
+  id bigint [pk, increment]
+  public_id char(26) [unique, not null]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  visit_id bigint [not null, ref: > visits.id]
+  number int [not null, note: "nomor kasir per outlet, dari outlet_sequences"]
+  status order_status [not null]
+  source order_source [not null]
+  payment_method payment_method [not null, note: "denormalisasi metode aktif"]
+  created_by_user_id bigint [ref: > users.id]
+  idempotency_key varchar(64) [not null]
+
+  currency char(3) [not null, default: "IDR"]
+  pb1_pct_snapshot decimal(5,2) [not null]
+  service_pct_snapshot decimal(5,2) [not null]
+  tax_mode_snapshot varchar(16) [not null]
+  subtotal bigint [not null]
+  discount_amount bigint [not null, default: 0]
+  service_amount bigint [not null]
+  pb1_amount bigint [not null]
+  grand_before bigint [not null, note: "omzet jika paid"]
+  grand_payable bigint [not null, note: "grand_before + unique_add QRIS"]
+  send_receipt boolean [not null, default: true, note: "opsi tamu/kasir: generate + kirim struk WA"]
+  receipt_wa_snapshot varchar(20) [note: "nomor tujuan saat struk dikirim; tidak berubah jika Visit ganti WA"]
+
+  paid_at timestamp
+  cancelled_at timestamp
+  voided_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, status, created_at)
+    (outlet_id, number) [unique]
+    (outlet_id, idempotency_key) [unique]
+    (visit_id, status)
+    (restaurant_id, created_at)
+  }
+
+  Note: "Tagihan + status. Uang masuk/tolak/refund ada di payments. in_production/completed dari item."
+}
+
+Table order_receipts {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  order_id bigint [unique, not null, ref: > orders.id]
+  file_path varchar(255) [not null, note: "PDF struk"]
+  generated_at timestamp [not null]
+  created_at timestamp
+
+  Note: "Satu struk per order, dibuat saat order paid. Generate ulang menimpa file_path."
+}
+
+Table whatsapp_messages {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  visit_id bigint [ref: > visits.id]
+  order_id bigint [ref: > orders.id]
+  receipt_id bigint [ref: > order_receipts.id]
+  requested_by_user_id bigint [ref: > users.id, note: "NULL = job sistem; terisi = kasir kirim ulang"]
+  kind whatsapp_message_kind [not null]
+  provider varchar(16) [not null, default: "fonnte"]
+  to_wa varchar(20) [not null]
+  body text
+  media_path varchar(255) [note: "PDF struk yang dilampirkan"]
+  status whatsapp_message_status [not null, default: "queued"]
+  attempts tinyint [not null, default: 0]
+  provider_ref varchar(191)
+  provider_payload json
+  last_error varchar(500)
+  queued_at timestamp [not null]
+  sent_at timestamp
+  failed_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, status, queued_at)
+    (order_id)
+    (to_wa)
+  }
+
+  Note: "Antrian kirim Fonnte memakai restaurants.fonnte_api_key_encrypted. Key kosong = jangan enqueue. Gagal tidak membatalkan order paid."
+}
+
+Table payments {
+  id bigint [pk, increment]
+  public_id char(26) [unique, not null]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  order_id bigint [not null, ref: > orders.id]
+  method payment_method [not null]
+  provider payment_provider [not null, default: "manual"]
+  status payment_status [not null]
+  amount bigint [not null, note: "yang dibayar tamu = orders.grand_payable"]
+  unique_add smallint [not null, default: 0]
+  qris_hold_amount bigint [note: "isi = amount hanya saat status awaiting_cashier + qris; WAJIB NULL setelah paid/rejected/cancelled/expired agar unique lepas"]
+  qris_image_path_snapshot varchar(255) [note: "G3: pending tetap pakai foto QRIS saat checkout"]
+  provider_ref varchar(191) [note: "id Midtrans/Xendit nanti"]
+  provider_payload json
+  proof_image_path varchar(255)
+
+  gps_status gps_check_status [not null, default: "not_required"]
+  gps_latitude decimal(10,7)
+  gps_longitude decimal(10,7)
+  gps_accuracy_m decimal(8,2)
+  gps_distance_m decimal(8,2)
+  gps_override_by_user_id bigint [ref: > users.id]
+  gps_override_reason varchar(255)
+  gps_overridden_at timestamp
+
+  awaiting_expires_at timestamp
+  paid_at timestamp
+  paid_by_user_id bigint [ref: > users.id]
+  rejected_at timestamp
+  reject_reason varchar(255)
+  cancelled_at timestamp
+  expired_at timestamp
+  refunded_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (order_id)
+    (outlet_id, status, created_at)
+    (outlet_id, qris_hold_amount) [unique]
+    (provider, provider_ref)
+    (awaiting_expires_at)
+  }
+
+  Note: '''
+    Tahap 1: 1 order : 1 payment provider=manual.
+    Nanti: baris kedua status=refunded, atau provider=midtrans tanpa ubah orders.
+    GPS hanya di payment tunai tamu.
+  '''
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  order_id bigint [not null, ref: > orders.id]
+  menu_item_id bigint [ref: > menu_items.id]
+  menu_variant_id bigint [ref: > menu_variants.id]
+  station_id bigint [not null, ref: > kds_stations.id]
+  name_snapshot varchar(120) [not null]
+  variant_name_snapshot varchar(80)
+  unit_price bigint [not null]
+  qty smallint [not null]
+  notes varchar(255)
+  kds_status kds_status [not null, default: "queued"]
+  void_omzet_policy void_omzet_policy
+  void_reason varchar(255)
+  queued_at timestamp
+  preparing_at timestamp
+  ready_at timestamp
+  served_at timestamp
+  served_reverted_at timestamp
+  voided_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (outlet_id, station_id, kds_status)
+    (order_id)
+  }
+
+  Note: "Hanya setelah payment/order paid. Timer = now - orders.paid_at."
+}
+
+Table order_item_modifiers {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [not null, ref: > outlets.id]
+  order_item_id bigint [not null, ref: > order_items.id]
+  modifier_id bigint [ref: > modifiers.id]
+  name_snapshot varchar(80) [not null]
+  price_snapshot bigint [not null]
+}
+
+// ===========================================================================
+// Audit
+// ===========================================================================
+
+Table audit_logs {
+  id bigint [pk, increment]
+  restaurant_id bigint [not null, ref: > restaurants.id]
+  outlet_id bigint [ref: > outlets.id]
+  actor_type audit_actor_type [not null]
+  user_id bigint [ref: > users.id]
+  visit_id bigint [ref: > visits.id]
+  order_id bigint [ref: > orders.id]
+  payment_id bigint [ref: > payments.id]
+  whatsapp_message_id bigint [ref: > whatsapp_messages.id]
+  action varchar(64) [not null]
+  old_value json
+  new_value json
+  reason varchar(255)
+  ip_address varchar(45)
+  user_agent varchar(255)
+  created_at timestamp [not null]
+
+  indexes {
+    (restaurant_id, created_at)
+    (outlet_id, created_at)
+    (action, created_at)
+    (visit_id)
+    (order_id)
+  }
+
+  Note: "Append-only. outlet_id NULL hanya aksi tenant-level (CMS brand, membership)."
+}
+
+TableGroup tenant {
+  restaurants
+  restaurant_users
+  users
+}
+
+TableGroup location {
+  outlets
+  outlet_users
+  outlet_operating_hours
+  outlet_closed_dates
+  kds_stations
+}
+
+TableGroup shield {
+  roles
+  permissions
+  role_has_permissions
+  model_has_roles
+  model_has_permissions
+}
+
+TableGroup cms {
+  cms_profiles
+  cms_gallery_images
+  cms_faqs
+  cms_banners
+}
+
+TableGroup floor {
+  tables
+  visits
+  visit_devices
+  visit_cart_items
+}
+
+TableGroup catalog {
+  menu_categories
+  menu_items
+  menu_variants
+  modifier_groups
+  modifiers
+}
+
+TableGroup ticket {
+  orders
+  payments
+  order_receipts
+  whatsapp_messages
+  order_items
+  order_item_modifiers
+}
