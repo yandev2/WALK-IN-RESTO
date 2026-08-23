@@ -41,7 +41,7 @@ class CmsGalleryImageResource extends Resource
 
     protected static ?string $navigationLabel = 'Galeri';
 
-    protected static ?string $modelLabel = 'foto galeri';
+    protected static ?string $pluralModelLabel  = 'foto galeri';
 
     protected static ?string $recordTitleAttribute = 'caption';
 
@@ -54,12 +54,15 @@ class CmsGalleryImageResource extends Resource
                 Section::make('Gambar')
                     ->description('Tampil di grid galeri halaman landing. Rasio 4:3 direkomendasikan.')
                     ->icon(Heroicon::OutlinedPhoto)
+                    ->columnSpanFull()
                     ->schema([
                         FileUpload::make('image_path')
                             ->hiddenLabel()
                             ->image()
                             ->imageEditor()
-                            ->imageCropAspectRatio('4:3')
+                            ->imageEditorMode(2)
+                            ->imageAspectRatio('4:3')
+                            ->automaticallyCropImagesToAspectRatio()
                             ->imagePreviewHeight('180')
                             ->panelLayout('compact')
                             ->required()
@@ -69,6 +72,7 @@ class CmsGalleryImageResource extends Resource
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
                     ]),
                 Section::make('Keterangan')
+                    ->columnSpanFull()
                     ->description('Opsional. Ditampilkan di bawah foto di landing.')
                     ->icon(Heroicon::OutlinedChatBubbleBottomCenterText)
                     ->schema([
@@ -81,6 +85,7 @@ class CmsGalleryImageResource extends Resource
                 Section::make('Tampilan')
                     ->compact()
                     ->columns(2)
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('sort_order')
                             ->label('Urutan')
@@ -101,6 +106,12 @@ class CmsGalleryImageResource extends Resource
     {
         $table = $table
             ->columns([
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
                 ImageColumn::make('image_path')
                     ->label('Gambar')
                     ->disk('public')
@@ -110,10 +121,14 @@ class CmsGalleryImageResource extends Resource
                     ->label('Keterangan')
                     ->placeholder('—')
                     ->searchable()
+                    ->grow()
                     ->wrap(),
                 TextColumn::make('sort_order')
                     ->label('Urutan')
                     ->sortable()
+                    ->width('sm')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
                 IconColumn::make('is_active')
                     ->label('Aktif')
@@ -122,8 +137,8 @@ class CmsGalleryImageResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order');
 
-        return TableRightClick::apply($table, fn (): array => [
-            EditAction::make(),
+        return TableRightClick::apply($table, fn(): array => [
+            EditAction::make()->modalWidth('2xl'),
             DeleteAction::make(),
         ]);
     }

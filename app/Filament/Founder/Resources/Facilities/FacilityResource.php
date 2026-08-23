@@ -35,7 +35,7 @@ class FacilityResource extends Resource
 
     protected static ?string $navigationLabel = 'Fasilitas';
 
-    protected static ?string $modelLabel = 'fasilitas';
+    protected static ?string $pluralModelLabel  = 'fasilitas';
 
     protected static ?string $recordTitleAttribute = 'name';
 

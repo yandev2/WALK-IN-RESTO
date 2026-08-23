@@ -48,7 +48,7 @@ class DiningTableResource extends Resource
 
     protected static ?string $navigationLabel = 'Meja';
 
-    protected static ?string $modelLabel = 'meja';
+    protected static ?string $pluralModelLabel  = 'meja';
 
     protected static ?string $slug = 'tables';
 

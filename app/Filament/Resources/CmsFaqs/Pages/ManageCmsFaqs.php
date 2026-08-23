@@ -14,7 +14,7 @@ class ManageCmsFaqs extends ManageRecords
     {
         return [
             CmsFaqResource::trashPageAction(),
-            CreateAction::make(),
+            CreateAction::make()->modalWidth('2xl'),
         ];
     }
 }

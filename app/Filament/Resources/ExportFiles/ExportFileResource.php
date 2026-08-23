@@ -39,9 +39,9 @@ class ExportFileResource extends Resource
 
     protected static ?string $navigationLabel = 'Riwayat ekspor';
 
-    protected static ?string $modelLabel = 'ekspor';
+    protected static ?string $pluralModelLabel  = 'ekspor';
 
-    protected static ?string $pluralModelLabel = 'riwayat ekspor';
+    protected static ?string $pluralpluralModelLabel  = 'riwayat ekspor';
 
     protected static ?string $tenantOwnershipRelationshipName = 'restaurant';
 
@@ -68,21 +68,19 @@ class ExportFileResource extends Resource
     {
         return $schema
             ->components([
-                Section::make()
-                    ->columns(2)
-                    ->schema([
-                        TextEntry::make('module_label')->label('Modul'),
-                        TextEntry::make('status')->badge(),
-                        TextEntry::make('format')->badge(),
-                        TextEntry::make('user.name')->label('Dibuat oleh'),
-                        TextEntry::make('filename')->columnSpanFull(),
-                        TextEntry::make('readable_size')->label('Ukuran'),
-                        TextEntry::make('created_at')->dateTime('d M Y H:i'),
-                        TextEntry::make('error_message')
-                            ->label('Pesan error')
-                            ->columnSpanFull()
-                            ->visible(fn (ExportFile $record): bool => filled($record->error_message)),
-                    ]),
+
+                TextEntry::make('module_label')->label('Modul'),
+                TextEntry::make('user.name')->label('Dibuat oleh'),
+                TextEntry::make('status')->badge(),
+                TextEntry::make('format')->badge(),
+                TextEntry::make('readable_size')->label('Ukuran'),
+                TextEntry::make('created_at')->dateTime('d M Y H:i'),
+                TextEntry::make('filename')->columnSpanFull(),
+                TextEntry::make('error_message')
+                    ->label('Pesan error')
+                    ->columnSpanFull()
+                    ->visible(fn(ExportFile $record): bool => filled($record->error_message)),
+
             ]);
     }
 
@@ -92,6 +90,12 @@ class ExportFileResource extends Resource
             $table
                 ->defaultSort('created_at', 'desc')
                 ->columns([
+                    TextColumn::make('index')
+                        ->label('No. ')
+                        ->width('sm')
+                        ->badge()
+                        ->color('primary')
+                        ->rowIndex(),
                     TextColumn::make('created_at')
                         ->label('Waktu')
                         ->dateTime('d M Y H:i')
@@ -100,7 +104,7 @@ class ExportFileResource extends Resource
                         ->label('Modul')
                         ->searchable(query: function ($query, string $search) {
                             $keys = collect(ExportFile::moduleLabels())
-                                ->filter(fn (string $label): bool => str_contains(strtolower($label), strtolower($search)))
+                                ->filter(fn(string $label): bool => str_contains(strtolower($label), strtolower($search)))
                                 ->keys()
                                 ->all();
 
@@ -109,7 +113,7 @@ class ExportFileResource extends Resource
                     TextColumn::make('format')->badge(),
                     TextColumn::make('status')
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
+                        ->color(fn(string $state): string => match ($state) {
                             ExportFile::STATUS_COMPLETED => 'success',
                             ExportFile::STATUS_FAILED => 'danger',
                             ExportFile::STATUS_PROCESSING => 'warning',
@@ -136,13 +140,13 @@ class ExportFileResource extends Resource
                             ExportFile::FORMAT_PDF => 'PDF',
                         ]),
                 ]),
-            fn (): array => [
+            fn(): array => [
                 Action::make('download')
                     ->label('Unduh')
                     ->icon(Heroicon::OutlinedArrowDownTray)
-                    ->url(fn (ExportFile $record): string => $record->downloadUrl())
+                    ->url(fn(ExportFile $record): string => $record->downloadUrl())
                     ->openUrlInNewTab()
-                    ->visible(fn (ExportFile $record): bool => $record->isDownloadable()),
+                    ->visible(fn(ExportFile $record): bool => $record->isDownloadable()),
                 ViewAction::make(),
                 DeleteAction::make(),
             ],

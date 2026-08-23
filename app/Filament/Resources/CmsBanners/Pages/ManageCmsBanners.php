@@ -14,7 +14,7 @@ class ManageCmsBanners extends ManageRecords
     {
         return [
             CmsBannerResource::trashPageAction(),
-            CreateAction::make(),
+            CreateAction::make()->modalWidth('2xl'),
         ];
     }
 }

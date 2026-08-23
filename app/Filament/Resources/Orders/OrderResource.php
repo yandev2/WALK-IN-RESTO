@@ -34,7 +34,7 @@ class OrderResource extends Resource
 
     protected static ?string $navigationLabel = 'Pesanan';
 
-    protected static ?string $modelLabel = 'pesanan';
+    protected static ?string $pluralModelLabel  = 'pesanan';
 
     protected static ?string $recordTitleAttribute = 'number';
 
@@ -154,7 +154,7 @@ class OrderResource extends Resource
                     ->label('Meja'),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'awaiting_cashier' => 'warning',
                         'paid' => 'success',
                         'rejected', 'cancelled', 'voided' => 'danger',
@@ -165,12 +165,13 @@ class OrderResource extends Resource
                 TextColumn::make('has_proof')
                     ->label('Bukti')
                     ->badge()
-                    ->state(fn (Order $record): string => filled($record->payments->sortByDesc('id')->first()?->proof_image_path) ? 'Ada' : '—')
-                    ->color(fn (string $state): string => $state === 'Ada' ? 'success' : 'gray'),
+                    ->state(fn(Order $record): string => filled($record->payments->sortByDesc('id')->first()?->proof_image_path) ? 'Ada' : '—')
+                    ->color(fn(string $state): string => $state === 'Ada' ? 'success' : 'gray'),
                 TextColumn::make('grand_payable')
                     ->label('Tagihan')
                     ->money('IDR', locale: 'id'),
                 TextColumn::make('visit.customer_wa')
+                    ->searchable()
                     ->label('WA'),
                 TextColumn::make('created_at')
                     ->label('Waktu')
@@ -180,6 +181,7 @@ class OrderResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
+                    ->native(false)
                     ->options([
                         'awaiting_cashier' => 'Menunggu kasir',
                         'paid' => 'Paid',
@@ -189,13 +191,14 @@ class OrderResource extends Resource
                         'voided' => 'Void',
                     ]),
                 SelectFilter::make('payment_method')
+                    ->native(false)
                     ->options([
                         'qris' => 'QRIS',
                         'cash' => 'Tunai',
                     ]),
             ]);
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             ViewAction::make(),
         ]);
     }

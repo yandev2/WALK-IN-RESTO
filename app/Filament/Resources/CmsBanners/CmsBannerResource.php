@@ -43,7 +43,7 @@ class CmsBannerResource extends Resource
 
     protected static ?string $navigationLabel = 'Banner';
 
-    protected static ?string $modelLabel = 'banner';
+    protected static ?string $pluralModelLabel  = 'banner';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -56,6 +56,7 @@ class CmsBannerResource extends Resource
                 Section::make('Konten promo')
                     ->description('Teks yang tampil di kartu banner landing.')
                     ->icon(Heroicon::OutlinedMegaphone)
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
@@ -88,12 +89,15 @@ class CmsBannerResource extends Resource
                 Section::make('Gambar')
                     ->description('Rasio 16:9, tampil sebagai slide promo di landing.')
                     ->icon(Heroicon::OutlinedPhoto)
+                    ->columnSpanFull()
                     ->schema([
                         FileUpload::make('image_path')
                             ->hiddenLabel()
                             ->image()
                             ->imageEditor()
-                            ->imageCropAspectRatio('16:9')
+                            ->imageEditorMode(2)
+                            ->imageAspectRatio('16:9')
+                            ->automaticallyCropImagesToAspectRatio()
                             ->imagePreviewHeight('180')
                             ->panelLayout('compact')
                             ->required()
@@ -106,6 +110,7 @@ class CmsBannerResource extends Resource
                     ->description('Banner tampil jika aktif dan waktu sekarang di antara mulai–selesai.')
                     ->icon(Heroicon::OutlinedCalendarDays)
                     ->columns(2)
+                    ->columnSpanFull()
                     ->schema([
                         DateTimePicker::make('starts_at')
                             ->label('Mulai')
@@ -142,14 +147,14 @@ class CmsBannerResource extends Resource
                 TextColumn::make('title')->label('Judul')->searchable()->wrap(),
                 TextColumn::make('starts_at')->label('Mulai')->dateTime('d M Y H:i'),
                 TextColumn::make('ends_at')->label('Selesai')->dateTime('d M Y H:i'),
-                TextColumn::make('sort_order')->label('Urutan')->sortable()->alignCenter(),
+                TextColumn::make('sort_order')->label('Urutan')->sortable()->alignCenter()->badge()->color('success'),
                 IconColumn::make('is_active')->label('Aktif')->boolean(),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order');
 
-        return TableRightClick::apply($table, fn (): array => [
-            EditAction::make(),
+        return TableRightClick::apply($table, fn(): array => [
+            EditAction::make()->modalWidth('2xl'),
             DeleteAction::make(),
         ]);
     }

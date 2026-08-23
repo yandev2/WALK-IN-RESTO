@@ -41,7 +41,7 @@ class VisitResource extends Resource
 
     protected static ?string $navigationLabel = 'Visit';
 
-    protected static ?string $modelLabel = 'visit';
+    protected static ?string $pluralModelLabel  = 'visit';
 
     protected static ?int $navigationSort = 3;
 
@@ -79,23 +79,25 @@ class VisitResource extends Resource
     {
         $table = $table
             ->columns([
-                TextColumn::make('diningTable.code')->label('Meja'),
+                TextColumn::make('diningTable.code')->label('Meja')->badge()->color('primary'),
                 TextColumn::make('status')->badge(),
                 TextColumn::make('customer_wa')->label('WA')->searchable(),
-                TextColumn::make('customer_name')->label('Nama')->placeholder('-'),
+                TextColumn::make('customer_name')->label('Nama')->placeholder('-')->searchable(),
                 TextColumn::make('join_pin')->label('PIN'),
                 TextColumn::make('claimed_at')->label('Klaim')->since(),
             ])
             ->defaultSort('claimed_at', 'desc')
+            ->filtersFormWidth('sm')
             ->filters([
                 SelectFilter::make('status')
+                ->columnSpanFull()
                     ->options([
                         'open' => 'Open',
                         'closed' => 'Closed',
                     ]),
             ]);
 
-        return TableRightClick::apply($table, fn (): array => static::recordActions());
+        return TableRightClick::apply($table, fn(): array => static::recordActions());
     }
 
     /**
@@ -107,12 +109,12 @@ class VisitResource extends Resource
             Action::make('updateWa')
                 ->label('Ganti WA')
                 ->icon(Heroicon::OutlinedChatBubbleLeftRight)
-                ->visible(fn (Visit $record): bool => $record->status === 'open')
+                ->visible(fn(Visit $record): bool => $record->status === 'open')
                 ->form([
                     TextInput::make('customer_wa')
                         ->label('WhatsApp tamu')
                         ->required()
-                        ->default(fn (Visit $record): ?string => $record->customer_wa),
+                        ->default(fn(Visit $record): ?string => $record->customer_wa),
                 ])
                 ->action(function (Visit $record, array $data, TableOpsService $ops): void {
                     $ops->updateCustomerWa($record, auth()->user(), $data['customer_wa']);
@@ -121,40 +123,40 @@ class VisitResource extends Resource
             Action::make('resetPin')
                 ->label('Reset PIN')
                 ->icon(Heroicon::OutlinedKey)
-                ->visible(fn (Visit $record): bool => $record->status === 'open')
+                ->visible(fn(Visit $record): bool => $record->status === 'open')
                 ->requiresConfirmation()
                 ->action(function (Visit $record, TableOpsService $ops): void {
                     $pin = $ops->resetPin($record, auth()->user());
                     Notification::make()
-                        ->title('PIN baru: '.$pin)
+                        ->title('PIN baru: ' . $pin)
                         ->success()
                         ->send();
                 }),
             Action::make('move')
                 ->label('Pindah meja')
                 ->icon(Heroicon::OutlinedArrowsRightLeft)
-                ->visible(fn (Visit $record): bool => $record->status === 'open')
+                ->visible(fn(Visit $record): bool => $record->status === 'open')
                 ->form([
                     Select::make('destination_table_id')
                         ->label('Meja tujuan')
-                        ->options(fn (Visit $record): array => DiningTableResource::availableTableOptions($record->table_id))
+                        ->options(fn(Visit $record): array => DiningTableResource::availableTableOptions($record->table_id))
                         ->required(),
                 ])
                 ->action(function (Visit $record, array $data, TableOpsService $ops): void {
                     $dest = DiningTable::query()->findOrFail($data['destination_table_id']);
                     $ops->moveVisit($record, $dest, auth()->user());
-                    Notification::make()->title('Visit dipindah ke meja '.$dest->code)->success()->send();
+                    Notification::make()->title('Visit dipindah ke meja ' . $dest->code)->success()->send();
                 }),
             Action::make('close')
                 ->label('Tutup visit')
                 ->icon(Heroicon::OutlinedLockClosed)
                 ->requiresConfirmation()
                 ->modalHeading('Tutup visit?')
-                ->modalDescription(fn (Visit $record): string => $record->hasUnservedKitchenItems()
+                ->modalDescription(fn(Visit $record): string => $record->hasUnservedKitchenItems()
                     ? 'Masih ada hidangan berjalan di KDS. Item sisa tetap dimasak sampai served/void. Meja masuk cleaning.'
                     : 'Visit ditutup. Meja masuk cleaning.')
-                ->visible(fn (Visit $record): bool => $record->status === 'open')
-                ->disabled(fn (Visit $record): bool => $record->orders()
+                ->visible(fn(Visit $record): bool => $record->status === 'open')
+                ->disabled(fn(Visit $record): bool => $record->orders()
                     ->whereIn('status', ['awaiting_cashier', 'pending_payment'])
                     ->exists())
                 ->tooltip('Tidak bisa ditutup jika masih ada order menunggu kasir.')

@@ -74,7 +74,7 @@ class ManageCmsProfile extends Page
         return [
             Action::make('viewLanding')
                 ->label('Lihat halaman publik')
-                ->url(fn (): string => route('landing.show', $tenant))
+                ->url(fn(): string => route('landing.show', $tenant))
                 ->openUrlInNewTab()
                 ->visible(filled($tenant?->slug)),
         ];
@@ -140,7 +140,7 @@ class ManageCmsProfile extends Page
                                     ->helperText('Landing: /{slug} · Admin: /admin/{slug}')
                                     ->required()
                                     ->maxLength(80)
-                                    ->unique(Restaurant::class, 'slug', ignorable: fn () => $this->restaurant()),
+                                    ->unique(Restaurant::class, 'slug', ignorable: fn() => $this->restaurant()),
                                 TextInput::make('legal_name')
                                     ->label('Nama legal')
                                     ->maxLength(191)
@@ -168,7 +168,9 @@ class ManageCmsProfile extends Page
                                     ->hiddenLabel()
                                     ->image()
                                     ->imageEditor()
-                                    ->imageCropAspectRatio('1:1')
+                                    ->imageEditorMode(2)
+                                    ->imageAspectRatio('1:1')
+                                    ->automaticallyCropImagesToAspectRatio()
                                     ->imagePreviewHeight('180')
                                     ->panelLayout('compact')
                                     ->directory('restaurants/logos')
@@ -195,7 +197,7 @@ class ManageCmsProfile extends Page
                             ->helperText('Kisaran harga rata-rata. Klik opsi yang sama sekali lagi untuk mengosongkan.'),
                         ToggleButtons::make('category_ids')
                             ->label('Kategori restoran')
-                            ->options(fn () => RestaurantCategory::query()
+                            ->options(fn() => RestaurantCategory::query()
                                 ->where('is_active', true)
                                 ->orderBy('sort_order')
                                 ->orderBy('name')
@@ -204,7 +206,7 @@ class ManageCmsProfile extends Page
                             ->inline(),
                         ToggleButtons::make('facilities')
                             ->label('Fasilitas')
-                            ->options(fn () => Facility::activeOptions())
+                            ->options(fn() => Facility::activeOptions())
                             ->multiple()
                             ->inline()
                             ->icons(Facility::iconMap()),
@@ -218,7 +220,7 @@ class ManageCmsProfile extends Page
                             ->label('API key Fonnte')
                             ->password()
                             ->revealable()
-                            ->dehydrated(fn (?string $state): bool => filled($state)),
+                            ->dehydrated(fn(?string $state): bool => filled($state)),
                     ]),
                 Grid::make(3)
                     ->schema([
@@ -277,7 +279,9 @@ class ManageCmsProfile extends Page
                                         ->hiddenLabel()
                                         ->image()
                                         ->imageEditor()
-                                        ->imageCropAspectRatio('16:9')
+                                        ->imageEditorMode(2)
+                                        ->imageAspectRatio('16:9')
+                                        ->automaticallyCropImagesToAspectRatio()
                                         ->imagePreviewHeight('140')
                                         ->panelLayout('compact')
                                         ->directory('cms/hero')
@@ -293,7 +297,9 @@ class ManageCmsProfile extends Page
                                         ->hiddenLabel()
                                         ->image()
                                         ->imageEditor()
-                                        ->imageCropAspectRatio('1:1')
+                                        ->imageEditorMode(2)
+                                        ->imageAspectRatio('1:1')
+                                        ->automaticallyCropImagesToAspectRatio()
                                         ->imagePreviewHeight('140')
                                         ->panelLayout('compact')
                                         ->directory('cms/how-to')
@@ -309,7 +315,9 @@ class ManageCmsProfile extends Page
                                         ->hiddenLabel()
                                         ->image()
                                         ->imageEditor()
-                                        ->imageCropAspectRatio('4:3')
+                                        ->imageEditorMode(2)
+                                        ->imageAspectRatio('4:3')
+                                        ->automaticallyCropImagesToAspectRatio()
                                         ->imagePreviewHeight('140')
                                         ->panelLayout('compact')
                                         ->directory('cms/about')
@@ -337,7 +345,7 @@ class ManageCmsProfile extends Page
             ? (int) $data['price_level']
             : null;
         $restaurantPayload['facilities'] = collect(Facility::knownKeys())
-            ->mapWithKeys(fn (string $key) => [$key => in_array($key, $data['facilities'] ?? [], true)])
+            ->mapWithKeys(fn(string $key) => [$key => in_array($key, $data['facilities'] ?? [], true)])
             ->all();
 
         if (filled($data['fonnte_api_key'] ?? null)) {
@@ -350,8 +358,8 @@ class ManageCmsProfile extends Page
         $restaurant->update($restaurantPayload);
         $restaurant->categories()->sync(
             collect($data['category_ids'] ?? [])
-                ->filter(fn ($id) => filled($id))
-                ->map(fn ($id) => (int) $id)
+                ->filter(fn($id) => filled($id))
+                ->map(fn($id) => (int) $id)
                 ->values()
                 ->all(),
         );

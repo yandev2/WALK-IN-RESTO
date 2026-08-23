@@ -13,9 +13,29 @@ use App\Policies\UserPolicy;
 use App\Support\GuestContext;
 use App\Support\PermissionTeam;
 use App\Support\RestaurantTheme;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Actions\HeaderActionsPosition;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\ComponentHookRegistry;
@@ -29,6 +49,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
+        static::registerStyle();
+
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ExportFile::class, ExportFilePolicy::class);
@@ -58,8 +84,18 @@ class AppServiceProvider extends ServiceProvider
             if (
                 method_exists($user, 'checkPermissionTo')
                 && ! in_array($ability, [
-                    'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny',
-                    'restore', 'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
+                    'viewAny',
+                    'view',
+                    'create',
+                    'update',
+                    'delete',
+                    'deleteAny',
+                    'restore',
+                    'forceDelete',
+                    'forceDeleteAny',
+                    'restoreAny',
+                    'replicate',
+                    'reorder',
                 ], true)
             ) {
                 return $user->checkPermissionTo($ability) ?: null;
@@ -68,9 +104,9 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        Gate::define('command-center:access', fn ($user): bool => $user instanceof User && $user->isPlatformOperator());
-        Gate::define('command-center:prune-history', fn ($user): bool => $user instanceof User && $user->isPlatformOperator());
-        Gate::define('command-center:manage-commands', fn ($user): bool => $user instanceof User && $user->isPlatformOperator());
+        Gate::define('command-center:access', fn($user): bool => $user instanceof User && $user->isPlatformOperator());
+        Gate::define('command-center:prune-history', fn($user): bool => $user instanceof User && $user->isPlatformOperator());
+        Gate::define('command-center:manage-commands', fn($user): bool => $user instanceof User && $user->isPlatformOperator());
 
         View::composer('layouts.guest-order', function ($view): void {
             $visit = GuestContext::visit();
@@ -88,11 +124,186 @@ class AppServiceProvider extends ServiceProvider
         FileUpload::configureUsing(function (FileUpload $component): void {
             if ($component->getDiskName() === 'public') {
                 $component->deleteUploadedFileUsing(
-                    fn (string $file): bool => Storage::disk('public')->delete($file),
+                    fn(string $file): bool => Storage::disk('public')->delete($file),
                 );
             }
         });
     }
 
-    private static function registerStyle(): void {}
+    private static function registerStyle(): void
+    {
+        CreateAction::configureUsing(function (CreateAction $action): void {
+            $action
+                ->label('Tambah Data')
+                ->color('primary')
+                ->icon(Heroicon::PlusCircle)
+                ->modalWidth(Width::Large)
+                ->modalIcon(Heroicon::PlusCircle)
+                ->modalHeading('Tambah Data')
+                ->successNotificationTitle("Data telah berhasil disimpan")
+                ->failureNotificationTitle("Terjadi kesalahan saat menyimpan data");
+        });
+
+        EditAction::configureUsing(function (EditAction $action): void {
+            $action
+                ->color('warning')
+                ->authorize(true)
+                ->icon(Heroicon::PencilSquare)
+                ->modalWidth(Width::Large)
+                ->modalIcon(Heroicon::PencilSquare)
+                ->modalHeading('Edit Data')
+                ->successNotificationTitle("Data telah berhasil diperbarui")
+                ->failureNotificationTitle("Terjadi kesalahan saat memperbarui data");
+        });
+
+        ViewAction::configureUsing(function (ViewAction $action): void {
+            $action
+                ->color('gray')
+                ->authorize(true)
+                ->icon(Heroicon::Eye)
+                ->modalWidth(Width::Large)
+                ->modalIcon(Heroicon::Eye)
+                ->modalHeading('Detail Data');
+        });
+
+        DeleteAction::configureUsing(function (DeleteAction $action): void {
+            $action
+                ->color('danger')
+                ->icon(Heroicon::Trash)
+                ->requiresConfirmation()
+                ->modalHeading('KONFIRMASI')
+                ->modalWidth(Width::Medium)
+                ->modalDescription("konfirmasi untuk menghapus data")
+                ->successNotificationTitle("Data telah berhasil dihapus")
+                ->failureNotificationTitle("Terjadi kesalahan saat menghapus data")
+            ;
+        });
+
+        RestoreAction::configureUsing(function (RestoreAction $action): void {
+            $action
+                ->color('gray')
+                ->icon(Heroicon::ArrowPath)
+                ->requiresConfirmation()
+                ->modalHeading('KONFIRMASI')
+                ->modalWidth(Width::Medium)
+                ->modalDescription("konfirmasi untuk memulihkan data")
+                ->successNotificationTitle("Data telah berhasil dipulihkan")
+                ->failureNotificationTitle("Terjadi kesalahan saat memulihkan data")
+            ;
+        });
+
+        DeleteBulkAction::configureUsing(function (DeleteBulkAction $action): void {
+            $action
+                ->color('danger')
+                ->icon(Heroicon::Trash)
+                ->requiresConfirmation()
+                ->modalHeading('KONFIRMASI')
+                ->modalWidth(Width::Medium)
+                ->modalDescription('konfirmasi untuk menghapus data yang dipilih')
+                ->successNotificationTitle("Data yang dipilih telah berhasil dihapus")
+                ->failureNotificationTitle("Terjadi kesalahan saat menghapus data yang dipilih")
+            ;
+        });
+
+        RestoreBulkAction::configureUsing(function (RestoreBulkAction $action): void {
+            $action
+                ->color('gray')
+                ->icon(Heroicon::Trash)
+                ->requiresConfirmation()
+                ->modalHeading('KONFIRMASI')
+                ->modalWidth(Width::Medium)
+                ->modalDescription('konfirmasi untuk memulihkan data yang dipilih')
+                ->successNotificationTitle("Data yang dipilih telah berhasil dipulihkan")
+                ->failureNotificationTitle("Terjadi kesalahan saat memulihkan data yang dipilih")
+            ;
+        });
+
+        ForceDeleteAction::configureUsing(function (ForceDeleteAction $action) {
+            $action
+                ->successNotificationTitle("Data telah berhasil dihapus permanen")
+                ->failureNotificationTitle("Terjadi kesalahan saat menghapus data");
+        });
+
+        ForceDeleteBulkAction::configureUsing(function (ForceDeleteBulkAction $action): void {
+            $action
+                ->color('danger')
+                ->icon(Heroicon::Trash)
+                ->requiresConfirmation()
+                ->modalHeading('KONFIRMASI')
+                ->modalWidth(Width::Medium)
+                ->modalDescription('konfirmasi untuk menghapus permanen data yang dipilih')
+                ->successNotificationTitle("Data yang dipilih telah berhasil dihapus permanen")
+                ->failureNotificationTitle("Terjadi kesalahan saat menghapus permanen data yang dipilih")
+            ;
+        });
+
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->groupRecordsTriggerAction(
+                    fn(Action $action) => $action
+                        ->button()
+                        ->color('primary')
+                        ->label('Group'),
+                )
+                ->selectable()
+                ->emptyStateHeading('TIDAK ADA DATA')
+                ->emptyStateDescription('belum ada data ditambahkan')
+                ->emptyStateIcon(HeroIcon::FolderOpen)
+                ->filtersFormWidth('2xl')
+                ->filtersFormColumns(3)
+                ->defaultPaginationPageOption(6)
+                ->extremePaginationLinks()
+                ->striped()
+                ->paginated([5, 10, 25, 50])
+                ->paginationMode(PaginationMode::Default)
+                ->headerActionsPosition(HeaderActionsPosition::Bottom)
+                ->filtersLayout(FiltersLayout::Modal)
+                ->filtersTriggerAction(
+                    fn(Action $action) => $action
+                        ->badgeColor('primary')
+                        ->label('Filter'),
+                )
+                ->filtersApplyAction(
+                    fn(Action $action) => $action
+                        ->badge()
+                        ->button()
+                        ->color('primary')
+                        ->label('Terapkan Filter')
+                );
+        });
+
+        Select::configureUsing(function (Select $select): void {
+            $select
+                ->preload()
+                ->placeholder('')
+                ->searchable()
+                ->native(false);
+        });
+
+        DatePicker::configureUsing(function (DatePicker $datePicker): void {
+            $datePicker
+                ->prefixIcon(Heroicon::Calendar)
+                ->displayFormat('d M Y')
+                ->native(false);
+        });
+
+        FileUpload::configureUsing(function (FileUpload $fileUpload) {
+            $fileUpload
+                ->openable()
+                ->downloadable()
+                ->alignCenter()
+                ->panelLayout('compact')
+                ->loadingIndicatorPosition('center')
+                ->removeUploadedFileButtonPosition('right')
+                ->uploadButtonPosition('center')
+                ->uploadProgressIndicatorPosition('center');
+        });
+
+        SelectFilter::configureUsing(function (SelectFilter $select) {
+            $select
+                ->preload()
+                ->searchable()
+                ->native(false);
+        });
+    }
 }

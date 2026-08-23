@@ -14,7 +14,7 @@ class ManageCmsGalleryImages extends ManageRecords
     {
         return [
             CmsGalleryImageResource::trashPageAction(),
-            CreateAction::make(),
+            CreateAction::make()->modalWidth('2xl'),
         ];
     }
 }

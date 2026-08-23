@@ -41,7 +41,7 @@ class KdsStationResource extends Resource
 
     protected static ?string $navigationLabel = 'Stasiun KDS';
 
-    protected static ?string $modelLabel = 'stasiun KDS';
+    protected static ?string $pluralModelLabel  = 'stasiun KDS';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -54,7 +54,7 @@ class KdsStationResource extends Resource
                 Section::make('Identitas stasiun')
                     ->description('Nama tampilan dan kode unik untuk layar dapur/bar.')
                     ->icon(Heroicon::OutlinedFire)
-                    ->columns(2)
+                    ->columns(1)
                     ->schema([
                         TextInput::make('name')
                             ->label('Nama')
@@ -71,7 +71,7 @@ class KdsStationResource extends Resource
                                 table: KdsStation::class,
                                 column: 'slug',
                                 ignoreRecord: true,
-                                modifyRuleUsing: fn (Unique $rule) => $rule->where('outlet_id', TenantContext::outletId()),
+                                modifyRuleUsing: fn(Unique $rule) => $rule->where('outlet_id', TenantContext::outletId()),
                             )
                             ->helperText('Huruf kecil, angka, dan strip. Dipakai di URL layar KDS.'),
                     ]),
@@ -79,7 +79,7 @@ class KdsStationResource extends Resource
                     ->description('Stasiun nonaktif tidak menerima item menu baru.')
                     ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
                     ->compact()
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         TextInput::make('sort_order')
                             ->label('Urutan')
@@ -87,6 +87,7 @@ class KdsStationResource extends Resource
                             ->minValue(0)
                             ->default(0)
                             ->required()
+                            ->columnSpan(2)
                             ->helperText('Angka kecil tampil lebih dulu. Bisa juga digeser di tabel.'),
                         Toggle::make('is_active')
                             ->label('Aktif')
@@ -100,6 +101,12 @@ class KdsStationResource extends Resource
     {
         $table = $table
             ->columns([
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->searchable()
@@ -110,6 +117,9 @@ class KdsStationResource extends Resource
                 TextColumn::make('sort_order')
                     ->label('Urutan')
                     ->sortable()
+                     ->width('sm')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
                 IconColumn::make('is_active')
                     ->label('Aktif')
@@ -118,7 +128,7 @@ class KdsStationResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order');
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             EditAction::make(),
             DeleteAction::make(),
         ]);

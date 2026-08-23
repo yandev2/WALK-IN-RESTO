@@ -87,6 +87,14 @@
         line-height: 1.5;
     }
 
+    .cashier-pay-summary__title {
+        color: rgb(15 23 42);
+    }
+
+    .dark .cashier-pay-summary__title {
+        color: rgb(248 250 252);
+    }
+
     .dark .cashier-pay-summary__empty {
         color: rgb(148 163 184);
     }
@@ -158,7 +166,7 @@
                 </div>
 
                 <div style="min-width: 0;">
-                    <div style="font-size: 0.9375rem; font-weight: 600; color: rgb(15 23 42); line-height: 1.3;">
+                    <div class="cashier-pay-summary__title" style="font-size: 0.9375rem; font-weight: 600; line-height: 1.3;">
                         Ringkasan pembayaran
                     </div>
                     <div style="margin-top: 0.2rem; font-size: 0.8125rem; color: rgb(100 116 139); line-height: 1.45;">

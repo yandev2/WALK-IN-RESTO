@@ -38,7 +38,7 @@ class MenuCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Kategori';
 
-    protected static ?string $modelLabel = 'kategori menu';
+    protected static ?string $pluralModelLabel  = 'kategori menu';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -67,15 +67,37 @@ class MenuCategoryResource extends Resource
     {
         $table = $table
             ->columns([
-                TextColumn::make('name')->label('Nama')->searchable(),
-                TextColumn::make('sort_order')->label('Urutan')->sortable(),
-                IconColumn::make('is_active')->label('Aktif')->boolean(),
-                TextColumn::make('items_count')->counts('items')->label('Item'),
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
+                TextColumn::make('name')->label('Nama')->searchable()->grow(),
+                TextColumn::make('sort_order')
+                    ->label('Urutan')
+                    ->sortable()
+                    ->width('sm')
+                    ->badge()
+                    ->color('success')
+                    ->alignCenter(),
+                IconColumn::make('is_active')
+                    ->label('Aktif')
+                    ->width('sm')
+                    ->boolean(),
+                TextColumn::make('items_count')
+                    ->counts('items')
+                    ->label('Item')
+                    ->width('sm')
+                    ->badge()
+                    ->tooltip('Jumlah Item Menu')
+                    ->color('success')
+                    ->alignCenter(),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order');
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             EditAction::make(),
             DeleteAction::make(),
         ]);

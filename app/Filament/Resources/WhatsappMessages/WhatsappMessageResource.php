@@ -34,7 +34,7 @@ class WhatsappMessageResource extends Resource
 
     protected static ?string $navigationLabel = 'Struk WhatsApp';
 
-    protected static ?string $modelLabel = 'pesan WhatsApp';
+    protected static ?string $pluralModelLabel  = 'pesan WhatsApp';
 
     protected static ?int $navigationSort = 15;
 

@@ -25,6 +25,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -51,7 +52,7 @@ class MenuItemResource extends Resource
 
     protected static ?string $navigationLabel = 'Item menu';
 
-    protected static ?string $modelLabel = 'item menu';
+    protected static ?string $pluralpluralModelLabel  = 'Item menu';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -79,7 +80,7 @@ class MenuItemResource extends Resource
                                     ->relationship(
                                         'category',
                                         'name',
-                                        fn (Builder $query): Builder => $query->where('restaurant_id', TenantContext::restaurantId()),
+                                        fn(Builder $query): Builder => $query->where('restaurant_id', TenantContext::restaurantId()),
                                     )
                                     ->required()
                                     ->searchable()
@@ -90,7 +91,7 @@ class MenuItemResource extends Resource
                                     ->relationship(
                                         'station',
                                         'name',
-                                        fn (Builder $query): Builder => $query->where('restaurant_id', TenantContext::restaurantId()),
+                                        fn(Builder $query): Builder => $query->where('restaurant_id', TenantContext::restaurantId()),
                                     )
                                     ->required()
                                     ->preload()
@@ -109,9 +110,10 @@ class MenuItemResource extends Resource
                                     ->label('Foto utama')
                                     ->image()
                                     ->imageEditor()
-                                    ->imageCropAspectRatio('4:3')
+                                    ->imageEditorMode(2)
+                                    ->imageAspectRatio('4:3')
+                                    ->automaticallyCropImagesToAspectRatio()
                                     ->imagePreviewHeight('120')
-                                    ->panelLayout('compact')
                                     ->required()
                                     ->directory('menu')
                                     ->disk('public')
@@ -125,7 +127,9 @@ class MenuItemResource extends Resource
                                             ->hiddenLabel()
                                             ->image()
                                             ->imageEditor()
-                                            ->imageCropAspectRatio('4:3')
+                                            ->imageEditorMode(2)
+                                            ->imageAspectRatio('4:3')
+                                            ->automaticallyCropImagesToAspectRatio()
                                             ->imagePreviewHeight('100')
                                             ->panelLayout('compact')
                                             ->required()
@@ -141,13 +145,13 @@ class MenuItemResource extends Resource
                                     ->reorderableWithDragAndDrop()
                                     ->orderColumn('sort_order')
                                     ->collapsible()
-                                    ->itemLabel(fn (array $state): string => 'Foto '.(((int) ($state['sort_order'] ?? 0)) + 2)),
+                                    ->itemLabel(fn(array $state): string => 'Foto ' . (((int) ($state['sort_order'] ?? 0)) + 2)),
                             ]),
                     ]),
                 Section::make('Harga & ketersediaan')
                     ->description('Harga jual dan status item di menu.')
                     ->icon(Heroicon::OutlinedBanknotes)
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         TextInput::make('price')
                             ->label('Harga')
@@ -186,6 +190,7 @@ class MenuItemResource extends Resource
                         Repeater::make('variants')
                             ->relationship()
                             ->hiddenLabel()
+                            ->addActionAlignment(Alignment::Start)
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Nama varian')
@@ -210,11 +215,18 @@ class MenuItemResource extends Resource
                                     ->default(true)
                                     ->inline(false),
                             ])
-                            ->columns(2)
+                            ->grid([
+                                'default' => 1,
+                                'sm' => 1,
+                                'md' => 1,
+                                'lg' => 1,
+                                '2xl' => 2
+                            ])
+                            ->columns(3)
                             ->defaultItems(0)
                             ->addActionLabel('Tambah varian')
                             ->collapsed()
-                            ->itemLabel(fn (array $state): string => filled($state['name'] ?? null)
+                            ->itemLabel(fn(array $state): string => filled($state['name'] ?? null)
                                 ? $state['name']
                                 : 'Varian baru'),
                     ]),
@@ -231,7 +243,7 @@ class MenuItemResource extends Resource
                             ->relationship(
                                 name: 'modifierGroups',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query): Builder => $query->where(
+                                modifyQueryUsing: fn(Builder $query): Builder => $query->where(
                                     $query->getModel()->qualifyColumn('restaurant_id'),
                                     TenantContext::restaurantId(),
                                 ),
@@ -246,7 +258,7 @@ class MenuItemResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $tenantId = fn (): int => Filament::getTenant()->id;
+        $tenantId = fn(): int => Filament::getTenant()->id;
 
         $table = $table
             ->columns([
@@ -272,22 +284,25 @@ class MenuItemResource extends Resource
                     ->label('Stasiun')
                     ->sortable()
                     ->toggleable()
-                    ->hidden(fn (ListMenuItems $livewire): bool => ! $livewire->showsStationColumn()),
+                    ->hidden(fn(ListMenuItems $livewire): bool => ! $livewire->showsStationColumn()),
                 TextColumn::make('price')
                     ->label('Harga')
                     ->badge()
                     ->color('primary')
                     ->formatStateUsing(function (MenuItem $record): string {
                         if ($record->hasDiscount()) {
-                            return 'Rp '.number_format($record->effectivePrice(), 0, ',', '.')
-                                .' (−'.$record->discount_percent.'%)';
+                            return 'Rp ' . number_format($record->effectivePrice(), 0, ',', '.')
+                                . ' (−' . $record->discount_percent . '%)';
                         }
 
-                        return 'Rp '.number_format((int) $record->price, 0, ',', '.');
+                        return 'Rp ' . number_format((int) $record->price, 0, ',', '.');
                     }),
                 TextColumn::make('sort_order')
                     ->label('Urutan')
                     ->sortable()
+                    ->width('sm')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
                 IconColumn::make('is_active')
                     ->label('Aktif')
@@ -318,11 +333,19 @@ class MenuItemResource extends Resource
                     ->relationship(
                         name: 'category',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query): Builder => $query->where('restaurant_id', $tenantId()),
+                        modifyQueryUsing: fn(Builder $query): Builder => $query->where('restaurant_id', $tenantId()),
+                    ),
+                SelectFilter::make('station_id')
+                    ->label('Stasiun')
+                    ->native(false)
+                    ->relationship(
+                        name: 'station',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn(Builder $query): Builder => $query->where('restaurant_id', $tenantId()),
                     ),
             ]);
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             EditAction::make(),
             DeleteAction::make(),
         ]);

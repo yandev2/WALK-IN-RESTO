@@ -31,7 +31,7 @@ class SubscriptionPlanResource extends Resource
 
     protected static ?string $navigationLabel = 'Paket';
 
-    protected static ?string $modelLabel = 'paket';
+    protected static ?string $pluralModelLabel  = 'paket';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -40,7 +40,7 @@ class SubscriptionInvoiceResource extends Resource
 
     protected static ?string $navigationLabel = 'Invoice';
 
-    protected static ?string $modelLabel = 'invoice';
+    protected static ?string $pluralModelLabel  = 'invoice';
 
     protected static ?string $recordTitleAttribute = 'invoice_number';
 

@@ -42,9 +42,9 @@ class TenantResource extends Resource
 
     protected static ?string $navigationLabel = 'Tenant';
 
-    protected static ?string $modelLabel = 'tenant';
+    protected static ?string $pluralModelLabel  = 'tenant';
 
-    protected static ?string $pluralModelLabel = 'tenant';
+    protected static ?string $pluralpluralModelLabel  = 'tenant';
 
     protected static ?string $recordTitleAttribute = 'name';
 

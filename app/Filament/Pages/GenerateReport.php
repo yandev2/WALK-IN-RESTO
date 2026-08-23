@@ -97,12 +97,14 @@ class GenerateReport extends Page
             ->components([
                 Section::make('Jenis laporan')
                     ->description('File diproses di antrean. Unduh dari Riwayat ekspor setelah selesai.')
+                    ->columns(4)
                     ->schema([
                         Select::make('module')
                             ->label('Modul')
                             ->options(ExportFile::moduleLabels())
                             ->required()
                             ->live()
+                            ->columnSpan(3)
                             ->native(false),
                         ToggleButtons::make('format')
                             ->label('Format')

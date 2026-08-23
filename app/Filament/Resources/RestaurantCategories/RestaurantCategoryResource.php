@@ -35,7 +35,7 @@ class RestaurantCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Kategori restoran';
 
-    protected static ?string $modelLabel = 'kategori restoran';
+    protected static ?string $pluralModelLabel  = 'kategori restoran';
 
     protected static ?string $recordTitleAttribute = 'name';
 

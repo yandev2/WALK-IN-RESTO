@@ -40,7 +40,7 @@ class ModifierGroupResource extends Resource
 
     protected static ?string $navigationLabel = 'Extra / modifier';
 
-    protected static ?string $modelLabel = 'grup extra';
+    protected static ?string $pluralModelLabel  = 'grup extra';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -124,7 +124,7 @@ class ModifierGroupResource extends Resource
                                     return $name;
                                 }
 
-                                return $name.' · Rp '.number_format((float) $state['price'], 0, ',', '.');
+                                return $name . ' · Rp ' . number_format((float) $state['price'], 0, ',', '.');
                             }),
                     ]),
             ]);
@@ -134,15 +134,27 @@ class ModifierGroupResource extends Resource
     {
         $table = $table
             ->columns([
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
                 TextColumn::make('name')
                     ->label('Nama')
+                     ->grow()
                     ->searchable()
                     ->wrap(),
                 TextColumn::make('min_select')
                     ->label('Min')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
                 TextColumn::make('max_select')
                     ->label('Maks')
+                    ->width('sm')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
                 IconColumn::make('is_required')
                     ->label('Wajib')
@@ -150,11 +162,14 @@ class ModifierGroupResource extends Resource
                 TextColumn::make('modifiers_count')
                     ->counts('modifiers')
                     ->label('Pilihan')
+                    ->width('sm')
+                    ->badge()
+                    ->color('success')
                     ->alignCenter(),
             ])
             ->defaultSort('name');
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             EditAction::make(),
             DeleteAction::make(),
         ]);

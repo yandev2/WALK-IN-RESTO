@@ -52,7 +52,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'Staf';
 
-    protected static ?string $modelLabel = 'staf';
+    protected static ?string $pluralModelLabel  = 'staf';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -119,9 +119,9 @@ class UserResource extends Resource
                                     ->label('Password')
                                     ->password()
                                     ->revealable()
-                                    ->required(fn (string $operation): bool => $operation === 'create')
-                                    ->dehydrated(fn (?string $state): bool => filled($state))
-                                    ->helperText(fn (string $operation): ?string => $operation === 'edit'
+                                    ->required(fn(string $operation): bool => $operation === 'create')
+                                    ->dehydrated(fn(?string $state): bool => filled($state))
+                                    ->helperText(fn(string $operation): ?string => $operation === 'edit'
                                         ? 'Kosongkan jika tidak ingin mengubah password.'
                                         : null)
                                     ->columnSpanFull(),
@@ -152,7 +152,7 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('role_name')
                             ->label('Peran')
-                            ->options(fn (): array => Role::query()
+                            ->options(fn(): array => Role::query()
                                 ->where('restaurant_id', Filament::getTenant()?->getKey())
                                 ->assignableToStaff()
                                 ->pluck('name', 'name')
@@ -174,12 +174,18 @@ class UserResource extends Resource
     {
         $table = $table
             ->columns([
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
                 ImageColumn::make('avatar_path')
                     ->label('Avatar')
                     ->disk('public')
                     ->circular()
                     ->imageSize(40)
-                    ->defaultImageUrl(fn (User $record): string => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF'),
+                    ->defaultImageUrl(fn(User $record): string => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF'),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->searchable()
@@ -198,11 +204,11 @@ class UserResource extends Resource
                     ->boolean(),
             ]);
 
-        return TableRightClick::apply($table, fn (): array => [
+        return TableRightClick::apply($table, fn(): array => [
             EditAction::make()
-                ->visible(fn (User $record): bool => static::canEdit($record)),
+                ->visible(fn(User $record): bool => static::canEdit($record)),
             DeleteAction::make()
-                ->visible(fn (User $record): bool => static::canDelete($record)),
+                ->visible(fn(User $record): bool => static::canDelete($record)),
         ]);
     }
 

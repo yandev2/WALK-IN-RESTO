@@ -149,12 +149,21 @@ jobs:
             rm -rf public/storage
             
             mkdir -p bootstrap/cache
-            chmod -R 777 bootstrap/cache
+
+            # --- STORAGE (shared) ---
+            # Livewire/Filament uploads need writable app/public and app/private/livewire-tmp.
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/app/public
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/app/private/livewire-tmp
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/framework/cache/data
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/framework/sessions
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/framework/views
+            mkdir -p ${{ secrets.APP_DIR }}/shared/storage/logs
             
             # --- FIX PERMISSIONS ---
             sudo chown -R www-data:www-data ${{ secrets.APP_DIR }}/shared/storage
             sudo chown -R www-data:www-data .
             sudo chmod -R 775 ${{ secrets.APP_DIR }}/shared/storage bootstrap/cache
+            sudo -u www-data touch ${{ secrets.APP_DIR }}/shared/storage/app/private/livewire-tmp/.deploy-write-check
 
             # --- JALANKAN COMPOSER (PHP 8.4) ---
             # Do not nest double quotes here: this whole SSH payload is already double-quoted.

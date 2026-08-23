@@ -25,7 +25,7 @@ class ManageModifierGroups extends ManageRecords
     {
         return [
             ModifierGroupResource::trashPageAction(),
-            CreateAction::make(),
+            CreateAction::make()->modalWidth('xl'),
         ];
     }
 }

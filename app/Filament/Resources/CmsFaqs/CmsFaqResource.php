@@ -40,7 +40,7 @@ class CmsFaqResource extends Resource
 
     protected static ?string $navigationLabel = 'FAQ';
 
-    protected static ?string $modelLabel = 'FAQ';
+    protected static ?string $pluralModelLabel  = 'FAQ';
 
     protected static ?string $recordTitleAttribute = 'question';
 
@@ -52,6 +52,7 @@ class CmsFaqResource extends Resource
             ->components([
                 Section::make('Isi FAQ')
                     ->description('Tampil di blok FAQ halaman landing.')
+                    ->columnSpanFull()
                     ->icon(Heroicon::OutlinedQuestionMarkCircle)
                     ->schema([
                         TextInput::make('question')
@@ -77,6 +78,7 @@ class CmsFaqResource extends Resource
                     ]),
                 Section::make('Tampilan')
                     ->compact()
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         TextInput::make('sort_order')
@@ -98,15 +100,21 @@ class CmsFaqResource extends Resource
     {
         $table = $table
             ->columns([
-                TextColumn::make('question')->label('Pertanyaan')->searchable()->wrap(),
-                TextColumn::make('sort_order')->label('Urutan')->sortable()->alignCenter(),
+                TextColumn::make('index')
+                    ->label('No. ')
+                    ->width('sm')
+                    ->badge()
+                    ->color('primary')
+                    ->rowIndex(),
+                TextColumn::make('question')->label('Pertanyaan')->searchable()->wrap()->grow(),
+                TextColumn::make('sort_order')->label('Urutan')->sortable()->alignCenter()->badge()->color('success'),
                 IconColumn::make('is_active')->label('Aktif')->boolean(),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order');
 
-        return TableRightClick::apply($table, fn (): array => [
-            EditAction::make(),
+        return TableRightClick::apply($table, fn(): array => [
+            EditAction::make()->modalWidth('2xl'),
             DeleteAction::make(),
         ]);
     }

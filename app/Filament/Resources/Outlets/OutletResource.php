@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
@@ -37,7 +38,7 @@ class OutletResource extends Resource
 
     protected static ?string $navigationLabel = 'Outlet';
 
-    protected static ?string $modelLabel = 'outlet';
+    protected static ?string $pluralModelLabel  = 'outlet';
 
     protected static ?int $navigationSort = 1;
 
@@ -82,7 +83,7 @@ class OutletResource extends Resource
                             ->label('Kode')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn (): bool => false)
+                            ->visible(fn(): bool => false)
                             ->helperText('Kode internal, tidak bisa diubah.'),
                         TextInput::make('name')
                             ->label('Nama')
@@ -116,26 +117,26 @@ class OutletResource extends Resource
                                 Select::make('day_of_week')
                                     ->label('Hari')
                                     ->options(self::DAY_LABELS)
-                                    ->required()
-                                    ->native(false),
+                                    ->required(),
                                 TimePicker::make('opens_at')
                                     ->label('Buka')
                                     ->seconds(false)
-                                    ->native(false),
+                                    ->native(true),
                                 TimePicker::make('closes_at')
                                     ->label('Tutup')
                                     ->seconds(false)
-                                    ->native(false),
+                                    ->native(true),
                                 Toggle::make('is_closed')
                                     ->label('Libur')
                                     ->inline(false),
                             ])
+                            ->addActionAlignment(Alignment::Start)
                             ->columns(4)
                             ->defaultItems(0)
                             ->reorderable(false)
                             ->addActionLabel('Tambah hari')
                             ->collapsed()
-                            ->itemLabel(fn (array $state): string => self::DAY_LABELS[$state['day_of_week'] ?? ''] ?? 'Jam operasional'),
+                            ->itemLabel(fn(array $state): string => self::DAY_LABELS[$state['day_of_week'] ?? ''] ?? 'Jam operasional'),
                     ]),
                 Grid::make(2)
                     ->schema([
@@ -157,18 +158,18 @@ class OutletResource extends Resource
                                     ->numeric()
                                     ->default(30)
                                     ->required()
-                                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full')),
+                                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full')),
                                 TextInput::make('gps_accuracy_max_m')
                                     ->label('Akurasi GPS maks (m)')
                                     ->numeric()
                                     ->default(50)
                                     ->required()
-                                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full')),
+                                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full')),
                             ]),
                         Section::make('QRIS statis')
                             ->description('Gambar QR untuk pembayaran non-tunai.')
                             ->icon(Heroicon::OutlinedQrCode)
-                            ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
+                            ->visible(fn(): bool => SubscriptionAccess::allows('settings_full'))
                             ->schema([
                                 FileUpload::make('qris_image_path')
                                     ->hiddenLabel()
@@ -185,7 +186,7 @@ class OutletResource extends Resource
                     ->description('Persentase pajak/service dan batas waktu antrian tamu.')
                     ->icon(Heroicon::OutlinedReceiptPercent)
                     ->columns(2)
-                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
+                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full'))
                     ->schema([
                         TextInput::make('pb1_pct')
                             ->label('PB1 (%)')

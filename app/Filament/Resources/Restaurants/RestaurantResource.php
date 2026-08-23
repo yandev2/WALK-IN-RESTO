@@ -42,7 +42,7 @@ class RestaurantResource extends Resource
 
     protected static ?string $navigationLabel = 'Restoran';
 
-    protected static ?string $modelLabel = 'restoran';
+    protected static ?string $pluralModelLabel  = 'restoran';
 
     protected static ?string $recordTitleAttribute = 'name';
 
