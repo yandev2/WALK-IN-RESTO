@@ -297,6 +297,32 @@ class ExportReportTest extends TestCase
         Storage::disk('public')->assertExists('exports/katalog-preview.pdf');
     }
 
+    public function test_penjualan_order_build_succeeds_with_paid_guest_order(): void
+    {
+        Storage::fake('local');
+
+        $world = $this->createGuestRestaurant();
+        $this->paidGuestOrder($world, 'export-order-1');
+
+        $payload = app(ReportExportBuilder::class)->build(
+            $world['restaurant'],
+            ExportFile::MODULE_PENJUALAN_ORDER,
+            ExportFile::FORMAT_EXCEL,
+            [
+                'date_from' => now('Asia/Jakarta')->toDateString(),
+                'date_to' => now('Asia/Jakarta')->toDateString(),
+            ],
+        );
+
+        $this->assertSame('exports.penjualan-order', $payload['view']);
+        $this->assertGreaterThanOrEqual(1, $payload['data']['order_count']);
+        $this->assertNotSame('', (string) $payload['data']['rows']->first()['kasir']);
+
+        $html = view($payload['view'], $payload['data'])->render();
+        $this->assertStringContainsString('Daftar penjualan (order)', $html);
+        $this->assertStringContainsString($payload['data']['rows']->first()['order_number'], $html);
+    }
+
     /**
      * @param  list<string>  $permissions
      */

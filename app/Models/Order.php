@@ -96,6 +96,11 @@ class Order extends Model
         return $this->hasMany(WhatsappMessage::class);
     }
 
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
     public function isAccepted(): bool
     {
         return in_array($this->status, self::ACCEPTED_STATUSES, true);

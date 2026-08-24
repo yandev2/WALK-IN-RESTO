@@ -131,7 +131,7 @@ class ReportExportBuilder
         $tz = RestaurantAnalyticsPeriod::timezone($restaurant);
 
         $orders = $this->omzet->paidOrdersQuery($restaurant, $window['startUtc'], $window['endUtc'])
-            ->with(['items', 'visit.diningTable', 'createdBy'])
+            ->with(['items', 'visit.diningTable', 'createdBy', 'payments.paidByUser'])
             ->orderBy('paid_at')
             ->get();
 
@@ -150,7 +150,9 @@ class ReportExportBuilder
                 'grand_before' => (int) $order->grand_before,
                 'omzet_net' => $this->omzet->netOmzet($order),
                 'waste' => $this->omzet->wasteAmount($order),
-                'kasir' => $order->createdBy?->name ?? '—',
+                'kasir' => $order->createdBy?->name
+                    ?? $order->payments->sortByDesc('id')->first()?->paidByUser?->name
+                    ?? '—',
                 'voided_at' => $order->voided_at?->timezone($tz)->format('d/m/Y H:i') ?? '—',
             ];
         });

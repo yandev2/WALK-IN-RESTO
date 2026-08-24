@@ -212,7 +212,7 @@ class ManageCmsProfile extends Page
                             ->icons(Facility::iconMap()),
                     ]),
                 Section::make('WhatsApp (Fonnte)')
-                    ->description('Struk dikirim sebagai pesan teks berisi ringkasan dan link unduh PDF (7 hari). Cocok untuk paket Fonnte gratis. Pastikan APP_URL di server sudah benar (https + domain produksi) agar link unduh valid. Kosongkan field API key untuk tidak mengubah key yang sudah tersimpan.')
+                    ->description('Struk dikirim sebagai pesan teks berisi ringkasan dan link unduh PDF (7 hari). Cocok untuk paket Fonnte gratis.')
                     ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                     ->compact()
                     ->schema([

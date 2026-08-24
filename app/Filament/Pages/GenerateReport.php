@@ -220,6 +220,16 @@ class GenerateReport extends Page
                 ->send();
 
             return;
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Gagal membuat laporan')
+                ->body('Ekspor gagal diproses. Coba lagi atau cek Riwayat ekspor.')
+                ->danger()
+                ->send();
+
+            return;
         }
 
         Notification::make()
