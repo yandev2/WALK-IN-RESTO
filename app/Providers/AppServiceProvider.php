@@ -147,7 +147,6 @@ class AppServiceProvider extends ServiceProvider
         EditAction::configureUsing(function (EditAction $action): void {
             $action
                 ->color('warning')
-                ->authorize(true)
                 ->icon(Heroicon::PencilSquare)
                 ->modalWidth(Width::Large)
                 ->modalIcon(Heroicon::PencilSquare)
@@ -159,7 +158,6 @@ class AppServiceProvider extends ServiceProvider
         ViewAction::configureUsing(function (ViewAction $action): void {
             $action
                 ->color('gray')
-                ->authorize(true)
                 ->icon(Heroicon::Eye)
                 ->modalWidth(Width::Large)
                 ->modalIcon(Heroicon::Eye)
