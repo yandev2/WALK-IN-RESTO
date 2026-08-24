@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExportFileDownloadController;
 use App\Http\Controllers\OrderReceiptDownloadController;
+use App\Http\Controllers\OrderReceiptPrintController;
 use App\Http\Controllers\RestaurantLandingController;
 use App\Http\Middleware\EnsureRestaurantOperations;
 use App\Livewire\Auth\RegisterRestaurant;
@@ -29,6 +30,14 @@ Route::get('/receipts/{order:public_id}/download', OrderReceiptDownloadControlle
 Route::middleware('auth')->group(function (): void {
     Route::get('/export-files/{exportFile}/download', ExportFileDownloadController::class)
         ->name('export-files.download');
+
+    Route::get('/receipts/{order:public_id}/print', OrderReceiptPrintController::class)
+        ->middleware('throttle:30,1')
+        ->name('receipts.print');
+
+    Route::get('/receipts/{order:public_id}/print/pdf', [OrderReceiptPrintController::class, 'pdf'])
+        ->middleware('throttle:30,1')
+        ->name('receipts.print.pdf');
 });
 
 Route::middleware('identify.guest')->prefix('order')->group(function (): void {

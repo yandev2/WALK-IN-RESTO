@@ -345,6 +345,7 @@ class DemoRestaurantSeeder extends Seeder
             'order.void',
             'table.manage',
             'receipt.resend',
+            'receipt.print',
         ]);
 
         $dapurRole = Role::query()->create([

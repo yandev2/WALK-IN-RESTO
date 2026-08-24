@@ -38,6 +38,7 @@ class Outlet extends Model
         'tax_mode',
         'claim_ttl_minutes',
         'awaiting_cashier_ttl_minutes',
+        'auto_print_receipt',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -56,6 +57,7 @@ class Outlet extends Model
                 'gps_accuracy_max_m',
                 'claim_ttl_minutes',
                 'awaiting_cashier_ttl_minutes',
+                'auto_print_receipt',
             ])
             ->logOnlyDirty()
             ->useLogName('outlet')
@@ -68,6 +70,7 @@ class Outlet extends Model
             'is_default' => 'boolean',
             'is_open' => 'boolean',
             'is_active' => 'boolean',
+            'auto_print_receipt' => 'boolean',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'pb1_pct' => 'decimal:2',

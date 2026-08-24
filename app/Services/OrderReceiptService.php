@@ -15,6 +15,7 @@ use App\Support\WhatsAppNumber;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderReceiptService
 {
@@ -77,6 +78,22 @@ class OrderReceiptService
             'generated_at' => now(),
             'created_at' => now(),
         ]);
+    }
+
+    public function streamPdf(Order $order, string $disposition = 'inline'): StreamedResponse
+    {
+        abort_unless(filled($order->paid_at), 404);
+
+        $receipt = $this->generate($order);
+
+        abort_unless(Storage::disk('local')->exists($receipt->file_path), 404);
+
+        return Storage::disk('local')->response(
+            $receipt->file_path,
+            'struk-'.$order->number.'.pdf',
+            ['Content-Type' => 'application/pdf'],
+            $disposition,
+        );
     }
 
     public function resend(Order $order, User $user): WhatsappMessage

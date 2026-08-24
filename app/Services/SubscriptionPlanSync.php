@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\PlanCode;
 use App\Models\Restaurant;
 use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
 class SubscriptionPlanSync
@@ -60,6 +61,8 @@ class SubscriptionPlanSync
             }
 
             $desired = $this->permissionsFor($planCode);
+            $this->ensurePermissionsExist($desired);
+
             $current = $role->permissions()->pluck('name')->all();
 
             sort($desired);
@@ -72,6 +75,26 @@ class SubscriptionPlanSync
             $role->syncPermissions($this->permissionsFor($planCode));
         } finally {
             $registrar->setPermissionsTeamId($previousTeamId);
+        }
+    }
+
+    /**
+     * @param  list<string>  $names
+     */
+    private function ensurePermissionsExist(array $names): void
+    {
+        $registrar = app(PermissionRegistrar::class);
+        $teamId = $registrar->getPermissionsTeamId();
+        $registrar->setPermissionsTeamId(0);
+
+        try {
+            foreach ($names as $name) {
+                Permission::findOrCreate($name, 'web');
+            }
+
+            $registrar->forgetCachedPermissions();
+        } finally {
+            $registrar->setPermissionsTeamId($teamId);
         }
     }
 }

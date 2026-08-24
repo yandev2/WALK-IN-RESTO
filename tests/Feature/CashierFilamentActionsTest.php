@@ -40,6 +40,24 @@ class CashierFilamentActionsTest extends TestCase
         $this->assertSame('voided', $order->items()->first()->kds_status);
     }
 
+    public function test_print_receipt_action_is_visible_on_paid_order(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $order = $this->paidGuestOrder($world, 'print-ui-1');
+        $user = $this->staffUser($world['restaurant'], ['order.verify_payment']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->getKey()])
+            ->assertOk()
+            ->assertActionVisible('printReceipt')
+            ->assertActionVisible('downloadReceipt');
+    }
+
     public function test_cashier_order_page_renders(): void
     {
         $this->seed(RolePermissionSeeder::class);

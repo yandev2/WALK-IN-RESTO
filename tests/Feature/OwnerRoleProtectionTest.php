@@ -15,6 +15,7 @@ use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\Concerns\CreatesSubscribedRestaurant;
 use Tests\TestCase;
@@ -155,6 +156,33 @@ class OwnerRoleProtectionTest extends TestCase
             config('filament-shield.custom_permissions'),
             $ownerRole->permissions()->pluck('name')->all(),
         );
+    }
+
+    public function test_sync_creates_missing_custom_permissions_without_failing(): void
+    {
+        Permission::query()->where('name', 'receipt.print')->delete();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $this->assertFalse(Permission::query()->where('name', 'receipt.print')->exists());
+
+        $restaurant = $this->makeRestaurant([
+            'plan_code' => PlanCode::ManagementKds->value,
+        ]);
+        $this->makeOwner($restaurant);
+
+        app(SubscriptionPlanSync::class)->syncOwnerPermissions(
+            $restaurant,
+            PlanCode::ManagementKds->value,
+        );
+
+        $this->assertTrue(Permission::query()->where('name', 'receipt.print')->where('guard_name', 'web')->exists());
+
+        $ownerRole = Role::query()
+            ->where('restaurant_id', $restaurant->id)
+            ->where('name', Role::OWNER)
+            ->firstOrFail();
+
+        $this->assertTrue($ownerRole->permissions()->where('name', 'receipt.print')->exists());
     }
 
     private function actingAsTenant(User $user, Restaurant $restaurant): void

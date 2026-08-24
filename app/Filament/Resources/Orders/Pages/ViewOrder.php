@@ -9,15 +9,14 @@ use App\Models\User;
 use App\Services\OrderPaymentService;
 use App\Services\OrderReceiptService;
 use App\Services\OrderVoidService;
+use App\Support\PermissionCheck;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
 class ViewOrder extends ViewRecord
 {
@@ -49,8 +48,16 @@ class ViewOrder extends ViewRecord
                     $order = $this->record;
                     $service->approve($order, auth()->user(), $data['gps_override_reason'] ?? null);
                     $this->record->refresh();
+                    $this->record->loadMissing('outlet');
                     $this->refreshFormData(['status', 'paid_at']);
                     Notification::make()->title('Pembayaran diterima')->success()->send();
+
+                    if ($this->record->outlet?->auto_print_receipt && $this->canPrintReceipt()) {
+                        $this->redirect(route('receipts.print', [
+                            'order' => $this->record->public_id,
+                            'auto' => 1,
+                        ]));
+                    }
                 }),
             Action::make('reject')
                 ->label('Tolak')
@@ -74,17 +81,18 @@ class ViewOrder extends ViewRecord
                 ->label('Unduh struk PDF')
                 ->icon(Heroicon::OutlinedArrowDownTray)
                 ->visible(fn (): bool => $this->canDownloadReceipt())
-                ->action(function (OrderReceiptService $receipts): Response {
+                ->action(function (OrderReceiptService $receipts) {
                     /** @var Order $order */
                     $order = $this->record;
-                    $receipt = $receipts->generate($order);
-                    $this->record->refresh();
 
-                    return Storage::disk('local')->download(
-                        $receipt->file_path,
-                        'struk-'.$order->number.'.pdf',
-                    );
+                    return $receipts->streamPdf($order, 'attachment');
                 }),
+            Action::make('printReceipt')
+                ->label('Cetak struk')
+                ->icon(Heroicon::OutlinedDocumentText)
+                ->visible(fn (): bool => $this->canPrintReceipt())
+                ->url(fn (): string => route('receipts.print', ['order' => $this->record->public_id]))
+                ->openUrlInNewTab(),
             Action::make('resendReceipt')
                 ->label('Kirim ulang struk WA')
                 ->icon(Heroicon::OutlinedChatBubbleLeftRight)
@@ -204,6 +212,18 @@ class ViewOrder extends ViewRecord
         return filled($this->record->paid_at);
     }
 
+    protected function canPrintReceipt(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user instanceof User || blank($this->record->paid_at)) {
+            return false;
+        }
+
+        return $user->isSuperAdmin()
+            || PermissionCheck::allowsAny($user, ['receipt.print', 'order.verify_payment']);
+    }
+
     protected function canResendReceipt(): bool
     {
         $user = auth()->user();
@@ -212,7 +232,7 @@ class ViewOrder extends ViewRecord
             return false;
         }
 
-        if (! $user->isSuperAdmin() && ! $user->can('receipt.resend')) {
+        if (! $user->isSuperAdmin() && ! PermissionCheck::allows($user, 'receipt.resend')) {
             return false;
         }
 

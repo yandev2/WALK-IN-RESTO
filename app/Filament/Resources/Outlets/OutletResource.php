@@ -38,7 +38,7 @@ class OutletResource extends Resource
 
     protected static ?string $navigationLabel = 'Outlet';
 
-    protected static ?string $pluralModelLabel  = 'outlet';
+    protected static ?string $pluralModelLabel = 'outlet';
 
     protected static ?int $navigationSort = 1;
 
@@ -83,7 +83,7 @@ class OutletResource extends Resource
                             ->label('Kode')
                             ->disabled()
                             ->dehydrated(false)
-                            ->visible(fn(): bool => false)
+                            ->visible(fn (): bool => false)
                             ->helperText('Kode internal, tidak bisa diubah.'),
                         TextInput::make('name')
                             ->label('Nama')
@@ -136,7 +136,7 @@ class OutletResource extends Resource
                             ->reorderable(false)
                             ->addActionLabel('Tambah hari')
                             ->collapsed()
-                            ->itemLabel(fn(array $state): string => self::DAY_LABELS[$state['day_of_week'] ?? ''] ?? 'Jam operasional'),
+                            ->itemLabel(fn (array $state): string => self::DAY_LABELS[$state['day_of_week'] ?? ''] ?? 'Jam operasional'),
                     ]),
                 Grid::make(2)
                     ->schema([
@@ -158,18 +158,18 @@ class OutletResource extends Resource
                                     ->numeric()
                                     ->default(30)
                                     ->required()
-                                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full')),
+                                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full')),
                                 TextInput::make('gps_accuracy_max_m')
                                     ->label('Akurasi GPS maks (m)')
                                     ->numeric()
                                     ->default(50)
                                     ->required()
-                                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full')),
+                                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full')),
                             ]),
                         Section::make('QRIS statis')
                             ->description('Gambar QR untuk pembayaran non-tunai.')
                             ->icon(Heroicon::OutlinedQrCode)
-                            ->visible(fn(): bool => SubscriptionAccess::allows('settings_full'))
+                            ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
                             ->schema([
                                 FileUpload::make('qris_image_path')
                                     ->hiddenLabel()
@@ -186,7 +186,7 @@ class OutletResource extends Resource
                     ->description('Persentase pajak/service dan batas waktu antrian tamu.')
                     ->icon(Heroicon::OutlinedReceiptPercent)
                     ->columns(2)
-                    ->visible(fn(): bool => SubscriptionAccess::allows('settings_full'))
+                    ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
                     ->schema([
                         TextInput::make('pb1_pct')
                             ->label('PB1 (%)')
@@ -215,7 +215,11 @@ class OutletResource extends Resource
                             ->label('TTL antrian kasir (menit)')
                             ->numeric()
                             ->default(20)
-                            ->required()
+                            ->required(),
+                        Toggle::make('auto_print_receipt')
+                            ->label('Cetak struk otomatis setelah terima bayar')
+                            ->helperText('Membuka PDF struk yang sama (80mm) di dialog cetak browser. Matikan jika kasir ingin cetak manual.')
+                            ->inline(false)
                             ->columnSpanFull(),
                     ]),
             ]);

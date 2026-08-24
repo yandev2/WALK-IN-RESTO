@@ -266,6 +266,7 @@ return [
         'analytics.view',
         'audit.view',
         'receipt.resend',
+        'receipt.print',
     ],
 
     /*

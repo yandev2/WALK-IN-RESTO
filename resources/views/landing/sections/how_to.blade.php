@@ -28,7 +28,7 @@
                     <p class="mt-4 max-w-lg text-sm leading-relaxed text-muted sm:text-base">{{ $copy['subtitle'] }}</p>
                 @endif
 
-                <ol class="landing-timeline mt-10">
+                <ol class="landing-timeline">
                     @foreach ($steps as $index => $step)
                         <li class="landing-timeline-item">
                             <span class="landing-timeline-marker" aria-hidden="true">{{ $index + 1 }}</span>

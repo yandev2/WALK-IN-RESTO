@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Activity;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class ActivityPresenter
@@ -35,6 +36,7 @@ class ActivityPresenter
             'cms.update_landing_layout' => 'Update layout',
             'kds.update_status' => 'Status KDS',
             'receipt.resend' => 'Kirim ulang struk',
+            'receipt.print' => 'Cetak struk',
             default => Str::headline($event ?? 'Aktivitas'),
         };
     }
@@ -122,7 +124,7 @@ class ActivityPresenter
      */
     private static function normalizeArray(mixed $value): array
     {
-        if ($value instanceof \Illuminate\Support\Collection) {
+        if ($value instanceof Collection) {
             return $value->toArray();
         }
 
@@ -146,16 +148,19 @@ class ActivityPresenter
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $flat[(string) $key] = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
                 continue;
             }
 
             if (is_bool($value)) {
                 $flat[(string) $key] = $value ? 'Ya' : 'Tidak';
+
                 continue;
             }
 
             if ($value === null || $value === '') {
                 $flat[(string) $key] = '-';
+
                 continue;
             }
 
