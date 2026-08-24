@@ -24,6 +24,8 @@ class WhatsappMessage extends Model
         'media_path',
         'status',
         'attempts',
+        'provider_ref',
+        'provider_payload',
         'last_error',
         'queued_at',
         'sent_at',
@@ -33,6 +35,7 @@ class WhatsappMessage extends Model
     protected function casts(): array
     {
         return [
+            'provider_payload' => 'array',
             'queued_at' => 'datetime',
             'sent_at' => 'datetime',
             'failed_at' => 'datetime',

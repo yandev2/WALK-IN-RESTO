@@ -50,10 +50,24 @@ class OrderReceiptServiceTest extends TestCase
         $message = WhatsappMessage::query()->first();
         $this->assertSame('sent', $message->status);
         $this->assertSame(1, $message->attempts);
+        $this->assertStringContainsString('Unduh PDF', $message->body);
+        $this->assertStringContainsString('/receipts/', $message->body);
+        $this->assertStringContainsString('Pesanan:', $message->body);
+        $this->assertStringContainsString('Total: Rp', $message->body);
 
         Http::assertSent(function ($request): bool {
-            return $request->url() === 'https://api.fonnte.com/send'
-                && $request->hasHeader('Authorization', 'test-fonnte-token');
+            if ($request->url() !== 'https://api.fonnte.com/send') {
+                return false;
+            }
+
+            if (! $request->hasHeader('Authorization', 'test-fonnte-token')) {
+                return false;
+            }
+
+            $body = $request->body();
+
+            return ! str_contains($body, 'Content-Disposition: form-data; name="file"')
+                && str_contains($body, 'Unduh PDF');
         });
     }
 
@@ -72,7 +86,79 @@ class OrderReceiptServiceTest extends TestCase
         $order = $this->paidGuestOrder($world, 'receipt-fail', sendReceipt: true);
 
         $this->assertTrue($order->fresh()->isAccepted());
-        $this->assertSame('failed', WhatsappMessage::query()->first()?->status);
+        $message = WhatsappMessage::query()->first();
+        $this->assertSame('failed', $message?->status);
+        $this->assertStringContainsString('timeout', (string) $message?->last_error);
+        $this->assertGreaterThanOrEqual(1, $message?->attempts);
+    }
+
+    public function test_token_invalid_fails_immediately_without_extra_retries(): void
+    {
+        Storage::fake('local');
+        Http::fake([
+            'https://api.fonnte.com/send' => Http::response(['status' => false, 'reason' => 'token invalid'], 200),
+        ]);
+
+        $world = $this->createGuestRestaurant();
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('bad-token'),
+        ]);
+
+        $this->paidGuestOrder($world, 'receipt-token-invalid', sendReceipt: true);
+
+        $message = WhatsappMessage::query()->first();
+        $this->assertSame('failed', $message?->status);
+        $this->assertSame(1, $message?->attempts);
+        $this->assertSame('Token Fonnte tidak valid. Periksa API key di Profil CMS.', $message?->last_error);
+    }
+
+    public function test_send_receipt_without_wa_records_failed_message(): void
+    {
+        Storage::fake('local');
+        Http::fake();
+
+        $world = $this->createGuestRestaurant();
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $order = $this->paidGuestOrder($world, 'receipt-no-wa', sendReceipt: false);
+        $order->visit?->update(['customer_wa' => '']);
+        $order->forceFill([
+            'send_receipt' => true,
+            'receipt_wa_snapshot' => null,
+        ])->save();
+
+        app(OrderReceiptService::class)->afterPaid($order->fresh(['restaurant', 'visit']), null);
+
+        Http::assertNothingSent();
+        $message = WhatsappMessage::query()->first();
+        $this->assertSame('failed', $message?->status);
+        $this->assertSame('Nomor WhatsApp tamu belum ada.', $message?->last_error);
+    }
+
+    public function test_invalid_wa_records_failed_message(): void
+    {
+        Storage::fake('local');
+        Http::fake();
+
+        $world = $this->createGuestRestaurant();
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $order = $this->paidGuestOrder($world, 'receipt-bad-wa', sendReceipt: false);
+        $order->forceFill([
+            'send_receipt' => true,
+            'receipt_wa_snapshot' => '123',
+        ])->save();
+
+        app(OrderReceiptService::class)->afterPaid($order->fresh(['restaurant', 'visit']), null);
+
+        Http::assertNothingSent();
+        $message = WhatsappMessage::query()->first();
+        $this->assertSame('failed', $message?->status);
+        $this->assertStringContainsString('tidak valid', (string) $message?->last_error);
     }
 
     public function test_resend_creates_new_row_and_rejects_empty_key(): void

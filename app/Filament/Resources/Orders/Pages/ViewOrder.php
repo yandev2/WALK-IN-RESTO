@@ -16,6 +16,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewOrder extends ViewRecord
@@ -90,10 +91,21 @@ class ViewOrder extends ViewRecord
                 ->visible(fn (): bool => $this->canResendReceipt())
                 ->requiresConfirmation()
                 ->action(function (OrderReceiptService $receipts): void {
-                    /** @var Order $order */
-                    $order = $this->record;
-                    $receipts->resend($order, auth()->user());
-                    Notification::make()->title('Struk masuk antrian kirim ulang')->success()->send();
+                    try {
+                        /** @var Order $order */
+                        $order = $this->record;
+                        $receipts->resend($order, auth()->user());
+                        Notification::make()->title('Struk masuk antrian kirim ulang')->success()->send();
+                    } catch (ValidationException $exception) {
+                        $detail = collect($exception->errors())->flatten()->first()
+                            ?: 'Tidak bisa kirim ulang struk.';
+
+                        Notification::make()
+                            ->title('Gagal kirim ulang struk')
+                            ->body($detail)
+                            ->danger()
+                            ->send();
+                    }
                 }),
             Action::make('voidItem')
                 ->label('Void item')
@@ -200,7 +212,21 @@ class ViewOrder extends ViewRecord
             return false;
         }
 
-        return $user->isSuperAdmin() || $user->can('receipt.resend');
+        if (! $user->isSuperAdmin() && ! $user->can('receipt.resend')) {
+            return false;
+        }
+
+        /** @var Order $order */
+        $order = $this->record;
+        $order->loadMissing(['restaurant', 'visit']);
+
+        if (! $order->restaurant?->hasFonnteKey() || ! $order->restaurant->fonnteApiKey()) {
+            return false;
+        }
+
+        $to = $order->visit?->customer_wa ?: $order->receipt_wa_snapshot;
+
+        return filled($to);
     }
 
     /**

@@ -8,6 +8,9 @@ use App\Models\OrderReceipt;
 use App\Models\User;
 use App\Models\WhatsappMessage;
 use App\Support\ActivityLogger;
+use App\Support\OrderReceiptDownloadUrl;
+use App\Support\OrderReceiptWhatsappMessage;
+use App\Support\WhatsAppNumber;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -26,6 +29,8 @@ class OrderReceiptService
         $to = $order->receipt_wa_snapshot ?: $order->visit?->customer_wa;
 
         if (blank($to)) {
+            $this->recordImmediateFailure($order, $receipt, $to, $user, 'Nomor WhatsApp tamu belum ada.');
+
             return;
         }
 
@@ -75,7 +80,13 @@ class OrderReceiptService
 
         if (! $order->restaurant?->hasFonnteKey()) {
             throw ValidationException::withMessages([
-                'fonnte' => 'Owner harus isi API key Fonnte di pengaturan restoran.',
+                'fonnte' => 'Owner harus isi API key Fonnte di Profil CMS → WhatsApp (Fonnte).',
+            ]);
+        }
+
+        if (! $order->restaurant->fonnteApiKey()) {
+            throw ValidationException::withMessages([
+                'fonnte' => 'API key Fonnte tidak bisa dibaca. Simpan ulang key di Profil CMS.',
             ]);
         }
 
@@ -117,14 +128,27 @@ class OrderReceiptService
 
     private function enqueue(Order $order, OrderReceipt $receipt, string $to, ?User $user): WhatsappMessage
     {
-        $table = $order->visit?->diningTable?->code ?: '-';
-        $body = sprintf(
-            'Struk %s order #%s meja %s. Total Rp %s',
-            $order->restaurant?->name ?: 'restoran',
-            $order->number,
-            $table,
-            number_format((int) $order->grand_payable, 0, ',', '.'),
-        );
+        $normalized = WhatsAppNumber::normalize($to);
+
+        if (! WhatsAppNumber::isValid($normalized)) {
+            return $this->recordImmediateFailure(
+                $order,
+                $receipt,
+                $to,
+                $user,
+                'Nomor WhatsApp tujuan tidak valid. Gunakan format 08… atau 62…',
+            );
+        }
+
+        if (blank(OrderReceiptDownloadUrl::signed($order))) {
+            return $this->recordImmediateFailure(
+                $order,
+                $receipt,
+                $normalized,
+                $user,
+                'Link unduh struk tidak bisa dibuat. Periksa APP_URL di server.',
+            );
+        }
 
         $message = WhatsappMessage::query()->create([
             'restaurant_id' => $order->restaurant_id,
@@ -135,8 +159,8 @@ class OrderReceiptService
             'requested_by_user_id' => $user?->id,
             'kind' => 'receipt',
             'provider' => 'fonnte',
-            'to_wa' => $to,
-            'body' => $body,
+            'to_wa' => $normalized,
+            'body' => OrderReceiptWhatsappMessage::compose($order),
             'media_path' => $receipt->file_path,
             'status' => 'queued',
             'attempts' => 0,
@@ -146,5 +170,32 @@ class OrderReceiptService
         SendWhatsappReceiptJob::dispatch($message->id);
 
         return $message;
+    }
+
+    private function recordImmediateFailure(
+        Order $order,
+        OrderReceipt $receipt,
+        ?string $to,
+        ?User $user,
+        string $error,
+    ): WhatsappMessage {
+        return WhatsappMessage::query()->create([
+            'restaurant_id' => $order->restaurant_id,
+            'outlet_id' => $order->outlet_id,
+            'visit_id' => $order->visit_id,
+            'order_id' => $order->id,
+            'receipt_id' => $receipt->id,
+            'requested_by_user_id' => $user?->id,
+            'kind' => 'receipt',
+            'provider' => 'fonnte',
+            'to_wa' => $to ?: '-',
+            'body' => OrderReceiptWhatsappMessage::compose($order),
+            'media_path' => $receipt->file_path,
+            'status' => 'failed',
+            'attempts' => 0,
+            'last_error' => substr($error, 0, 500),
+            'queued_at' => now(),
+            'failed_at' => now(),
+        ]);
     }
 }

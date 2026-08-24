@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExportFileDownloadController;
+use App\Http\Controllers\OrderReceiptDownloadController;
 use App\Http\Controllers\RestaurantLandingController;
 use App\Http\Middleware\EnsureRestaurantOperations;
 use App\Livewire\Auth\RegisterRestaurant;
@@ -20,6 +21,10 @@ Route::get('/', RestaurantDirectory::class)->name('home');
 Route::get('/daftar', RegisterRestaurant::class)
     ->middleware(['guest', 'throttle:10,1'])
     ->name('register.restaurant');
+
+Route::get('/receipts/{order:public_id}/download', OrderReceiptDownloadController::class)
+    ->middleware(['signed', 'throttle:30,1'])
+    ->name('receipts.download');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/export-files/{exportFile}/download', ExportFileDownloadController::class)
@@ -43,7 +48,7 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
-$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$)[A-Za-z0-9_-]+$';
+$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

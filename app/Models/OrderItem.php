@@ -59,6 +59,11 @@ class OrderItem extends Model
         return $this->belongsTo(KdsStation::class, 'station_id');
     }
 
+    public function menuItem(): BelongsTo
+    {
+        return $this->belongsTo(MenuItem::class);
+    }
+
     public function modifiers(): HasMany
     {
         return $this->hasMany(OrderItemModifier::class);

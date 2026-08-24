@@ -16,6 +16,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use UnitEnum;
 
 class WhatsappMessageResource extends Resource
@@ -34,7 +35,7 @@ class WhatsappMessageResource extends Resource
 
     protected static ?string $navigationLabel = 'Struk WhatsApp';
 
-    protected static ?string $pluralModelLabel  = 'pesan WhatsApp';
+    protected static ?string $pluralModelLabel = 'pesan WhatsApp';
 
     protected static ?int $navigationSort = 15;
 
@@ -58,9 +59,23 @@ class WhatsappMessageResource extends Resource
         $table = $table
             ->columns([
                 TextColumn::make('queued_at')->label('Antrian')->dateTime('d M Y H:i')->sortable(),
-                TextColumn::make('kind')->badge(),
+                TextColumn::make('kind')
+                    ->label('Jenis')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'receipt' => 'Struk',
+                        default => $state,
+                    }),
                 TextColumn::make('to_wa')->label('Tujuan')->searchable(),
-                TextColumn::make('status')->badge()
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'queued' => 'Antrian',
+                        'sent' => 'Terkirim',
+                        'failed' => 'Gagal',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'sent' => 'success',
                         'failed' => 'danger',
@@ -68,16 +83,21 @@ class WhatsappMessageResource extends Resource
                         default => 'gray',
                     }),
                 TextColumn::make('attempts')->label('Percobaan'),
-                TextColumn::make('last_error')->limit(40)->placeholder('-'),
+                TextColumn::make('last_error')
+                    ->label('Error terakhir')
+                    ->limit(50)
+                    ->tooltip(fn (?string $state): ?string => filled($state) ? $state : null)
+                    ->placeholder('-'),
                 TextColumn::make('order.number')->label('Order'),
             ])
             ->defaultSort('queued_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
+                    ->label('Status')
                     ->options([
-                        'queued' => 'Queued',
-                        'sent' => 'Sent',
-                        'failed' => 'Failed',
+                        'queued' => 'Antrian',
+                        'sent' => 'Terkirim',
+                        'failed' => 'Gagal',
                     ]),
             ]);
 
@@ -85,17 +105,51 @@ class WhatsappMessageResource extends Resource
             Action::make('resend')
                 ->label('Kirim ulang')
                 ->icon(Heroicon::OutlinedArrowPath)
-                ->visible(fn (WhatsappMessage $record): bool => in_array($record->status, ['failed', 'sent'], true))
+                ->visible(fn (WhatsappMessage $record): bool => self::canResendRecord($record))
                 ->requiresConfirmation()
                 ->action(function (WhatsappMessage $record, OrderReceiptService $receipts): void {
-                    $receipts->resendMessage($record, auth()->user());
+                    try {
+                        $receipts->resendMessage($record, auth()->user());
 
-                    Notification::make()
-                        ->title('Struk masuk antrian kirim ulang')
-                        ->success()
-                        ->send();
+                        Notification::make()
+                            ->title('Struk masuk antrian kirim ulang')
+                            ->success()
+                            ->send();
+                    } catch (ValidationException $exception) {
+                        $detail = collect($exception->errors())->flatten()->first()
+                            ?: 'Tidak bisa kirim ulang struk.';
+
+                        Notification::make()
+                            ->title('Gagal kirim ulang struk')
+                            ->body($detail)
+                            ->danger()
+                            ->send();
+                    }
                 }),
         ]);
+    }
+
+    public static function canResendRecord(WhatsappMessage $record): bool
+    {
+        if (! in_array($record->status, ['failed', 'sent'], true) || blank($record->order_id)) {
+            return false;
+        }
+
+        $order = $record->order()->with(['restaurant', 'visit'])->first();
+
+        if (! $order || blank($order->paid_at)) {
+            return false;
+        }
+
+        $restaurant = $order->restaurant;
+
+        if (! $restaurant?->hasFonnteKey() || ! $restaurant->fonnteApiKey()) {
+            return false;
+        }
+
+        $to = $order->visit?->customer_wa ?: $order->receipt_wa_snapshot;
+
+        return filled($to);
     }
 
     public static function getPages(): array
