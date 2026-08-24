@@ -6,6 +6,7 @@ use App\Models\OrderReceipt;
 use App\Models\User;
 use App\Models\WhatsappMessage;
 use App\Services\OrderReceiptService;
+use App\Support\ReceiptLogo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
@@ -196,5 +197,33 @@ class OrderReceiptServiceTest extends TestCase
 
         $this->assertSame(1, OrderReceipt::query()->count());
         $this->assertSame($order->receipt->id, $second->id);
+    }
+
+    public function test_pdf_receipt_uses_thermal_layout_without_wifi_or_at(): void
+    {
+        Storage::fake('local');
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['phone' => '081234567890']);
+        $order = $this->paidGuestOrder($world, 'receipt-layout');
+        $order->loadMissing(['items.modifiers', 'visit.diningTable', 'restaurant', 'outlet', 'payments.paidByUser']);
+
+        $html = view('receipts.order', [
+            'order' => $order,
+            'payment' => $order->payments->first(),
+            'logoDataUri' => ReceiptLogo::dataUri($order->restaurant),
+        ])->render();
+
+        $this->assertStringContainsString('Terima kasih telah berkunjung.', $html);
+        $this->assertStringContainsString('Kode Struk', $html);
+        $this->assertStringContainsString('WHATSAPP:', $html);
+        $this->assertStringContainsString('Bukan faktur pajak resmi.', $html);
+        $this->assertStringNotContainsString('Pass Wifi', $html);
+        $this->assertDoesNotMatchRegularExpression('/x\d+\s+@/', $html);
+
+        $pdf = Storage::disk('local')->get($order->receipt->file_path);
+        $this->assertNotFalse($pdf);
+        $this->assertStringStartsWith('%PDF', $pdf);
+        $this->assertStringContainsString((string) $order->payments->first()?->paidByUser?->name, $html);
     }
 }

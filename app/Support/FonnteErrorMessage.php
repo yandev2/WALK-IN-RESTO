@@ -54,6 +54,9 @@ final class FonnteErrorMessage
 
             str_contains($reason, 'devices must belong') => 'Token Fonnte tidak cocok dengan perangkat terdaftar.',
 
+            str_contains($reason, 'disconnected device'),
+            str_contains($reason, 'device disconnected') => 'Perangkat WhatsApp Fonnte terputus. Buka dashboard Fonnte dan sambungkan ulang (scan QR).',
+
             str_contains($reason, 'timeout'),
             str_contains($reason, 'timed out') => 'Fonnte tidak merespons (timeout). Coba kirim ulang.',
 
@@ -95,6 +98,7 @@ final class FonnteErrorMessage
             'melebihi batas',
             'data kirim',
             'token fonnte tidak cocok',
+            'perangkat whatsapp fonnte terputus',
         ] as $needle) {
             if (str_contains($normalized, $needle)) {
                 return false;

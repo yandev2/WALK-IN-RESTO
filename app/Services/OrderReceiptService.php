@@ -10,6 +10,7 @@ use App\Models\WhatsappMessage;
 use App\Support\ActivityLogger;
 use App\Support\OrderReceiptDownloadUrl;
 use App\Support\OrderReceiptWhatsappMessage;
+use App\Support\ReceiptLogo;
 use App\Support\WhatsAppNumber;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
@@ -39,24 +40,34 @@ class OrderReceiptService
 
     public function generate(Order $order): OrderReceipt
     {
-        $existing = $order->receipt ?? $order->receipt()->first();
-
-        if ($existing) {
-            return $existing;
-        }
-
         $order->loadMissing([
-            'items',
             'items.modifiers',
             'visit.diningTable',
             'restaurant',
             'outlet',
-            'payments',
         ]);
 
-        $pdf = Pdf::loadView('receipts.order', ['order' => $order]);
+        $payment = $order->payments()->with('paidByUser')->latest('id')->first();
+
         $path = 'receipts/'.$order->public_id.'.pdf';
+        $pdf = Pdf::loadView('receipts.order', [
+            'order' => $order,
+            'payment' => $payment,
+            'logoDataUri' => ReceiptLogo::dataUri($order->restaurant),
+        ])->setPaper([0, 0, 226.77, 1200], 'portrait');
+
         Storage::disk('local')->put($path, $pdf->output());
+
+        $existing = $order->receipt ?? $order->receipt()->first();
+
+        if ($existing) {
+            $existing->forceFill([
+                'file_path' => $path,
+                'generated_at' => now(),
+            ])->save();
+
+            return $existing;
+        }
 
         return OrderReceipt::query()->create([
             'restaurant_id' => $order->restaurant_id,

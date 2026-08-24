@@ -68,7 +68,7 @@ final class OrderReceiptWhatsappMessage
         $discount = self::itemDiscountLabel($item);
 
         return sprintf(
-            '• %s x%d @ Rp %s = Rp %s%s',
+            '• %s x%d Rp %s = Rp %s%s',
             $item->displayName(),
             $item->qty,
             self::money($item->unit_price),

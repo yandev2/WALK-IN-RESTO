@@ -83,6 +83,11 @@ class Payment extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function paidByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'paid_by_user_id');
+    }
+
     /**
      * @return list<string>
      */

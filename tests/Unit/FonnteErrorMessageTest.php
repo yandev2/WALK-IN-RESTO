@@ -23,6 +23,7 @@ class FonnteErrorMessageTest extends TestCase
             ['token invalid', 'Token Fonnte tidak valid. Periksa API key di Profil CMS.'],
             ['insufficient quota', 'Kuota Fonnte habis. Upgrade paket atau tunggu reset bulanan.'],
             ['target invalid', 'Nomor WhatsApp tujuan tidak valid.'],
+            ['request invalid on disconnected device', 'Perangkat WhatsApp Fonnte terputus. Buka dashboard Fonnte dan sambungkan ulang (scan QR).'],
             ['request timeout', 'Fonnte tidak merespons (timeout). Coba kirim ulang.'],
         ];
     }
@@ -50,6 +51,7 @@ class FonnteErrorMessageTest extends TestCase
             ['Token Fonnte tidak valid. Periksa API key di Profil CMS.', false],
             ['Kuota Fonnte habis. Upgrade paket atau tunggu reset bulanan.', false],
             ['Nomor WhatsApp tujuan tidak valid.', false],
+            ['Perangkat WhatsApp Fonnte terputus. Buka dashboard Fonnte dan sambungkan ulang (scan QR).', false],
             ['Fonnte tidak merespons (timeout). Coba kirim ulang.', true],
             ['Server Fonnte sedang bermasalah. Coba kirim ulang nanti.', true],
             ['Tidak bisa terhubung ke Fonnte. Periksa koneksi internet server.', true],

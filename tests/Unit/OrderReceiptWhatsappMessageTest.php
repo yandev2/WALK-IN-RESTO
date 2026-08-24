@@ -26,7 +26,8 @@ class OrderReceiptWhatsappMessageTest extends TestCase
 
         $this->assertStringContainsString('Pesanan:', $message);
         $this->assertStringContainsString($world['item']->name, $message);
-        $this->assertStringContainsString('x1 @ Rp 32.000 = Rp 32.000 (diskon 20%)', $message);
+        $this->assertStringContainsString('x1 Rp 32.000 = Rp 32.000 (diskon 20%)', $message);
+        $this->assertStringNotContainsString('@', $message);
         $this->assertStringContainsString('Subtotal: Rp', $message);
         $this->assertStringContainsString('Service: Rp', $message);
         $this->assertStringContainsString('PB1: Rp', $message);
