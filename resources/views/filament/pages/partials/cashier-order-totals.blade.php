@@ -7,249 +7,149 @@
     $paymentLabel = $isQris ? 'QRIS' : 'Tunai';
     $lineCount = (int) ($preview['line_count'] ?? 0);
     $totalQty = (int) ($preview['total_qty'] ?? 0);
-
-    $rowStyle = 'display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0.75rem; font-size: 0.875rem; line-height: 1.4;';
-    $labelStyle = 'color: rgb(100 116 139);';
-    $valueStyle = 'font-variant-numeric: tabular-nums; font-weight: 500; color: rgb(51 65 85); text-align: right; white-space: nowrap;';
+    $grandPayable = (int) ($preview['grand_payable'] ?? 0);
+    $cashReceived = $cashReceived ?? null;
 
     $formatPct = static function (float $pct): string {
         return rtrim(rtrim(number_format($pct, 2, ',', '.'), '0'), ',');
     };
 @endphp
 
-<style>
-    .cashier-pay-summary {
-        border-radius: 0.75rem;
-        border: 1px solid rgb(226 232 240);
-        background: linear-gradient(180deg, rgb(255 255 255) 0%, rgb(248 250 252) 100%);
-        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
-        overflow: hidden;
-    }
+<div class="space-y-4">
+    <div class="flex items-center justify-between gap-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            @if ($isEmpty)
+                Belum ada item — tambahkan menu untuk melihat perkiraan total.
+            @else
+                {{ $lineCount }} {{ $lineCount === 1 ? 'baris' : 'baris' }} · {{ $totalQty }} {{ $totalQty === 1 ? 'porsi' : 'porsi' }}
+            @endif
+        </div>
+        <span @class([
+            'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
+            'bg-success-50 text-success-700 ring-1 ring-success-600/10 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/20' => ! $isQris,
+            'bg-info-50 text-info-700 ring-1 ring-info-600/10 dark:bg-info-400/10 dark:text-info-400 dark:ring-info-400/20' => $isQris,
+        ])>
+            {{ $paymentLabel }}
+        </span>
+    </div>
 
-    .dark .cashier-pay-summary {
-        border-color: rgb(55 65 81);
-        background: linear-gradient(180deg, rgb(17 24 39) 0%, rgb(15 23 42) 100%);
-        box-shadow: none;
-    }
-
-    .cashier-pay-summary__badge--cash {
-        background: rgb(220 252 231);
-        color: rgb(21 128 61);
-        border: 1px solid rgb(187 247 208);
-    }
-
-    .dark .cashier-pay-summary__badge--cash {
-        background: rgb(21 128 61 / 0.15);
-        color: rgb(134 239 172);
-        border-color: rgb(34 197 94 / 0.25);
-    }
-
-    .cashier-pay-summary__badge--qris {
-        background: rgb(219 234 254);
-        color: rgb(29 78 216);
-        border: 1px solid rgb(191 219 254);
-    }
-
-    .dark .cashier-pay-summary__badge--qris {
-        background: rgb(29 78 216 / 0.15);
-        color: rgb(147 197 253);
-        border-color: rgb(59 130 246 / 0.25);
-    }
-
-    .cashier-pay-summary__total-box {
-        background: rgb(15 23 42);
-        color: rgb(248 250 252);
-    }
-
-    .dark .cashier-pay-summary__total-box {
-        background: rgb(248 250 252);
-        color: rgb(15 23 42);
-    }
-
-    .cashier-pay-summary__note {
-        border-radius: 0.5rem;
-        border: 1px solid rgb(191 219 254);
-        background: rgb(239 246 255);
-        color: rgb(29 78 216);
-        font-size: 0.75rem;
-        line-height: 1.45;
-    }
-
-    .dark .cashier-pay-summary__note {
-        border-color: rgb(59 130 246 / 0.3);
-        background: rgb(29 78 216 / 0.12);
-        color: rgb(147 197 253);
-    }
-
-    .cashier-pay-summary__empty {
-        color: rgb(100 116 139);
-        font-size: 0.875rem;
-        line-height: 1.5;
-    }
-
-    .cashier-pay-summary__title {
-        color: rgb(15 23 42);
-    }
-
-    .dark .cashier-pay-summary__title {
-        color: rgb(248 250 252);
-    }
-
-    .dark .cashier-pay-summary__empty {
-        color: rgb(148 163 184);
-    }
-
-    .cashier-pay-summary__qris {
-        margin-top: 1rem;
-        border-radius: 0.625rem;
-        border: 1px solid rgb(226 232 240);
-        background: rgb(255 255 255);
-        padding: 0.875rem;
-        text-align: center;
-    }
-
-    .dark .cashier-pay-summary__qris {
-        border-color: rgb(55 65 81);
-        background: rgb(15 23 42 / 0.6);
-    }
-
-    .cashier-pay-summary__qris-label {
-        margin-bottom: 0.625rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: rgb(100 116 139);
-    }
-
-    .dark .cashier-pay-summary__qris-label {
-        color: rgb(148 163 184);
-    }
-
-    .cashier-pay-summary__qris-image {
-        display: block;
-        width: 100%;
-        max-width: 11rem;
-        margin: 0 auto;
-        border-radius: 0.5rem;
-        border: 1px solid rgb(241 245 249);
-        background: rgb(248 250 252);
-    }
-
-    .dark .cashier-pay-summary__qris-image {
-        border-color: rgb(55 65 81);
-        background: rgb(255 255 255);
-    }
-
-    .cashier-pay-summary__qris-missing {
-        font-size: 0.8125rem;
-        line-height: 1.45;
-        color: rgb(100 116 139);
-    }
-
-    .dark .cashier-pay-summary__qris-missing {
-        color: rgb(148 163 184);
-    }
-</style>
-
-<div class="cashier-pay-summary">
-    <div style="padding: 1rem 1.25rem 0;">
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;">
-            <div style="display: flex; align-items: flex-start; gap: 0.75rem; min-width: 0;">
-                <div
-                    style="display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 0.625rem; background: rgb(241 245 249); color: rgb(71 85 105); flex-shrink: 0;"
-                    aria-hidden="true"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 1.25rem; height: 1.25rem;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h-15m15 0h.008v.008H21v-.008Zm0 3h.008v.008H21V9Zm0 3h.008v.008H21v-.008Zm0 3h.008v.008H21v-.008Z" />
-                    </svg>
-                </div>
-
-                <div style="min-width: 0;">
-                    <div class="cashier-pay-summary__title" style="font-size: 0.9375rem; font-weight: 600; line-height: 1.3;">
-                        Ringkasan pembayaran
-                    </div>
-                    <div style="margin-top: 0.2rem; font-size: 0.8125rem; color: rgb(100 116 139); line-height: 1.45;">
-                        Perkiraan total dihitung otomatis dari item yang dipilih.
-                    </div>
-                </div>
+    @unless ($isEmpty)
+        <dl class="space-y-2 text-sm">
+            <div class="flex items-baseline justify-between gap-3">
+                <dt class="text-gray-500 dark:text-gray-400">Subtotal</dt>
+                <dd class="font-medium tabular-nums text-gray-950 dark:text-white">{{ \App\Support\CmsMedia::formatIdr($subtotal) }}</dd>
             </div>
 
-            <span
-                class="cashier-pay-summary__badge--{{ $isQris ? 'qris' : 'cash' }}"
-                style="display: inline-flex; align-items: center; padding: 0.2rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; flex-shrink: 0;"
-            >
-                {{ $paymentLabel }}
+            @if (($preview['service_amount'] ?? 0) > 0)
+                <div class="flex items-baseline justify-between gap-3">
+                    <dt class="text-gray-500 dark:text-gray-400">Service ({{ $formatPct($preview['service_pct']) }}%)</dt>
+                    <dd class="font-medium tabular-nums text-gray-950 dark:text-white">{{ \App\Support\CmsMedia::formatIdr($preview['service_amount']) }}</dd>
+                </div>
+            @endif
+
+            @if (($preview['pb1_amount'] ?? 0) > 0)
+                <div class="flex items-baseline justify-between gap-3">
+                    <dt class="text-gray-500 dark:text-gray-400">PB1 ({{ $formatPct($preview['pb1_pct']) }}%)</dt>
+                    <dd class="font-medium tabular-nums text-gray-950 dark:text-white">{{ \App\Support\CmsMedia::formatIdr($preview['pb1_amount']) }}</dd>
+                </div>
+            @endif
+        </dl>
+
+        @if ($isQris)
+            <div class="rounded-lg bg-gray-50 p-3 text-center ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Scan QRIS outlet</p>
+
+                @if ($qrisImageUrl)
+                    <img
+                        src="{{ $qrisImageUrl }}"
+                        alt="QRIS outlet"
+                        class="mx-auto block w-full max-w-[11rem] rounded-lg bg-white ring-1 ring-gray-950/5"
+                    >
+                @else
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        QRIS outlet belum diunggah. Atur di menu Outlet agar kasir bisa scan di sini.
+                    </p>
+                @endif
+            </div>
+        @endif
+
+        <div class="flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-3 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Total bayar</span>
+            <span class="text-2xl font-bold tabular-nums tracking-tight text-gray-950 dark:text-white">
+                {{ \App\Support\CmsMedia::formatIdr($grandPayable) }}
             </span>
         </div>
-    </div>
 
-    <div style="padding: 1rem 1.25rem 1.25rem;">
-        @if ($isEmpty)
-            <p class="cashier-pay-summary__empty">
-                Belum ada item — tambahkan menu di bawah untuk melihat perkiraan total.
+        @if ($isQris)
+            <p class="rounded-lg bg-info-50 px-3 py-2 text-xs leading-5 text-info-700 dark:bg-info-400/10 dark:text-info-400">
+                QRIS: kode unik 1–999 ditambahkan saat pembayaran diproses.
             </p>
         @else
-            @if ($lineCount > 0)
-                <div style="margin-bottom: 0.75rem; font-size: 0.75rem; color: rgb(100 116 139);">
-                    {{ $lineCount }} {{ $lineCount === 1 ? 'baris' : 'baris' }} · {{ $totalQty }} {{ $totalQty === 1 ? 'porsi' : 'porsi' }}
-                </div>
-            @endif
-
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <div style="{{ $rowStyle }}">
-                    <span style="{{ $labelStyle }}">Subtotal</span>
-                    <span style="{{ $valueStyle }}">{{ \App\Support\CmsMedia::formatIdr($subtotal) }}</span>
-                </div>
-
-                @if (($preview['service_amount'] ?? 0) > 0)
-                    <div style="{{ $rowStyle }}">
-                        <span style="{{ $labelStyle }}">Service ({{ $formatPct($preview['service_pct']) }}%)</span>
-                        <span style="{{ $valueStyle }}">{{ \App\Support\CmsMedia::formatIdr($preview['service_amount']) }}</span>
-                    </div>
-                @endif
-
-                @if (($preview['pb1_amount'] ?? 0) > 0)
-                    <div style="{{ $rowStyle }}">
-                        <span style="{{ $labelStyle }}">PB1 ({{ $formatPct($preview['pb1_pct']) }}%)</span>
-                        <span style="{{ $valueStyle }}">{{ \App\Support\CmsMedia::formatIdr($preview['pb1_amount']) }}</span>
-                    </div>
-                @endif
-            </div>
-
-            @if ($isQris)
-                <div class="cashier-pay-summary__qris">
-                    <p class="cashier-pay-summary__qris-label">Scan QRIS outlet</p>
-
-                    @if ($qrisImageUrl)
-                        <img
-                            src="{{ $qrisImageUrl }}"
-                            alt="QRIS outlet"
-                            class="cashier-pay-summary__qris-image"
-                        >
-                    @else
-                        <p class="cashier-pay-summary__qris-missing">
-                            QRIS outlet belum diunggah. Atur di menu Outlet agar kasir bisa scan di sini.
-                        </p>
-                    @endif
-                </div>
-            @endif
-
             <div
-                class="cashier-pay-summary__total-box"
-                style="margin-top: 1rem; padding: 0.875rem 1rem; border-radius: 0.625rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0.75rem;"
+                wire:key="cashier-cash-{{ $grandPayable }}"
+                x-data="{
+                    total: {{ (int) $grandPayable }},
+                    raw: '{{ (string) ($cashReceived ?? '') }}',
+                    parsed() {
+                        const digits = String(this.raw).replace(/\D+/g, '');
+                        return digits === '' ? null : Number(digits);
+                    },
+                    change() {
+                        return this.parsed() === null ? 0 : this.parsed() - this.total;
+                    },
+                    short() {
+                        return this.parsed() !== null && this.change() < 0;
+                    },
+                    format(amount) {
+                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.trunc(amount));
+                    },
+                    exact() {
+                        this.raw = String(this.total);
+                    },
+                }"
+                class="space-y-2 border-t border-gray-200 pt-4 dark:border-white/10"
             >
-                <span style="font-size: 0.875rem; font-weight: 600; opacity: 0.88;">Total bayar</span>
-                <span style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap;">
-                    {{ \App\Support\CmsMedia::formatIdr($preview['grand_payable']) }}
-                </span>
-            </div>
+                <div class="flex items-center justify-between gap-2">
+                    <label for="cashier-cash-received" class="text-sm font-medium text-gray-950 dark:text-white">Uang diterima</label>
+                    <button
+                        type="button"
+                        class="text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
+                        x-on:click="exact(); $wire.set('data.cash_received', raw === '' ? null : raw, false)"
+                    >
+                        Uang pas
+                    </button>
+                </div>
 
-            @if ($isQris)
-                <p class="cashier-pay-summary__note" style="margin-top: 0.75rem; padding: 0.625rem 0.75rem;">
-                    QRIS: kode unik 1–999 ditambahkan saat pembayaran diproses.
+                <div class="flex overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20">
+                    <span class="flex items-center px-3 text-sm text-gray-500 dark:text-gray-400">Rp</span>
+                    <input
+                        id="cashier-cash-received"
+                        type="text"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        placeholder="0"
+                        class="min-w-0 flex-1 border-none bg-transparent py-2 pe-3 text-sm text-gray-950 outline-none ring-0 placeholder:text-gray-400 dark:text-white"
+                        x-model="raw"
+                        x-on:input="$wire.set('data.cash_received', raw === '' ? null : raw, false)"
+                    >
+                </div>
+
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Isi nominal uang dari tamu. Kembalian dihitung otomatis.
                 </p>
-            @endif
+
+                <p x-show="parsed() === null" class="text-sm text-gray-500 dark:text-gray-400">
+                    Isi uang diterima untuk menghitung kembalian.
+                </p>
+                <div x-show="parsed() !== null && short()" class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-danger-600 dark:text-danger-400">Kembalian</span>
+                    <span class="font-bold tabular-nums text-danger-600 dark:text-danger-400" x-text="'Kurang ' + format(Math.abs(change()))"></span>
+                </div>
+                <div x-show="parsed() !== null && ! short()" class="flex items-baseline justify-between gap-3 text-sm">
+                    <span class="text-gray-500 dark:text-gray-400">Kembalian</span>
+                    <span class="font-bold tabular-nums text-success-600 dark:text-success-400" x-text="format(change())"></span>
+                </div>
+            </div>
         @endif
-    </div>
+    @endunless
 </div>

@@ -23,10 +23,13 @@ final class CashierOrderPreview
      *     is_qris: bool,
      *     line_count: int,
      *     total_qty: int,
-     *     qris_image_url: string|null
+     *     qris_image_url: string|null,
+     *     cash_received: int|null,
+     *     change_amount: int|null,
+     *     cash_short: bool
      * }
      */
-    public static function estimateFromLines(array $lines, ?Outlet $outlet, string $paymentMethod = 'cash'): array
+    public static function estimateFromLines(array $lines, ?Outlet $outlet, string $paymentMethod = 'cash', mixed $cashReceived = null): array
     {
         $subtotal = 0;
         $lineCount = 0;
@@ -46,15 +49,21 @@ final class CashierOrderPreview
 
         $totals = CheckoutTotals::forSubtotal($subtotal, $outlet);
         $isQris = $paymentMethod === 'qris';
+        $grandPayable = $totals['grand_before'];
+        $received = $isQris ? null : IdrAmount::parse($cashReceived);
+        $change = $received === null ? null : $received - $grandPayable;
 
         return [
             ...$totals,
-            'grand_payable' => $totals['grand_before'],
+            'grand_payable' => $grandPayable,
             'payment_method' => $paymentMethod,
             'is_qris' => $isQris,
             'line_count' => $lineCount,
             'total_qty' => $totalQty,
             'qris_image_url' => $isQris ? CmsMedia::url($outlet?->qris_image_path) : null,
+            'cash_received' => $received,
+            'change_amount' => $change,
+            'cash_short' => $received !== null && $change < 0,
         ];
     }
 

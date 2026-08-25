@@ -31,6 +31,8 @@ class Payment extends Model
         'provider',
         'status',
         'amount',
+        'cash_received',
+        'change_amount',
         'unique_add',
         'qris_hold_amount',
         'qris_image_path_snapshot',

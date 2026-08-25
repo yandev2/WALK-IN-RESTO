@@ -11,10 +11,13 @@ use App\Models\User;
 use App\Services\CashierOrderService;
 use App\Support\CashierOrderPreview;
 use App\Support\CmsMedia;
+use App\Support\IdrAmount;
 use App\Support\SubscriptionAccess;
 use App\Support\TenantContext;
+use App\Support\WhatsAppNumber;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -28,6 +31,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -63,7 +67,7 @@ class CreateCashierOrder extends Page
     public function mount(): void
     {
         $this->form->fill([
-            'send_receipt' => TenantContext::restaurant()?->hasFonnteKey() ?? false,
+            'send_receipt' => false,
             'payment_method' => 'cash',
             'lines' => [['qty' => 1]],
         ]);
@@ -105,8 +109,20 @@ class CreateCashierOrder extends Page
                         TextInput::make('customer_wa')
                             ->label('WhatsApp tamu')
                             ->placeholder('08xxxxxxxxxx')
-                            ->required()
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->live()
+                            ->helperText('Opsional. Wajib jika struk dikirim via WhatsApp.')
+                            ->afterStateUpdated(function (Set $set, mixed $state): void {
+                                if (blank($state)) {
+                                    $set('send_receipt', false);
+
+                                    return;
+                                }
+
+                                if (TenantContext::restaurant()?->hasFonnteKey()) {
+                                    $set('send_receipt', true);
+                                }
+                            }),
                         TextInput::make('customer_name')
                             ->label('Nama tamu')
                             ->maxLength(120),
@@ -124,16 +140,19 @@ class CreateCashierOrder extends Page
                             ->label('Kirim struk WhatsApp')
                             ->visible($hasFonnte)
                             ->default($hasFonnte)
+                            ->live()
+                            ->disabled(fn (Get $get): bool => blank($get('customer_wa')))
+                            ->dehydrated()
                             ->helperText('Kirim ringkasan order ke nomor tamu setelah dibuat.')
                             ->inline(false)
                             ->columnSpanFull(),
                     ]),
 
-                Grid::make(3)
+                Grid::make(5)
                     ->columnSpanFull()
                     ->schema([
                         Section::make('Menu')
-                            ->columnSpan(2)
+                            ->columnSpan(3)
                             ->description('Tambah satu atau lebih item ke pesanan.')
                             ->icon(Heroicon::OutlinedShoppingBag)
                             ->schema([
@@ -162,6 +181,7 @@ class CreateCashierOrder extends Page
                                             ->native(false)
                                             ->allowHtml()
                                             ->live()
+                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
                                             ->columnSpanFull(),
                                         TextInput::make('qty')
                                             ->label('Jumlah')
@@ -170,7 +190,8 @@ class CreateCashierOrder extends Page
                                             ->default(1)
                                             ->required()
                                             ->suffix('x')
-                                            ->live(),
+                                            ->live()
+                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
                                         Select::make('modifier_ids')
                                             ->label('Extra')
                                             ->multiple()
@@ -199,7 +220,8 @@ class CreateCashierOrder extends Page
                                                     ->all();
                                             })
                                             ->native(false)
-                                            ->live(),
+                                            ->live()
+                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
                                         Textarea::make('notes')
                                             ->label('Catatan')
                                             ->rows(2)
@@ -208,9 +230,7 @@ class CreateCashierOrder extends Page
                                     ->columns(2)
                                     ->minItems(1)
                                     ->required()
-                                    ->columnSpan(2)
-                                    ->live()
-                                    ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
+                                    ->columnSpanFull()
                                     ->collapsible()
                                     ->itemLabel(fn (array $state): string => filled($state['menu_item_id'] ?? null)
                                         ? (MenuItem::query()->find($state['menu_item_id'])?->name ?? 'Item')
@@ -218,14 +238,23 @@ class CreateCashierOrder extends Page
                                     ->addActionLabel('Tambah item'),
                             ]),
 
-                        View::make('filament.pages.partials.cashier-order-totals')
-                            ->key('cashier-order-totals')
-                            ->viewData(fn (Get $get): array => [
-                                'preview' => CashierOrderPreview::estimateFromLines(
-                                    $get('lines') ?? [],
-                                    TenantContext::outlet(),
-                                    (string) ($get('payment_method') ?? 'cash'),
-                                ),
+                        Section::make('Ringkasan pembayaran')
+                            ->columnSpan(2)
+                            ->description('Perkiraan total dihitung otomatis dari item yang dipilih.')
+                            ->icon(Heroicon::OutlinedReceiptPercent)
+                            ->schema([
+                                Hidden::make('cash_received')
+                                    ->dehydrated(fn (Get $get): bool => ($get('payment_method') ?? 'cash') === 'cash'),
+                                View::make('filament.pages.partials.cashier-order-totals')
+                                    ->key('cashier-order-totals')
+                                    ->viewData(fn (Get $get): array => [
+                                        'preview' => CashierOrderPreview::estimateFromLines(
+                                            $get('lines') ?? [],
+                                            TenantContext::outlet(),
+                                            (string) ($get('payment_method') ?? 'cash'),
+                                        ),
+                                        'cashReceived' => $get('cash_received'),
+                                    ]),
                             ]),
                     ]),
 
@@ -247,15 +276,29 @@ class CreateCashierOrder extends Page
             ->whereKey($data['table_id'])
             ->firstOrFail();
 
+        $sendReceipt = (bool) ($data['send_receipt'] ?? false);
+
+        if ($sendReceipt && ! WhatsAppNumber::isValid($data['customer_wa'] ?? null)) {
+            Notification::make()
+                ->title('Nomor WhatsApp wajib diisi jika struk dikirim via WhatsApp.')
+                ->danger()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'customer_wa' => 'Nomor WhatsApp wajib diisi jika struk dikirim via WhatsApp.',
+            ]);
+        }
+
         try {
             $order = app(CashierOrderService::class)->create(
                 $user,
                 $table,
-                $data['customer_wa'],
+                filled($data['customer_wa'] ?? null) ? (string) $data['customer_wa'] : null,
                 $data['customer_name'] ?? null,
                 $data['payment_method'],
-                (bool) ($data['send_receipt'] ?? false),
+                $sendReceipt,
                 $data['lines'] ?? [],
+                IdrAmount::parse($data['cash_received'] ?? null),
             );
         } catch (ValidationException $e) {
             Notification::make()

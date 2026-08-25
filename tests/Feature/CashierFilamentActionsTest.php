@@ -6,6 +6,7 @@ use App\Filament\Pages\CreateCashierOrder;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Services\CashierOrderService;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -71,7 +72,130 @@ class CashierFilamentActionsTest extends TestCase
 
         Livewire::test(CreateCashierOrder::class)
             ->assertOk()
-            ->assertSee('Buat order kasir');
+            ->assertSee('Buat order kasir')
+            ->assertSee('Opsional')
+            ->assertSee('Ringkasan pembayaran')
+            ->assertSee('Tambah item');
+    }
+
+    public function test_cashier_order_can_add_another_menu_line_after_selecting_item(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        $other = $this->extraMenuItem($world, 'Kentang Goreng', 15000);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $page = Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'payment_method' => 'cash',
+                'lines' => [
+                    [
+                        'menu_item_id' => $world['item']->id,
+                        'qty' => 1,
+                    ],
+                ],
+            ]);
+
+        $page->assertSee('Uang diterima')
+            ->assertDontSee('raw: ""', false)
+            ->callFormComponentAction('lines', 'add');
+
+        $this->assertCount(2, $page->instance()->data['lines'] ?? []);
+
+        $page->fillForm([
+            'lines' => [
+                [
+                    'menu_item_id' => $world['item']->id,
+                    'qty' => 1,
+                ],
+                [
+                    'menu_item_id' => $other->id,
+                    'qty' => 2,
+                ],
+            ],
+        ])->call('create')->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('order_items', [
+            'menu_item_id' => $other->id,
+            'qty' => 2,
+        ]);
+    }
+
+    public function test_cashier_order_can_be_created_without_whatsapp(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'customer_wa' => null,
+                'customer_name' => 'Walk-in',
+                'payment_method' => 'cash',
+                'send_receipt' => false,
+                'cash_received' => '20.000',
+                'lines' => [
+                    [
+                        'menu_item_id' => $world['item']->id,
+                        'qty' => 1,
+                    ],
+                ],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('visits', [
+            'table_id' => $world['table']->id,
+            'customer_name' => 'Walk-in',
+            'customer_wa' => null,
+        ]);
+        $this->assertDatabaseHas('payments', [
+            'method' => 'cash',
+            'cash_received' => 20000,
+        ]);
+    }
+
+    public function test_approve_cash_order_accepts_tender_amount(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create', 'order.verify_payment']);
+        $order = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            null,
+            'Walk-in',
+            'cash',
+            false,
+            [['menu_item_id' => $world['item']->id, 'qty' => 1]],
+            20000,
+        );
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->getKey()])
+            ->assertOk()
+            ->callAction('approve');
+
+        $payment = $order->fresh()->payments()->first();
+        $this->assertTrue($order->fresh()->isAccepted());
+        $this->assertSame(20000, (int) $payment->cash_received);
+        $this->assertSame(20000 - (int) $order->grand_payable, (int) $payment->change_amount);
     }
 
     /**

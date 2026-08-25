@@ -9,12 +9,17 @@ use App\Models\User;
 use App\Services\OrderPaymentService;
 use App\Services\OrderReceiptService;
 use App\Services\OrderVoidService;
+use App\Support\CmsMedia;
+use App\Support\IdrAmount;
 use App\Support\PermissionCheck;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Validation\ValidationException;
 
@@ -31,22 +36,70 @@ class ViewOrder extends ViewRecord
                 ->color('success')
                 ->visible(fn (): bool => $this->canApprove())
                 ->form(function (): array {
-                    if (! $this->needsGpsOverride()) {
-                        return [];
+                    $fields = [];
+                    $payment = $this->record->payments()->latest('id')->first();
+                    $total = (int) $this->record->grand_payable;
+                    $alreadyTendered = $payment?->method === 'cash' && $payment->cash_received !== null;
+
+                    if ($payment?->method === 'cash' && ! $alreadyTendered) {
+                        $fields[] = TextInput::make('cash_received')
+                            ->label('Uang diterima')
+                            ->prefix('Rp')
+                            ->live()
+                            ->helperText(function (Get $get) use ($total): string {
+                                $received = IdrAmount::parse($get('cash_received'));
+
+                                if ($received === null) {
+                                    return 'Total '.CmsMedia::formatIdr($total).'. Isi uang dari tamu untuk hitung kembalian.';
+                                }
+
+                                if ($received < $total) {
+                                    return 'Kurang '.CmsMedia::formatIdr($total - $received).'.';
+                                }
+
+                                return 'Kembalian '.CmsMedia::formatIdr($received - $total).'.';
+                            })
+                            ->hintAction(
+                                Action::make('exactCash')
+                                    ->label('Uang pas')
+                                    ->action(function (Set $set) use ($total): void {
+                                        $set('cash_received', (string) $total);
+                                    }),
+                            );
                     }
 
-                    return [
-                        Textarea::make('gps_override_reason')
+                    if ($this->needsGpsOverride()) {
+                        $fields[] = Textarea::make('gps_override_reason')
                             ->label('Alasan override GPS')
                             ->required()
-                            ->helperText('Akurasi GPS buruk atau izin lokasi ditolak. Pastikan tamu ada di meja.'),
-                    ];
+                            ->helperText('Akurasi GPS buruk atau izin lokasi ditolak. Pastikan tamu ada di meja.');
+                    }
+
+                    return $fields;
+                })
+                ->modalDescription(function (): ?string {
+                    $payment = $this->record->payments()->latest('id')->first();
+
+                    if ($payment?->method !== 'cash' || $payment->cash_received === null) {
+                        return null;
+                    }
+
+                    $received = (int) $payment->cash_received;
+                    $change = (int) ($payment->change_amount ?? max(0, $received - (int) $this->record->grand_payable));
+
+                    return 'Uang diterima '.CmsMedia::formatIdr($received)
+                        .' · Kembalian '.CmsMedia::formatIdr($change).'.';
                 })
                 ->requiresConfirmation()
                 ->action(function (array $data, OrderPaymentService $service): void {
                     /** @var Order $order */
                     $order = $this->record;
-                    $service->approve($order, auth()->user(), $data['gps_override_reason'] ?? null);
+                    $service->approve(
+                        $order,
+                        auth()->user(),
+                        $data['gps_override_reason'] ?? null,
+                        $data['cash_received'] ?? null,
+                    );
                     $this->record->refresh();
                     $this->record->loadMissing('outlet');
                     $this->refreshFormData(['status', 'paid_at']);

@@ -103,13 +103,13 @@ class VisitClaimService
         });
     }
 
-    public function openByCashier(DiningTable $table, User $user, string $customerWa, ?string $customerName = null): Visit
+    public function openByCashier(DiningTable $table, User $user, ?string $customerWa, ?string $customerName = null): Visit
     {
         $wa = WhatsAppNumber::normalize($customerWa);
 
-        if (! WhatsAppNumber::isValid($wa)) {
+        if (filled($customerWa) && ! WhatsAppNumber::isValid($wa)) {
             throw ValidationException::withMessages([
-                'customer_wa' => 'Nomor WhatsApp wajib. Gunakan 08… atau 62…',
+                'customer_wa' => 'Nomor WhatsApp tidak valid. Gunakan 08… atau 62…',
             ]);
         }
 

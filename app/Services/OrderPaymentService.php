@@ -7,6 +7,8 @@ use App\Models\Payment;
 use App\Models\User;
 use App\Models\Visit;
 use App\Support\ActivityLogger;
+use App\Support\CashTender;
+use App\Support\IdrAmount;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,9 +17,9 @@ class OrderPaymentService
 {
     private const DEFAULT_AWAITING_TTL_MINUTES = 20;
 
-    public function approve(Order $order, User $cashier, ?string $gpsOverrideReason = null): void
+    public function approve(Order $order, User $cashier, ?string $gpsOverrideReason = null, mixed $cashReceived = null): void
     {
-        DB::transaction(function () use ($order, $cashier, $gpsOverrideReason): void {
+        DB::transaction(function () use ($order, $cashier, $gpsOverrideReason, $cashReceived): void {
             $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
 
             if ($locked->status !== 'awaiting_cashier') {
@@ -46,11 +48,16 @@ class OrderPaymentService
                     ]);
                 }
 
+                $tenderInput = IdrAmount::parse($cashReceived) ?? $payment->cash_received;
+                $tender = CashTender::resolve((string) $payment->method, (int) $locked->grand_payable, $tenderInput);
+
                 $payment->forceFill([
                     'status' => 'paid',
                     'paid_at' => now(),
                     'paid_by_user_id' => $cashier->id,
                     'qris_hold_amount' => null,
+                    'cash_received' => $tender['cash_received'],
+                    'change_amount' => $tender['change_amount'],
                 ])->save();
             }
 

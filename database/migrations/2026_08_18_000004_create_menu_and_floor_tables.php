@@ -103,7 +103,7 @@ return new class extends Migration
             $table->timestamp('join_locked_until')->nullable();
             $table->foreignId('opened_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('customer_name', 120)->nullable();
-            $table->string('customer_wa', 20);
+            $table->string('customer_wa', 20)->nullable();
             $table->timestamp('claimed_at');
             $table->timestamp('claim_expires_at');
             $table->timestamp('closed_at')->nullable();

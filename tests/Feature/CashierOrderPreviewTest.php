@@ -6,6 +6,7 @@ use App\Models\Modifier;
 use App\Models\ModifierGroup;
 use App\Support\CashierOrderPreview;
 use App\Support\CheckoutTotals;
+use App\Support\CmsMedia;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\CreatesGuestRestaurant;
 use Tests\TestCase;
@@ -103,7 +104,7 @@ class CashierOrderPreviewTest extends TestCase
         ], $world['outlet'], 'qris');
 
         $this->assertSame(
-            \App\Support\CmsMedia::url('outlets/qris/cashier.jpg'),
+            CmsMedia::url('outlets/qris/cashier.jpg'),
             $preview['qris_image_url'],
         );
     }
@@ -118,6 +119,44 @@ class CashierOrderPreviewTest extends TestCase
         ], $world['outlet'], 'cash');
 
         $this->assertNull($preview['qris_image_url']);
+    }
+
+    public function test_cash_preview_computes_change_and_shortfall(): void
+    {
+        $world = $this->createGuestRestaurant();
+
+        $enough = CashierOrderPreview::estimateFromLines([
+            ['menu_item_id' => $world['item']->id, 'qty' => 1],
+        ], $world['outlet'], 'cash', '20.000');
+
+        $this->assertSame(20000, $enough['cash_received']);
+        $this->assertSame(20000 - $enough['grand_payable'], $enough['change_amount']);
+        $this->assertFalse($enough['cash_short']);
+
+        $short = CashierOrderPreview::estimateFromLines([
+            ['menu_item_id' => $world['item']->id, 'qty' => 1],
+        ], $world['outlet'], 'cash', 1000);
+
+        $this->assertTrue($short['cash_short']);
+        $this->assertLessThan(0, $short['change_amount']);
+    }
+
+    public function test_cash_tender_partial_uses_current_grand_payable(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $preview = CashierOrderPreview::estimateFromLines([
+            ['menu_item_id' => $world['item']->id, 'qty' => 1],
+        ], $world['outlet'], 'cash', 20000);
+
+        $html = view('filament.pages.partials.cashier-order-totals', [
+            'preview' => $preview,
+            'cashReceived' => '20000',
+        ])->render();
+
+        $this->assertStringContainsString('total: '.(int) $preview['grand_payable'], $html);
+        $this->assertStringNotContainsString('this.$el.dataset.total', $html);
+        $this->assertStringContainsString('wire:key="cashier-cash-'.$preview['grand_payable'].'"', $html);
+        $this->assertSame(20000 - $preview['grand_payable'], $preview['change_amount']);
     }
 
     public function test_service_and_pb1_match_outlet_settings(): void

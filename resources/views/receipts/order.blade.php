@@ -139,6 +139,16 @@
                 <td class="label">Total</td>
                 <td class="value">{{ number_format((int) $order->grand_payable, 0, ',', '.') }}</td>
             </tr>
+            @if ($method === 'CASH' && $payment?->cash_received !== null)
+                <tr>
+                    <td class="label">Bayar</td>
+                    <td class="value">{{ number_format((int) $payment->cash_received, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Kembalian</td>
+                    <td class="value">{{ number_format((int) $payment->change_amount, 0, ',', '.') }}</td>
+                </tr>
+            @endif
         </table>
 
         @if (filled($methodLabel))

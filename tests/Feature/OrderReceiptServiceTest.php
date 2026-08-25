@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\OrderReceipt;
 use App\Models\User;
 use App\Models\WhatsappMessage;
+use App\Services\CashierOrderService;
+use App\Services\OrderPaymentService;
 use App\Services\OrderReceiptService;
 use App\Support\ReceiptLogo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -220,10 +222,46 @@ class OrderReceiptServiceTest extends TestCase
         $this->assertStringContainsString('Bukan faktur pajak resmi.', $html);
         $this->assertStringNotContainsString('Pass Wifi', $html);
         $this->assertDoesNotMatchRegularExpression('/x\d+\s+@/', $html);
+        $this->assertStringNotContainsString('Kembalian', $html);
 
         $pdf = Storage::disk('local')->get($order->receipt->file_path);
         $this->assertNotFalse($pdf);
         $this->assertStringStartsWith('%PDF', $pdf);
         $this->assertStringContainsString((string) $order->payments->first()?->paidByUser?->name, $html);
+    }
+
+    public function test_cash_receipt_includes_tender_and_change(): void
+    {
+        Storage::fake('local');
+
+        $world = $this->createGuestRestaurant();
+        $user = User::factory()->create();
+        $order = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            null,
+            'Walk-in',
+            'cash',
+            false,
+            [['menu_item_id' => $world['item']->id, 'qty' => 1]],
+            50000,
+        );
+
+        app(OrderPaymentService::class)->approve($order, $user);
+
+        $order->refresh()->loadMissing(['items.modifiers', 'visit.diningTable', 'restaurant', 'outlet', 'payments.paidByUser']);
+        $payment = $order->payments->first();
+
+        $html = view('receipts.order', [
+            'order' => $order,
+            'payment' => $payment,
+            'logoDataUri' => ReceiptLogo::dataUri($order->restaurant),
+        ])->render();
+
+        $this->assertStringContainsString('TUNAI', $html);
+        $this->assertStringContainsString('Bayar', $html);
+        $this->assertStringContainsString('Kembalian', $html);
+        $this->assertStringContainsString(number_format((int) $payment->cash_received, 0, ',', '.'), $html);
+        $this->assertStringContainsString(number_format((int) $payment->change_amount, 0, ',', '.'), $html);
     }
 }

@@ -115,6 +115,19 @@ class GuestApiTest extends TestCase
             ->assertJsonValidationErrors(['pin']);
     }
 
+    public function test_claim_without_whatsapp_returns_422(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $device = $this->newDeviceToken();
+
+        $this->withHeaders($this->deviceHeaders($device))
+            ->postJson('/api/v1/guest/tables/'.$world['token'].'/claim', [
+                'customer_name' => 'Budi',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['customer_wa']);
+    }
+
     public function test_cash_checkout_outside_geofence_returns_422(): void
     {
         $world = $this->createGuestRestaurant();

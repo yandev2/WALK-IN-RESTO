@@ -14,6 +14,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -34,7 +35,7 @@ class OrderResource extends Resource
 
     protected static ?string $navigationLabel = 'Pesanan';
 
-    protected static ?string $pluralModelLabel  = 'pesanan';
+    protected static ?string $pluralModelLabel = 'pesanan';
 
     protected static ?string $recordTitleAttribute = 'number';
 
@@ -84,53 +85,63 @@ class OrderResource extends Resource
         return $schema
             ->components([
                 Section::make('Pesanan')
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 2,
+                        'xl' => 4,
+                        '2xl' => 4,
+                    ])
+                    ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('number')->label('Nomor'),
+                        TextEntry::make('number')->label('Nomor')->badge()->color('success'),
+                        TextEntry::make('visit.diningTable.code')->label('Meja')->badge()->color('success'),
+                        TextEntry::make('payment_method')->label('Metode')->badge()->color('success'),
                         TextEntry::make('status')->badge(),
                         TextEntry::make('source')->label('Sumber'),
-                        TextEntry::make('payment_method')->label('Metode'),
-                        TextEntry::make('visit.diningTable.code')->label('Meja'),
-                        TextEntry::make('visit.customer_wa')->label('WhatsApp tamu'),
                         TextEntry::make('visit.customer_name')->label('Nama tamu')->placeholder('-'),
+                        TextEntry::make('visit.customer_wa')->label('WhatsApp tamu'),
                         TextEntry::make('created_at')->label('Dibuat')->dateTime('d M Y H:i'),
-                    ])
-                    ->columns(2),
+                    ]),
                 Section::make('Tagihan')
+                    ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('subtotal')->money('IDR', locale: 'id'),
-                        TextEntry::make('service_amount')->label('Service')->money('IDR', locale: 'id'),
-                        TextEntry::make('pb1_amount')->label('PB1')->money('IDR', locale: 'id'),
-                        TextEntry::make('grand_before')->label('Omzet (grand before)')->money('IDR', locale: 'id'),
-                        TextEntry::make('grand_payable')->label('Dibayar tamu')->money('IDR', locale: 'id'),
+                        TextEntry::make('subtotal')->money('IDR', locale: 'id')->badge()->color('success'),
+                        TextEntry::make('service_amount')->label('Service')->money('IDR', locale: 'id')->badge()->color('success'),
+                        TextEntry::make('pb1_amount')->label('PB1')->money('IDR', locale: 'id')->badge()->color('success'),
+                        TextEntry::make('grand_before')->label('Omzet (grand before)')->money('IDR', locale: 'id')->badge()->color('success'),
+                        TextEntry::make('grand_payable')->label('Dibayar tamu')->money('IDR', locale: 'id')->badge()->color('success'),
                         TextEntry::make('send_receipt')->label('Kirim struk WA')->badge(),
                     ])
-                    ->columns(3),
-                Section::make('Item')
-                    ->schema([
-                        RepeatableEntry::make('items')
-                            ->schema([
-                                TextEntry::make('name_snapshot')->label('Item'),
-                                TextEntry::make('variant_name_snapshot')->label('Varian')->placeholder('-'),
-                                TextEntry::make('qty'),
-                                TextEntry::make('unit_price')->label('Harga')->money('IDR', locale: 'id'),
-                                TextEntry::make('kds_status')->label('KDS')->badge(),
-                                TextEntry::make('void_omzet_policy')->label('Omzet void')->placeholder('-'),
-                                TextEntry::make('void_reason')->label('Alasan void')->placeholder('-'),
-                                TextEntry::make('notes')->placeholder('-'),
-                            ])
-                            ->columns(6),
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 2,
+                        'xl' => 3,
+                        '2xl' => 3,
                     ]),
+
                 Section::make('Pembayaran')
+                    ->columnSpanFull()
                     ->schema([
                         RepeatableEntry::make('payments')
+                            ->hiddenLabel()
+                            ->columnSpanFull()
+                            ->contained(false)
                             ->schema([
-                                TextEntry::make('method'),
+                                TextEntry::make('method')->badge()->color('success'),
                                 TextEntry::make('status')->badge(),
-                                TextEntry::make('amount')->money('IDR', locale: 'id'),
-                                TextEntry::make('unique_add')->label('Digit unik'),
-                                TextEntry::make('gps_status')->label('GPS')->badge(),
-                                TextEntry::make('gps_override_reason')->label('Alasan override')->placeholder('-'),
-                                TextEntry::make('reject_reason')->label('Alasan tolak')->placeholder('-'),
+                                TextEntry::make('amount')->money('IDR', locale: 'id')->badge()->color('success'),
+                                TextEntry::make('unique_add')->label('Digit unik')->badge()->color('success'),
+                                TextEntry::make('gps_status')->label('GPS')->badge()->color('success'),
+                                Grid::make(2)
+                                    ->columnSpan(3)
+                                    ->schema([
+                                        TextEntry::make('gps_override_reason')->label('Alasan override')->placeholder('-'),
+                                        TextEntry::make('reject_reason')->label('Alasan tolak')->placeholder('-'),
+                                    ]),
                                 ImageEntry::make('proof_image_path')
                                     ->label('Bukti transfer')
                                     ->disk('public')
@@ -138,8 +149,40 @@ class OrderResource extends Resource
                                     ->columnSpanFull()
                                     ->placeholder('Belum diunggah'),
                             ])
-                            ->columns(4),
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 1,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 4,
+                                '2xl' => 4,
+                            ]),
                     ]),
+
+                Section::make('Item')
+                ->columnSpanFull()
+                    ->schema([
+                        RepeatableEntry::make('items')
+                            ->schema([
+                                TextEntry::make('name_snapshot')->label('Item'),
+                                TextEntry::make('variant_name_snapshot')->label('Varian')->placeholder('-'),
+                                TextEntry::make('qty')->badge()->color('success'),
+                                TextEntry::make('unit_price')->label('Harga')->money('IDR', locale: 'id')->badge()->color('success'),
+                                TextEntry::make('kds_status')->label('KDS')->badge(),
+                                TextEntry::make('void_omzet_policy')->label('Omzet void')->placeholder('-')->badge()->color('success'),
+                                TextEntry::make('void_reason')->label('Alasan void')->placeholder('-'),
+                                TextEntry::make('notes')->placeholder('-'),
+                            ])
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 3,
+                                'lg' => 3,
+                                'xl' => 6,
+                                '2xl' => 6,
+                            ]),
+                    ]),
+
             ]);
     }
 
@@ -154,7 +197,7 @@ class OrderResource extends Resource
                     ->label('Meja'),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'awaiting_cashier' => 'warning',
                         'paid' => 'success',
                         'rejected', 'cancelled', 'voided' => 'danger',
@@ -165,8 +208,8 @@ class OrderResource extends Resource
                 TextColumn::make('has_proof')
                     ->label('Bukti')
                     ->badge()
-                    ->state(fn(Order $record): string => filled($record->payments->sortByDesc('id')->first()?->proof_image_path) ? 'Ada' : '—')
-                    ->color(fn(string $state): string => $state === 'Ada' ? 'success' : 'gray'),
+                    ->state(fn (Order $record): string => filled($record->payments->sortByDesc('id')->first()?->proof_image_path) ? 'Ada' : '—')
+                    ->color(fn (string $state): string => $state === 'Ada' ? 'success' : 'gray'),
                 TextColumn::make('grand_payable')
                     ->label('Tagihan')
                     ->money('IDR', locale: 'id'),
@@ -198,7 +241,7 @@ class OrderResource extends Resource
                     ]),
             ]);
 
-        return TableRightClick::apply($table, fn(): array => [
+        return TableRightClick::apply($table, fn (): array => [
             ViewAction::make(),
         ]);
     }

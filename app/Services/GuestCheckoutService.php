@@ -11,6 +11,7 @@ use App\Models\Outlet;
 use App\Models\Payment;
 use App\Models\Visit;
 use App\Models\VisitCartItem;
+use App\Support\CashTender;
 use App\Support\CmsMedia;
 use App\Support\GeoDistance;
 use Illuminate\Support\Collection;
@@ -100,9 +101,12 @@ class GuestCheckoutService
         array $lineInputs,
         array $gps = [],
         ?int $createdByUserId = null,
+        mixed $cashReceived = null,
     ): Order {
         $this->assertMethod($method);
-        $this->assertVisitReady($visit);
+        if ($source !== 'cashier') {
+            $this->assertVisitReady($visit);
+        }
 
         $existing = $this->existingOrder($visit, $idempotencyKey);
 
@@ -128,7 +132,7 @@ class GuestCheckoutService
             throw ValidationException::withMessages(['lines' => 'Pilih minimal satu menu.']);
         }
 
-        return DB::transaction(function () use ($visit, $outlet, $method, $sendReceipt, $idempotencyKey, $source, $lineInputs, $gpsResult, $gps, $createdByUserId) {
+        return DB::transaction(function () use ($visit, $outlet, $method, $sendReceipt, $idempotencyKey, $source, $lineInputs, $gpsResult, $gps, $createdByUserId, $cashReceived) {
             $order = $this->createOrder(
                 $visit,
                 $outlet,
@@ -140,6 +144,7 @@ class GuestCheckoutService
                 $gpsResult,
                 $gps,
                 $createdByUserId,
+                $cashReceived,
             );
 
             $this->extendClaimIfNeeded($visit, $outlet);
@@ -164,6 +169,7 @@ class GuestCheckoutService
         array $gpsResult,
         array $gps,
         ?int $createdByUserId,
+        mixed $cashReceived = null,
     ): Order {
         $lines = $this->resolveLines($visit, $lineInputs);
         $subtotal = collect($lines)->sum(fn (array $line): int => $line['unit'] * $line['qty']);
@@ -182,8 +188,10 @@ class GuestCheckoutService
         }
 
         $grandPayable = $method === 'qris' ? $grandBefore + $uniqueAdd : $grandBefore;
+        $tender = CashTender::resolve($method, $grandPayable, $cashReceived);
         $number = $this->nextOrderNumber($visit->restaurant_id, $outlet->id);
         $hasFonnte = $outlet->restaurant?->hasFonnteKey() ?? false;
+        $canSendReceipt = $hasFonnte && $sendReceipt && filled($visit->customer_wa);
 
         $order = Order::query()->create([
             'restaurant_id' => $visit->restaurant_id,
@@ -205,8 +213,8 @@ class GuestCheckoutService
             'pb1_amount' => $pb1,
             'grand_before' => $grandBefore,
             'grand_payable' => $grandPayable,
-            'send_receipt' => $hasFonnte && $sendReceipt,
-            'receipt_wa_snapshot' => $hasFonnte && $sendReceipt ? $visit->customer_wa : null,
+            'send_receipt' => $canSendReceipt,
+            'receipt_wa_snapshot' => $canSendReceipt ? $visit->customer_wa : null,
         ]);
 
         foreach ($lines as $line) {
@@ -253,6 +261,8 @@ class GuestCheckoutService
             'provider' => 'manual',
             'status' => 'awaiting_cashier',
             'amount' => $grandPayable,
+            'cash_received' => $tender['cash_received'],
+            'change_amount' => $tender['change_amount'],
             'unique_add' => $uniqueAdd,
             'qris_hold_amount' => $holdAmount,
             'qris_image_path_snapshot' => $qrisSnapshotPath,
