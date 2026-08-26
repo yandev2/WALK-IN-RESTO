@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\MenuItem;
 use App\Models\Modifier;
 use App\Models\Outlet;
+use Illuminate\Support\Collection;
 
 final class CashierOrderPreview
 {
@@ -31,12 +32,41 @@ final class CashierOrderPreview
      */
     public static function estimateFromLines(array $lines, ?Outlet $outlet, string $paymentMethod = 'cash', mixed $cashReceived = null): array
     {
+        $itemIds = [];
+        $modifierIds = [];
+
+        foreach ($lines as $line) {
+            $itemId = (int) ($line['menu_item_id'] ?? 0);
+
+            if ($itemId > 0) {
+                $itemIds[$itemId] = $itemId;
+            }
+
+            foreach ($line['modifier_ids'] ?? [] as $modifierId) {
+                if (filled($modifierId)) {
+                    $modifierIds[(int) $modifierId] = (int) $modifierId;
+                }
+            }
+        }
+
+        $items = $itemIds === []
+            ? collect()
+            : MenuItem::query()->whereIn('id', array_values($itemIds))->get()->keyBy('id');
+
+        $modifiers = $modifierIds === []
+            ? collect()
+            : Modifier::query()
+                ->whereIn('id', array_values($modifierIds))
+                ->where('is_active', true)
+                ->get()
+                ->keyBy('id');
+
         $subtotal = 0;
         $lineCount = 0;
         $totalQty = 0;
 
         foreach ($lines as $line) {
-            $lineTotal = self::lineTotal($line);
+            $lineTotal = self::lineTotal($line, $items, $modifiers);
 
             if ($lineTotal <= 0) {
                 continue;
@@ -69,8 +99,10 @@ final class CashierOrderPreview
 
     /**
      * @param  array{menu_item_id?: int|null, qty?: int|null, modifier_ids?: list<int|string>|null}  $line
+     * @param  Collection<int, MenuItem>|null  $items
+     * @param  Collection<int, Modifier>|null  $modifiers
      */
-    public static function lineTotal(array $line): int
+    public static function lineTotal(array $line, $items = null, $modifiers = null): int
     {
         $itemId = $line['menu_item_id'] ?? null;
         $qty = (int) ($line['qty'] ?? 0);
@@ -79,24 +111,28 @@ final class CashierOrderPreview
             return 0;
         }
 
-        $item = MenuItem::query()->find($itemId);
+        $item = $items?->get((int) $itemId) ?? MenuItem::query()->find($itemId);
 
         if (! $item) {
             return 0;
         }
 
-        $modifierIds = collect($line['modifier_ids'] ?? [])
+        $selectedModifierIds = collect($line['modifier_ids'] ?? [])
             ->filter()
             ->map(fn (mixed $id): int => (int) $id)
-            ->values()
-            ->all();
+            ->values();
 
-        $modifierTotal = $modifierIds === []
-            ? 0
-            : (int) Modifier::query()
-                ->whereIn('id', $modifierIds)
+        if ($selectedModifierIds->isEmpty()) {
+            $modifierTotal = 0;
+        } elseif ($modifiers) {
+            $modifierTotal = (int) $selectedModifierIds
+                ->sum(fn (int $id): int => (int) ($modifiers->get($id)?->price ?? 0));
+        } else {
+            $modifierTotal = (int) Modifier::query()
+                ->whereIn('id', $selectedModifierIds->all())
                 ->where('is_active', true)
                 ->sum('price');
+        }
 
         $unit = (int) $item->effectivePrice() + $modifierTotal;
 

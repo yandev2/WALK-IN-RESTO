@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Support\TableRightClick;
+use App\Models\DiningTable;
 use App\Models\KdsStation;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -20,8 +21,11 @@ use Filament\Schemas\Components\View as SchemaView;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -143,13 +147,6 @@ class KitchenDisplay extends Page implements HasTable
                 ->modifyQueryUsing(fn (Builder $query): Builder => $this->applyStationScope($query, $stationId));
         }
 
-        $tabs['batch'] = Tab::make('Batch')
-            ->badge(fn (): ?string => $this->badgeCount(
-                $this->kdsBaseQuery()->whereIn('kds_status', ['queued', 'preparing']),
-            ))
-            ->badgeColor('warning')
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->whereIn('kds_status', ['queued', 'preparing']));
-
         $tabs['ready'] = Tab::make('Siap antar')
             ->badge(fn (): ?string => $this->badgeCount(
                 $this->kdsBaseQuery()->where('kds_status', 'ready'),
@@ -164,11 +161,90 @@ class KitchenDisplay extends Page implements HasTable
     {
         $table = $table
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
-            ->columns([])
-            ->content(view('filament.pages.kitchen-display'))
+            ->columns([
+                TextColumn::make('order.visit.diningTable.code')
+                    ->label('Meja')
+                    ->badge()
+                    ->placeholder('—'),
+                TextColumn::make('order.number')
+                    ->label('Pesanan')
+                    ->prefix('#')
+                    ->searchable(),
+                TextColumn::make('name_snapshot')
+                    ->label('Item')
+                    ->formatStateUsing(fn (OrderItem $record): string => $record->qty.'× '.$record->displayName())
+                    ->description(fn (OrderItem $record): ?string => filled($record->notes) ? 'Catatan: '.$record->notes : null)
+                    ->wrap()
+                    ->searchable(),
+                TextColumn::make('kds_status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'queued' => 'Antri',
+                        'preparing' => 'Dimasak',
+                        'ready' => 'Siap antar',
+                        'served' => 'Sudah diantar',
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'queued' => 'gray',
+                        'preparing' => 'warning',
+                        'ready' => 'success',
+                        'served' => 'info',
+                        default => 'gray',
+                    }),
+                TextColumn::make('timer')
+                    ->label('Timer')
+                    ->state(fn (OrderItem $record): string => $record->elapsedMinutes().' m')
+                    ->badge()
+                    ->color(fn (OrderItem $record): string => match ($record->timerBand()) {
+                        'green' => 'success',
+                        'yellow' => 'warning',
+                        default => 'danger',
+                    }),
+                TextColumn::make('station.name')
+                    ->label('Stasiun')
+                    ->visible(fn (): bool => ($this->activeTab ?? null) === 'ready'),
+            ])
+            ->filters([
+                SelectFilter::make('table_id')
+                    ->label('Meja')
+                    ->native(false)
+                    ->searchable()
+                    ->options(fn (): array => $this->diningTableOptions())
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (blank($data['value'] ?? null)) {
+                            return $query;
+                        }
+
+                        return $query->whereHas(
+                            'order.visit',
+                            fn (Builder $visit): Builder => $visit->where('table_id', $data['value']),
+                        );
+                    }),
+                SelectFilter::make('kds_status')
+                    ->label('Status')
+                    ->native(false)
+                    ->options([
+                        'queued' => 'Antri',
+                        'preparing' => 'Dimasak',
+                        'ready' => 'Siap antar',
+                        'served' => 'Sudah diantar',
+                    ])
+                    ->visible(fn (): bool => ($this->activeTab ?? null) !== 'ready'),
+            ], FiltersLayout::AboveContent)
+            ->filtersFormColumns(2)
+            ->deferFilters(false)
+            ->persistFiltersInSession()
+            ->persistSearchInSession()
+            ->searchPlaceholder('Cari nomor pesanan atau nama menu')
+            ->recordClasses(fn (OrderItem $record): array => [
+                'kds-row',
+                'kds-row--'.$record->timerBand(),
+            ])
             ->poll('5s')
             ->paginated([25, 50, 100])
-            ->defaultPaginationPageOption(50)
+            ->defaultPaginationPageOption(25)
             ->columnManager(false)
             ->emptyStateIcon(Heroicon::OutlinedFire)
             ->emptyStateHeading('Antrian kosong')
@@ -178,9 +254,9 @@ class KitchenDisplay extends Page implements HasTable
         return TableRightClick::apply($table, fn (): array => [
             Action::make('advance')
                 ->label(fn (OrderItem $record): string => match ($record->kds_status) {
-                    'queued' => 'Masak',
-                    'preparing' => 'Siap',
-                    'ready' => 'Diantar',
+                    'queued' => 'Mulai masak',
+                    'preparing' => 'Tandai siap',
+                    'ready' => 'Tandai diantar',
                     default => 'Lanjut',
                 })
                 ->button()
@@ -275,6 +351,18 @@ class KitchenDisplay extends Page implements HasTable
         return OrderItem::query()
             ->where('restaurant_id', Filament::getTenant()?->getKey())
             ->whereHas('order', fn (Builder $order) => $order->whereIn('status', Order::ACCEPTED_STATUSES));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function diningTableOptions(): array
+    {
+        return DiningTable::query()
+            ->where('restaurant_id', Filament::getTenant()?->getKey())
+            ->orderBy('code')
+            ->pluck('code', 'id')
+            ->all();
     }
 
     private function applyStationScope(Builder $query, int $stationId): Builder

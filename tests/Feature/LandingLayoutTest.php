@@ -173,4 +173,37 @@ class LandingLayoutTest extends TestCase
             ->assertSee('landing-testimonial-slide', false)
             ->assertSee('landing-testimonial-track', false);
     }
+
+    public function test_gallery_images_open_shared_image_preview_modal(): void
+    {
+        $world = $this->createGuestRestaurant();
+
+        CmsGalleryImage::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'image_path' => 'https://example.com/galeri-1.jpg',
+            'caption' => 'Meja depan',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        CmsGalleryImage::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'image_path' => 'https://example.com/galeri-2.jpg',
+            'caption' => 'Dapur terbuka',
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+
+        $this->get(route('landing.show', $world['restaurant']))
+            ->assertOk()
+            ->assertSee('id="galeri"', false)
+            ->assertSee('imagePreview', false)
+            ->assertSee('window.imagePreview', false)
+            ->assertSee('openPreview(0)', false)
+            ->assertSee('openPreview(1)', false)
+            ->assertSee('image-preview-modal', false)
+            ->assertSee('aria-modal="true"', false)
+            ->assertSee('Meja depan', false)
+            ->assertSee('https://example.com/galeri-1.jpg', false);
+    }
 }

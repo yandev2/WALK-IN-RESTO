@@ -7,6 +7,8 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CashierOrderService;
+use App\Support\CashierOrderPreview;
+use App\Support\CmsMedia;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -125,6 +127,55 @@ class CashierFilamentActionsTest extends TestCase
             'menu_item_id' => $other->id,
             'qty' => 2,
         ]);
+    }
+
+    public function test_cashier_order_totals_update_when_repeater_line_is_deleted(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        $other = $this->extraMenuItem($world, 'Kentang Goreng', 15000);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $twoLines = [
+            ['menu_item_id' => $world['item']->id, 'qty' => 1],
+            ['menu_item_id' => $other->id, 'qty' => 2],
+        ];
+        $oneLine = [
+            ['menu_item_id' => $world['item']->id, 'qty' => 1],
+        ];
+
+        $totalForTwo = CmsMedia::formatIdr(
+            CashierOrderPreview::estimateFromLines($twoLines, $world['outlet'], 'cash')['grand_payable'],
+        );
+        $totalForOne = CmsMedia::formatIdr(
+            CashierOrderPreview::estimateFromLines($oneLine, $world['outlet'], 'cash')['grand_payable'],
+        );
+
+        $page = Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'payment_method' => 'cash',
+                'lines' => $twoLines,
+            ])
+            ->assertSee($totalForTwo)
+            ->assertSee('2 baris');
+
+        $itemKey = array_key_last($page->instance()->data['lines'] ?? []);
+
+        $page->callFormComponentAction('lines', 'delete', [], ['item' => $itemKey]);
+
+        $this->assertCount(1, $page->instance()->data['lines'] ?? []);
+        $this->assertNotSame($totalForTwo, $totalForOne);
+
+        $partialHtml = implode("\n", invade($page)->lastState->getEffects()['partials'] ?? []);
+
+        $this->assertStringContainsString($totalForOne, $partialHtml);
+        $this->assertStringContainsString('1 baris', $partialHtml);
     }
 
     public function test_cashier_order_can_be_created_without_whatsapp(): void

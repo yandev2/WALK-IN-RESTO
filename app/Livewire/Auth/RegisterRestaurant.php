@@ -10,6 +10,7 @@ use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Services\RestaurantProvisioner;
 use App\Services\SubscriptionPlanSync;
+use App\Support\AuthGlass;
 use App\Support\ReservedSlugs;
 use App\Support\RestaurantTheme;
 use Illuminate\Support\Facades\Auth;
@@ -150,6 +151,8 @@ class RegisterRestaurant extends Component
                 ->get(),
             'theme' => RestaurantTheme::for(null),
             'trialDays' => PlatformSetting::trialDays(),
+            'home' => PlatformSetting::homeViewData(),
+            'cssVariables' => AuthGlass::cssVariables(),
         ]);
     }
 

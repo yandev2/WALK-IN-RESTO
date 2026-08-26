@@ -12,11 +12,17 @@
     $instagramLabel = filled($home['footer_instagram'] ?? null) && ! str_starts_with((string) $home['footer_instagram'], 'http')
         ? '@'.ltrim((string) $home['footer_instagram'], '@/')
         : 'Instagram';
+    $asideCount = 1 + (int) $hasContact + (int) ($hasSocial || $hasLegal);
+    $asideColClass = [
+        'lg:col-span-6' => $asideCount <= 1,
+        'lg:col-span-3' => $asideCount === 2,
+        'lg:col-span-2' => $asideCount >= 3,
+    ];
 @endphp
 
 <footer class="directory-footer mt-auto border-t border-border-subtle bg-surface-muted/70">
-    <div class="landing-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="sm:col-span-2 lg:col-span-1">
+    <div class="landing-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-16">
+        <div class="min-w-0 sm:col-span-2 lg:col-span-6 lg:pr-4">
             <a href="{{ route('home') }}" class="inline-flex min-w-0 items-center gap-2.5">
                 @if (filled($home['logo_url'] ?? null))
                     <img
@@ -34,11 +40,11 @@
                 @endif
             </a>
             @if (filled($home['footer_about'] ?? null))
-                <p class="mt-4 max-w-xs text-sm leading-relaxed text-muted">{{ $home['footer_about'] }}</p>
+                <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted">{{ $home['footer_about'] }}</p>
             @endif
         </div>
 
-        <div>
+        <div @class($asideColClass)>
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Jelajah</p>
             <ul class="mt-4 space-y-2.5 text-sm text-muted">
                 <li>
@@ -51,7 +57,7 @@
         </div>
 
         @if ($hasContact)
-            <div>
+            <div @class($asideColClass)>
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Kontak</p>
                 <ul class="mt-4 space-y-2.5 text-sm leading-relaxed text-muted">
                     @if (filled($home['footer_email'] ?? null))
@@ -78,7 +84,7 @@
         @endif
 
         @if ($hasSocial || $hasLegal)
-            <div>
+            <div @class($asideColClass)>
                 @if ($hasSocial)
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Ikuti kami</p>
                     <ul class="mt-4 space-y-2.5 text-sm text-muted">

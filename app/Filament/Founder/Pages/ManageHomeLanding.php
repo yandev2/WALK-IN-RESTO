@@ -55,6 +55,7 @@ class ManageHomeLanding extends Page
             'primary_color',
             'site_name',
             'logo_path',
+            'auth_background_path',
             'hero_eyebrow',
             'hero_title',
             'hero_highlight',
@@ -92,6 +93,18 @@ class ManageHomeLanding extends Page
                             ->label('Primary')
                             ->hex()
                             ->required(),
+                        FileUpload::make('auth_background_path')
+                            ->label('Gambar latar login')
+                            ->helperText('Latar penuh untuk login Admin, login Founder, dan daftar restoran. Kosongkan untuk memakai gradient bawaan.')
+                            ->image()
+                            ->imageEditor()
+                            ->imagePreviewHeight('140')
+                            ->panelLayout('compact')
+                            ->directory('platform/auth')
+                            ->disk('public')
+                            ->maxSize(2048)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->columnSpanFull(),
                     ]),
                 Section::make('Identitas & CTA')
                     ->icon(Heroicon::OutlinedBuildingStorefront)
@@ -163,7 +176,7 @@ class ManageHomeLanding extends Page
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
                     ]),
                 Section::make('Footer')
-                    ->description('Tampil di bagian bawah home dan halaman daftar restoran. Kosongkan field opsional untuk menyembunyikannya.')
+                    ->description('Tampil di bagian bawah home. Kosongkan field opsional untuk menyembunyikannya.')
                     ->icon(Heroicon::OutlinedNewspaper)
                     ->columns(2)
                     ->schema([

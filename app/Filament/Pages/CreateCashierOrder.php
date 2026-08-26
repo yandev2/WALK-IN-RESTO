@@ -4,13 +4,11 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
 use App\Models\DiningTable;
-use App\Models\MenuItem;
-use App\Models\Modifier;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CashierOrderService;
+use App\Support\CashierMenuCatalog;
 use App\Support\CashierOrderPreview;
-use App\Support\CmsMedia;
 use App\Support\IdrAmount;
 use App\Support\SubscriptionAccess;
 use App\Support\TenantContext;
@@ -35,7 +33,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\ValidationException;
 
 class CreateCashierOrder extends Page
@@ -90,7 +87,7 @@ class CreateCashierOrder extends Page
                 Section::make('Tamu')
                     ->description('Data meja dan tamu untuk visit baru.')
                     ->icon(Heroicon::OutlinedUser)
-                    ->columns(2)
+                    ->columns(4)
                     ->schema([
                         Select::make('table_id')
                             ->label('Meja')
@@ -156,25 +153,17 @@ class CreateCashierOrder extends Page
                             ->description('Tambah satu atau lebih item ke pesanan.')
                             ->icon(Heroicon::OutlinedShoppingBag)
                             ->schema([
+                                View::make('filament.components.menu-item-select-styles'),
                                 Repeater::make('lines')
                                     ->hiddenLabel()
                                     ->schema([
                                         Select::make('menu_item_id')
                                             ->label('Menu')
-                                            ->options(fn (): array => self::menuItemSelectOptions())
-                                            ->getOptionLabelUsing(function (mixed $value): ?string {
-                                                if (blank($value)) {
-                                                    return null;
-                                                }
-
-                                                $item = MenuItem::query()->find($value);
-
-                                                if (! $item instanceof MenuItem) {
-                                                    return null;
-                                                }
-
-                                                return $item->name.' — '.CmsMedia::formatIdr($item->effectivePrice());
-                                            })
+                                            ->options(fn (): array => CashierMenuCatalog::selectOptions(TenantContext::restaurantId()))
+                                            ->getOptionLabelUsing(fn (mixed $value): ?string => CashierMenuCatalog::optionLabel(
+                                                TenantContext::restaurantId(),
+                                                $value,
+                                            ))
                                             ->required()
                                             ->searchable()
                                             ->preload()
@@ -195,30 +184,7 @@ class CreateCashierOrder extends Page
                                         Select::make('modifier_ids')
                                             ->label('Extra')
                                             ->multiple()
-                                            ->options(function (Get $get): array {
-                                                $itemId = $get('menu_item_id');
-
-                                                if (! $itemId) {
-                                                    return [];
-                                                }
-
-                                                return Modifier::query()
-                                                    ->where('is_active', true)
-                                                    ->whereHas(
-                                                        'group.menuItems',
-                                                        fn ($query) => $query->whereKey($itemId),
-                                                    )
-                                                    ->orderBy('sort_order')
-                                                    ->get()
-                                                    ->mapWithKeys(fn (Modifier $modifier): array => [
-                                                        $modifier->id => $modifier->name.(
-                                                            $modifier->price
-                                                                ? ' (+'.CmsMedia::formatIdr((int) $modifier->price).')'
-                                                                : ''
-                                                        ),
-                                                    ])
-                                                    ->all();
-                                            })
+                                            ->options(fn (Get $get): array => CashierMenuCatalog::modifierSelectOptions($get('menu_item_id')))
                                             ->native(false)
                                             ->live()
                                             ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
@@ -232,10 +198,12 @@ class CreateCashierOrder extends Page
                                     ->required()
                                     ->columnSpanFull()
                                     ->collapsible()
-                                    ->itemLabel(fn (array $state): string => filled($state['menu_item_id'] ?? null)
-                                        ? (MenuItem::query()->find($state['menu_item_id'])?->name ?? 'Item')
-                                        : 'Item baru')
-                                    ->addActionLabel('Tambah item'),
+                                    ->itemLabel(fn (array $state): string => CashierMenuCatalog::itemName(
+                                        TenantContext::restaurantId(),
+                                        $state['menu_item_id'] ?? null,
+                                    ))
+                                    ->addActionLabel('Tambah item')
+                                    ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
                             ]),
 
                         Section::make('Ringkasan pembayaran')
@@ -332,34 +300,5 @@ class CreateCashierOrder extends Page
                         ]),
                     ]),
             ]);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    protected static function menuItemSelectOptions(): array
-    {
-        return self::availableMenuItems()
-            ->mapWithKeys(fn (MenuItem $item): array => [
-                $item->id => view('filament.components.menu-item-select-option', [
-                    'item' => $item,
-                ])->render(),
-            ])
-            ->all();
-    }
-
-    /**
-     * @return Collection<int, MenuItem>
-     */
-    protected static function availableMenuItems(): Collection
-    {
-        return MenuItem::query()
-            ->where('restaurant_id', TenantContext::restaurantId())
-            ->where('is_active', true)
-            ->where('is_out_of_stock', false)
-            ->whereNotNull('station_id')
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get();
     }
 }

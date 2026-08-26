@@ -76,6 +76,8 @@ class RegisterRestaurantTest extends TestCase
 
         Livewire::test(RegisterRestaurant::class)
             ->assertSee('Uji coba 14 hari', false)
+            ->assertSee('auth-glass-page', false)
+            ->assertSee('Sudah punya akun?', false)
             ->set('name', 'Owner Trial')
             ->set('email', 'owner.trial@example.com')
             ->set('password', 'password12')
@@ -105,6 +107,7 @@ class RegisterRestaurantTest extends TestCase
             ->assertSet('step', 3)
             ->assertSet('plan_code', PlanCode::LandingOnly->value)
             ->assertSee('Landing Page Only', false)
+            ->assertSee('auth-glass-plan', false)
             ->call('selectPlan', PlanCode::ManagementKds->value)
             ->assertSet('plan_code', PlanCode::ManagementKds->value);
     }

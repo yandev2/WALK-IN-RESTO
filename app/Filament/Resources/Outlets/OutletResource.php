@@ -7,6 +7,7 @@ use App\Filament\Resources\Outlets\Pages\ManageOutlet;
 use App\Models\Outlet;
 use App\Support\SubscriptionAccess;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -185,7 +186,14 @@ class OutletResource extends Resource
                 Section::make('Pajak & antrian kasir')
                     ->description('Persentase pajak/service dan batas waktu antrian tamu.')
                     ->icon(Heroicon::OutlinedReceiptPercent)
-                    ->columns(2)
+                    ->columns([
+                        'default' => 2,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 2,
+                        'xl' => 5,
+                        '2xl' => 5,
+                    ])
                     ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
                     ->schema([
                         TextInput::make('pb1_pct')
@@ -207,15 +215,27 @@ class OutletResource extends Resource
                             ->default('exclusive')
                             ->helperText('Saat ini hanya exclusive.'),
                         TextInput::make('claim_ttl_minutes')
-                            ->label('TTL klaim meja (menit)')
+                            ->label('TTL klaim meja')
                             ->numeric()
                             ->default(10)
-                            ->required(),
+                            ->suffix('Menit')
+                            ->required()
+                            ->hintAction(self::ttlHintAction(
+                                'claimTtlHelp',
+                                'TTL klaim meja',
+                                'Batas waktu setelah tamu scan QR dan mengunci meja. Jika belum checkout sampai waktu habis, sesi ditutup dan meja otomatis kosong. Tidak berlaku jika sudah ada pesanan menunggu kasir atau sudah lunas (tamu sedang makan).',
+                            )),
                         TextInput::make('awaiting_cashier_ttl_minutes')
-                            ->label('TTL antrian kasir (menit)')
+                            ->label('TTL antrian kasir')
                             ->numeric()
                             ->default(20)
-                            ->required(),
+                            ->suffix('Menit')
+                            ->required()
+                            ->hintAction(self::ttlHintAction(
+                                'awaitingCashierTtlHelp',
+                                'TTL antrian kasir',
+                                'Batas waktu pesanan menunggu kasir menekan Terima atau Tolak. Jika kasir tidak merespons sampai waktu habis, pesanan dibatalkan otomatis dan digit unik QRIS dilepas. Dapur tidak masak sebelum lunas.',
+                            )),
                         Toggle::make('auto_print_receipt')
                             ->label('Cetak struk otomatis setelah terima bayar')
                             ->helperText('Membuka PDF struk yang sama (80mm) di dialog cetak browser. Matikan jika kasir ingin cetak manual.')
@@ -223,6 +243,19 @@ class OutletResource extends Resource
                             ->columnSpanFull(),
                     ]),
             ]);
+    }
+
+    private static function ttlHintAction(string $name, string $heading, string $description): Action
+    {
+        return Action::make($name)
+            ->icon(Heroicon::OutlinedQuestionMarkCircle)
+            ->iconButton()
+            ->color('gray')
+            ->label($heading)
+            ->modalHeading($heading)
+            ->modalDescription($description)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Tutup');
     }
 
     public static function getPages(): array

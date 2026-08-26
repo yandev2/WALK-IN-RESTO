@@ -17,51 +17,58 @@
     if ($gallery->isEmpty() && filled($photo)) {
         $gallery = collect([$photo]);
     }
+
+    $previewImages = $gallery
+        ->map(fn ($src) => [
+            'src' => $src,
+            'caption' => (string) $name,
+        ])
+        ->all();
 @endphp
 
-<article {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col overflow-hidden text-left']) }}>
+<article
+    {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col overflow-hidden text-left']) }}
+    @if ($gallery->isNotEmpty())
+        x-data="imagePreview(@js($previewImages))"
+    @endif
+>
     <div
         @class([
             'relative shrink-0 overflow-hidden bg-surface-muted',
             'mx-auto mt-5 h-28 w-28 rounded-full' => $circular,
             'aspect-[4/3] w-full' => ! $circular,
         ])
-        @if ($gallery->count() > 1)
-            x-data="{ index: 0, total: {{ $gallery->count() }} }"
-        @endif
     >
         @if ($gallery->isNotEmpty())
             @foreach ($gallery as $galleryIndex => $galleryPhoto)
-                <img
-                    src="{{ $galleryPhoto }}"
-                    alt=""
+                <button
+                    type="button"
                     @class([
-                        'object-cover landing-interactive group-hover:scale-105',
-                        'absolute inset-0 h-full w-full rounded-full' => $circular,
-                        'absolute inset-0 h-full w-full' => ! $circular,
+                        'absolute inset-0 cursor-zoom-in',
+                        'rounded-full' => $circular,
                     ])
                     @if ($gallery->count() > 1)
+                        @if ($galleryIndex > 0)
+                            x-cloak
+                        @endif
                         x-show="index === {{ $galleryIndex }}"
                         x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0"
                         x-transition:enter-end="opacity-100"
                     @endif
+                    aria-label="Perbesar foto {{ $name }}"
+                    @click="openPreview({{ $galleryIndex }})"
                 >
+                    <img
+                        src="{{ $galleryPhoto }}"
+                        alt=""
+                        @class([
+                            'h-full w-full object-cover landing-interactive group-hover:scale-105',
+                            'rounded-full' => $circular,
+                        ])
+                    >
+                </button>
             @endforeach
-
-            @if ($gallery->count() > 1)
-                <div class="absolute inset-x-0 bottom-2 flex justify-center gap-1.5">
-                    @foreach ($gallery as $galleryIndex => $galleryPhoto)
-                        <button
-                            type="button"
-                            @click="index = {{ $galleryIndex }}"
-                            :class="index === {{ $galleryIndex }} ? 'bg-white' : 'bg-white/50'"
-                            class="h-1.5 w-1.5 rounded-full"
-                            aria-label="Foto {{ $galleryIndex + 1 }}"
-                        ></button>
-                    @endforeach
-                </div>
-            @endif
         @else
             <div class="flex h-full min-h-[8rem] items-center justify-center text-muted/40">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -71,7 +78,23 @@
         @endif
 
         @if ($discountPercent)
-            <span class="absolute left-3 top-3 customer-pill bg-red-500 text-white shadow-sm">-{{ $discountPercent }}%</span>
+            <span class="pointer-events-none absolute left-3 top-3 z-10 customer-pill bg-red-500 text-white shadow-sm">-{{ $discountPercent }}%</span>
+        @endif
+
+        @if ($gallery->count() > 1)
+            <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                @foreach ($gallery as $thumbIndex => $thumbPhoto)
+                    <button
+                        type="button"
+                        class="h-9 w-9 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition sm:h-10 sm:w-10"
+                        :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : ''"
+                        aria-label="Foto {{ $thumbIndex + 1 }}"
+                        @click.stop="openPreview({{ $thumbIndex }})"
+                    >
+                        <img src="{{ $thumbPhoto }}" alt="" class="h-full w-full object-cover">
+                    </button>
+                @endforeach
+            </div>
         @endif
     </div>
 
@@ -109,4 +132,8 @@
             <div class="mt-4">{{ $slot }}</div>
         @endif
     </div>
+
+    @if ($gallery->isNotEmpty())
+        <x-customer.image-preview-modal />
+    @endif
 </article>

@@ -91,6 +91,10 @@ class PlatformSettingTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('directory-footer', false)
+            ->assertSee('lg:grid-cols-12', false)
+            ->assertSee('lg:col-span-6', false)
+            ->assertSee('lg:col-span-3', false)
+            ->assertSee('max-w-xl', false)
             ->assertSee((string) config('subscription.contact_email'), false)
             ->assertSee("© {$year} RestoTerdekat. Semua hak dilindungi.", false)
             ->assertSee('RestoTerdekat membantu tamu menemukan restoran terdekat', false);
@@ -113,6 +117,7 @@ class PlatformSettingTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Tentang RestoKita dari Founder.', false)
+            ->assertSee('lg:col-span-2', false)
             ->assertSee('halo@restokita.id', false)
             ->assertSee('081234567890', false)
             ->assertSee('https://wa.me/6281234567890', false)

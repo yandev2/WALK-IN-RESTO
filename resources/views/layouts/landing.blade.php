@@ -21,6 +21,7 @@
             @yield('body')
         @endisset
         @stack('scripts')
+        @include('partials.customer.image-preview-alpine')
         @livewireScripts
     </body>
 </html>

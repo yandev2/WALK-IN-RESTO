@@ -8,6 +8,7 @@ use App\Filament\Profile\EditProfile;
 use App\Filament\Resources\RestaurantCategories\RestaurantCategoryResource;
 use App\Http\Middleware\ApplyPlatformBrandTheme;
 use App\Models\User;
+use App\Support\AuthGlass;
 use App\Support\RestaurantTheme;
 use Bityukov\CommandCenter\Filament\CommandCenterPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -18,12 +19,14 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Zvizvi\FilamentNotificationsTabs\FilamentNotificationsTabsPlugin;
 
@@ -68,6 +71,10 @@ class FounderPanelProvider extends PanelProvider
                 FilamentNotificationsTabsPlugin::make()
                     ->confirmDelete(),
             ])
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): HtmlString => AuthGlass::headHtml(includeVite: true),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

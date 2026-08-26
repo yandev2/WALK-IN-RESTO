@@ -3,12 +3,16 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\KitchenDisplay;
-use App\Models\Order;
+use App\Models\DiningTable;
+use App\Models\MenuItem;
+use App\Models\Outlet;
+use App\Models\Restaurant;
 use App\Models\User;
-use App\Services\OrderPaymentService;
+use App\Support\TableQrToken;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -31,16 +35,18 @@ class KitchenDisplayPageTest extends TestCase
 
         Livewire::test(KitchenDisplay::class)
             ->assertOk()
-            ->assertSee('Batch')
             ->assertSee('Siap antar')
-            ->assertSee('Timer dari kasir terima')
-            ->assertSee('Antrian kosong');
+            ->assertSee('Meja')
+            ->assertSee('Pesanan')
+            ->assertSee('Cari nomor pesanan atau nama menu')
+            ->assertSee('Antrian kosong')
+            ->assertDontSee('Batch');
     }
 
     public function test_kitchen_page_renders_queued_items_after_cashier_confirm(): void
     {
         [$user, $restaurant, $world] = $this->kitchenUser();
-        $this->paidOrder($world);
+        $this->paidGuestOrder($world, 'kds-page-order-1');
 
         $this->actingAs($user);
 
@@ -54,8 +60,42 @@ class KitchenDisplayPageTest extends TestCase
             ->assertDontSee('Antrian kosong');
     }
 
+    public function test_kitchen_page_can_search_order_number_and_filter_by_table(): void
+    {
+        $this->withoutMiddleware(ThrottleRequests::class);
+
+        [$user, $restaurant, $world] = $this->kitchenUser();
+
+        $orderA = $this->paidGuestOrder($world, 'kds-page-order-a');
+
+        $worldB = $world;
+        $worldB['token'] = TableQrToken::make($world['otherTable']);
+        $orderB = $this->paidGuestOrder($worldB, 'kds-page-order-b');
+
+        $itemA = $orderA->items()->firstOrFail();
+        $itemB = $orderB->items()->firstOrFail();
+
+        $this->actingAs($user);
+
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        $page = Livewire::test(KitchenDisplay::class)
+            ->assertOk()
+            ->assertCanSeeTableRecords([$itemA, $itemB]);
+
+        $page->searchTable((string) $orderA->number)
+            ->assertCanSeeTableRecords([$itemA])
+            ->assertCanNotSeeTableRecords([$itemB]);
+
+        $page->searchTable(null)
+            ->filterTable('table_id', $world['table']->id)
+            ->assertCanSeeTableRecords([$itemA])
+            ->assertCanNotSeeTableRecords([$itemB]);
+    }
+
     /**
-     * @return array{0: User, 1: \App\Models\Restaurant, 2: array{restaurant: \App\Models\Restaurant, outlet: \App\Models\Outlet, table: \App\Models\DiningTable, item: \App\Models\MenuItem, token: string}}
+     * @return array{0: User, 1: Restaurant, 2: array{restaurant: Restaurant, outlet: Outlet, table: DiningTable, otherTable: DiningTable, item: MenuItem, token: string}}
      */
     private function kitchenUser(): array
     {
@@ -80,39 +120,5 @@ class KitchenDisplayPageTest extends TestCase
         $user->assignRole($role);
 
         return [$user, $restaurant, $world];
-    }
-
-    /**
-     * @param  array{restaurant: \App\Models\Restaurant, item: \App\Models\MenuItem, token: string}  $world
-     */
-    private function paidOrder(array $world): Order
-    {
-        $device = $this->newDeviceToken();
-        $headers = $this->deviceHeaders($device);
-
-        $this->withHeaders($headers)
-            ->postJson('/api/v1/guest/tables/'.$world['token'].'/claim', [
-                'customer_wa' => '081234567890',
-            ])
-            ->assertCreated();
-
-        $this->withHeaders($headers)
-            ->postJson('/api/v1/guest/cart/items', [
-                'menu_item_id' => $world['item']->id,
-            ])
-            ->assertCreated();
-
-        $publicId = $this->withHeaders($headers)
-            ->postJson('/api/v1/guest/checkout', [
-                'method' => 'qris',
-                'idempotency_key' => 'kds-page-order-1',
-            ])
-            ->assertCreated()
-            ->json('data.public_id');
-
-        $order = Order::query()->where('public_id', $publicId)->firstOrFail();
-        app(OrderPaymentService::class)->approve($order, User::factory()->create());
-
-        return $order->fresh(['items']);
     }
 }

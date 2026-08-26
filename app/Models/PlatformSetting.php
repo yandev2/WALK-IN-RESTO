@@ -22,6 +22,7 @@ class PlatformSetting extends Model
         'primary_color',
         'site_name',
         'logo_path',
+        'auth_background_path',
         'hero_eyebrow',
         'hero_title',
         'hero_highlight',
@@ -75,6 +76,7 @@ class PlatformSetting extends Model
             'primary_color' => RestaurantTheme::DEFAULT_PRIMARY,
             'site_name' => 'RestoTerdekat',
             'logo_path' => null,
+            'auth_background_path' => null,
             'hero_eyebrow' => 'Walk-in',
             'hero_title' => 'Temukan restoran terdekat & terbaik',
             'hero_highlight' => 'terdekat',
@@ -172,6 +174,7 @@ class PlatformSetting extends Model
 
         $data['hero_image_url'] = CmsMedia::url($row?->hero_image_path);
         $data['logo_url'] = CmsMedia::url($row?->logo_path);
+        $data['auth_background_url'] = CmsMedia::url($row?->auth_background_path);
 
         $siteName = (string) ($data['site_name'] ?? '');
         foreach (['footer_about', 'footer_copyright'] as $tokenField) {
@@ -243,6 +246,6 @@ class PlatformSetting extends Model
      */
     protected function storedFileAttributes(): array
     {
-        return ['hero_image_path', 'logo_path', 'qr_image_path'];
+        return ['hero_image_path', 'logo_path', 'qr_image_path', 'auth_background_path'];
     }
 }

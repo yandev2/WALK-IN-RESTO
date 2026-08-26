@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToRestaurantAndOutlet;
 use App\Models\Concerns\PurgesPublicDiskFiles;
+use App\Support\CashierMenuCatalog;
 use App\Support\CmsMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +18,9 @@ use Spatie\Activitylog\Support\LogOptions;
 class MenuItem extends Model
 {
     use BelongsToRestaurantAndOutlet;
+    use LogsActivity;
     use PurgesPublicDiskFiles;
     use SoftDeletes;
-    use LogsActivity;
 
     protected $fillable = [
         'restaurant_id',
@@ -63,6 +64,13 @@ class MenuItem extends Model
 
     protected static function booted(): void
     {
+        $forgetCatalog = function (self $item): void {
+            CashierMenuCatalog::forget((int) $item->restaurant_id);
+        };
+
+        static::saved($forgetCatalog);
+        static::deleted($forgetCatalog);
+        static::restored($forgetCatalog);
         static::forceDeleting(function (self $item): void {
             $item->photos()->each(fn (MenuItemPhoto $photo) => $photo->delete());
         });
