@@ -249,6 +249,143 @@ class CashierFilamentActionsTest extends TestCase
         $this->assertSame(20000 - (int) $order->grand_payable, (int) $payment->change_amount);
     }
 
+    public function test_cashier_order_defaults_to_form_ui_with_grid_toggle(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->assertOk()
+            ->assertSet('cashierUi', 'form')
+            ->assertActionVisible('toggleCashierUi')
+            ->assertSee('Tambah item')
+            ->assertDontSee('Semua menu');
+    }
+
+    public function test_cashier_order_can_switch_to_grid_and_merge_qty(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $page = Livewire::test(CreateCashierOrder::class)
+            ->callAction('toggleCashierUi')
+            ->assertSet('cashierUi', 'pos')
+            ->assertSee('Semua menu')
+            ->assertDontSee('Tambah item')
+            ->call('addPosItem', $world['item']->id)
+            ->call('addPosItem', $world['item']->id);
+
+        $lines = array_values($page->instance()->data['lines'] ?? []);
+
+        $this->assertCount(1, $lines);
+        $this->assertSame($world['item']->id, (int) $lines[0]['menu_item_id']);
+        $this->assertSame(2, (int) $lines[0]['qty']);
+    }
+
+    public function test_cashier_order_grid_can_create_without_whatsapp(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->callAction('toggleCashierUi')
+            ->set('data.table_id', $world['table']->id)
+            ->set('data.customer_name', 'Walk-in')
+            ->set('data.payment_method', 'cash')
+            ->set('data.send_receipt', false)
+            ->set('data.cash_received', '20000')
+            ->call('addPosItem', $world['item']->id)
+            ->call('create')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('visits', [
+            'table_id' => $world['table']->id,
+            'customer_name' => 'Walk-in',
+            'customer_wa' => null,
+        ]);
+        $this->assertDatabaseHas('order_items', [
+            'menu_item_id' => $world['item']->id,
+            'qty' => 1,
+        ]);
+    }
+
+    public function test_cashier_order_ui_roundtrip_keeps_selected_menu(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $page = Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'payment_method' => 'cash',
+                'lines' => [
+                    [
+                        'menu_item_id' => $world['item']->id,
+                        'qty' => 1,
+                    ],
+                ],
+            ])
+            ->callAction('toggleCashierUi')
+            ->assertSet('cashierUi', 'pos')
+            ->assertSee('Es Teh')
+            ->callAction('toggleCashierUi')
+            ->assertSet('cashierUi', 'form')
+            ->assertSee('Tambah item');
+
+        $lines = array_values($page->instance()->data['lines'] ?? []);
+        $this->assertSame($world['item']->id, (int) ($lines[0]['menu_item_id'] ?? 0));
+
+        $page->callFormComponentAction('lines', 'add');
+        $this->assertCount(2, $page->instance()->data['lines'] ?? []);
+    }
+
+    public function test_cashier_order_grid_ui_persists_in_session(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->callAction('toggleCashierUi')
+            ->assertSet('cashierUi', 'pos');
+
+        $this->assertSame('pos', session('cashier_order_ui'));
+
+        Livewire::test(CreateCashierOrder::class)
+            ->assertSet('cashierUi', 'pos')
+            ->assertSee('Semua menu')
+            ->assertDontSee('Tambah item');
+    }
+
     /**
      * @param  list<string>  $permissions
      */

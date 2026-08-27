@@ -70,4 +70,45 @@ class CashierMenuCatalogTest extends TestCase
         $this->assertSame('Es Teh', CashierMenuCatalog::itemName($restaurantId, $world['item']->id));
         $this->assertSame('Item baru', CashierMenuCatalog::itemName($restaurantId, null));
     }
+
+    public function test_pos_payload_is_cached_separately_and_forgotten_with_menu(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $restaurantId = $world['restaurant']->id;
+
+        Cache::flush();
+        CashierMenuCatalog::forget($restaurantId);
+
+        $payload = CashierMenuCatalog::posPayload($restaurantId);
+        $item = collect($payload)->firstWhere('id', $world['item']->id);
+
+        $this->assertNotNull($item);
+        $this->assertSame('Es Teh', $item['name']);
+        $this->assertArrayHasKey('category_id', $item);
+        $this->assertArrayHasKey('photo_url', $item);
+        $this->assertArrayHasKey('has_modifiers', $item);
+        $this->assertArrayHasKey('modifiers', $item);
+        $this->assertTrue(Cache::has(CashierMenuCatalog::posKey($restaurantId)));
+        $this->assertFalse(Cache::has(CashierMenuCatalog::itemsKey($restaurantId)));
+
+        CashierMenuCatalog::selectOptions($restaurantId);
+        $this->assertTrue(Cache::has(CashierMenuCatalog::itemsKey($restaurantId)));
+        $this->assertTrue(Cache::has(CashierMenuCatalog::optionsKey($restaurantId)));
+        $this->assertTrue(Cache::has(CashierMenuCatalog::posKey($restaurantId)));
+
+        $categories = CashierMenuCatalog::categories($restaurantId);
+        $this->assertContains('Minuman', array_column($categories, 'name'));
+        $this->assertTrue(Cache::has(CashierMenuCatalog::categoriesKey($restaurantId)));
+
+        $item = $world['item']->fresh();
+        $item->name = 'Es Teh Grid';
+        $item->save();
+
+        $this->assertFalse(Cache::has(CashierMenuCatalog::posKey($restaurantId)));
+        $this->assertFalse(Cache::has(CashierMenuCatalog::itemsKey($restaurantId)));
+        $this->assertFalse(Cache::has(CashierMenuCatalog::categoriesKey($restaurantId)));
+
+        $fresh = collect(CashierMenuCatalog::posPayload($restaurantId))->firstWhere('id', $world['item']->id);
+        $this->assertSame('Es Teh Grid', $fresh['name']);
+    }
 }

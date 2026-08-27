@@ -138,9 +138,7 @@
                     Isi nominal uang dari tamu. Kembalian dihitung otomatis.
                 </p>
 
-                <p x-show="parsed() === null" class="text-sm text-gray-500 dark:text-gray-400">
-                    Isi uang diterima untuk menghitung kembalian.
-                </p>
+             
                 <div x-show="parsed() !== null && short()" class="flex items-baseline justify-between gap-3 text-sm">
                     <span class="text-danger-600 dark:text-danger-400">Kembalian</span>
                     <span class="font-bold tabular-nums text-danger-600 dark:text-danger-400" x-text="'Kurang ' + format(Math.abs(change()))"></span>

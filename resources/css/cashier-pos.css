@@ -1,0 +1,724 @@
+.cashier-pos-app [x-cloak] {
+    display: none !important;
+}
+
+.cashier-pos {
+    display: grid;
+    gap: 1.25rem;
+    color: rgb(15 23 42);
+}
+
+@media (min-width: 1024px) {
+    .cashier-pos {
+        grid-template-columns: minmax(0, 1.7fr) minmax(20rem, 0.9fr);
+        align-items: start;
+    }
+}
+
+.dark .cashier-pos {
+    color: rgb(226 232 240);
+}
+
+.cashier-pos-catalog,
+.cashier-pos-summary {
+    min-width: 0;
+}
+
+.cashier-pos-summary {
+    border-radius: 1.25rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    box-shadow: 0 18px 40px -28px rgb(15 23 42 / 0.45);
+    padding: 1.15rem 1.2rem 1.2rem;
+}
+
+.dark .cashier-pos-summary {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+    box-shadow: 0 18px 40px -28px rgb(0 0 0 / 0.7);
+}
+
+.cashier-pos-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.cashier-pos-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.cashier-pos-search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+}
+
+.cashier-pos-search {
+    flex: 1;
+    min-width: 0;
+    border-radius: 9999px;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    padding: 0.55rem 0.95rem;
+    font-size: 0.875rem;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.cashier-pos-search::-webkit-search-cancel-button,
+.cashier-pos-search::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.dark .cashier-pos-search {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+    color: rgb(226 232 240);
+}
+
+.cashier-pos-search:focus,
+.cashier-pos-search:focus-visible {
+    outline: none;
+    border-color: var(--primary-500, #f97316);
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    box-shadow: 0 0 0 1px var(--primary-500, #f97316);
+}
+
+.cashier-pos-search-reset {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.35rem;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--danger-600, #dc2626);
+    color: #fff;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cashier-pos-search-reset:hover {
+    background: var(--danger-700, #b91c1c);
+}
+
+.cashier-pos-search-reset:focus,
+.cashier-pos-search-reset:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(255 255 255), 0 0 0 4px var(--danger-600, #dc2626);
+}
+
+.cashier-pos-chips {
+    display: flex;
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding: 0.5rem 0.25rem 0.65rem;
+    margin: 0 -0.25rem 0.85rem;
+}
+
+.cashier-pos-chip {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    border-radius: 9999px;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    color: rgb(51 65 85);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.dark .cashier-pos-chip {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+    color: rgb(203 213 225);
+}
+
+.cashier-pos-chip.is-active {
+    border-color: transparent;
+    background: var(--primary-600, #4f46e5);
+    color: #fff;
+}
+
+@media (hover: hover) {
+    .cashier-pos-chip:hover:not(.is-active) {
+        border-color: color-mix(in srgb, var(--primary-500, #f97316) 55%, rgb(226 232 240));
+        background: color-mix(in srgb, var(--primary-500, #f97316) 12%, white);
+        color: var(--primary-700, #c2410c);
+        transform: translateY(-1px);
+    }
+
+    .dark .cashier-pos-chip:hover:not(.is-active) {
+        border-color: color-mix(in srgb, var(--primary-500, #f97316) 45%, rgb(51 65 85));
+        background: color-mix(in srgb, var(--primary-500, #f97316) 18%, rgb(15 23 42));
+        color: rgb(254 215 170);
+    }
+
+    .cashier-pos-chip.is-active:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px -10px var(--primary-600, #f97316);
+        filter: brightness(1.06);
+    }
+}
+
+.cashier-pos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    padding: 0.55rem 0.3rem 0.65rem;
+}
+
+
+@media (min-width: 768px) {
+    .cashier-pos-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 960px) {
+    .cashier-pos-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .cashier-pos-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1440px) {
+    .cashier-pos-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.cashier-pos-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    cursor: pointer;
+    transform-origin: center;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.dark .cashier-pos-card {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+}
+
+.cashier-pos-card.is-active {
+    border-color: var(--primary-500, #6366f1);
+    box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+}
+
+@media (hover: hover) {
+    .cashier-pos-card:hover {
+        z-index: 1;
+        transform: translateY(-4px) scale(1.035);
+        border-color: var(--primary-400, #fb923c);
+        box-shadow: 0 16px 32px -18px rgb(15 23 42 / 0.45);
+    }
+
+    .dark .cashier-pos-card:hover {
+        box-shadow: 0 16px 32px -16px rgb(0 0 0 / 0.7);
+    }
+
+    .cashier-pos-card:hover .cashier-pos-card__photo img {
+        transform: scale(1.08);
+    }
+}
+
+.cashier-pos-card__photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7.5rem;
+    background: rgb(241 245 249);
+    overflow: hidden;
+}
+
+.dark .cashier-pos-card__photo {
+    background: rgb(30 41 59);
+}
+
+.cashier-pos-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+    transition: transform 220ms ease;
+}
+
+.cashier-pos-card__photo span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(148 163 184);
+}
+
+.cashier-pos-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0.8rem 0.85rem;
+}
+
+.cashier-pos-card__name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.cashier-pos-card__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.cashier-pos-card__was {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(148 163 184);
+    text-decoration: line-through;
+}
+
+.cashier-pos-card__discount {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgb(220 38 38);
+}
+
+.cashier-pos-add,
+.cashier-pos-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: auto;
+    border: 0;
+    border-radius: 0.75rem;
+    background: var(--primary-600, #4f46e5);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.55rem 0.7rem;
+}
+
+.cashier-pos-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    border-radius: 0.75rem;
+    background: var(--primary-600, #4f46e5);
+    color: #fff;
+    padding: 0.2rem;
+}
+
+.cashier-pos-stepper button {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 0.55rem;
+    background: rgb(255 255 255 / 0.14);
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.cashier-pos-stepper span {
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.cashier-pos-section {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed rgb(226 232 240);
+}
+
+.dark .cashier-pos-section {
+    border-bottom-color: rgb(51 65 85);
+}
+
+.cashier-pos-section:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.cashier-pos-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(100 116 139);
+}
+
+.dark .cashier-pos-label {
+    color: rgb(148 163 184);
+}
+
+.cashier-pos-input,
+.cashier-pos-select,
+.cashier-pos-textarea {
+    width: 100%;
+    border-radius: 0.7rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(248 250 252);
+    padding: 0.5rem 0.7rem;
+    font-size: 0.875rem;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.cashier-pos-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.45rem;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1rem;
+    padding-right: 2.1rem;
+}
+
+.dark .cashier-pos-input,
+.dark .cashier-pos-select,
+.dark .cashier-pos-textarea {
+    border-color: rgb(51 65 85);
+    background-color: rgb(30 41 59);
+    color: rgb(226 232 240);
+}
+
+.cashier-pos-input:focus,
+.cashier-pos-input:focus-visible,
+.cashier-pos-select:focus,
+.cashier-pos-select:focus-visible,
+.cashier-pos-select[aria-expanded='true'],
+.cashier-pos-textarea:focus,
+.cashier-pos-textarea:focus-visible {
+    outline: none;
+    border-color: var(--primary-500, #f97316);
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    box-shadow: 0 0 0 1px var(--primary-500, #f97316);
+}
+
+.cashier-pos-combobox {
+    position: relative;
+}
+
+.cashier-pos-combobox__menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    left: 0;
+    max-height: 14rem;
+    overflow: auto;
+    border-radius: 0.85rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    box-shadow: 0 18px 40px -24px rgb(15 23 42 / 0.45);
+    padding: 0.35rem;
+}
+
+.dark .cashier-pos-combobox__menu {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+}
+
+.cashier-pos-combobox__option {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 0.6rem;
+    background: transparent;
+    color: inherit;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.cashier-pos-combobox__option:hover,
+.cashier-pos-combobox__option.is-active {
+    background: color-mix(in srgb, var(--primary-500, #f97316) 12%, white);
+    color: var(--primary-700, #c2410c);
+}
+
+.dark .cashier-pos-combobox__option:hover,
+.dark .cashier-pos-combobox__option.is-active {
+    background: color-mix(in srgb, var(--primary-500, #f97316) 18%, rgb(30 41 59));
+    color: rgb(254 215 170);
+}
+
+.cashier-pos-field + .cashier-pos-field {
+    margin-top: 0.65rem;
+}
+
+.cashier-pos-cart-item {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+    gap: 0.65rem;
+    align-items: center;
+}
+
+.cashier-pos-cart-item + .cashier-pos-cart-item {
+    margin-top: 0.75rem;
+}
+
+.cashier-pos-cart-item img,
+.cashier-pos-cart-item__ph {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.6rem;
+    object-fit: cover;
+    background: rgb(241 245 249);
+}
+
+.cashier-pos-cart-item__ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: rgb(148 163 184);
+}
+
+.cashier-pos-cart-item p {
+    margin: 0;
+}
+
+.cashier-pos-cart-item__name {
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.cashier-pos-cart-item__meta {
+    font-size: 0.72rem;
+    color: rgb(100 116 139);
+}
+
+.cashier-pos-pay {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.cashier-pos-pay button {
+    border-radius: 0.85rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(248 250 252);
+    padding: 0.7rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.dark .cashier-pos-pay button {
+    border-color: rgb(51 65 85);
+    background: rgb(30 41 59);
+    color: rgb(241, 241, 241);
+}
+
+.cashier-pos-pay button.is-active {
+    border-color: var(--primary-500, #6366f1);
+    background: color-mix(in srgb, var(--primary-500, #6366f1) 12%, white);
+    box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+}
+
+.dark .cashier-pos-pay button.is-active {
+    border-color: var(--primary-500, #6366f1);
+    /* Mengubah campuran 'white' menjadi 'black' atau warna gelap agar selaras dengan dark mode */
+    background: color-mix(in srgb, var(--primary-500, #6366f1) 20%, transparent);
+    box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+}
+
+.cashier-pos-empty {
+    font-size: 0.85rem;
+    color: rgb(100 116 139);
+}
+
+.cashier-pos-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.cashier-pos-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgb(15 23 42 / 0.55);
+}
+
+.cashier-pos-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(28rem, 100%);
+    max-height: min(36rem, calc(100dvh - 2rem));
+    overflow: auto;
+    border-radius: 1.25rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(255 255 255);
+    box-shadow: 0 24px 60px -20px rgb(15 23 42 / 0.55);
+    padding: 1.15rem 1.2rem 1.2rem;
+}
+
+.dark .cashier-pos-modal__panel {
+    border-color: rgb(51 65 85);
+    background: rgb(15 23 42);
+}
+
+.cashier-pos-modal__panel h3 {
+    margin: 0 0 0.9rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.cashier-pos-modal__panel h3 span {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgb(100 116 139);
+}
+
+.cashier-pos-modal__options {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.cashier-pos-modal__option {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgb(226 232 240);
+    background: rgb(248 250 252);
+    padding: 0.7rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.dark .cashier-pos-modal__option {
+    border-color: rgb(51 65 85);
+    background: rgb(30 41 59);
+}
+
+.cashier-pos-modal__option.is-checked {
+    border-color: var(--primary-500, #6366f1);
+    background: color-mix(in srgb, var(--primary-500, #6366f1) 12%, white);
+    box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+}
+
+.cashier-pos-modal__option input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--primary-600, #4f46e5);
+}
+
+.cashier-pos-check {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+}
+
+.cashier-pos-editor-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+.cashier-pos-modal__save {
+    margin-top: 0;
+    width: auto;
+    flex: 1;
+    padding-inline: 1rem;
+}
+
+.cashier-pos-muted {
+    border-radius: 0.75rem;
+    border: 1px solid rgb(226 232 240);
+    background: transparent;
+    color: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.7rem;
+}
+
+.cashier-pos-link {
+    border: 0;
+    background: transparent;
+    color: var(--primary-600, #4f46e5);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0;
+}
+
+.cashier-pos-submit {
+    margin-top: 0.85rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cashier-pos-chip,
+    .cashier-pos-card,
+    .cashier-pos-card__photo img {
+        transition: none;
+    }
+
+    .cashier-pos-chip:hover,
+    .cashier-pos-card:hover {
+        transform: none;
+    }
+
+    .cashier-pos-card:hover .cashier-pos-card__photo img {
+        transform: none;
+    }
+}

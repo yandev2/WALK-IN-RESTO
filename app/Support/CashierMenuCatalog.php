@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Modifier;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,6 +27,16 @@ final class CashierMenuCatalog
      */
     private static array $modifierOptionsMemo = [];
 
+    /**
+     * @var array<int, list<array<string, mixed>>>
+     */
+    private static array $posMemo = [];
+
+    /**
+     * @var array<int, list<array{id: int, name: string}>>
+     */
+    private static array $categoriesMemo = [];
+
     public static function itemsKey(int $restaurantId): string
     {
         return "cashier-menu:{$restaurantId}:items";
@@ -36,17 +47,34 @@ final class CashierMenuCatalog
         return "cashier-menu:{$restaurantId}:options";
     }
 
+    public static function posKey(int $restaurantId): string
+    {
+        return "cashier-menu:{$restaurantId}:pos-v2";
+    }
+
+    public static function categoriesKey(int $restaurantId): string
+    {
+        return "cashier-menu:{$restaurantId}:categories";
+    }
+
     public static function forget(?int $restaurantId): void
     {
         if (! $restaurantId) {
             return;
         }
 
-        unset(self::$itemsMemo[$restaurantId], self::$optionsMemo[$restaurantId]);
+        unset(
+            self::$itemsMemo[$restaurantId],
+            self::$optionsMemo[$restaurantId],
+            self::$posMemo[$restaurantId],
+            self::$categoriesMemo[$restaurantId],
+        );
         self::$modifierOptionsMemo = [];
 
         Cache::forget(self::itemsKey($restaurantId));
         Cache::forget(self::optionsKey($restaurantId));
+        Cache::forget(self::posKey($restaurantId));
+        Cache::forget(self::categoriesKey($restaurantId));
     }
 
     /**
@@ -186,5 +214,125 @@ final class CashierMenuCatalog
                 ),
             ])
             ->all();
+    }
+
+    /**
+     * @return list<array{
+     *     id: int,
+     *     name: string,
+     *     price: int,
+     *     effective_price: int,
+     *     discount_percent: int,
+     *     photo_url: string|null,
+     *     category_id: int|null,
+     *     has_modifiers: bool,
+     *     modifiers: list<array{id: int, label: string, price: int}>
+     * }>
+     */
+    public static function posPayload(?int $restaurantId): array
+    {
+        if (! $restaurantId) {
+            return [];
+        }
+
+        if (isset(self::$posMemo[$restaurantId])) {
+            return self::$posMemo[$restaurantId];
+        }
+
+        /** @var list<array<string, mixed>> $payload */
+        $payload = Cache::remember(
+            self::posKey($restaurantId),
+            self::TTL_SECONDS,
+            function () use ($restaurantId): array {
+                return MenuItem::query()
+                    ->where('restaurant_id', $restaurantId)
+                    ->where('is_active', true)
+                    ->where('is_out_of_stock', false)
+                    ->whereNotNull('station_id')
+                    ->with([
+                        'modifierGroups.modifiers' => fn ($query) => $query
+                            ->where('is_active', true)
+                            ->orderBy('sort_order'),
+                    ])
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->get([
+                        'id',
+                        'name',
+                        'price',
+                        'discount_percent',
+                        'photo_path',
+                        'category_id',
+                        'sort_order',
+                    ])
+                    ->map(function (MenuItem $item): array {
+                        $modifiers = $item->modifierGroups
+                            ->flatMap(fn ($group) => $group->modifiers)
+                            ->unique('id')
+                            ->map(fn (Modifier $modifier): array => [
+                                'id' => $modifier->id,
+                                'label' => $modifier->name.(
+                                    $modifier->price
+                                        ? ' (+'.CmsMedia::formatIdr((int) $modifier->price).')'
+                                        : ''
+                                ),
+                                'price' => (int) $modifier->price,
+                            ])
+                            ->values()
+                            ->all();
+
+                        return [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                            'price' => (int) $item->price,
+                            'effective_price' => $item->effectivePrice(),
+                            'discount_percent' => $item->hasDiscount() ? (int) $item->discount_percent : 0,
+                            'photo_url' => CmsMedia::url($item->photo_path),
+                            'category_id' => $item->category_id ? (int) $item->category_id : null,
+                            'has_modifiers' => $modifiers !== [],
+                            'modifiers' => $modifiers,
+                        ];
+                    })
+                    ->values()
+                    ->all();
+            },
+        );
+
+        return self::$posMemo[$restaurantId] = $payload;
+    }
+
+    /**
+     * @return list<array{id: int, name: string}>
+     */
+    public static function categories(?int $restaurantId): array
+    {
+        if (! $restaurantId) {
+            return [];
+        }
+
+        if (isset(self::$categoriesMemo[$restaurantId])) {
+            return self::$categoriesMemo[$restaurantId];
+        }
+
+        /** @var list<array{id: int, name: string}> $categories */
+        $categories = Cache::remember(
+            self::categoriesKey($restaurantId),
+            self::TTL_SECONDS,
+            function () use ($restaurantId): array {
+                return MenuCategory::query()
+                    ->where('restaurant_id', $restaurantId)
+                    ->where('is_active', true)
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
+                    ->map(fn (MenuCategory $category): array => [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ])
+                    ->all();
+            },
+        );
+
+        return self::$categoriesMemo[$restaurantId] = $categories;
     }
 }
