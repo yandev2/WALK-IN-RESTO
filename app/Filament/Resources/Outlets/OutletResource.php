@@ -213,7 +213,11 @@ class OutletResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->default('exclusive')
-                            ->helperText('Saat ini hanya exclusive.'),
+                              ->hintAction(self::ttlHintAction(
+                                'Pajak',
+                                'Mode pajak',
+                                'Saat ini hanya tersedia mode exclusive.',
+                            )),
                         TextInput::make('claim_ttl_minutes')
                             ->label('TTL klaim meja')
                             ->numeric()

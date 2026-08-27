@@ -4,13 +4,13 @@
 
 .cashier-pos {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.55rem;
     color: rgb(15 23 42);
 }
 
 @media (min-width: 1024px) {
     .cashier-pos {
-        grid-template-columns: minmax(0, 1.7fr) minmax(20rem, 0.9fr);
+        grid-template-columns: minmax(0, 2fr) minmax(20rem, 0.9fr);
         align-items: start;
     }
 }

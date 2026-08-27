@@ -47,10 +47,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->spa(hasPrefetching: true)
+            ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->brandName('Resto Admin')
-            ->colors(fn (): array => [
+            ->colors(fn(): array => [
                 'primary' => Color::hex(
                     RestaurantTheme::for(FilamentTenantTheme::restaurantForCurrentPanel())['primary']
                 ),
@@ -97,16 +98,16 @@ class AdminPanelProvider extends PanelProvider
                 EditProfile::plugin()
                     ->group('Pengaturan')
                     ->sort(99)
-                    ->visible(fn (): bool => auth()->user() instanceof User
+                    ->visible(fn(): bool => auth()->user() instanceof User
                         && auth()->user()->isRestaurantOwner()),
                 FilamentNotificationsTabsPlugin::make()
                     ->confirmDelete(),
             ])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => new HtmlString(
+                fn(): HtmlString => new HtmlString(
                     AuthGlass::headHtml()->toHtml()
-                    .<<<'HTML'
+                        . <<<'HTML'
                     <style>
                         .fi-page-dashboard .fi-wi-analytics-kpi,
                         .fi-page-dashboard .fi-wi-analytics-period-summary,
