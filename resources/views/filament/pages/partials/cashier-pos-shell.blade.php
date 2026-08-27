@@ -571,7 +571,7 @@
                     <p class="cashier-pos-empty" x-show="$store.cashierPos.editor.modifiers.length === 0">Tidak ada extra untuk menu ini.</p>
                     <template x-for="mod in $store.cashierPos.editor.modifiers" :key="mod.id">
                         <label class="cashier-pos-modal__option" :class="$store.cashierPos.isModOn(mod.id) && 'is-checked'">
-                            <input type="checkbox" :checked="$store.cashierPos.isModOn(mod.id)" @click.prevent="$store.cashierPos.toggleMod(mod.id)">
+                            <input type="checkbox" :checked="$store.cashierPos.isModOn(mod.id)" @change="$store.cashierPos.toggleMod(mod.id)">
                             <span x-text="mod.label"></span>
                         </label>
                     </template>

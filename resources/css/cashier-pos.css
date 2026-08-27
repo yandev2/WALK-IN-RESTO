@@ -641,6 +641,7 @@
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
 .dark .cashier-pos-modal__option {
@@ -652,6 +653,18 @@
     border-color: var(--primary-500, #6366f1);
     background: color-mix(in srgb, var(--primary-500, #6366f1) 12%, white);
     box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+}
+
+.cashier-pos-modal__option:hover:not(.is-checked),
+.cashier-pos-modal__option:focus-within:not(.is-checked) {
+    border-color: color-mix(in srgb, var(--primary-500, #f97316) 45%, rgb(226 232 240));
+    background: color-mix(in srgb, var(--primary-500, #f97316) 5%, white);
+}
+
+.dark .cashier-pos-modal__option:hover:not(.is-checked),
+.dark .cashier-pos-modal__option:focus-within:not(.is-checked) {
+    border-color: color-mix(in srgb, var(--primary-500, #f97316) 45%, rgb(51 65 85));
+    background: color-mix(in srgb, var(--primary-500, #f97316) 10%, rgb(30 41 59));
 }
 
 .cashier-pos-modal__option input {
