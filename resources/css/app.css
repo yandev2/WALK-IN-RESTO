@@ -328,7 +328,7 @@ details[open] .landing-faq-content {
     grid-template-rows: 1fr;
 }
 
-.landing-faq-content > div {
+.landing-faq-content>div {
     overflow: hidden;
 }
 
@@ -444,7 +444,9 @@ input[type="range"].accent-primary::-webkit-slider-thumb:hover {
 }
 
 @keyframes landing-float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
 
@@ -750,13 +752,11 @@ html.dark {
     width: 100%;
     height: 7px;
     border-radius: 9999px;
-    background: linear-gradient(
-        to right,
-        var(--brand-primary) 0%,
-        var(--brand-primary) var(--slider-fill, 100%),
-        var(--slider-track-bg) var(--slider-fill, 100%),
-        var(--slider-track-bg) 100%
-    );
+    background: linear-gradient(to right,
+            var(--brand-primary) 0%,
+            var(--brand-primary) var(--slider-fill, 100%),
+            var(--slider-track-bg) var(--slider-fill, 100%),
+            var(--slider-track-bg) 100%);
     border: 1px solid var(--slider-track-border);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
     outline: none;
@@ -934,41 +934,32 @@ html.dark {
 
 @media (min-width: 640px) {
     .recommended-hero-img {
-        -webkit-mask-image: linear-gradient(
-            to right,
-            transparent 0%,
-            transparent 15%,
-            rgba(0, 0, 0, 0.35) 35%,
-            rgba(0, 0, 0, 0.85) 55%,
-            black 75%
-        );
-        mask-image: linear-gradient(
-            to right,
-            transparent 0%,
-            transparent 15%,
-            rgba(0, 0, 0, 0.35) 35%,
-            rgba(0, 0, 0, 0.85) 55%,
-            black 75%
-        );
+        -webkit-mask-image: linear-gradient(to right,
+                transparent 0%,
+                transparent 5%,
+                rgba(0, 0, 0, 0.4) 20%,
+                rgba(0, 0, 0, 0.85) 35%,
+                black 45%);
+        mask-image: linear-gradient(to right,
+                transparent 0%,
+                transparent 5%,
+                rgba(0, 0, 0, 0.4) 20%,
+                rgba(0, 0, 0, 0.85) 35%,
+                black 45%);
     }
 }
 
 @media (max-width: 639px) {
     .recommended-hero-img {
-        -webkit-mask-image: linear-gradient(
-            to bottom,
-            black 35%,
-            rgba(0, 0, 0, 0.5) 65%,
-            transparent 95%
-        );
-        mask-image: linear-gradient(
-            to bottom,
-            black 35%,
-            rgba(0, 0, 0, 0.5) 65%,
-            transparent 95%
-        );
+        -webkit-mask-image: linear-gradient(to bottom,
+                black 45%,
+                rgba(0, 0, 0, 0.75) 65%,
+                rgba(0, 0, 0, 0.3) 85%,
+                transparent 100%);
+        mask-image: linear-gradient(to bottom,
+                black 45%,
+                rgba(0, 0, 0, 0.75) 65%,
+                rgba(0, 0, 0, 0.3) 85%,
+                transparent 100%);
     }
 }
-
-
-

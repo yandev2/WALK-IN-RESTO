@@ -180,16 +180,23 @@ class RestaurantDirectory extends Component
         $paginator = $directory->paginate($this->filters(), perPage: 6, page: $this->getPage());
         $cards = $directory->mapCardsForPaginator($paginator);
 
+        $home = PlatformSetting::homeViewData();
+
         return view('livewire.landing.restaurant-directory', [
             'theme' => RestaurantTheme::for(null),
-            'home' => PlatformSetting::homeViewData(),
+            'home' => $home,
             'facilityOptions' => Facility::activeOptions(),
             'cards' => $cards,
             'recommendedCards' => $this->recommendedCards,
             'paginator' => $paginator,
             'totalCount' => $paginator->total(),
             'mapPins' => $this->pinsFromCards($cards),
-        ])->layout('layouts.directory');
+        ])->layout('layouts.directory', [
+            'home' => $home,
+            'theme' => RestaurantTheme::for(null),
+            'title' => $home['meta_title'] ?? 'Temukan Restoran Terdekat',
+            'description' => $home['meta_description'] ?? null,
+        ]);
     }
 
     /**

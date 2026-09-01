@@ -22,6 +22,13 @@ Route::get('/', RestaurantDirectory::class)->name('home');
 
 Route::get('/tentang', [PlatformPageController::class, 'about'])->name('page.about');
 Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->name('page.terms');
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', function () {
+    $sitemapUrl = route('sitemap');
+    $content = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /founder\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
+
+    return response($content, 200, ['Content-Type' => 'text/plain']);
+});
 
 Route::get('/daftar', RegisterRestaurant::class)
     ->middleware(['guest', 'throttle:10,1'])
@@ -61,7 +68,7 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
-$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$)[A-Za-z0-9_-]+$';
+$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

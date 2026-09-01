@@ -44,7 +44,8 @@ Route::prefix('v1')->group(function (): void {
                     ->middleware('throttle:10,1');
                 Route::get('/guest/orders', [OrderController::class, 'index']);
                 Route::get('/guest/orders/{order:public_id}', [OrderController::class, 'show']);
-                Route::post('/guest/orders/{order:public_id}/proof', [OrderController::class, 'storeProof']);
+                Route::post('/guest/orders/{order:public_id}/proof', [OrderController::class, 'storeProof'])
+                    ->middleware('throttle:10,1');
                 Route::get('/guest/review', [ReviewController::class, 'show']);
                 Route::post('/guest/review', [ReviewController::class, 'store'])
                     ->middleware('throttle:10,1');

@@ -32,7 +32,7 @@
     };
 @endphp
 
-<div id="directory-search" class="directory-search relative z-30 w-full pb-6">
+<div id="directory-search" role="search" aria-label="Pencarian direktori restoran" class="directory-search relative z-30 w-full pb-6">
     <div class="customer-card w-full overflow-visible p-0 shadow-lg ring-1 ring-[color:var(--border-subtle)]">
         @if ($locationStatus === 'idle')
             <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle/80 bg-surface-muted/90 px-4 py-2.5 text-xs sm:text-sm">

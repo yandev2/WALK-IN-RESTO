@@ -3,7 +3,9 @@
 ])
 
 @if (! empty($cards))
-    <div
+    <section
+        aria-label="Restoran Rekomendasi Pilihan"
+        aria-roledescription="carousel"
         class="recommended-slider-container relative mb-8 overflow-hidden rounded-[2rem] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10"
         x-data="{
             active: 0,
@@ -42,21 +44,23 @@
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                     class="absolute inset-0 h-full w-full"
+                    aria-roledescription="slide"
+                    aria-label="{{ $index + 1 }} dari {{ count($cards) }}"
                     @if ($index > 0) x-cloak @endif
                 >
                     {{-- Hero Media & Cinematic Gradient Overlays --}}
                     @if ($card['hero_url'])
                         <img
                             src="{{ $card['hero_url'] }}"
-                            alt="{{ $card['name'] }}"
+                            alt="{{ $card['name'] }} - {{ $card['categories_label'] ?: 'Restoran Rekomendasi' }}"
                             class="recommended-hero-img"
                             loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                         >
                     @endif
 
                     {{-- Multi-directional Gradient Vignettes --}}
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/85 to-transparent sm:bg-gradient-to-r sm:from-zinc-950 sm:from-20% sm:via-zinc-950/75 sm:via-50% sm:to-transparent"></div>
-                    <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 via-45% to-transparent/10 sm:bg-gradient-to-r sm:from-zinc-950 sm:from-20% sm:via-zinc-950/50 sm:via-45% sm:to-transparent"></div>
+                    <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-zinc-950/80 to-transparent pointer-events-none"></div>
 
                     {{-- Badge Populer di Pojok Kanan Atas Kontainer --}}
                     <div class="absolute right-5 top-5 sm:right-8 sm:top-8 z-20">
@@ -171,5 +175,5 @@
                 ></button>
             </template>
         </div>
-    </div>
+    </section>
 @endif

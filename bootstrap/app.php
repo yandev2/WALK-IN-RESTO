@@ -5,6 +5,7 @@ use App\Http\Middleware\EnsureGuestVisit;
 use App\Http\Middleware\IdentifyApiGuestDevice;
 use App\Http\Middleware\IdentifyGuestDevice;
 use App\Http\Middleware\RequireApiGuestDevice;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->redirectTo(
             guests: '/admin/login',

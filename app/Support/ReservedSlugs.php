@@ -19,7 +19,11 @@ final class ReservedSlugs
             'livewire',
             'login',
             'order',
+            'robots.txt',
+            'sitemap.xml',
             'storage',
+            'tentang',
+            'syarat-dan-ketentuan',
             'up',
         ];
     }

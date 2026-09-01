@@ -19,10 +19,13 @@
     }
 @endphp
 
-<aside @class([
-    'directory-filter customer-card relative z-10 overflow-visible p-5 ring-1 ring-[color:var(--border-subtle)] shadow-sm',
-    'hidden lg:block' => ! $mobile,
-])>
+<aside
+    aria-label="Filter Pencarian Restoran"
+    @class([
+        'directory-filter customer-card relative z-10 overflow-visible p-5 ring-1 ring-[color:var(--border-subtle)] shadow-sm',
+        'hidden lg:block' => ! $mobile,
+    ])
+>
     <div class="mb-5 flex items-center justify-between gap-3 border-b border-border-subtle/70 pb-3.5">
         <div class="flex items-center gap-2">
             <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-dark text-white shadow-xs">

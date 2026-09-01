@@ -11,8 +11,9 @@
     @if (filled($heroImageUrl))
         <img
             src="{{ $heroImageUrl }}"
-            alt=""
+            alt="{{ strip_tags($home['hero_title'] ?? $home['site_name']) }}"
             class="directory-hero-media absolute inset-0 h-full w-full object-cover object-center scale-105 transition duration-700"
+            fetchpriority="high"
         >
         <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/40" aria-hidden="true"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" aria-hidden="true"></div>

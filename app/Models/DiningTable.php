@@ -35,6 +35,10 @@ class DiningTable extends Model
         'open_visit_id',
     ];
 
+    protected $hidden = [
+        'qr_secret',
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

@@ -8,7 +8,7 @@ return [
 
     'allowed_origins' => array_values(array_filter(array_map(
         trim(...),
-        explode(',', (string) env('CORS_ALLOWED_ORIGINS', '*')),
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', env('APP_ENV') === 'production' ? (string) env('APP_URL', 'http://localhost') : '*')),
     ))),
 
     'allowed_origins_patterns' => [],

@@ -22,6 +22,7 @@ class PlatformSetting extends Model
         'primary_color',
         'site_name',
         'logo_path',
+        'favicon_path',
         'auth_background_path',
         'hero_eyebrow',
         'hero_title',
@@ -40,6 +41,11 @@ class PlatformSetting extends Model
         'footer_copyright',
         'footer_privacy_url',
         'footer_terms_url',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'og_image_path',
+        'canonical_url',
         'about_title',
         'about_content',
         'terms_title',
@@ -119,6 +125,7 @@ class PlatformSetting extends Model
             'primary_color' => RestaurantTheme::DEFAULT_PRIMARY,
             'site_name' => 'RestoTerdekat',
             'logo_path' => null,
+            'favicon_path' => null,
             'auth_background_path' => null,
             'hero_eyebrow' => 'Walk-in',
             'hero_title' => 'Temukan restoran terdekat & terbaik',
@@ -137,6 +144,11 @@ class PlatformSetting extends Model
             'footer_copyright' => '© {year} {site}. Semua hak dilindungi.',
             'footer_privacy_url' => null,
             'footer_terms_url' => null,
+            'meta_title' => 'Temukan Restoran Terdekat & Kuliner Terbaik - {site}',
+            'meta_description' => 'Jelajahi restoran terbaik dan rekomendasi kuliner terdekat di sekitar Anda. Lihat menu lezat, jam buka, fasilitas, dan langsung pesan dari meja tanpa antre.',
+            'meta_keywords' => 'restoran terdekat, kuliner terdekat, menu restoran, cafe terdekat, walk-in resto, pesan dari meja, direktori restoran',
+            'og_image_path' => null,
+            'canonical_url' => null,
             'about_title' => 'Tentang RestoTerdekat',
             'about_content' => '<h2>Solusi Mudah Menikmati Kuliner Walk-In</h2><p><strong>RestoTerdekat</strong> adalah platform direktori kuliner modern yang dirancang untuk menghubungkan pecinta kuliner dengan berbagai restoran terbaik di sekitar mereka secara instan dan tanpa ribet.</p><p>Kami memahami bahwa pengalaman bersantap yang menyenangkan berawal dari kemudahan. Melalui RestoTerdekat, Anda dapat dengan mudah:</p><ul><li><strong>Menemukan Restoran Terdekat</strong>: Mencari restoran pilihan berdasarkan jarak, kategori masakan, atau fasilitas yang tersedia.</li><li><strong>Melihat Menu &amp; Jam Buka</strong>: Mengetahui hidangan populer, harga terkini, dan status operasional restoran secara real-time.</li><li><strong>Dine-In Walk-In Tanpa Reservasi</strong>: Datang langsung, duduk di meja pilihan Anda, dan nikmati kemudahan memesan dari meja dengan scan stiker QR.</li></ul><p>Bagi pemilik restoran, kami menyediakan sistem operasional digital terintegrasi—mulai dari Kitchen Display System (KDS), kasir POS, hingga pemesanan mandiri oleh pelanggan—untuk meningkatkan efisiensi dan kepuasan tamu.</p>',
             'terms_title' => 'Syarat & Ketentuan Layanan',
@@ -221,13 +233,16 @@ class PlatformSetting extends Model
 
         $data['hero_image_url'] = CmsMedia::url($row?->hero_image_path);
         $data['logo_url'] = CmsMedia::url($row?->logo_path);
+        $data['favicon_url'] = CmsMedia::url($row?->favicon_path) ?: $data['logo_url'];
+        $data['og_image_url'] = CmsMedia::url($row?->og_image_path) ?: $data['hero_image_url'] ?: $data['logo_url'];
         $data['auth_background_url'] = CmsMedia::url($row?->auth_background_path);
 
         $siteName = (string) ($data['site_name'] ?? '');
-        foreach (['footer_about', 'footer_copyright'] as $tokenField) {
+        foreach (['footer_about', 'footer_copyright', 'meta_title', 'meta_description'] as $tokenField) {
             $data[$tokenField] = self::applyFooterTokens((string) ($data[$tokenField] ?? ''), $siteName);
         }
 
+        $data['canonical_url'] = filled($row?->canonical_url) ? (string) $row->canonical_url : (url()->current());
         $data['footer_whatsapp_url'] = CmsMedia::whatsappUrl($data['footer_phone'] ?? null);
         $data['footer_instagram_url'] = CmsMedia::instagramUrl($data['footer_instagram'] ?? null);
 
@@ -293,6 +308,6 @@ class PlatformSetting extends Model
      */
     protected function storedFileAttributes(): array
     {
-        return ['hero_image_path', 'logo_path', 'qr_image_path', 'auth_background_path'];
+        return ['hero_image_path', 'logo_path', 'favicon_path', 'og_image_path', 'qr_image_path', 'auth_background_path'];
     }
 }

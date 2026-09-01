@@ -253,4 +253,72 @@ class PlatformSettingTest extends TestCase
 
         $this->assertSame(14, PlatformSetting::trialDays());
     }
+
+    public function test_directory_renders_default_seo_tags_favicon_and_schema(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk()
+            ->assertSee('<title>', false)
+            ->assertSee('Kuliner Terbaik', false)
+            ->assertSee('RestoTerdekat</title>', false)
+            ->assertSee('name="description"', false)
+            ->assertSee('property="og:title"', false)
+            ->assertSee('property="og:type" content="website"', false)
+            ->assertSee('name="twitter:card" content="summary_large_image"', false)
+            ->assertSee('"@type": "WebSite"', false)
+            ->assertSee('"@type": "Organization"', false)
+            ->assertSee('"@type": "SearchAction"', false);
+    }
+
+    public function test_directory_renders_custom_seo_and_favicon_configured_by_founder(): void
+    {
+        PlatformSetting::current()->update([
+            'site_name' => 'KulinerKeren',
+            'favicon_path' => 'platform/favicon/custom-fav.png',
+            'meta_title' => 'Direktori Makanan Paling Enak - {site}',
+            'meta_description' => 'Cari tempat nongkrong dan resto terbaik di {site}.',
+            'meta_keywords' => 'nongkrong, cafe, makan enak',
+            'og_image_path' => 'platform/seo/custom-og.png',
+            'canonical_url' => 'https://kulinerkeren.id',
+        ]);
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk()
+            ->assertSee('<title>Direktori Makanan Paling Enak - KulinerKeren</title>', false)
+            ->assertSee('content="Cari tempat nongkrong dan resto terbaik di KulinerKeren."', false)
+            ->assertSee('name="keywords" content="nongkrong, cafe, makan enak"', false)
+            ->assertSee('rel="canonical" href="https://kulinerkeren.id"', false)
+            ->assertSee('storage/platform/favicon/custom-fav.png', false)
+            ->assertSee('storage/platform/seo/custom-og.png', false);
+    }
+
+    public function test_sitemap_xml_and_robots_txt_are_accessible_and_valid(): void
+    {
+        Restaurant::query()->create([
+            'name' => 'Restoran Sitemap Demo',
+            'slug' => 'resto-sitemap-demo',
+            'is_active' => true,
+            'listed_in_directory' => true,
+            'landing_enabled' => true,
+        ]);
+
+        $sitemapResponse = $this->get('/sitemap.xml');
+        $sitemapResponse->assertOk()
+            ->assertHeader('Content-Type', 'application/xml; charset=utf-8')
+            ->assertSee('<urlset', false)
+            ->assertSee(route('home'), false)
+            ->assertSee(route('page.about'), false)
+            ->assertSee(route('page.terms'), false)
+            ->assertSee(route('register.restaurant'), false)
+            ->assertSee(url('/resto-sitemap-demo'), false)
+            ->assertSee(url('/resto-sitemap-demo/menu'), false);
+
+        $robotsResponse = $this->get('/robots.txt');
+        $robotsResponse->assertOk()
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertSee('User-agent: *', false)
+            ->assertSee('Sitemap: '.route('sitemap'), false);
+    }
 }

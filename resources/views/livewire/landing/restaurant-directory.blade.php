@@ -32,7 +32,7 @@
                 :max-distance-km="$maxDistanceKm"
             />
 
-            <section class="min-w-0">
+            <section aria-label="Daftar Restoran" class="min-w-0">
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h2 class="text-lg font-bold text-body">Restoran ditemukan</h2>

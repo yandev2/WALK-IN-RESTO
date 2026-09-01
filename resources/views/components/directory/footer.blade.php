@@ -20,7 +20,7 @@
     ];
 @endphp
 
-<footer class="directory-footer mt-auto border-t border-border-subtle/80 bg-surface-section">
+<footer role="contentinfo" class="directory-footer mt-auto border-t border-border-subtle/80 bg-surface-section">
     <div class="landing-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-16">
         <div class="min-w-0 sm:col-span-2 lg:col-span-6 lg:pr-4">
             <a href="{{ route('home') }}" class="group inline-flex min-w-0 items-center gap-2.5">

@@ -6,9 +6,9 @@
     $home = $home !== [] ? $home : \App\Models\PlatformSetting::homeViewData();
 @endphp
 
-<header class="directory-header sticky top-0 z-40 border-b border-border-subtle/80 bg-surface-base/85 backdrop-blur-md transition-colors duration-200">
+<header role="banner" class="directory-header sticky top-0 z-40 border-b border-border-subtle/80 bg-surface-base/85 backdrop-blur-md transition-colors duration-200">
     <div class="landing-container flex h-16 items-center justify-between gap-4">
-        <a href="{{ route('home') }}" class="inline-flex min-w-0 items-center gap-2.5">
+        <a href="{{ route('home') }}" class="inline-flex min-w-0 items-center gap-2.5" aria-label="Beranda {{ $home['site_name'] }}">
             @if (filled($home['logo_url'] ?? null))
                 <img
                     src="{{ $home['logo_url'] }}"
@@ -25,7 +25,7 @@
             @endif
         </a>
 
-        <nav class="hidden items-center gap-2 md:flex">
+        <nav aria-label="Navigasi Utama" class="hidden items-center gap-2 md:flex">
             <a href="{{ route('home') }}" @class([
                 'rounded-full px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('home'),
