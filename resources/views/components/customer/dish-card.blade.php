@@ -82,11 +82,18 @@
         @endif
 
         @if ($gallery->count() > 1)
-            <div class="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-md shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <span>{{ $gallery->count() }} foto</span>
+            <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                @foreach ($gallery as $thumbIndex => $thumbPhoto)
+                    <button
+                        type="button"
+                        class="h-9 w-9 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition sm:h-10 sm:w-10"
+                        :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : ''"
+                        aria-label="Foto {{ $thumbIndex + 1 }}"
+                        @click.stop="openPreview({{ $thumbIndex }})"
+                    >
+                        <img src="{{ $thumbPhoto }}" alt="" class="h-full w-full object-cover">
+                    </button>
+                @endforeach
             </div>
         @endif
     </div>

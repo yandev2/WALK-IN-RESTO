@@ -93,7 +93,7 @@ class PlatformSettingTest extends TestCase
             ->assertSee('directory-footer', false)
             ->assertSee('lg:grid-cols-12', false)
             ->assertSee('lg:col-span-6', false)
-            ->assertSee('lg:col-span-3', false)
+            ->assertSee('lg:col-span-2', false)
             ->assertSee('max-w-xl', false)
             ->assertSee((string) config('subscription.contact_email'), false)
             ->assertSee("© {$year} RestoTerdekat. Semua hak dilindungi.", false)

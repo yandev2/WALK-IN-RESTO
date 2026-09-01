@@ -8,7 +8,7 @@
         || filled($home['footer_phone'] ?? null)
         || filled($home['footer_address'] ?? null);
     $hasSocial = filled($home['footer_instagram_url'] ?? null);
-    $hasLegal = true;
+    $hasLegal = true; // Syarat & Ketentuan selalu ada sekarang
     $instagramLabel = filled($home['footer_instagram'] ?? null) && ! str_starts_with((string) $home['footer_instagram'], 'http')
         ? '@'.ltrim((string) $home['footer_instagram'], '@/')
         : 'Instagram';
