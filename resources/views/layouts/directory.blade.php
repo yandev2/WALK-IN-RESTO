@@ -4,8 +4,8 @@
         @include('partials.customer.theme-init')
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? 'Temukan restoran terdekat' }}</title>
-        <meta name="description" content="{{ $description ?? 'Temukan restoran terdekat, lihat menu, dan datang langsung.' }}">
+        <title>@yield('title', $title ?? 'Temukan restoran terdekat')</title>
+        <meta name="description" content="@yield('description', $description ?? 'Temukan restoran terdekat, lihat menu, dan datang langsung.')">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=fraunces:500,600,700|dm-sans:400,500,600,700|caveat:500,600,700" rel="stylesheet" />
         @include('partials.customer.theme-vars', ['theme' => $theme ?? \App\Support\RestaurantTheme::for(null)])
@@ -16,7 +16,11 @@
         @stack('head')
     </head>
     <body class="min-h-screen bg-surface-base text-body antialiased transition-colors duration-300">
-        {{ $slot }}
+        @isset($slot)
+            {{ $slot }}
+        @else
+            @yield('body')
+        @endisset
         @stack('scripts')
         @livewireScripts
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

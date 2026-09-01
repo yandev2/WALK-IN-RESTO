@@ -21,6 +21,8 @@
         <script type="application/json" id="directory-map-pins">@json($mapPins)</script>
         <script type="application/json" id="directory-user-location">@json($locationStatus === 'granted' ? ['lat' => $userLat, 'lng' => $userLng] : null)</script>
 
+        <x-directory.recommended-slider :cards="$recommendedCards" />
+
         <div class="grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
             <x-directory.filter-panel
                 :categories="$this->categories"

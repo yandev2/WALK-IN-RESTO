@@ -168,6 +168,12 @@ class RestaurantDirectory extends Component
         return app(DirectoryQuery::class)->activeCategories();
     }
 
+    #[Computed]
+    public function recommendedCards(): array
+    {
+        return app(DirectoryQuery::class)->mapRecommendedCards();
+    }
+
     public function render()
     {
         $directory = app(DirectoryQuery::class);
@@ -179,6 +185,7 @@ class RestaurantDirectory extends Component
             'home' => PlatformSetting::homeViewData(),
             'facilityOptions' => Facility::activeOptions(),
             'cards' => $cards,
+            'recommendedCards' => $this->recommendedCards,
             'paginator' => $paginator,
             'totalCount' => $paginator->total(),
             'mapPins' => $this->pinsFromCards($cards),

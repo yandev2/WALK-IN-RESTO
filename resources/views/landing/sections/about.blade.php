@@ -6,13 +6,13 @@
 <section id="tentang" class="scroll-mt-20 bg-surface-section">
     <div class="landing-container landing-section">
         <div @class([
-            'grid items-center gap-10 lg:gap-14',
+            'grid items-center gap-10 lg:gap-16',
             'lg:grid-cols-2' => $aboutImage,
         ])>
             @if ($aboutImage)
                 <div class="landing-reveal order-2 lg:order-1">
-                    <div class="landing-img-hover overflow-hidden rounded-[2rem] shadow-[var(--card-shadow)]">
-                        <img src="{{ $aboutImage }}" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy">
+                    <div class="landing-img-hover overflow-hidden rounded-3xl shadow-md ring-1 ring-[color:var(--border-subtle)]">
+                        <img src="{{ $aboutImage }}" alt="" class="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-105" loading="lazy">
                     </div>
                 </div>
             @endif

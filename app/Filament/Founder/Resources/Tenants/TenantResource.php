@@ -102,6 +102,10 @@ class TenantResource extends Resource
                         Toggle::make('landing_enabled')
                             ->label('Landing publik aktif')
                             ->default(true),
+                        Toggle::make('is_recommended')
+                            ->label('Rekomendasi spesial')
+                            ->helperText('Tampilkan di slider rekomendasi halaman direktori.')
+                            ->default(false),
                     ]),
                 Section::make('Langganan')
                     ->columns(2)
@@ -160,6 +164,9 @@ class TenantResource extends Resource
                     ->boolean(),
                 IconColumn::make('landing_enabled')
                     ->label('Landing')
+                    ->boolean(),
+                IconColumn::make('is_recommended')
+                    ->label('Rekomendasi')
                     ->boolean(),
             ])
             ->filters([

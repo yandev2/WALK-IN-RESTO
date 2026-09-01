@@ -145,21 +145,21 @@
                 />
             </div>
             @if ($ratingSummary['average'])
-                <div class="flex items-center gap-5">
-                    <p class="font-display text-5xl font-bold leading-none text-body">{{ number_format($ratingSummary['average'], 1) }}</p>
+                <div class="flex items-center gap-4 bg-surface-raised px-5 py-3 rounded-2xl ring-1 ring-border-subtle shadow-sm">
+                    <p class="font-display text-4xl sm:text-5xl font-bold leading-none text-body">{{ number_format($ratingSummary['average'], 1) }}</p>
                     <div>
                         <div class="flex gap-0.5" aria-hidden="true">
                             @foreach (range(1, 5) as $star)
                                 <svg @class([
                                     'h-4 w-4',
-                                    'text-primary' => $star <= round($ratingSummary['average']),
-                                    'text-muted/35' => $star > round($ratingSummary['average']),
+                                    'text-amber-500 fill-amber-500' => $star <= round($ratingSummary['average']),
+                                    'text-muted/30' => $star > round($ratingSummary['average']),
                                 ]) fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
                             @endforeach
                         </div>
-                        <p class="mt-1 text-sm text-muted">Berdasarkan {{ $ratingSummary['count'] }} ulasan</p>
+                        <p class="mt-1 text-xs sm:text-sm text-muted">Berdasarkan {{ $ratingSummary['count'] }} ulasan</p>
                     </div>
                 </div>
             @endif
@@ -184,45 +184,41 @@
                         class="landing-testimonial landing-testimonial-slide"
                         :style="`--testimonial-accent: ${accentFor(index)}`"
                     >
-                        <div class="landing-testimonial-avatar" aria-hidden="true" x-text="initialsFor(review.customer_name)"></div>
-
                         <div class="landing-testimonial-panel">
-                            <span class="landing-testimonial-quote is-open" aria-hidden="true">“</span>
-                            <span class="landing-testimonial-quote is-close" aria-hidden="true">”</span>
+                            <span class="landing-testimonial-quote" aria-hidden="true">“</span>
 
-                            <div class="relative z-[3] flex min-h-0 flex-1 flex-col">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div class="min-w-0">
-                                        <h3 class="truncate text-[1.05rem] font-bold leading-tight text-body" x-text="review.customer_name"></h3>
-                                        <p class="mt-0.5 text-xs text-muted">Pengunjung</p>
-                                        <span class="mt-2 block h-[3px] w-10 rounded-full" :style="{ background: accentFor(index) }"></span>
-                                    </div>
-                                    <div class="flex shrink-0 gap-0.5 pt-0.5" :aria-label="`Rating ${review.rating} dari 5`">
-                                        <template x-for="star in [1, 2, 3, 4, 5]" :key="review.id + '-' + star">
-                                            <svg
-                                                class="landing-testimonial-star h-3.5 w-3.5"
-                                                :class="star <= review.rating && 'is-filled'"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                                aria-hidden="true"
-                                            >
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                            </svg>
-                                        </template>
-                                    </div>
+                            <div class="flex items-center gap-3">
+                                <div class="landing-testimonial-avatar" aria-hidden="true" x-text="initialsFor(review.customer_name)"></div>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="truncate text-base font-bold leading-tight text-body" x-text="review.customer_name"></h3>
+                                    <p class="text-xs text-muted">Pengunjung</p>
                                 </div>
-
-                                <p class="mt-3 line-clamp-4 min-h-[5.5rem] flex-1 text-sm italic leading-relaxed text-muted" x-text="review.comment"></p>
                             </div>
+
+                            <div class="mt-3 flex gap-0.5" :aria-label="`Rating ${review.rating} dari 5`">
+                                <template x-for="star in [1, 2, 3, 4, 5]" :key="review.id + '-' + star">
+                                    <svg
+                                        class="landing-testimonial-star h-3.5 w-3.5"
+                                        :class="star <= review.rating && 'is-filled'"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                </template>
+                            </div>
+
+                            <p class="mt-3 line-clamp-4 min-h-[4.5rem] flex-1 text-xs sm:text-sm italic leading-relaxed text-muted" x-text="review.comment"></p>
                         </div>
                     </article>
                 </template>
             </div>
 
-            <div class="mt-4 flex items-center justify-center gap-3" x-show="canCycle()" x-cloak>
+            <div class="mt-6 flex items-center justify-center gap-3" x-show="canCycle()" x-cloak>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-surface-raised text-body shadow-[var(--card-shadow)] ring-1 ring-[color:var(--border-subtle)] transition hover:shadow-[var(--card-shadow-hover)]"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
                     x-on:click="scrollPage(-1)"
                     aria-label="Ulasan sebelumnya"
                 >
@@ -232,7 +228,7 @@
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-surface-raised text-body shadow-[var(--card-shadow)] ring-1 ring-[color:var(--border-subtle)] transition hover:shadow-[var(--card-shadow-hover)]"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
                     x-on:click="scrollPage(1); fetchNext()"
                     aria-label="Ulasan berikutnya"
                 >

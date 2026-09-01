@@ -40,6 +40,10 @@ class PlatformSetting extends Model
         'footer_copyright',
         'footer_privacy_url',
         'footer_terms_url',
+        'about_title',
+        'about_content',
+        'terms_title',
+        'terms_content',
         'bank_name',
         'bank_holder',
         'bank_account',
@@ -63,8 +67,47 @@ class PlatformSetting extends Model
             }
         });
 
+        static::updating(function (self $setting): void {
+            foreach (['about_content', 'terms_content'] as $attribute) {
+                if ($setting->isDirty($attribute)) {
+                    $oldFiles = self::extractRichTextAttachments($setting->getOriginal($attribute));
+                    $newFiles = self::extractRichTextAttachments($setting->getAttribute($attribute));
+                    $deletedFiles = array_diff($oldFiles, $newFiles);
+
+                    foreach ($deletedFiles as $deletedFile) {
+                        CmsMedia::delete($deletedFile);
+                    }
+                }
+            }
+        });
+
+        static::deleting(function (self $setting): void {
+            foreach (['about_content', 'terms_content'] as $attribute) {
+                $files = self::extractRichTextAttachments($setting->getAttribute($attribute));
+                foreach ($files as $file) {
+                    CmsMedia::delete($file);
+                }
+            }
+        });
+
         static::saved(fn () => self::forgetCache());
         static::deleted(fn () => self::forgetCache());
+    }
+
+    /**
+     * Ekstrak file lampiran gambar/media dari konten HTML RichEditor.
+     *
+     * @return list<string>
+     */
+    public static function extractRichTextAttachments(?string $html): array
+    {
+        if (blank($html)) {
+            return [];
+        }
+
+        preg_match_all('/(?:href|src)=["\'](?:https?:\/\/[^\/"\']+)?(?:\/storage\/)?(platform\/pages\/[^"\']+)["\']/i', $html, $matches);
+
+        return array_values(array_unique($matches[1] ?? []));
     }
 
     /**
@@ -94,6 +137,10 @@ class PlatformSetting extends Model
             'footer_copyright' => '© {year} {site}. Semua hak dilindungi.',
             'footer_privacy_url' => null,
             'footer_terms_url' => null,
+            'about_title' => 'Tentang RestoTerdekat',
+            'about_content' => '<h2>Solusi Mudah Menikmati Kuliner Walk-In</h2><p><strong>RestoTerdekat</strong> adalah platform direktori kuliner modern yang dirancang untuk menghubungkan pecinta kuliner dengan berbagai restoran terbaik di sekitar mereka secara instan dan tanpa ribet.</p><p>Kami memahami bahwa pengalaman bersantap yang menyenangkan berawal dari kemudahan. Melalui RestoTerdekat, Anda dapat dengan mudah:</p><ul><li><strong>Menemukan Restoran Terdekat</strong>: Mencari restoran pilihan berdasarkan jarak, kategori masakan, atau fasilitas yang tersedia.</li><li><strong>Melihat Menu &amp; Jam Buka</strong>: Mengetahui hidangan populer, harga terkini, dan status operasional restoran secara real-time.</li><li><strong>Dine-In Walk-In Tanpa Reservasi</strong>: Datang langsung, duduk di meja pilihan Anda, dan nikmati kemudahan memesan dari meja dengan scan stiker QR.</li></ul><p>Bagi pemilik restoran, kami menyediakan sistem operasional digital terintegrasi—mulai dari Kitchen Display System (KDS), kasir POS, hingga pemesanan mandiri oleh pelanggan—untuk meningkatkan efisiensi dan kepuasan tamu.</p>',
+            'terms_title' => 'Syarat & Ketentuan Layanan',
+            'terms_content' => '<h2>Ketentuan Penggunaan Platform</h2><p>Selamat datang di <strong>RestoTerdekat</strong>. Dengan mengakses dan menggunakan situs web serta layanan kami, Anda menyetujui untuk terikat dengan Syarat dan Ketentuan berikut ini.</p><h3>1. Layanan Direktori &amp; Walk-In</h3><p>RestoTerdekat menyediakan informasi restoran, daftar menu, jam buka, serta layanan pemesanan mandiri meja (walk-in dining). Kami senantiasa berupaya menyajikan informasi yang akurat dan terkini, namun ketersediaan menu dan harga sewaktu-waktu dapat berubah sesuai kebijakan masing-masing restoran mitra.</p><h3>2. Pemesanan &amp; Pembayaran</h3><p>Tamu dapat melakukan pemesanan langsung dari meja melalui pemindaian stiker QR resmi restoran. Pembayaran dapat dilakukan melalui metode yang disediakan oleh restoran, baik secara tunai di kasir maupun melalui pembayaran digital (QRIS/Transfer Bank).</p><h3>3. Kewajiban Pengguna</h3><ul><li>Pengguna wajib memberikan informasi yang benar saat melakukan pemesanan atau pendaftaran.</li><li>Pengguna dilarang menyalahgunakan sistem pemesanan QR, termasuk membuat pesanan palsu atau mengganggu operasional restoran.</li><li>Pengguna bertanggung jawab atas pesanan yang telah dikonfirmasi di meja restoran.</li></ul><h3>4. Pembaharuan Ketentuan</h3><p>Kami berhak untuk memperbarui Syarat dan Ketentuan ini sewaktu-waktu guna meningkatkan kualitas layanan. Perubahan akan berlaku efektif setelah diterbitkan pada halaman ini.</p>',
             'bank_name' => (string) config('subscription.bank_name', 'BCA'),
             'bank_holder' => (string) config('subscription.bank_holder', 'RestoTerdekat'),
             'bank_account' => (string) config('subscription.bank_account', '0000000000'),

@@ -18,20 +18,20 @@
 @endphp
 
 <header
-    class="sticky top-0 z-50 border-b border-border-subtle/70 bg-surface-base/95 backdrop-blur"
+    class="sticky top-0 z-50 border-b border-border-subtle/80 bg-surface-base/85 backdrop-blur-md transition-colors duration-200"
     x-data="{ open: false }"
     @keydown.escape.window="open = false"
 >
     <div class="landing-container flex items-center justify-between gap-3 py-3.5">
-        <a href="{{ $homeUrl ?? $anchor('atas') }}" class="flex min-w-0 items-center gap-3">
+        <a href="{{ $homeUrl ?? $anchor('atas') }}" class="group flex min-w-0 items-center gap-3">
             @if ($logoUrl ?? null)
-                <img src="{{ $logoUrl }}" alt="" class="h-11 w-11 rounded-full object-cover ring-2 ring-primary/25">
+                <img src="{{ $logoUrl }}" alt="" class="h-11 w-11 rounded-2xl object-cover ring-2 ring-primary/25 shadow-sm transition duration-200 group-hover:scale-105">
             @else
-                <span class="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-[var(--card-shadow)]">
+                <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-dark text-sm font-bold text-white shadow-sm ring-2 ring-white/20 transition duration-200 group-hover:scale-105">
                     {{ mb_substr($restaurant->name, 0, 1) }}
                 </span>
             @endif
-            <span class="truncate font-display text-xl font-bold tracking-tight text-body">{{ $restaurant->name }}</span>
+            <span class="truncate font-display text-xl font-bold tracking-tight text-body group-hover:text-primary transition-colors">{{ $restaurant->name }}</span>
         </a>
 
         <nav class="hidden items-center gap-7 text-sm font-semibold text-muted lg:flex">
@@ -58,9 +58,11 @@
         <div class="flex shrink-0 items-center gap-2">
             <x-customer.theme-toggle />
             @if ($ctaUrl ?? null)
-                <x-customer.btn-primary :href="$ctaUrl" class="hidden sm:inline-flex">
-                    {{ $ctaLabel ?? 'Lihat lokasi' }}
-                </x-customer.btn-primary>
+                <div class="hidden sm:inline-flex">
+                    <x-customer.btn-primary :href="$ctaUrl">
+                        {{ $ctaLabel ?? 'Lihat lokasi' }}
+                    </x-customer.btn-primary>
+                </div>
             @endif
             <button
                 type="button"

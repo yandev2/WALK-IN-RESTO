@@ -12,18 +12,24 @@
                     :highlight="$copy['highlight'] ?? null"
                 />
                 @if ($outlet?->address)
-                    <p class="mt-5 text-base leading-relaxed text-muted sm:text-lg">{{ $outlet->address }}</p>
+                    <p class="mt-5 text-base leading-relaxed text-body sm:text-lg flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>{{ $outlet->address }}</span>
+                    </p>
                 @endif
                 @if ($outlet?->name)
-                    <p class="mt-2 text-sm text-muted/70">{{ $outlet->name }}</p>
+                    <p class="mt-2 text-sm text-muted pl-7.5">{{ $outlet->name }}</p>
                 @endif
                 @if ($mapsUrl)
-                    <x-customer.btn-primary :href="$mapsUrl" class="mt-8" target="_blank" rel="noopener noreferrer">
+                    <x-customer.btn-primary :href="$mapsUrl" class="mt-8 shadow-md" target="_blank" rel="noopener noreferrer">
                         {{ $copy['button'] ?? 'Buka di Google Maps' }}
                     </x-customer.btn-primary>
                 @endif
             </div>
-            <div class="landing-reveal overflow-hidden rounded-[1.75rem] bg-surface-muted shadow-[var(--card-shadow)] ring-1 ring-[color:var(--border-subtle)]">
+            <div class="landing-reveal overflow-hidden rounded-[1.75rem] bg-surface-muted shadow-md ring-1 ring-[color:var(--border-subtle)]">
                 @if ($mapEmbedUrl)
                     <iframe
                         title="Peta {{ $restaurant->name }}"

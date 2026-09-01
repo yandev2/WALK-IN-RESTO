@@ -3,6 +3,7 @@
 use App\Http\Controllers\ExportFileDownloadController;
 use App\Http\Controllers\OrderReceiptDownloadController;
 use App\Http\Controllers\OrderReceiptPrintController;
+use App\Http\Controllers\PlatformPageController;
 use App\Http\Controllers\RestaurantLandingController;
 use App\Http\Middleware\EnsureRestaurantOperations;
 use App\Livewire\Auth\RegisterRestaurant;
@@ -18,6 +19,9 @@ use App\Livewire\Landing\RestaurantMenuCatalog;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', RestaurantDirectory::class)->name('home');
+
+Route::get('/tentang', [PlatformPageController::class, 'about'])->name('page.about');
+Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->name('page.terms');
 
 Route::get('/daftar', RegisterRestaurant::class)
     ->middleware(['guest', 'throttle:10,1'])
@@ -57,7 +61,7 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
-$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$)[A-Za-z0-9_-]+$';
+$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

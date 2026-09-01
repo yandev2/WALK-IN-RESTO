@@ -27,7 +27,7 @@
 @endphp
 
 <article
-    {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col overflow-hidden text-left']) }}
+    {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col overflow-hidden text-left shadow-sm hover:shadow-md transition-all duration-300 ring-1 ring-[color:var(--border-subtle)]']) }}
     @if ($gallery->isNotEmpty())
         x-data="imagePreview(@js($previewImages))"
     @endif
@@ -35,7 +35,7 @@
     <div
         @class([
             'relative shrink-0 overflow-hidden bg-surface-muted',
-            'mx-auto mt-5 h-28 w-28 rounded-full' => $circular,
+            'mx-auto mt-5 h-28 w-28 rounded-full ring-2 ring-primary/20' => $circular,
             'aspect-[4/3] w-full' => ! $circular,
         ])
     >
@@ -63,56 +63,49 @@
                         src="{{ $galleryPhoto }}"
                         alt=""
                         @class([
-                            'h-full w-full object-cover landing-interactive group-hover:scale-105',
+                            'h-full w-full object-cover transition duration-500 group-hover:scale-105',
                             'rounded-full' => $circular,
                         ])
                     >
                 </button>
             @endforeach
         @else
-            <div class="flex h-full min-h-[8rem] items-center justify-center text-muted/40">
+            <div class="flex h-full min-h-[8rem] items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/35">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
             </div>
         @endif
 
         @if ($discountPercent)
-            <span class="pointer-events-none absolute left-3 top-3 z-10 customer-pill bg-red-500 text-white shadow-sm">-{{ $discountPercent }}%</span>
+            <span class="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">-{{ $discountPercent }}%</span>
         @endif
 
         @if ($gallery->count() > 1)
-            <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
-                @foreach ($gallery as $thumbIndex => $thumbPhoto)
-                    <button
-                        type="button"
-                        class="h-9 w-9 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition sm:h-10 sm:w-10"
-                        :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : ''"
-                        aria-label="Foto {{ $thumbIndex + 1 }}"
-                        @click.stop="openPreview({{ $thumbIndex }})"
-                    >
-                        <img src="{{ $thumbPhoto }}" alt="" class="h-full w-full object-cover">
-                    </button>
-                @endforeach
+            <div class="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-md shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>{{ $gallery->count() }} foto</span>
             </div>
         @endif
     </div>
 
     <div class="flex flex-1 flex-col p-5">
         @if ($category)
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{{ $category }}</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-primary mb-1">{{ $category }}</p>
         @endif
-        <h3 class="mt-1 font-display text-lg font-bold text-body">{{ $name }}</h3>
+        <h3 class="font-display text-base sm:text-lg font-bold text-body group-hover:text-primary transition-colors duration-200">{{ $name }}</h3>
         @if ($description)
-            <p class="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-muted">{{ $description }}</p>
+            <p class="mt-1.5 line-clamp-2 flex-1 text-xs sm:text-sm leading-relaxed text-muted">{{ $description }}</p>
         @else
             <div class="flex-1"></div>
         @endif
 
-        <div class="mt-auto pt-3 flex items-end justify-between gap-3">
+        <div class="mt-auto pt-3 flex items-end justify-between gap-3 border-t border-border-subtle/60">
             <div>
                 @if ($discountPercent && $originalPrice)
-                    <p class="text-xs text-muted line-through">{{ $originalPrice }}</p>
+                    <p class="text-xs text-muted/80 line-through">{{ $originalPrice }}</p>
                 @endif
                 @if ($price)
                     <p class="text-base font-bold text-primary">{{ $price }}</p>
@@ -121,7 +114,7 @@
             @if ($href)
                 <a
                     href="{{ $href }}"
-                    class="inline-flex rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-primary hover:text-white"
+                    class="inline-flex rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition hover:bg-primary hover:text-white shadow-sm"
                 >
                     Lihat
                 </a>

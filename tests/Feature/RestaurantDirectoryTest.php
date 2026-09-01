@@ -179,4 +179,37 @@ class RestaurantDirectoryTest extends TestCase
             $this->assertNull($card['distance_label']);
         }
     }
+
+    public function test_recommended_restaurants_appear_in_slider(): void
+    {
+        $restaurant = Restaurant::query()->firstOrFail();
+        $restaurant->update(['is_recommended' => true]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('recommended-slider-container', false)
+            ->assertSee('Rekomendasi Spesial', false)
+            ->assertSee('Populer', false)
+            ->assertSee($restaurant->name, false)
+            ->assertSee('Lihat Detail Restoran', false);
+    }
+
+    public function test_non_recommended_or_inactive_restaurants_do_not_appear_in_slider(): void
+    {
+        Restaurant::query()->update(['is_recommended' => false]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('recommended-slider-container', false);
+
+        $restaurant = Restaurant::query()->firstOrFail();
+        $restaurant->update([
+            'is_recommended' => true,
+            'is_active' => false,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('recommended-slider-container', false);
+    }
 }

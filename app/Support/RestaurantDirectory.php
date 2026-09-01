@@ -90,6 +90,44 @@ final class RestaurantDirectory
     }
 
     /**
+     * @return Collection<int, Restaurant>
+     */
+    public function recommendedRestaurants(int $limit = 6): Collection
+    {
+        return Restaurant::query()
+            ->recommended()
+            ->with([
+                'cmsProfile',
+                'categories',
+                'defaultOutlet.operatingHours',
+                'defaultOutlet.closedDates',
+                'defaultOutlet.restaurant',
+            ])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function mapRecommendedCards(int $limit = 6): array
+    {
+        return $this->recommendedRestaurants($limit)
+            ->map(function (Restaurant $restaurant): array {
+                $card = $this->toCard($restaurant);
+                $card['hero_url'] = CmsMedia::url($restaurant->cmsProfile?->hero_image_path)
+                    ?: $card['cover_url'];
+
+                return $card;
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
      * @return Collection<int, RestaurantCategory>
      */
     public function activeCategories(): Collection

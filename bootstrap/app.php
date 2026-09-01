@@ -19,6 +19,24 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
 
+        $middleware->redirectTo(
+            guests: '/admin/login',
+            users: function () {
+                $user = auth()->user();
+                if ($user instanceof \App\Models\User) {
+                    if ($user->isSuperAdmin()) {
+                        return '/founder';
+                    }
+                    $restaurant = $user->restaurants()->first();
+                    if ($restaurant) {
+                        return '/admin/'.$restaurant->slug;
+                    }
+                }
+
+                return '/admin';
+            }
+        );
+
         $middleware->alias([
             'identify.guest' => IdentifyGuestDevice::class,
             'guest.visit' => EnsureGuestVisit::class,

@@ -29,6 +29,7 @@ class Restaurant extends Model implements HasAvatar, HasName
         'is_active' => true,
         'listed_in_directory' => true,
         'landing_enabled' => true,
+        'is_recommended' => false,
         'plan_code' => 'management_kds',
         'subscription_status' => 'active',
     ];
@@ -46,6 +47,7 @@ class Restaurant extends Model implements HasAvatar, HasName
         'is_active',
         'listed_in_directory',
         'landing_enabled',
+        'is_recommended',
         'price_level',
         'facilities',
         'plan_code',
@@ -63,6 +65,7 @@ class Restaurant extends Model implements HasAvatar, HasName
             'is_active' => 'boolean',
             'listed_in_directory' => 'boolean',
             'landing_enabled' => 'boolean',
+            'is_recommended' => 'boolean',
             'subscription_status' => SubscriptionStatus::class,
             'trial_ends_at' => 'datetime',
             'grace_ends_at' => 'datetime',
@@ -131,11 +134,23 @@ class Restaurant extends Model implements HasAvatar, HasName
         return $this->is_active && ($this->landing_enabled ?? true);
     }
 
+    public function isRecommended(): bool
+    {
+        return $this->isListedInDirectory() && (bool) ($this->is_recommended ?? false);
+    }
+
     public function scopeListedInDirectory(Builder $query): Builder
     {
         return $query
             ->where('is_active', true)
             ->where('listed_in_directory', true);
+    }
+
+    public function scopeRecommended(Builder $query): Builder
+    {
+        return $query
+            ->listedInDirectory()
+            ->where('is_recommended', true);
     }
 
     public function users(): BelongsToMany
