@@ -110,8 +110,9 @@
                                     <p class="text-xs text-white/80">{{ $restaurant->displayCategoriesLabel() ?: 'Restoran Pilihan' }}</p>
                                 </div>
                                 @if ($outlet)
-                                    <span class="rounded-full bg-black/60 px-3 py-1 text-xs font-semibold backdrop-blur-md border border-white/20">
-                                        {{ $isOpenNow ? '🟢 Buka' : '⚪ Tutup' }}
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold backdrop-blur-md border border-white/20">
+                                        <span class="h-2 w-2 rounded-full {{ $isOpenNow ? 'bg-emerald-400' : 'bg-zinc-400' }}"></span>
+                                        <span>{{ $isOpenNow ? 'Buka' : 'Tutup' }}</span>
                                     </span>
                                 @endif
                             </div>

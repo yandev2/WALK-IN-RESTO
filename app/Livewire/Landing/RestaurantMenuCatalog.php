@@ -106,6 +106,12 @@ class RestaurantMenuCatalog extends Component
             'cta' => filled($mapsUrl) || filled($whatsappUrl),
         ]);
 
+        $this->restaurant->loadAvg('reviews', 'rating');
+        $this->restaurant->loadCount('reviews');
+
+        $ratingSummary = \App\Support\RestaurantRatingSummary::for($this->restaurant);
+        $template = $profile?->landing_template ?: 'classic';
+
         return view('livewire.landing.restaurant-menu-catalog', [
             'outlet' => $outlet,
             'profile' => $profile,
@@ -114,8 +120,14 @@ class RestaurantMenuCatalog extends Component
             'logoUrl' => CmsMedia::url($this->restaurant->logo_path),
             'ctaUrl' => $ctaUrl,
             'ctaLabel' => $profile?->cta_label ?: 'Lihat lokasi',
+            'heroUrl' => CmsMedia::url($profile?->hero_image_path),
+            'howToImageUrl' => CmsMedia::url($profile?->how_to_image_path),
+            'aboutImageUrl' => CmsMedia::url($profile?->about_image_path),
             'mapsUrl' => $mapsUrl,
             'whatsappUrl' => $whatsappUrl,
+            'isOpenNow' => (bool) $outlet?->isOpenNow(),
+            'ratingSummary' => $ratingSummary,
+            'template' => $template,
             'previewMenuItems' => collect(),
             'layout' => $layout,
             'visibleSections' => $visibleSections,

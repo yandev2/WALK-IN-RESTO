@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Forms\Components\TemplateRadioPicker;
 use App\Models\CmsProfile;
+use App\Models\LandingTemplate;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Support\ActivityLogger;
@@ -77,6 +79,7 @@ class ManageLandingLayout extends Page
         );
 
         $this->form->fill([
+            'landing_template' => $profile->landing_template ?: LandingTemplate::DEFAULT_TEMPLATE,
             'sections' => LandingLayout::formItems($profile),
         ]);
     }
@@ -90,6 +93,16 @@ class ManageLandingLayout extends Page
     {
         return $schema
             ->components([
+                Section::make('Pilihan Template Desain')
+                    ->description('Pilih desain tampilan landing page publik untuk restoran Anda. Seluruh menu, ulasan, foto, dan informasi asli Anda akan otomatis terpasang.')
+                    ->icon(Heroicon::OutlinedPaintBrush)
+                    ->schema([
+                        TemplateRadioPicker::make('landing_template')
+                            ->hiddenLabel()
+                            ->required()
+                            ->default(LandingTemplate::DEFAULT_TEMPLATE),
+                    ]),
+
                 Section::make('Urutan & teks blok')
                     ->description('Geser kartu untuk mengubah urutan di halaman publik. Buka kartu untuk menyunting teks. Field kosong memakai default.')
                     ->icon(Heroicon::OutlinedSquares2x2)
@@ -124,21 +137,22 @@ class ManageLandingLayout extends Page
 
         $data = $this->form->getState();
         $payload = LandingLayout::persistFromForm($data['sections'] ?? []);
+        $payload['landing_template'] = $data['landing_template'] ?? LandingTemplate::DEFAULT_TEMPLATE;
 
         $profile = CmsProfile::query()->firstOrCreate(
             ['restaurant_id' => $restaurant->getKey()],
         );
 
-        $old = $profile->only(['landing_sections', 'landing_copy']);
+        $old = $profile->only(['landing_template', 'landing_sections', 'landing_copy']);
         $profile->update($payload);
 
         ActivityLogger::log('cms.update_landing_layout', [
             'old' => $old,
-            'new' => $profile->only(['landing_sections', 'landing_copy']),
+            'new' => $profile->only(['landing_template', 'landing_sections', 'landing_copy']),
         ]);
 
         Notification::make()
-            ->title('Layout landing disimpan')
+            ->title('Layout & template landing disimpan')
             ->success()
             ->send();
     }

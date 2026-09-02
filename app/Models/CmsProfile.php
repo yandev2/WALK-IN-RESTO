@@ -28,6 +28,7 @@ class CmsProfile extends Model
         'cta_url',
         'primary_color',
         'accent_color',
+        'landing_template',
         'landing_sections',
         'landing_copy',
     ];
@@ -41,6 +42,7 @@ class CmsProfile extends Model
                 'cta_url',
                 'primary_color',
                 'accent_color',
+                'landing_template',
                 'hero_image_path',
                 'how_to_image_path',
                 'about_image_path',
@@ -75,6 +77,11 @@ class CmsProfile extends Model
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    public function landingTemplate(): BelongsTo
+    {
+        return $this->belongsTo(LandingTemplate::class, 'landing_template', 'slug');
     }
 
     /**
