@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders;
 
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Filament\Resources\Orders\Widgets\OrderTodayStatsWidget;
 use App\Filament\Support\TableRightClick;
 use App\Models\Order;
 use App\Models\User;
@@ -11,6 +12,9 @@ use App\Support\SubscriptionAccess;
 use BackedEnum;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\ImageEntry;
+use Carbon\Carbon;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -19,7 +23,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -97,8 +103,27 @@ class OrderResource extends Resource
                     ->schema([
                         TextEntry::make('number')->label('Nomor')->badge()->color('success'),
                         TextEntry::make('visit.diningTable.code')->label('Meja')->badge()->color('success'),
-                        TextEntry::make('payment_method')->label('Metode')->badge()->color('success'),
-                        TextEntry::make('status')->badge(),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                'awaiting_cashier' => 'Menunggu kasir',
+                                'paid' => 'Lunas',
+                                'in_production' => 'Sedang dimasak',
+                                'completed' => 'Selesai',
+                                'pending_payment' => 'Pending bayar',
+                                'rejected' => 'Ditolak',
+                                'cancelled' => 'Batal',
+                                'voided' => 'Void',
+                                default => ucfirst(str_replace('_', ' ', $state)),
+                            })
+                            ->color(fn (string $state): string => match ($state) {
+                                'awaiting_cashier' => 'warning',
+                                'paid' => 'info',
+                                'in_production' => 'primary',
+                                'completed' => 'success',
+                                'rejected', 'cancelled', 'voided' => 'danger',
+                                default => 'gray',
+                            }),
                         TextEntry::make('source')->label('Sumber'),
                         TextEntry::make('visit.customer_name')->label('Nama tamu')->placeholder('-'),
                         TextEntry::make('visit.customer_wa')->label('WhatsApp tamu'),
@@ -196,10 +221,24 @@ class OrderResource extends Resource
                 TextColumn::make('visit.diningTable.code')
                     ->label('Meja'),
                 TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'awaiting_cashier' => 'Menunggu kasir',
+                        'paid' => 'Lunas',
+                        'in_production' => 'Sedang dimasak',
+                        'completed' => 'Selesai',
+                        'pending_payment' => 'Pending bayar',
+                        'rejected' => 'Ditolak',
+                        'cancelled' => 'Batal',
+                        'voided' => 'Void',
+                        default => ucfirst(str_replace('_', ' ', $state)),
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'awaiting_cashier' => 'warning',
-                        'paid' => 'success',
+                        'paid' => 'info',
+                        'in_production' => 'primary',
+                        'completed' => 'success',
                         'rejected', 'cancelled', 'voided' => 'danger',
                         default => 'gray',
                     }),
@@ -223,14 +262,63 @@ class OrderResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from')
+                            ->label('Dari tanggal')
+                            ->native(false)
+                            ->displayFormat('d/m/Y'),
+                        DatePicker::make('created_until')
+                            ->label('Sampai tanggal')
+                            ->native(false)
+                            ->displayFormat('d/m/Y'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $restaurant = Filament::getTenant();
+                        $tz = $restaurant?->timezone ?: 'Asia/Jakarta';
+
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->where(
+                                    'created_at',
+                                    '>=',
+                                    Carbon::parse($date, $tz)->startOfDay()->utc(),
+                                ),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->where(
+                                    'created_at',
+                                    '<=',
+                                    Carbon::parse($date, $tz)->endOfDay()->utc(),
+                                ),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Dari: ' . Carbon::parse($data['created_from'])->format('d/m/Y');
+                        }
+
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Sampai: ' . Carbon::parse($data['created_until'])->format('d/m/Y');
+                        }
+
+                        return $indicators;
+                    }),
                 SelectFilter::make('status')
+                    ->label('Status')
                     ->native(false)
                     ->options([
                         'awaiting_cashier' => 'Menunggu kasir',
-                        'paid' => 'Paid',
+                        'paid' => 'Lunas (Antrian dapur)',
+                        'in_production' => 'Sedang dimasak',
+                        'completed' => 'Selesai',
+                        'pending_payment' => 'Pending bayar',
                         'rejected' => 'Ditolak',
                         'cancelled' => 'Batal',
-                        'pending_payment' => 'Pending',
                         'voided' => 'Void',
                     ]),
                 SelectFilter::make('payment_method')
@@ -239,7 +327,14 @@ class OrderResource extends Resource
                         'qris' => 'QRIS',
                         'cash' => 'Tunai',
                     ]),
-            ]);
+            ])
+            ->groups([
+                Group::make('created_at')
+                    ->label('Tanggal')
+                    ->date()
+                    ->collapsible(),
+            ])
+            ->defaultGroup('created_at');
 
         return TableRightClick::apply($table, fn (): array => [
             ViewAction::make(),
@@ -264,6 +359,13 @@ class OrderResource extends Resource
     {
         return parent::getEloquentQuery()
             ->with(['visit.diningTable', 'payments', 'items']);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            OrderTodayStatsWidget::class,
+        ];
     }
 
     public static function getPages(): array

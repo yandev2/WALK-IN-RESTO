@@ -62,7 +62,7 @@
 .cashier-pos-search {
     flex: 1;
     min-width: 0;
-    border-radius: 9999px;
+    border-radius: 10px;
     border: 1px solid rgb(226 232 240);
     background: rgb(255 255 255);
     padding: 0.55rem 0.95rem;
@@ -100,7 +100,7 @@
     justify-content: center;
     min-height: 2.35rem;
     border: 0;
-    border-radius: 9999px;
+    border-radius: 10px;
     background: var(--danger-600, #dc2626);
     color: #fff;
     padding: 0.45rem 0.75rem;
@@ -131,7 +131,7 @@
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
-    border-radius: 9999px;
+    border-radius: 10px;
     border: 1px solid rgb(226 232 240);
     background: rgb(255 255 255);
     color: rgb(51 65 85);
@@ -489,7 +489,7 @@
     color: rgb(254 215 170);
 }
 
-.cashier-pos-field + .cashier-pos-field {
+.cashier-pos-field+.cashier-pos-field {
     margin-top: 0.65rem;
 }
 
@@ -500,7 +500,7 @@
     align-items: center;
 }
 
-.cashier-pos-cart-item + .cashier-pos-cart-item {
+.cashier-pos-cart-item+.cashier-pos-cart-item {
     margin-top: 0.75rem;
 }
 
@@ -720,6 +720,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .cashier-pos-chip,
     .cashier-pos-card,
     .cashier-pos-card__photo img {

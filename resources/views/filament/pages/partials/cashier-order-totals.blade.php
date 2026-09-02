@@ -34,7 +34,7 @@
     </div>
 
     @unless ($isEmpty)
-        <dl class="space-y-2 text-sm">
+        <dl class="space-y-1.5 text-xs">
             <div class="flex items-baseline justify-between gap-3">
                 <dt class="text-gray-500 dark:text-gray-400">Subtotal</dt>
                 <dd class="font-medium tabular-nums text-gray-950 dark:text-white">{{ \App\Support\CmsMedia::formatIdr($subtotal) }}</dd>
@@ -73,9 +73,9 @@
             </div>
         @endif
 
-        <div class="flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-3 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
-            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Total bayar</span>
-            <span class="text-2xl font-bold tabular-nums tracking-tight text-gray-950 dark:text-white">
+        <div class="mt-3.5 flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2.5 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
+            <span class="text-xs font-semibold text-gray-700 dark:text-gray-200">Total bayar</span>
+            <span class="text-lg font-bold tabular-nums tracking-tight text-gray-950 dark:text-white">
                 {{ \App\Support\CmsMedia::formatIdr($grandPayable) }}
             </span>
         </div>

@@ -136,6 +136,38 @@ class LandingMenuCatalogTest extends TestCase
         $this->assertSame('nasigoreng', MenuSearch::normalize('NASI  Goreng'));
     }
 
+    public function test_menu_catalog_renders_glassmorphism_background_when_template_is_glassmorphism(): void
+    {
+        $world = $this->createRestaurantWithMenu();
+        \App\Models\CmsProfile::query()->updateOrCreate(
+            ['restaurant_id' => $world['restaurant']->id],
+            ['landing_template' => 'glassmorphism']
+        );
+
+        $response = $this->get(route('landing.menu', $world['restaurant']));
+
+        $response->assertOk();
+        // Verifies the floating organic 3D spheres / ambient fluid mesh glow HTML elements
+        $response->assertSee('dark:from-[#060913]', false);
+        $response->assertSee('blur-[110px]', false);
+        $response->assertSee('border-white/70', false);
+    }
+
+    public function test_menu_catalog_does_not_render_glassmorphism_background_when_template_is_classic(): void
+    {
+        $world = $this->createRestaurantWithMenu();
+        \App\Models\CmsProfile::query()->updateOrCreate(
+            ['restaurant_id' => $world['restaurant']->id],
+            ['landing_template' => 'classic']
+        );
+
+        $response = $this->get(route('landing.menu', $world['restaurant']));
+
+        $response->assertOk();
+        $response->assertDontSee('dark:from-[#060913]', false);
+        $response->assertDontSee('blur-[110px]', false);
+    }
+
     /**
      * @return array{
      *     restaurant: Restaurant,

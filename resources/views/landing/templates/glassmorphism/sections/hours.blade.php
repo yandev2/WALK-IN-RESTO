@@ -82,6 +82,8 @@
                             $dayHour = $hours->firstWhere('day_of_week', $dayIndex);
                             $isToday = $dayIndex === $todayDay;
                             $isDayClosed = $dayHour ? (bool) $dayHour->is_closed : false;
+                            $opensAt = $dayHour?->opens_at ?? $dayHour?->open_time;
+                            $closesAt = $dayHour?->closes_at ?? $dayHour?->close_time;
                         @endphp
                         <div class="py-3 sm:py-3.5 px-3 flex items-center justify-between rounded-xl transition-colors {{ $isToday ? 'bg-primary/15 border border-primary/30 font-bold shadow-xs' : '' }}">
                             <div class="flex items-center gap-2">
@@ -93,8 +95,8 @@
                             <div class="text-xs sm:text-sm">
                                 @if ($isDayClosed)
                                     <span class="text-rose-500 font-semibold">Tutup</span>
-                                @elseif ($dayHour && $dayHour->open_time && $dayHour->close_time)
-                                    <span class="text-zinc-700 dark:text-zinc-300">{{ $formatTime($dayHour->open_time) }} – {{ $formatTime($dayHour->close_time) }}</span>
+                                @elseif ($dayHour && $opensAt && $closesAt)
+                                    <span class="text-zinc-700 dark:text-zinc-300 tabular-nums">{{ $formatTime($opensAt) }} – {{ $formatTime($closesAt) }}</span>
                                 @else
                                     <span class="text-zinc-400">—</span>
                                 @endif

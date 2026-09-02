@@ -145,6 +145,15 @@ class LandingMultiTemplateTest extends TestCase
             'submitted_at' => now(),
         ]);
 
+        \App\Models\OutletOperatingHour::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'outlet_id' => $world['outlet']->id,
+            'day_of_week' => 1,
+            'opens_at' => '09:00:00',
+            'closes_at' => '22:00:00',
+            'is_closed' => false,
+        ]);
+
         $response = $this->get(route('landing.show', $world['restaurant']));
 
         $response->assertOk();
@@ -154,6 +163,7 @@ class LandingMultiTemplateTest extends TestCase
         $response->assertSee('Budi Santoso', false);
         $response->assertSee('Es Teh', false);
         $response->assertSee('Rp 8.000', false);
+        $response->assertSee('09.00 – 22.00', false);
     }
 
     public function test_foodie_template_renders_all_sections_including_banners_and_faqs(): void

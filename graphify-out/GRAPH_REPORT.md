@@ -1,16 +1,16 @@
-# Graph Report - WALK-IN-RESTO  (2026-09-02)
+# Graph Report - WALK-IN-RESTO  (2026-09-03)
 
 ## Corpus Check
-- 620 files · ~290,912 words
+- 625 files · ~292,847 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 8467 nodes · 26142 edges · 323 communities (288 shown, 35 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 2462 edges (avg confidence: 0.85)
+- 8493 nodes · 26206 edges · 327 communities (290 shown, 37 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 2464 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `91504d36`
+- Built from commit: `96c8948d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,103 +19,105 @@
 - components/chart.js
 - code-editor.js
 - rich-editor.js
-- Illuminate\Database\Eloquent\Relations\BelongsTo
-- draw
+- Illuminate\Database\Eloquent\Model
+- updateElements
 - TestCase
 - constructor
-- nodeAt
-- GuestContext
-- r
-- i
-- User
-- RestaurantAnalyticsPeriod
-- _update
-- Visit
+- Illuminate\Support\Collection
 - Illuminate\Http\Request
+- r
+- facet
+- User
+- by
+- _update
+- Order
+- SubscriptionAccess
 - DiningTable
 - get
 - Filament\Tables\Table
 - advance
-- Order
-- Dashboard
+- CmsProfile
+- Illuminate\Database\Eloquent\Builder
 - markdown-editor.js
 - Restaurant
 - support.js
-- n
-- P
-- facet
+- vd
+- marks
+- of
 - columns/select.js
 - .slice
-- AppServiceProvider.php
+- CreateCashierOrder.php
 - echo.js
 - resolve
 - ExportFile
-- create
+- copy
 - o
 - Filament\Schemas\Schema
-- W
-- toString
-- SubscriptionInvoice
-- SubscriptionAccess
+- prop
+- Im
+- InvoicePaymentTest
+- E
 - Ye
-- Filament\Resources\Pages\ListRecords
+- Dashboard
 - SoftDeleteTrashPage
 - notifications.js
-- buildTicks
+- Y
 - PlatformSetting
 - te
 - Cn
-- y
+- Pe
 - components/select.js
 - reduce
 - tables.js
-- ce
+- ne
 - r
-- KitchenDisplay
+- AppServiceProvider.php
 - SubscriptionStatus
 - Xt
 - RestaurantCategory
 - filament-right-click.js
 - Activity
-- next
+- t
 - Si
 - RendersAnalyticsDashboard.php
-- dx
+- n
 - selectOption
-- child
-- TenantContext
+- cc
+- CreateCashierOrder
 - ir
-- addCommands
+- addElementByRule
 - slider.js
 - ae
-- selectOption
+- closeDropdown
 - fn
 - slice
-- eq
+- Facility
 - ExportFileResource
-- sliceDoc
+- SubscriptionInvoiceResource
 - file-upload.js
-- Pe
+- renderOptions
 - CashierFilamentActionsTest
-- SoftDeleteTrashTest
 - RestaurantDirectory
 - FonnteErrorMessage
-- g$
-- fn
+- eq
+- toString
+- constructor
 - AdminPanelProvider.php
+- y
 - devDependencies
 - filament/app.js
-- cc
+- g$
 - fn
 - selectRecords
 - require
 - scripts
-- Illuminate\Database\Eloquent\Model
+- static
 - color-picker.js
 - js/app.js
 - EditProfile
-- CmsMedia
+- RegisterRestaurant.php
 - composer.json
+- order-today-stats-widget.blade.php
 - .panel
 - date-time-picker.js
 - 🚀 3. Langkah-Langkah Menambahkan Template Baru (*Workflow*)
@@ -138,13 +140,13 @@
 - ProfileInformationForm.php
 - register-restaurant.blade.php
 - add-to-cart-modal.blade.php
-- addSingleBadge
+- selectOption
 - components/actions.js
 - psr-4
 - extra
 - logging.php
 - GeoDistance
-- replace
+- Illuminate\Foundation\Http\FormRequest
 - cart.blade.php
 - 2026_08_19_040000_add_soft_deletes_to_core_tables.php
 - customer.blade.php
@@ -190,14 +192,15 @@
 - workflows/graphify.md
 - glassmorphism/show.blade.php
 - MenuItem
+- glassmorphism-background.blade.php
 
 ## God Nodes (most connected - your core abstractions)
-1. `Restaurant` - 260 edges
-2. `User` - 245 edges
+1. `Restaurant` - 263 edges
+2. `User` - 247 edges
 3. `constructor()` - 152 edges
 4. `update()` - 148 edges
-5. `TestCase` - 139 edges
-6. `Order` - 105 edges
+5. `TestCase` - 141 edges
+6. `Order` - 108 edges
 7. `resolve()` - 94 edges
 8. `y()` - 93 edges
 9. `MenuItem` - 92 edges
@@ -206,8 +209,8 @@
 ## Surprising Connections (you probably didn't know these)
 - `up()` --calls--> `DiningTable`  [EXTRACTED]
   database/migrations/2026_08_20_010000_add_floor_layout_to_tables_table.php → app/Models/DiningTable.php
-- `createGuestRestaurant()` --calls--> `KdsStation`  [EXTRACTED]
-  tests/Concerns/CreatesGuestRestaurant.php → app/Models/KdsStation.php
+- `createGuestRestaurant()` --calls--> `DiningTable`  [EXTRACTED]
+  tests/Concerns/CreatesGuestRestaurant.php → app/Models/DiningTable.php
 - `createGuestRestaurant()` --calls--> `MenuCategory`  [EXTRACTED]
   tests/Concerns/CreatesGuestRestaurant.php → app/Models/MenuCategory.php
 - `createGuestRestaurant()` --calls--> `MenuItem`  [EXTRACTED]
@@ -218,247 +221,243 @@
 ## Import Cycles
 - None detected.
 
-## Communities (323 total, 35 thin omitted)
+## Communities (327 total, 37 thin omitted)
 
 ### Community 0 - "stat/chart.js"
 Cohesion: 0.01
-Nodes (490): A(), aa(), acquireContext(), active(), add(), addControllers(), addElements(), addEventListener() (+482 more)
+Nodes (488): Nn(), Ot(), A(), aa(), acquireContext(), active(), add(), addControllers() (+480 more)
 
 ### Community 1 - "components/chart.js"
 Cohesion: 0.01
-Nodes (352): El(), abutsStart(), ac(), add(), addControllers(), addPlugins(), addScales(), ae() (+344 more)
+Nodes (352): abutsStart(), ac(), ad(), addControllers(), addPlugins(), addScales(), ae(), after() (+344 more)
 
 ### Community 2 - "code-editor.js"
 Cohesion: 0.01
-Nodes (131): Ac(), addCompletion(), addCompletions(), addNamespace(), addNamespaceObject(), addSelection(), Ag(), b0() (+123 more)
+Nodes (133): aa(), Ac(), addActive(), addChanges(), addCompletion(), addCompletions(), addNamespace(), addNamespaceObject() (+125 more)
 
 ### Community 3 - "rich-editor.js"
 Cohesion: 0.01
-Nodes (201): aa(), add(), addExtensions(), addGlobalAttributes(), addHackNode(), addTextblockHacks(), an(), applyAspectRatio() (+193 more)
+Nodes (185): themeClasses(), aa(), addHackNode(), addNodeMark(), addTextblockHacks(), an(), applyAspectRatio(), applyConstraints() (+177 more)
 
-### Community 4 - "Illuminate\Database\Eloquent\Relations\BelongsTo"
-Cohesion: 0.03
-Nodes (37): CmsBanner, LogOptions, CmsFaq, LogOptions, CmsGalleryImage, CmsProfile, LogOptions, restaurant() (+29 more)
+### Community 4 - "Illuminate\Database\Eloquent\Model"
+Cohesion: 0.02
+Nodes (40): CmsBanner, LogOptions, CmsFaq, LogOptions, CmsGalleryImage, restaurant(), bootPurgesPublicDiskFiles(), storedFileAttributes() (+32 more)
 
-### Community 5 - "draw"
-Cohesion: 0.03
-Nodes (164): aa(), acquireContext(), adjustHitBoxes(), af(), Ao(), applyStack(), aspectRatio(), bh() (+156 more)
+### Community 5 - "updateElements"
+Cohesion: 0.06
+Nodes (53): addEventListener(), applyStack(), bindResponsiveEvents(), _calculateBarIndexPixels(), _calculateBarValuePixels(), calculateCircumference(), _circumference(), _computeAngle() (+45 more)
 
 ### Community 6 - "TestCase"
 Cohesion: 0.03
-Nodes (54): CashierOrderService, BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles, Bityukov\CommandCenter\Filament\Pages\Commands, Bityukov\CommandCenter\Filament\Pages\History, DatabaseSeeder, RolePermissionSeeder, Filament\Facades\Filament, Illuminate\Database\QueryException (+46 more)
+Nodes (52): CashierOrderService, BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles, Bityukov\CommandCenter\Filament\Pages\Commands, Bityukov\CommandCenter\Filament\Pages\History, DatabaseSeeder, RolePermissionSeeder, Filament\Facades\Filament, Illuminate\Database\QueryException (+44 more)
 
 ### Community 7 - "constructor"
-Cohesion: 0.02
-Nodes (142): add(), addChunk(), addEventListener(), addInfoPane(), addInner(), addWindowListeners(), adjust(), al() (+134 more)
-
-### Community 8 - "nodeAt"
-Cohesion: 0.11
-Nodes (50): AS(), cellsInRect(), co(), colCount(), content(), createAndFill(), ct(), dS() (+42 more)
-
-### Community 9 - "GuestContext"
 Cohesion: 0.03
-Nodes (38): CartController, CheckoutController, MenuController, OrderController, ReviewController, SessionController, TableController, VisitController (+30 more)
+Nodes (144): add(), addChunk(), addEventListener(), addInfoPane(), addInner(), addWindowListeners(), adjust(), al() (+136 more)
+
+### Community 8 - "Illuminate\Support\Collection"
+Cohesion: 0.06
+Nodes (10): periodSummary(), WelcomeBannerWidget, GuestCheckoutService, MenuModifierService, CashTender, IdrAmount, RestaurantDirectory, Illuminate\Contracts\Pagination\LengthAwarePaginator (+2 more)
+
+### Community 9 - "Illuminate\Http\Request"
+Cohesion: 0.02
+Nodes (67): CartController, CheckoutController, MenuController, OrderController, ReviewController, SessionController, TableController, VisitController (+59 more)
 
 ### Community 10 - "r"
 Cohesion: 0.05
-Nodes (127): _0(), addNodeView(), addOptions(), addProseMirrorPlugins(), af(), au(), buildProps(), Cc() (+119 more)
+Nodes (141): _0(), addNodeView(), addProseMirrorPlugins(), af(), au(), blockRange(), buildProps(), c1() (+133 more)
 
-### Community 11 - "i"
-Cohesion: 0.05
-Nodes (80): aa(), applyChanges(), balanced(), baseIndent(), baseIndentFor(), Bg(), bidiSpans(), blockAt() (+72 more)
+### Community 11 - "facet"
+Cohesion: 0.04
+Nodes (64): accept(), activateHover(), applyTransaction(), asSingle(), baseDirAt(), bidiIn(), bidiSpans(), bidiSpansAt() (+56 more)
 
 ### Community 12 - "User"
-Cohesion: 0.03
-Nodes (25): AnalyticsKpiWidget, Role, LogOptions, User, ExportFilePolicy, RolePolicy, UserPolicy, Filament\Models\Contracts\FilamentUser (+17 more)
+Cohesion: 0.02
+Nodes (31): AnalyticsKpiWidget, Role, LogOptions, User, ExportFilePolicy, RolePolicy, UserPolicy, Filament\Models\Contracts\FilamentUser (+23 more)
 
-### Community 13 - "RestaurantAnalyticsPeriod"
-Cohesion: 0.07
-Nodes (19): analyticsDateFrom(), analyticsDateTo(), analyticsDayCount(), analyticsRangeLabel(), analyticsSnapshot(), canViewAnalytics(), normalizedAnalyticsDateRange(), Carbon (+11 more)
+### Community 13 - "by"
+Cohesion: 0.04
+Nodes (85): Ad(), add(), ay(), Bd(), Bg(), bt(), bw(), by() (+77 more)
 
 ### Community 14 - "_update"
-Cohesion: 0.02
-Nodes (139): active(), addBox(), addElements(), afterBuildTicks(), afterCalculateLabelRotation(), afterDataLimits(), afterDatasetsUpdate(), afterDraw() (+131 more)
+Cohesion: 0.03
+Nodes (123): addBox(), addElements(), afterBuildTicks(), afterCalculateLabelRotation(), afterDataLimits(), afterDatasetsUpdate(), afterDraw(), afterFit() (+115 more)
 
-### Community 15 - "Visit"
+### Community 15 - "Order"
 Cohesion: 0.04
-Nodes (18): Visit, VisitDevice, GuestCheckoutService, MenuModifierService, OrderPaymentService, StaleOperationsService, TableOpsService, TableScanService (+10 more)
+Nodes (17): OrderReceiptDownloadController, OrderReceiptPrintController, SendWhatsappReceiptJob, Order, OrderItem, OrderReceipt, WhatsappMessage, DailyOmzetService (+9 more)
 
-### Community 16 - "Illuminate\Http\Request"
+### Community 16 - "SubscriptionAccess"
 Cohesion: 0.05
-Nodes (32): RestaurantMenuController, ApplyRestaurantPanelTheme, EnsureApiGuestVisit, EnsureGuestVisit, EnsureRestaurantOperations, EnsureTenantSubscription, IdentifyApiGuestDevice, IdentifyGuestDevice (+24 more)
+Nodes (12): canCreate(), canEdit(), canViewAny(), OrderResource, ListOrders, OrderTodayStatsWidget, OutletResource, Action (+4 more)
 
 ### Community 17 - "DiningTable"
 Cohesion: 0.03
-Nodes (17): getRecordRouteBindingEloquentQuery(), periodSummary(), bootScopedToRestaurant(), scopeForRestaurant(), scopeWithoutRestaurantScope(), DiningTable, LogOptions, RestaurantDirectory (+9 more)
+Nodes (20): ScanTable, DiningTable, LogOptions, Visit, OrderPaymentService, StaleOperationsService, TableOpsService, TableScanService (+12 more)
 
 ### Community 18 - "get"
-Cohesion: 0.04
-Nodes (87): addBlockWidget(), addBreak(), addComposition(), addDelimiter(), addInlineWidget(), addLine(), addLineStart(), addLineStartIfNotCovered() (+79 more)
+Cohesion: 0.03
+Nodes (108): addBlockWidget(), addBreak(), addComposition(), addDelimiter(), addInlineWidget(), addLine(), addLineStart(), addLineStartIfNotCovered() (+100 more)
 
 ### Community 19 - "Filament\Tables\Table"
 Cohesion: 0.13
-Nodes (32): SubscriptionPlanResource, CmsBannerResource, CmsGalleryImageResource, KdsStationResource, MenuCategoryResource, MenuItemResource, ModifierGroupResource, WhatsappMessageResource (+24 more)
+Nodes (35): CmsBannerResource, DiningTableResource, MenuItemResource, ModifierGroupResource, WhatsappMessageResource, TableRightClick, BackedEnum, Carbon\Carbon (+27 more)
 
 ### Community 20 - "advance"
 Cohesion: 0.05
-Nodes (62): addChild(), addGaps(), addLeafElement(), addNode(), advance(), ATXHeading(), blank(), break() (+54 more)
+Nodes (65): addChild(), addGaps(), addLeafElement(), addNode(), advance(), ATXHeading(), blank(), break() (+57 more)
 
-### Community 21 - "Order"
-Cohesion: 0.03
-Nodes (22): PdfExporter, ExportFileDownloadController, OrderReceiptPrintController, SendWhatsappReceiptJob, Order, OrderItem, OrderReceipt, WhatsappMessage (+14 more)
+### Community 21 - "CmsProfile"
+Cohesion: 0.04
+Nodes (13): CmsProfile, LogOptions, FilamentTenantTheme, LandingLayout, self, Filament\Support\Colors\ColorManager, Filament\Support\Facades\FilamentColor, Illuminate\Support\Arr (+5 more)
 
-### Community 22 - "Dashboard"
-Cohesion: 0.07
-Nodes (9): EditFacility, EditLandingTemplate, EditSubscriptionPlan, Dashboard, EditMenuItem, EditRestaurantCategory, EditRestaurant, EditUser (+1 more)
+### Community 22 - "Illuminate\Database\Eloquent\Builder"
+Cohesion: 0.06
+Nodes (15): getRecordRouteBindingEloquentQuery(), ManageDiningTables, Action, Closure, ListMenuItems, bootBelongsToRestaurantAndOutlet(), bootScopedToRestaurant(), scopeForRestaurant() (+7 more)
 
 ### Community 23 - "markdown-editor.js"
 Cohesion: 0.05
-Nodes (85): ad(), af(), ai(), al(), An(), ao(), bo(), br() (+77 more)
+Nodes (88): ad(), af(), ai(), al(), An(), ao(), bf(), bo() (+80 more)
 
 ### Community 24 - "Restaurant"
-Cohesion: 0.02
-Nodes (45): ExpireStaleOperationsCommand, GenerateUpcomingInvoicesCommand, ProcessSubscriptionLifecycleCommand, RestaurantController, PlatformPageController, RestaurantLandingController, SitemapController, RestaurantResource (+37 more)
+Cohesion: 0.03
+Nodes (38): ExpireStaleOperationsCommand, GenerateUpcomingInvoicesCommand, ProcessSubscriptionLifecycleCommand, FounderStatsWidget, analyticsDateFrom(), analyticsDateTo(), analyticsDayCount(), analyticsRangeLabel() (+30 more)
 
 ### Community 25 - "support.js"
 Cohesion: 0.05
 Nodes (75): acquireScrollLock(), ai(), e(), Bi(), br(), Bt(), ca(), close() (+67 more)
 
-### Community 26 - "n"
-Cohesion: 0.09
-Nodes (80): _a(), Ae(), ar(), as(), Ba(), bc(), bf(), ee() (+72 more)
+### Community 26 - "vd"
+Cohesion: 0.08
+Nodes (77): _a(), Ac(), Ae(), ar(), as(), bc(), bl(), ce() (+69 more)
 
-### Community 27 - "P"
-Cohesion: 0.12
-Nodes (26): addInputRules(), addMark(), addPasteRules(), Ah(), Ax(), dispatchTransaction(), ea(), Eh() (+18 more)
+### Community 27 - "marks"
+Cohesion: 0.06
+Nodes (58): addGlobalAttributes(), addInputRules(), addMark(), addPasteRules(), addStoredMark(), Ah(), Ax(), dn() (+50 more)
 
-### Community 28 - "facet"
+### Community 28 - "of"
 Cohesion: 0.04
-Nodes (88): accept(), active(), applyTransaction(), asSingle(), B(), baseTheme(), between(), blur() (+80 more)
+Nodes (70): active(), apply(), B(), baseTheme(), blur(), bu(), checkAsyncSchedule(), define() (+62 more)
 
 ### Community 29 - "columns/select.js"
 Cohesion: 0.06
 Nodes (57): A(), An(), applyDisabledState(), b(), Bt(), Ce(), D(), disable() (+49 more)
 
 ### Community 30 - ".slice"
-Cohesion: 0.06
-Nodes (54): accepts(), addMaps(), addStep(), addTransform(), appendMap(), appendMapping(), appendMappingInverted(), apply() (+46 more)
+Cohesion: 0.05
+Nodes (67): accepts(), addInner(), addMaps(), addStep(), addTransform(), appendMap(), appendMapping(), appendMappingInverted() (+59 more)
 
-### Community 31 - "AppServiceProvider.php"
-Cohesion: 0.06
-Nodes (53): Width, AppServiceProvider, Filament\Actions\Action, Filament\Actions\DeleteBulkAction, Filament\Actions\ForceDeleteAction, Filament\Actions\ForceDeleteBulkAction, Filament\Actions\RestoreAction, Filament\Actions\RestoreBulkAction (+45 more)
+### Community 31 - "CreateCashierOrder.php"
+Cohesion: 0.13
+Nodes (26): Filament\Actions\Action, Filament\Forms\Components\ColorPicker, Filament\Forms\Components\Component, Filament\Forms\Components\DatePicker, Filament\Forms\Components\Hidden, Filament\Forms\Components\Repeater, Filament\Forms\Components\RichEditor, Filament\Forms\Components\Select (+18 more)
 
 ### Community 32 - "echo.js"
 Cohesion: 0.05
-Nodes (49): a(), ar(), b(), Be(), Ce(), cr(), d(), De() (+41 more)
+Nodes (48): a(), ar(), b(), Be(), Ce(), cr(), d(), De() (+40 more)
 
 ### Community 33 - "resolve"
-Cohesion: 0.04
-Nodes (140): Ad(), addKeyboardShortcuts(), after(), al(), ay(), Bd(), before(), Bg() (+132 more)
+Cohesion: 0.06
+Nodes (139): Ac(), addCommands(), addKeyboardShortcuts(), after(), ag(), al(), AS(), before() (+131 more)
 
 ### Community 34 - "ExportFile"
 Cohesion: 0.06
-Nodes (14): CleanupOldExportFilesJob, ExportReportJob, ExportFile, ExportFileObserver, ExportFinishedNotifier, ReportExportDispatcher, ExportService, HandleNotification (+6 more)
+Nodes (19): ExcelExporter, PdfExporter, CleanupOldExportFilesJob, ExportReportJob, ExportFile, ExportFileObserver, ExportFinishedNotifier, ReportExportDispatcher (+11 more)
 
-### Community 35 - "create"
-Cohesion: 0.04
-Nodes (118): Ac(), addAll(), addDOM(), addElement(), addElementByRule(), addNodeMark(), addTextNode(), addToSet() (+110 more)
+### Community 35 - "copy"
+Cohesion: 0.14
+Nodes (32): bu(), close(), closeFrontierNode(), computeWrapping(), copy(), defaultType(), dl(), dropNode() (+24 more)
 
 ### Community 36 - "o"
-Cohesion: 0.03
-Nodes (179): $a(), ad(), addEventListener(), ag(), apply(), ar(), at(), au() (+171 more)
+Cohesion: 0.02
+Nodes (219): acquireContext(), adjustHitBoxes(), ah(), Ao(), apply(), ar(), aspectRatio(), au() (+211 more)
 
 ### Community 37 - "Filament\Schemas\Schema"
-Cohesion: 0.04
-Nodes (20): ManageBillingAccount, BackedEnum, UnitEnum, ManageHomeLanding, BackedEnum, UnitEnum, ManagePlatformPages, BackedEnum (+12 more)
-
-### Community 38 - "W"
 Cohesion: 0.05
-Nodes (79): AQ(), atLastNode(), au(), child(), childAfter(), childBefore(), continue(), cursor() (+71 more)
+Nodes (18): TemplateRadioPicker, ManageBillingAccount, BackedEnum, UnitEnum, ManageHomeLanding, BackedEnum, UnitEnum, ManagePlatformPages (+10 more)
 
-### Community 39 - "toString"
-Cohesion: 0.13
-Nodes (20): Bc(), check(), checkAttrs(), checkContent(), cn(), endIndex(), getObj(), hasProtocol() (+12 more)
-
-### Community 40 - "SubscriptionInvoice"
-Cohesion: 0.05
-Nodes (6): FounderStatsWidget, SubscriptionInvoice, SubscriptionInvoiceService, Filament\Widgets\StatsOverviewWidget, Filament\Widgets\StatsOverviewWidget\Stat, InvoicePaymentTest
-
-### Community 41 - "SubscriptionAccess"
+### Community 38 - "prop"
 Cohesion: 0.06
-Nodes (11): canCreate(), canEdit(), canViewAny(), OrderResource, ListOrders, OutletResource, Action, ManageOutlet (+3 more)
+Nodes (58): AQ(), atLastNode(), au(), child(), cursor(), cursorAt(), dX(), enter() (+50 more)
+
+### Community 39 - "Im"
+Cohesion: 0.31
+Nodes (10): Bm(), eat(), err(), Im(), isInGroup(), Lm(), o1(), pc() (+2 more)
+
+### Community 41 - "E"
+Cohesion: 0.05
+Nodes (64): $a(), aa(), add(), B(), bo(), bs(), ca(), _cachedScopes() (+56 more)
 
 ### Community 42 - "Ye"
-Cohesion: 0.10
-Nodes (41): Rd(), $a(), ak(), at(), bk(), c(), bp(), Dk() (+33 more)
+Cohesion: 0.07
+Nodes (52): Rd(), $a(), ak(), at(), bk(), c(), bp(), closest() (+44 more)
 
-### Community 43 - "Filament\Resources\Pages\ListRecords"
-Cohesion: 0.04
-Nodes (23): CreateFacility, ListFacilities, CreateLandingTemplate, ListLandingTemplates, CreateSubscriptionInvoice, ListSubscriptionInvoices, ViewSubscriptionInvoice, SubscriptionInvoiceResource (+15 more)
+### Community 43 - "Dashboard"
+Cohesion: 0.05
+Nodes (12): EditFacility, EditLandingTemplate, EditSubscriptionPlan, ListSubscriptionPlans, SubscriptionPlanResource, EditTenant, Dashboard, EditMenuItem (+4 more)
 
 ### Community 44 - "SoftDeleteTrashPage"
-Cohesion: 0.04
-Nodes (22): SoftDeleteTrashPage, ManageCmsBanners, TrashCmsBanners, CmsFaqResource, ManageCmsFaqs, TrashCmsFaqs, ManageCmsGalleryImages, TrashCmsGalleryImages (+14 more)
+Cohesion: 0.03
+Nodes (26): SoftDeleteTrashPage, ManageCmsBanners, TrashCmsBanners, CmsFaqResource, ManageCmsFaqs, TrashCmsFaqs, CmsGalleryImageResource, ManageCmsGalleryImages (+18 more)
 
 ### Community 45 - "notifications.js"
 Cohesion: 0.06
 Nodes (31): actions(), button(), c(), close(), configureAnimations(), configureTransitions(), constructor(), danger() (+23 more)
 
-### Community 46 - "buildTicks"
-Cohesion: 0.09
-Nodes (30): afterAutoSkip(), ah(), average(), Bf(), buildLookupTable(), buildTicks(), Fa(), _generate() (+22 more)
+### Community 46 - "Y"
+Cohesion: 0.05
+Nodes (54): active(), af(), afterAutoSkip(), _animateOptions(), at(), Bf(), br(), buildLookupTable() (+46 more)
 
 ### Community 47 - "PlatformSetting"
 Cohesion: 0.04
-Nodes (13): self, PlatformSetting, FilamentTenantTheme, ReceiptLogo, PlatformSettingSeeder, Filament\Support\Colors\ColorManager, Filament\Support\Facades\FilamentColor, ReflectionClass (+5 more)
+Nodes (16): PlatformPageController, RestaurantLandingController, RestaurantMenuCatalog, self, PlatformSetting, LandingPageDataService, ReceiptLogo, RestaurantTheme (+8 more)
 
 ### Community 48 - "te"
-Cohesion: 0.05
-Nodes (11): Bn(), Id(), ji(), on(), qd(), qi(), Ri(), te() (+3 more)
+Cohesion: 0.04
+Nodes (12): Pr(), Bn(), br(), Id(), ji(), qd(), qi(), Ri() (+4 more)
 
 ### Community 49 - "Cn"
 Cohesion: 0.13
 Nodes (46): Cn(), b(), Be(), Ce(), De(), dn(), _e(), Fe() (+38 more)
 
-### Community 50 - "y"
-Cohesion: 0.16
-Nodes (70): at(), b(), Be(), $c(), X(), me(), Cr(), Ct() (+62 more)
+### Community 50 - "Pe"
+Cohesion: 0.23
+Nodes (22): ca(), de(), dt(), Ee(), ei(), Ft(), Hr(), ht() (+14 more)
 
 ### Community 51 - "components/select.js"
 Cohesion: 0.08
-Nodes (38): A(), applyDisabledState(), b(), Bt(), D(), disable(), E(), en() (+30 more)
+Nodes (34): b(), Bt(), D(), E(), en(), Et(), getLabelsForMultipleSelection(), getSelectedOptionLabels() (+26 more)
 
 ### Community 52 - "reduce"
-Cohesion: 0.06
-Nodes (62): addActions(), advanceFully(), advanceStack(), allActions(), apply(), c0(), canShift(), checkAsyncSchedule() (+54 more)
+Cohesion: 0.08
+Nodes (46): addActions(), advanceFully(), advanceStack(), allActions(), c0(), canShift(), close(), deadEnd() (+38 more)
 
 ### Community 53 - "tables.js"
 Cohesion: 0.13
 Nodes (44): A(), ae(), B(), be(), C(), ce(), E(), ee() (+36 more)
 
-### Community 54 - "ce"
-Cohesion: 0.09
-Nodes (41): Ac(), bl(), Cc(), ce(), cl(), Dc(), Do(), Ec() (+33 more)
+### Community 54 - "ne"
+Cohesion: 0.10
+Nodes (42): cd(), ee(), ue(), cl(), dd(), Do(), Et(), fd() (+34 more)
 
 ### Community 55 - "r"
 Cohesion: 0.15
 Nodes (43): _a(), ar(), c(), f(), d(), di(), g(), Hi() (+35 more)
 
-### Community 56 - "KitchenDisplay"
-Cohesion: 0.18
-Nodes (3): KitchenDisplay, BackedEnum, UnitEnum
+### Community 56 - "AppServiceProvider.php"
+Cohesion: 0.06
+Nodes (25): KitchenDisplay, BackedEnum, UnitEnum, Width, AppServiceProvider, Filament\Actions\DeleteBulkAction, Filament\Actions\ForceDeleteAction, Filament\Actions\ForceDeleteBulkAction (+17 more)
 
 ### Community 57 - "SubscriptionStatus"
-Cohesion: 0.11
-Nodes (7): ExcelExporter, BackedEnum, UnitEnum, SubscriptionStatus, Illuminate\Contracts\View\View, Maatwebsite\Excel\Concerns\FromView, Maatwebsite\Excel\Concerns\ShouldAutoSize
+Cohesion: 0.10
+Nodes (4): BackedEnum, UnitEnum, SubscriptionStatus, SubscriptionPlan
 
 ### Community 58 - "Xt"
 Cohesion: 0.12
 Nodes (44): ae(), At(), bi(), bn(), ci(), cn(), ct(), de() (+36 more)
 
 ### Community 59 - "RestaurantCategory"
-Cohesion: 0.07
-Nodes (4): RestaurantCategory, RestaurantCategorySeeder, RestaurantDirectoryTest, TenantIsolationTest
+Cohesion: 0.06
+Nodes (9): RestaurantCategory, FacilitySeeder, LandingTemplateSeeder, PlatformSettingSeeder, RestaurantCategorySeeder, SubscriptionPlanSeeder, Illuminate\Database\Seeder, RestaurantDirectoryTest (+1 more)
 
 ### Community 60 - "filament-right-click.js"
 Cohesion: 0.11
@@ -468,41 +467,41 @@ Nodes (42): a(), ae(), b(), be(), C(), ce(), D(), de() (+34 more)
 Cohesion: 0.07
 Nodes (11): ActivityResource, ListActivities, ViewActivity, ActivityInfolist, ActivitiesTable, ViewOrder, Activity, ActivityPresenter (+3 more)
 
-### Community 62 - "next"
-Cohesion: 0.08
-Nodes (33): activeForPoint(), addActive(), addBlock(), addLineDeco(), Ar(), as(), blankContent(), boundChange() (+25 more)
+### Community 62 - "t"
+Cohesion: 0.07
+Nodes (42): a$(), activeForPoint(), addBlock(), addLineDeco(), b1(), blankContent(), boundChange(), commit() (+34 more)
 
 ### Community 63 - "Si"
-Cohesion: 0.13
-Nodes (41): ae(), At(), bi(), bn(), ci(), cn(), ct(), de() (+33 more)
+Cohesion: 0.14
+Nodes (40): ae(), At(), bi(), bn(), ci(), cn(), ct(), de() (+32 more)
 
 ### Community 64 - "RendersAnalyticsDashboard.php"
 Cohesion: 0.09
 Nodes (19): AnalyticsPeriodSummaryWidget, AnalyticsRevenueBarWidget, AnalyticsSidebarWidget, AnalyticsTopMenuWidget, generateChartDataChecksum(), getCachedChartData(), getChartData(), mountRefreshesAnalyticsChart() (+11 more)
 
-### Community 65 - "dx"
-Cohesion: 0.14
-Nodes (24): Ei(), Aa(), Bi(), ca(), da(), fa(), Gr(), ki() (+16 more)
+### Community 65 - "n"
+Cohesion: 0.09
+Nodes (40): Ei(), Aa(), Ba(), Bi(), cf(), gl(), Gr(), If() (+32 more)
 
 ### Community 66 - "selectOption"
 Cohesion: 0.12
 Nodes (39): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), closeDropdown(), constructor(), createBadgeElement(), createOptionElement(), createRemoveButton() (+31 more)
 
-### Community 67 - "child"
-Cohesion: 0.10
-Nodes (33): addInner(), Bm(), child(), dg(), eat(), err(), ew(), findIndex() (+25 more)
+### Community 67 - "cc"
+Cohesion: 0.12
+Nodes (18): attrs(), AX(), bi(), cc(), combine(), configure(), extend(), gQ() (+10 more)
 
-### Community 68 - "TenantContext"
-Cohesion: 0.06
-Nodes (13): CreateCashierOrder, BackedEnum, UnitEnum, Width, DiningTableResource, ManageDiningTables, Action, Closure (+5 more)
+### Community 68 - "CreateCashierOrder"
+Cohesion: 0.13
+Nodes (4): CreateCashierOrder, BackedEnum, UnitEnum, Width
 
 ### Community 69 - "ir"
 Cohesion: 0.13
 Nodes (34): Ft(), ir(), ce(), de(), Dt(), ee(), Et(), fe() (+26 more)
 
-### Community 70 - "addCommands"
-Cohesion: 0.13
-Nodes (26): addCommands(), addStoredMark(), computeAttrs(), createChecked(), ensureMarks(), handleExit(), i1(), insertText() (+18 more)
+### Community 70 - "addElementByRule"
+Cohesion: 0.14
+Nodes (25): addAll(), addDOM(), addElement(), addElementByRule(), addTextNode(), addToSet(), allowedMarks(), allowsMarkType() (+17 more)
 
 ### Community 71 - "slider.js"
 Cohesion: 0.11
@@ -512,53 +511,61 @@ Nodes (33): ar(), Be(), Ce(), De(), _e(), Ee(), er(), et() (+25 more)
 Cohesion: 0.09
 Nodes (34): ae(), Ao(), as(), B(), Kt(), cs(), Ee(), Ge() (+26 more)
 
-### Community 73 - "selectOption"
-Cohesion: 0.15
-Nodes (33): addSingleSelectionDisplay(), closeDropdown(), constructor(), createOptionElement(), deferPositionDropdown(), destroy(), filterOptions(), focusNextOption() (+25 more)
+### Community 73 - "closeDropdown"
+Cohesion: 0.23
+Nodes (17): applyDisabledState(), closeDropdown(), constructor(), destroy(), disable(), enable(), focusNextOption(), focusPreviousOption() (+9 more)
 
 ### Community 74 - "fn"
 Cohesion: 0.13
 Nodes (33): aa(), At(), ba(), cr(), da(), de(), dt(), ei() (+25 more)
 
 ### Community 75 - "slice"
-Cohesion: 0.04
-Nodes (133): a$(), activateHover(), addChanges(), addElement(), Ah(), AX(), b1(), balance() (+125 more)
+Cohesion: 0.05
+Nodes (128): addElement(), Ah(), balanced(), baseIndentFor(), be(), Bg(), a(), blockAt() (+120 more)
 
-### Community 76 - "eq"
-Cohesion: 0.07
-Nodes (40): addNode(), ao(), append(), destroyBetween(), destroyRest(), dragend(), dragleave(), dragover() (+32 more)
+### Community 76 - "Facility"
+Cohesion: 0.12
+Nodes (4): ManageCmsProfile, BackedEnum, UnitEnum, Facility
 
 ### Community 77 - "ExportFileResource"
 Cohesion: 0.12
 Nodes (6): GenerateReport, BackedEnum, UnitEnum, ExportFileResource, ListExportFiles, TrashExportFiles
 
-### Community 78 - "sliceDoc"
+### Community 78 - "SubscriptionInvoiceResource"
 Cohesion: 0.15
-Nodes (19): aO(), charCategorizer(), Fc(), flatten(), getCursor(), getDeco(), gT(), highlight() (+11 more)
+Nodes (3): CreateSubscriptionInvoice, ViewSubscriptionInvoice, SubscriptionInvoiceResource
 
 ### Community 79 - "file-upload.js"
 Cohesion: 0.05
 Nodes (53): hc(), Bp(), c(), ca(), clickPercent(), constructor(), Cp(), da() (+45 more)
 
-### Community 80 - "Pe"
-Cohesion: 0.12
-Nodes (32): cd(), dd(), dt(), Ft(), gl(), _i(), Ie(), it() (+24 more)
+### Community 80 - "renderOptions"
+Cohesion: 0.37
+Nodes (13): createOptionElement(), deferPositionDropdown(), filterOptions(), handleSearch(), hideLoadingState(), openDropdown(), populateLabelRepositoryFromOptions(), positionDropdown() (+5 more)
 
 ### Community 84 - "FonnteErrorMessage"
 Cohesion: 0.11
 Nodes (8): FonnteClient, FonnteErrorMessage, Throwable, Illuminate\Http\Client\ConnectionException, Illuminate\Http\Client\Response, PHPUnit\Framework\Attributes\DataProvider, RuntimeException, FonnteErrorMessageTest
 
-### Community 86 - "g$"
-Cohesion: 0.07
-Nodes (45): acceptToken(), allows(), bd(), Bh(), clearDelayedAndroidKey(), d0(), De(), delayAndroidKey() (+37 more)
+### Community 85 - "eq"
+Cohesion: 0.06
+Nodes (52): addNode(), allowsMarks(), ao(), append(), Cc(), co(), compatibleContent(), dd() (+44 more)
 
-### Community 87 - "fn"
-Cohesion: 0.08
-Nodes (35): themeClasses(), addAttributes(), b1(), Ck(), coordsAtPos(), De(), fn(), Gh() (+27 more)
+### Community 86 - "toString"
+Cohesion: 0.07
+Nodes (38): addToSet(), bd(), between(), Bh(), childString(), clearDelayedAndroidKey(), d0(), De() (+30 more)
+
+### Community 87 - "constructor"
+Cohesion: 0.04
+Nodes (68): addAttributes(), addExtensions(), addOptions(), applyInitialSize(), Bo(), cn(), compile(), configure() (+60 more)
 
 ### Community 89 - "AdminPanelProvider.php"
 Cohesion: 0.16
-Nodes (19): ApplyPlatformBrandTheme, BezhanSalleh\FilamentShield\FilamentShieldPlugin, Bityukov\CommandCenter\Filament\CommandCenterPlugin, Filament\Http\Middleware\Authenticate, Filament\Http\Middleware\AuthenticateSession, Filament\Http\Middleware\DisableBladeIconComponents, Filament\Http\Middleware\DispatchServingFilamentEvent, Filament\Navigation\NavigationGroup (+11 more)
+Nodes (18): BezhanSalleh\FilamentShield\FilamentShieldPlugin, Bityukov\CommandCenter\Filament\CommandCenterPlugin, Filament\Http\Middleware\Authenticate, Filament\Http\Middleware\AuthenticateSession, Filament\Http\Middleware\DisableBladeIconComponents, Filament\Http\Middleware\DispatchServingFilamentEvent, Filament\Navigation\NavigationGroup, Filament\Support\Colors\Color (+10 more)
+
+### Community 90 - "y"
+Cohesion: 0.18
+Nodes (62): at(), b(), Be(), $c(), X(), me(), Cr(), Ct() (+54 more)
 
 ### Community 91 - "devDependencies"
 Cohesion: 0.11
@@ -568,9 +575,9 @@ Nodes (18): axios, concurrently, laravel-vite-plugin, devDependencies, axios, co
 Cohesion: 0.13
 Nodes (8): B(), close(), G(), init(), P(), setUpResizeObserver(), x(), Y()
 
-### Community 93 - "cc"
-Cohesion: 0.22
-Nodes (11): attrs(), bi(), cc(), cO(), JQ(), m$(), Ow(), rc() (+3 more)
+### Community 93 - "g$"
+Cohesion: 0.03
+Nodes (95): acceptToken(), allows(), aO(), ch(), charCategorizer(), childAfter(), childBefore(), cO() (+87 more)
 
 ### Community 94 - "fn"
 Cohesion: 0.22
@@ -588,9 +595,9 @@ Nodes (16): require, barryvdh/laravel-dompdf, bezhansalleh/filament-shield, endr
 Cohesion: 0.12
 Nodes (16): scripts, dev, post-autoload-dump, post-create-project-cmd, post-root-package-install, post-update-cmd, Composer\\Config::disableProcessTimeout, Illuminate\\Foundation\\ComposerScripts::postAutoloadDump (+8 more)
 
-### Community 98 - "Illuminate\Database\Eloquent\Model"
-Cohesion: 0.04
-Nodes (18): canDelete(), canDeleteAny(), canForceDelete(), canRestore(), Action, trashPageAction(), FacilityResource, LandingTemplateResource (+10 more)
+### Community 98 - "static"
+Cohesion: 0.03
+Nodes (32): canDelete(), canDeleteAny(), canForceDelete(), canRestore(), Action, trashPageAction(), FacilityResource, CreateFacility (+24 more)
 
 ### Community 99 - "color-picker.js"
 Cohesion: 0.14
@@ -600,9 +607,9 @@ Nodes (3): style(), update(), [x]()
 Cohesion: 0.22
 Nodes (6): applyTheme(), bindThemeToggle(), initReveal(), initTheme(), syncThemeToggleIcons(), toggleTheme()
 
-### Community 102 - "CmsMedia"
-Cohesion: 0.06
-Nodes (9): WelcomeBannerWidget, Modifier, Payment, PaymentProofService, CashierOrderPreview, CheckoutTotals, CmsMedia, Illuminate\Http\UploadedFile (+1 more)
+### Community 102 - "RegisterRestaurant.php"
+Cohesion: 0.10
+Nodes (7): RegisterRestaurant, RestaurantProvisioner, SubscriptionPlanSync, ReservedSlugs, Illuminate\Support\Facades\Auth, Illuminate\Validation\Rule, Illuminate\Validation\Rules\Password
 
 ### Community 103 - "composer.json"
 Cohesion: 0.14
@@ -684,9 +691,9 @@ Nodes (5): back, nextFromAccount, nextFromRestaurant, register, selectPlan(
 Cohesion: 0.33
 Nodes (5): confirmAdd, decrementPickingQty, incrementPickingQty, setVariant({{ $variant->id }}), toggleModifier({{ $modifier->id }})
 
-### Community 132 - "addSingleBadge"
-Cohesion: 0.33
-Nodes (6): addBadgesForSelectedOptions(), addSingleBadge(), createBadgeElement(), createRemoveButton(), getLabelForSingleSelection(), getSelectedOptionLabel()
+### Community 132 - "selectOption"
+Cohesion: 0.24
+Nodes (12): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), createBadgeElement(), createRemoveButton(), getLabelForSingleSelection(), getSelectedOptionLabel(), hideMaxItemsMessage() (+4 more)
 
 ### Community 134 - "psr-4"
 Cohesion: 0.40
@@ -704,9 +711,9 @@ Nodes (4): Monolog\Handler\NullHandler, Monolog\Handler\StreamHandler, Monolog\H
 Cohesion: 0.20
 Nodes (4): GeoDistance, PHPUnit\Framework\TestCase, ExampleTest, GeoDistanceTest
 
-### Community 139 - "replace"
-Cohesion: 0.07
-Nodes (36): addToSet(), childString(), decompose(), decomposeLeft(), decomposeRight(), flushIOSKey(), FO(), getReplacement() (+28 more)
+### Community 138 - "Illuminate\Foundation\Http\FormRequest"
+Cohesion: 0.08
+Nodes (8): AddCartItemRequest, CheckoutRequest, ClaimTableRequest, JoinTableRequest, StorePaymentProofRequest, StoreRestaurantReviewRequest, UpdateCartItemRequest, Illuminate\Foundation\Http\FormRequest
 
 ### Community 140 - "cart.blade.php"
 Cohesion: 0.40
@@ -753,8 +760,8 @@ Cohesion: 0.67
 Nodes (3): Ae(), Bt(), ne()
 
 ### Community 193 - "restaurant-menu-catalog.blade.php"
-Cohesion: 0.29
-Nodes (6): landing.templates.foodie.sections.footer, landing.templates.foodie.sections.header, landing.templates.glassmorphism.sections.footer, landing.templates.glassmorphism.sections.header, partials.customer.landing-footer, partials.customer.landing-header
+Cohesion: 0.25
+Nodes (7): landing.templates.foodie.sections.footer, landing.templates.foodie.sections.header, landing.templates.glassmorphism.partials.background, landing.templates.glassmorphism.sections.footer, landing.templates.glassmorphism.sections.header, partials.customer.landing-footer, partials.customer.landing-header
 
 ### Community 295 - "3. Detail Implementasi Perbaikan Keamanan"
 Cohesion: 0.17
@@ -773,32 +780,32 @@ Cohesion: 0.50
 Nodes (3): landing.sections., partials.customer.landing-footer, partials.customer.landing-header
 
 ### Community 322 - "glassmorphism/show.blade.php"
-Cohesion: 0.33
-Nodes (5): landing.templates.glassmorphism.sections., landing.templates.glassmorphism.sections.hero, landing.sections., landing.templates.glassmorphism.sections.footer, landing.templates.glassmorphism.sections.header
+Cohesion: 0.29
+Nodes (6): landing.templates.glassmorphism.sections., landing.templates.glassmorphism.sections.hero, landing.sections., landing.templates.glassmorphism.partials.background, landing.templates.glassmorphism.sections.footer, landing.templates.glassmorphism.sections.header
 
 ### Community 328 - "MenuItem"
-Cohesion: 0.05
-Nodes (12): TemplateRadioPicker, MenuItem, LogOptions, MenuItemPhoto, CashierMenuCatalog, Filament\Forms\Components\Field, Illuminate\Database\Eloquent\Collection, extraMenuItem() (+4 more)
+Cohesion: 0.03
+Nodes (19): GuestCart, GuestMenu, MenuCategory, MenuItem, LogOptions, VisitCartItem, GuestCartService, CashierMenuCatalog (+11 more)
 
 ## Knowledge Gaps
-- **319 isolated node(s):** `$schema`, `name`, `type`, `description`, `laravel` (+314 more)
+- **323 isolated node(s):** `$schema`, `name`, `type`, `description`, `laravel` (+318 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **37 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `_s()` connect `components/chart.js` to `rich-editor.js`, `buildTicks`?**
+- **Why does `_s()` connect `components/chart.js` to `rich-editor.js`, `o`?**
   _High betweenness centrality (0.030) - this node is a cross-community bridge._
-- **Why does `update()` connect `constructor` to `stat/chart.js`, `components/chart.js`, `code-editor.js`, `rich-editor.js`, `replace`, `i`, `get`, `advance`, `markdown-editor.js`, `n`, `facet`, `echo.js`, `resolve`, `W`, `Ye`, `te`, `y`, `reduce`, `ce`, `next`, `dx`, `slice`, `sliceDoc`, `g$`, `fn`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `Wi()` connect `Ye` to `code-editor.js`, `rich-editor.js`, `constructor`, `components/select.js`, `facet`, `columns/select.js`?**
+- **Why does `update()` connect `constructor` to `stat/chart.js`, `components/chart.js`, `code-editor.js`, `rich-editor.js`, `facet`, `by`, `get`, `advance`, `markdown-editor.js`, `vd`, `of`, `prop`, `Ye`, `te`, `reduce`, `ne`, `t`, `n`, `slice`, `toString`, `constructor`, `y`, `g$`?**
   _High betweenness centrality (0.027) - this node is a cross-community bridge._
+- **Why does `Wi()` connect `Ye` to `code-editor.js`, `rich-editor.js`, `constructor`, `components/select.js`, `of`, `columns/select.js`?**
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Are the 18 inferred relationships involving `constructor()` (e.g. with `a()` and `h()`) actually correct?**
   _`constructor()` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 26 inferred relationships involving `update()` (e.g. with `Pr()` and `a()`) actually correct?**
   _`update()` has 26 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `$schema`, `name`, `type` to the rest of the system?**
-  _319 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _323 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `stat/chart.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.010898665598583384 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.010747207000552228 - nodes in this community are weakly interconnected._

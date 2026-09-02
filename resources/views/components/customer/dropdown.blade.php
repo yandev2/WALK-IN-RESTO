@@ -15,6 +15,7 @@
 <div
     {{ $attributes->except(['property', 'method', 'value', 'options', 'label', 'size'])->class('relative') }}
     x-data="{ open: false }"
+    x-bind:class="{ 'z-50': open, 'z-10': ! open }"
     x-on:keydown.escape.window="open = false"
     x-on:click.outside="open = false"
 >
@@ -47,7 +48,7 @@
         x-cloak
         x-show="open"
         x-transition.origin.top
-        class="absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-surface-raised py-1 shadow-[var(--card-shadow-hover)] ring-1 ring-[color:var(--border-subtle)]"
+        class="absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-surface-raised dark:bg-zinc-900 py-1 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 border border-border-subtle dark:border-zinc-800"
         style="background-color: var(--surface-raised);"
     >
         @foreach ($options as $option)
@@ -67,9 +68,9 @@
                 @endif
                 x-on:click="open = false"
                 @class([
-                    'flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition hover:bg-surface-muted',
+                    'flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800',
                     'font-semibold text-primary' => $isActive,
-                    'text-body' => ! $isActive,
+                    'text-body dark:text-zinc-200' => ! $isActive,
                 ])
             >
                 <span>{{ $option['label'] }}</span>

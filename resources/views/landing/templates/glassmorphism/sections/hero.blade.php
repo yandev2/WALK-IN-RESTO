@@ -61,14 +61,14 @@
                     </p>
 
                     {{-- Action Buttons --}}
-                    <div class="mt-8 flex flex-wrap items-center gap-4">
+                    <div class="mt-8 flex flex-nowrap sm:flex-wrap items-center gap-2.5 sm:gap-4 w-full sm:w-auto">
                         @if ($menuItems->isNotEmpty())
                             <a
                                 href="#menu"
-                                class="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary to-accent hover:opacity-95 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-primary/35 transition-all hover:scale-105 active:scale-95 border border-white/30"
+                                class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-primary via-primary to-accent hover:opacity-95 px-3.5 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-bold text-white shadow-xl shadow-primary/35 transition-all hover:scale-105 active:scale-95 border border-white/30 text-center whitespace-nowrap"
                             >
                                 <span>Eksplor Menu</span>
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
                         @endif
 
@@ -77,9 +77,9 @@
                                 href="{{ $mapsUrl }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center justify-center gap-2 rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-xl border border-white/60 dark:border-white/20 px-7 py-4 text-sm font-semibold text-zinc-900 dark:text-white shadow-lg hover:bg-white/60 dark:hover:bg-white/20 transition-all hover:scale-103"
+                                class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-white/40 dark:bg-white/10 backdrop-blur-xl border border-white/60 dark:border-white/20 px-3.5 sm:px-7 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-zinc-900 dark:text-white shadow-lg hover:bg-white/60 dark:hover:bg-white/20 transition-all hover:scale-103 text-center whitespace-nowrap"
                             >
-                                <svg class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                                 <span>Petunjuk Arah</span>
                             </a>
                         @endif

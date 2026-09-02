@@ -40,7 +40,27 @@ class Order extends Model
         'voided_at',
     ];
 
+    public const STATUS_PENDING_PAYMENT = 'pending_payment';
+    public const STATUS_AWAITING_CASHIER = 'awaiting_cashier';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_IN_PRODUCTION = 'in_production';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_VOIDED = 'voided';
+
     public const ACCEPTED_STATUSES = ['paid', 'in_production', 'completed'];
+
+    public const STATUSES = [
+        self::STATUS_AWAITING_CASHIER => 'Menunggu kasir',
+        self::STATUS_PAID => 'Lunas (Antrian dapur)',
+        self::STATUS_IN_PRODUCTION => 'Sedang dimasak',
+        self::STATUS_COMPLETED => 'Selesai',
+        self::STATUS_PENDING_PAYMENT => 'Pending bayar',
+        self::STATUS_REJECTED => 'Ditolak',
+        self::STATUS_CANCELLED => 'Batal',
+        self::STATUS_VOIDED => 'Void',
+    ];
 
     protected function casts(): array
     {

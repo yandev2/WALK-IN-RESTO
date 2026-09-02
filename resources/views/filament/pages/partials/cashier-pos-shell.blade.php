@@ -299,7 +299,7 @@
                 }"
                 @click.outside="tableOpen = false"
             >
-                <h2 class="cashier-pos-title">Ringkasan pesanan</h2>
+                <h2 class="cashier-pos-title mb-3.5">Ringkasan pesanan</h2>
                 <div class="cashier-pos-field">
                     <span class="cashier-pos-label" id="cashier-pos-table-label">Meja</span>
                     <div class="cashier-pos-combobox">
@@ -463,7 +463,7 @@
                     </div>
 
                     <div x-show="$store.cashierPos.preview.subtotal" x-cloak>
-                        <dl class="space-y-2 text-sm">
+                        <dl class="space-y-1.5 text-xs">
                             <div class="flex items-baseline justify-between gap-3">
                                 <dt class="text-gray-500 dark:text-gray-400">Subtotal</dt>
                                 <dd class="font-medium tabular-nums text-gray-950 dark:text-white" x-text="$store.cashierPos.preview.subtotal_label"></dd>
@@ -488,9 +488,9 @@
                             </p>
                         </div>
 
-                        <div class="mt-4 flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-3 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
-                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Total bayar</span>
-                            <span class="text-2xl font-bold tabular-nums tracking-tight text-gray-950 dark:text-white" x-text="$store.cashierPos.preview.grand_label"></span>
+                        <div class="mt-3.5 flex items-baseline justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2.5 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10">
+                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-200">Total bayar</span>
+                            <span class="text-lg font-bold tabular-nums tracking-tight text-gray-950 dark:text-white" x-text="$store.cashierPos.preview.grand_label"></span>
                         </div>
 
                         <p class="mt-4 rounded-lg bg-info-50 px-3 py-2 text-xs leading-5 text-info-700 dark:bg-info-400/10 dark:text-info-400" x-show="$store.cashierPos.paymentMethod === 'qris'">

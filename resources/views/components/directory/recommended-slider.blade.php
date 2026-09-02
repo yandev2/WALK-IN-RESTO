@@ -6,11 +6,12 @@
     <section
         aria-label="Restoran Rekomendasi Pilihan"
         aria-roledescription="carousel"
-        class="recommended-slider-container relative mb-8 overflow-hidden rounded-[2rem] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10"
+        class="recommended-slider-container relative mb-8 overflow-hidden rounded-[2rem] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10 select-none"
         x-data="{
             active: 0,
             total: {{ count($cards) }},
             timer: null,
+            touchStartX: 0,
             next() {
                 this.active = (this.active + 1) % this.total;
             },
@@ -27,13 +28,25 @@
                     clearInterval(this.timer);
                     this.timer = null;
                 }
+            },
+            handleTouchStart(e) {
+                this.touchStartX = e.changedTouches[0].screenX;
+            },
+            handleTouchEnd(e) {
+                const diff = e.changedTouches[0].screenX - this.touchStartX;
+                if (diff < -40) this.next();
+                if (diff > 40) this.prev();
             }
         }"
         x-init="startAutoplay()"
         @mouseenter="stopAutoplay()"
         @mouseleave="startAutoplay()"
+        @touchstart.passive="handleTouchStart($event)"
+        @touchend.passive="handleTouchEnd($event)"
+        @keydown.arrow-left.window="prev()"
+        @keydown.arrow-right.window="next()"
     >
-        <div class="relative min-h-[420px] sm:min-h-[460px] md:min-h-[500px]">
+        <div class="relative min-h-[440px] sm:min-h-[480px] md:min-h-[520px]">
             @foreach ($cards as $index => $card)
                 <div
                     x-show="active === {{ $index }}"
@@ -58,9 +71,9 @@
                         >
                     @endif
 
-                    {{-- Multi-directional Gradient Vignettes --}}
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 via-45% to-transparent/10 sm:bg-gradient-to-r sm:from-zinc-950 sm:from-20% sm:via-zinc-950/50 sm:via-45% sm:to-transparent"></div>
-                    <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-zinc-950/80 to-transparent pointer-events-none"></div>
+                    {{-- Multi-directional Gradient Vignettes for Perfect Text Legibility --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 via-50% to-zinc-950/20 sm:bg-gradient-to-r sm:from-zinc-950 sm:from-25% sm:via-zinc-950/60 sm:via-50% sm:to-transparent"></div>
+                    <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-zinc-950/90 via-zinc-950/50 to-transparent pointer-events-none"></div>
 
                     {{-- Badge Populer di Pojok Kanan Atas Kontainer --}}
                     <div class="absolute right-5 top-5 sm:right-8 sm:top-8 z-20">
@@ -71,7 +84,7 @@
                     </div>
 
                     {{-- Slide Content --}}
-                    <div class="relative z-10 flex h-full min-h-[420px] sm:min-h-[460px] md:min-h-[500px] flex-col justify-between p-6 sm:p-10 md:p-12 max-w-2xl">
+                    <div class="relative z-10 flex h-full min-h-[440px] sm:min-h-[480px] md:min-h-[520px] flex-col justify-between p-6 sm:p-10 md:p-12 max-w-2xl">
                         {{-- Top Badge Rekomendasi Spesial --}}
                         <div class="flex items-center gap-3">
                             <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/20 border border-primary/40 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm backdrop-blur-md">
@@ -84,10 +97,10 @@
 
                         {{-- Main Body Info --}}
                         <div
-                            class="my-auto py-6"
+                            class="my-auto py-4 sm:py-6"
                             x-show="active === {{ $index }}"
                             x-transition:enter="transition ease-out duration-700 delay-100"
-                            x-transition:enter-start="opacity-0 translate-y-1.5"
+                            x-transition:enter-start="opacity-0 translate-y-2"
                             x-transition:enter-end="opacity-100 translate-y-0"
                         >
                             <h2 class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
@@ -138,42 +151,46 @@
             @endforeach
         </div>
 
-        {{-- Left / Right Arrow Navigation --}}
-        <button
-            type="button"
-            @click="prev()"
-            x-show="total > 1"
-            class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md border border-white/15 transition shadow-lg"
-            aria-label="Restoran sebelumnya"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
-            </svg>
-        </button>
-
-        <button
-            type="button"
-            @click="next()"
-            x-show="total > 1"
-            class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md border border-white/15 transition shadow-lg"
-            aria-label="Restoran berikutnya"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
-            </svg>
-        </button>
-
-        {{-- Pagination Dots --}}
-        <div x-show="total > 1" class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-            <template x-for="i in total" :key="i">
+        {{-- Floating Bottom-Right Glassmorphic Navigation Capsule (Zero Text Overlap) --}}
+        @if (count($cards) > 1)
+            <div class="absolute bottom-5 right-5 sm:bottom-8 sm:right-8 z-30 flex items-center gap-1.5 sm:gap-2 rounded-full bg-zinc-950/80 p-1.5 backdrop-blur-xl border border-white/15 shadow-2xl">
+                {{-- Prev Button --}}
                 <button
                     type="button"
-                    @click="active = i - 1"
-                    :class="active === i - 1 ? 'w-6 bg-primary' : 'w-2 bg-white/35 hover:bg-white/60'"
-                    class="h-2 rounded-full transition-all duration-300"
-                    :aria-label="`Slide ${i}`"
-                ></button>
-            </template>
-        </div>
+                    @click="prev()"
+                    class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-zinc-300 hover:bg-white/15 hover:text-white transition active:scale-95"
+                    aria-label="Restoran sebelumnya"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+                    </svg>
+                </button>
+
+                {{-- Slide Indicator Dots --}}
+                <div class="flex items-center gap-1.5 px-2">
+                    <template x-for="i in total" :key="i">
+                        <button
+                            type="button"
+                            @click="active = i - 1"
+                            :class="active === i - 1 ? 'w-5 bg-primary shadow-sm shadow-primary/50' : 'w-1.5 bg-white/30 hover:bg-white/60'"
+                            class="h-1.5 rounded-full transition-all duration-300"
+                            :aria-label="`Slide ${i}`"
+                        ></button>
+                    </template>
+                </div>
+
+                {{-- Next Button --}}
+                <button
+                    type="button"
+                    @click="next()"
+                    class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-zinc-300 hover:bg-white/15 hover:text-white transition active:scale-95"
+                    aria-label="Restoran berikutnya"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                    </svg>
+                </button>
+            </div>
+        @endif
     </section>
 @endif

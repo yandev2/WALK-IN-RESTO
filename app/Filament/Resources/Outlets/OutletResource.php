@@ -191,7 +191,7 @@ class OutletResource extends Resource
                         'sm' => 1,
                         'md' => 2,
                         'lg' => 2,
-                        'xl' => 5,
+                        'xl' => 3,
                         '2xl' => 5,
                     ])
                     ->visible(fn (): bool => SubscriptionAccess::allows('settings_full'))
@@ -213,7 +213,7 @@ class OutletResource extends Resource
                             ->disabled()
                             ->dehydrated(false)
                             ->default('exclusive')
-                              ->hintAction(self::ttlHintAction(
+                            ->hintAction(self::ttlHintAction(
                                 'Pajak',
                                 'Mode pajak',
                                 'Saat ini hanya tersedia mode exclusive.',

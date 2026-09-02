@@ -2364,10 +2364,10 @@
     "semantic_hash": ""
   },
   "resources/views/components/customer/dropdown.blade.php": {
-    "mtime": 1788243511.057189,
-    "seen": 1788284156.3228202,
-    "ast_hash": "0e126762b4fee8f6481c6d82d571d024",
-    "semantic_hash": "0e126762b4fee8f6481c6d82d571d024"
+    "mtime": 1788365895.0400627,
+    "seen": 1788365979.8516245,
+    "ast_hash": "8284a03d017279407e3b5b920dfbd714",
+    "semantic_hash": ""
   },
   "resources/views/components/customer/feature-tile.blade.php": {
     "mtime": 1788243511.057189,
@@ -2556,16 +2556,16 @@
     "semantic_hash": "6741b863bed0ac11000478f937c8e253"
   },
   "resources/views/filament/pages/partials/cashier-order-totals.blade.php": {
-    "mtime": 1788243511.0663743,
-    "seen": 1788284156.322849,
-    "ast_hash": "f3a2026db8e9a2adf93b653a53c0faee",
-    "semantic_hash": "f3a2026db8e9a2adf93b653a53c0faee"
+    "mtime": 1788367087.3024313,
+    "seen": 1788367160.6565132,
+    "ast_hash": "f9f0f25e74923b2dbbbf5b1674403d49",
+    "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/cashier-pos-shell.blade.php": {
-    "mtime": 1788243511.0663743,
-    "seen": 1788284156.32285,
-    "ast_hash": "10db470aee1d62be36b4817f1138945a",
-    "semantic_hash": "10db470aee1d62be36b4817f1138945a"
+    "mtime": 1788367066.0032456,
+    "seen": 1788367160.6565154,
+    "ast_hash": "fa6c463161d9efbe56a57e160fd275f9",
+    "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/kds-beep.blade.php": {
     "mtime": 1788243511.0663743,
@@ -2862,9 +2862,9 @@
     "semantic_hash": "9847b544dbf98821146e041030d81442"
   },
   "resources/views/livewire/landing/restaurant-menu-catalog.blade.php": {
-    "mtime": 1788319951.3497407,
-    "seen": 1788320026.0713203,
-    "ast_hash": "f8d09a1cf024c8d5c803f7f1f333261c",
+    "mtime": 1788365874.7663062,
+    "seen": 1788365979.8518002,
+    "ast_hash": "c7ab55345453e2f85c94c55af2db42ec",
     "semantic_hash": ""
   },
   "resources/views/partials/customer/guest-header.blade.php": {
@@ -3168,10 +3168,10 @@
     "semantic_hash": "d08a32f114f363247c8ae88cedf0f6f7"
   },
   "tests/Feature/LandingMenuCatalogTest.php": {
-    "mtime": 1788243511.1042743,
-    "seen": 1788284156.3229463,
-    "ast_hash": "fcc973fd52946a74b5873993946d6a37",
-    "semantic_hash": "fcc973fd52946a74b5873993946d6a37"
+    "mtime": 1788365063.084609,
+    "seen": 1788365116.301554,
+    "ast_hash": "fecd174a75782d77fdb2d8e9465d28ce",
+    "semantic_hash": ""
   },
   "tests/Feature/MenuItemDiscountTest.php": {
     "mtime": 1788243511.1042743,
@@ -3516,9 +3516,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/LandingMultiTemplateTest.php": {
-    "mtime": 1788317255.792356,
-    "seen": 1788317335.4004,
-    "ast_hash": "6e5829796fc595cccfcf9c08df817adf",
+    "mtime": 1788365728.2318983,
+    "seen": 1788365813.306532,
+    "ast_hash": "c0159b291ba2a2eef7aae49f7c775536",
     "semantic_hash": ""
   },
   ".agents/rules/graphify.md": {
@@ -3684,9 +3684,9 @@
     "semantic_hash": ""
   },
   "doc/context-add-template-leanding-page.md": {
-    "mtime": 1788316749.693311,
-    "seen": 1788316789.789084,
-    "ast_hash": "916b65804d96193293abf154a04cf597",
+    "mtime": 1788320526.124254,
+    "seen": 1788320564.0487926,
+    "ast_hash": "9675954b825f5000d6608f705cf00207",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/about.blade.php": {
@@ -3732,15 +3732,15 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/hero.blade.php": {
-    "mtime": 1788319140.97987,
-    "seen": 1788320026.0712774,
-    "ast_hash": "434323d149cbf0c82606df27a93c16d5",
+    "mtime": 1788365344.053813,
+    "seen": 1788365431.408298,
+    "ast_hash": "7e2aef9c02fe84c4eedf323e47fb29b4",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/hours.blade.php": {
-    "mtime": 1788319235.2663486,
-    "seen": 1788320026.0712786,
-    "ast_hash": "52f80ec1364b32223b17f786d05499ec",
+    "mtime": 1788365650.3379362,
+    "seen": 1788365813.3064094,
+    "ast_hash": "a02ae7318d0c6f5178633f97ee1d5353",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/how_to.blade.php": {
@@ -3768,15 +3768,27 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/show.blade.php": {
-    "mtime": 1788320398.0644522,
-    "seen": 1788320456.7673054,
-    "ast_hash": "9019606471cd4618aec8aa70f943baac",
+    "mtime": 1788364997.9726896,
+    "seen": 1788365116.3014555,
+    "ast_hash": "e9b41ff61e80528407a3bdc7b7e8fec4",
     "semantic_hash": ""
   },
   "public/images/landing/templates/glassmorphism.webp": {
     "mtime": 1788317030.0045335,
     "seen": 1788317335.400544,
     "ast_hash": "93db08792bfb8ff2bd442ecf296d9606",
+    "semantic_hash": ""
+  },
+  "resources/views/components/customer/glassmorphism-background.blade.php": {
+    "mtime": 1788364984.873435,
+    "seen": 1788365116.301294,
+    "ast_hash": "9e746a13824b76e3181b26303ebffb4b",
+    "semantic_hash": ""
+  },
+  "resources/views/landing/templates/glassmorphism/partials/background.blade.php": {
+    "mtime": 1788364980.1772532,
+    "seen": 1788365116.3014293,
+    "ast_hash": "8c99d77759c89c300fc61c937a9b1c4d",
     "semantic_hash": ""
   }
 }

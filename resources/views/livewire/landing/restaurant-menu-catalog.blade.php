@@ -1,12 +1,19 @@
 @php
     use App\Support\CmsMedia;
+
+    $isGlassmorphism = in_array($template ?? 'classic', ['glassmorphism', 'glassmorp'], true);
 @endphp
 
-<div>
+<div class="{{ $isGlassmorphism ? 'relative min-h-screen text-zinc-900 dark:text-white overflow-x-hidden selection:bg-primary/30 selection:text-white transition-colors duration-500 font-sans' : 'relative min-h-screen' }}">
+    {{-- Glassmorphism Base Backdrop & 3D Floating Frosted Spheres Background --}}
+    @if ($isGlassmorphism)
+        @include('landing.templates.glassmorphism.partials.background')
+    @endif
+
     {{-- Header matching active landing template --}}
     @if (($template ?? 'classic') === 'foodie')
         @include('landing.templates.foodie.sections.header')
-    @elseif (($template ?? 'classic') === 'glassmorphism' || ($template ?? 'classic') === 'glassmorp')
+    @elseif ($isGlassmorphism)
         @include('landing.templates.glassmorphism.sections.header')
     @else
         @include('partials.customer.landing-header', [
@@ -22,7 +29,7 @@
         ])
     @endif
 
-    <main id="atas" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <main id="atas" class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
                 <x-customer.section-heading
@@ -40,7 +47,7 @@
         </div>
 
         {{-- Filter & Search Bar --}}
-        <div class="customer-card mt-8 overflow-visible p-2.5 rounded-3xl bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 shadow-xs">
+        <div class="relative z-30 mt-8 overflow-visible p-2.5 rounded-3xl transition-all duration-300 {{ $isGlassmorphism ? 'bg-white/25 dark:bg-white/[0.06] backdrop-blur-2xl border border-white/50 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.7)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)]' : 'customer-card bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 shadow-xs' }}">
             <div class="flex flex-col gap-2 lg:flex-row lg:items-stretch">
                 <label class="relative min-w-0 flex-1">
                     <span class="sr-only">Cari menu</span>
@@ -51,11 +58,11 @@
                         type="search"
                         wire:model.live.debounce.300ms="search"
                         placeholder="Cari nama menu..."
-                        class="h-12 w-full rounded-2xl border-0 bg-transparent py-3 pl-11 pr-4 text-sm text-body placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                        class="h-12 w-full rounded-2xl border-0 bg-transparent py-3 pl-11 pr-4 text-sm text-body dark:text-zinc-100 placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                     >
                 </label>
 
-                <div class="hidden w-px self-stretch bg-border-subtle dark:bg-zinc-800 lg:block"></div>
+                <div class="hidden w-px self-stretch {{ $isGlassmorphism ? 'bg-white/30 dark:bg-white/10' : 'bg-border-subtle dark:bg-zinc-800' }} lg:block"></div>
 
                 <div class="grid grid-cols-2 gap-2 lg:w-[28rem]">
                     <x-customer.dropdown
@@ -77,15 +84,15 @@
 
         {{-- Menu List Grid --}}
         @if ($menuItems->isEmpty())
-            <div class="customer-card mt-10 p-12 text-center rounded-3xl bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800">
-                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-muted dark:bg-zinc-800 text-muted mb-4">
+            <div class="mt-10 p-12 text-center rounded-3xl transition-all duration-300 {{ $isGlassmorphism ? 'bg-white/25 dark:bg-white/[0.06] backdrop-blur-2xl border border-white/50 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.7)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)]' : 'customer-card bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800' }}">
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl {{ $isGlassmorphism ? 'bg-white/40 dark:bg-white/10 border border-white/50 dark:border-white/20 shadow-inner' : 'bg-surface-muted dark:bg-zinc-800' }} text-muted mb-4">
                     <svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 </div>
-                <p class="text-lg font-semibold text-body">Tidak ada menu yang cocok.</p>
+                <p class="text-lg font-semibold text-body dark:text-zinc-100">Tidak ada menu yang cocok.</p>
                 <p class="mt-1 text-sm text-muted">Coba ubah kata kunci pencarian atau filter kategori.</p>
             </div>
         @else
-            <ul class="mt-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <ul class="relative z-10 mt-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($menuItems as $item)
                     <li wire:key="menu-item-{{ $item->id }}" class="h-full">
                         <x-customer.dish-card
@@ -113,7 +120,7 @@
     {{-- Footer matching active landing template --}}
     @if (($template ?? 'classic') === 'foodie')
         @include('landing.templates.foodie.sections.footer')
-    @elseif (($template ?? 'classic') === 'glassmorphism' || ($template ?? 'classic') === 'glassmorp')
+    @elseif ($isGlassmorphism)
         @include('landing.templates.glassmorphism.sections.footer')
     @else
         @include('partials.customer.landing-footer', [
