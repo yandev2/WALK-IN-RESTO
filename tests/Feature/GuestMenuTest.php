@@ -43,7 +43,7 @@ class GuestMenuTest extends TestCase
             ->assertOk()
             ->assertSee('guest-menu-shell', false)
             ->assertSee('max-w-md', false)
-            ->assertSee('Mau makan apa hari ini?', false)
+            ->assertSee('Pilihan Menu', false)
             ->assertSee('Promo Spesial', false)
             ->assertSee('Es Teh', false)
             ->assertSee('Meja 1', false)

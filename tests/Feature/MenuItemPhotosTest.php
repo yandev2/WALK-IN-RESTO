@@ -67,7 +67,7 @@ class MenuItemPhotosTest extends TestCase
         ])
             ->assertOk()
             ->assertSee('dish-card-thumbs', false)
-            ->assertSee('absolute bottom-2 left-2', false)
+            ->assertSee('absolute bottom-2 right-2', false)
             ->assertSee('imagePreview', false)
             ->assertSee('openPreview', false)
             ->assertSee('image-preview-modal', false)
