@@ -34,6 +34,7 @@ class MenuItem extends Model
         'photo_path',
         'is_active',
         'is_out_of_stock',
+        'is_best_seller',
         'sort_order',
     ];
 
@@ -46,6 +47,7 @@ class MenuItem extends Model
                 'discount_percent',
                 'is_active',
                 'is_out_of_stock',
+                'is_best_seller',
                 'category.name',
                 'station.name',
             ])
@@ -59,6 +61,7 @@ class MenuItem extends Model
         return [
             'is_active' => 'boolean',
             'is_out_of_stock' => 'boolean',
+            'is_best_seller' => 'boolean',
         ];
     }
 
@@ -138,6 +141,28 @@ class MenuItem extends Model
         $percent = min(100, max(0, (int) $this->discount_percent));
 
         return (int) round((int) $this->price * (100 - $percent) / 100);
+    }
+
+    /**
+     * @param  Builder<MenuItem>  $query
+     * @return Builder<MenuItem>
+     */
+     public function scopeBestSeller(Builder $query): Builder
+     {
+         return $query->where('is_best_seller', true);
+     }
+
+    /**
+     * Order by Best Seller first (1 -> 0), then Discounted items (discount > 0), then remaining items.
+     *
+     * @param  Builder<MenuItem>  $query
+     * @return Builder<MenuItem>
+     */
+    public function scopeOrderByLandingPriority(Builder $query): Builder
+    {
+        return $query->orderByRaw(
+            '(CASE WHEN is_best_seller = true THEN 0 WHEN discount_percent IS NOT NULL AND discount_percent > 0 THEN 1 ELSE 2 END) ASC'
+        );
     }
 
     /**

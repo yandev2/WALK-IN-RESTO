@@ -77,5 +77,5 @@
         <p class="mt-6 text-center text-xs text-muted">Halaman ini diperbarui otomatis.</p>
     @endif
 
-    @include('guest.partials.nav', ['cartCount' => $cartCount])
+    @include('guest.partials.nav', ['cartCount' => $cartCount, 'activeTab' => 'cart'])
 </div>

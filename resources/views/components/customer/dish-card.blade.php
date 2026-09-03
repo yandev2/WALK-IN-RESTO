@@ -11,6 +11,7 @@
     'href' => null,
     'template' => 'classic',
     'rating' => null,
+    'isBestSeller' => false,
 ])
 
 @php
@@ -26,6 +27,10 @@
             'caption' => (string) $name,
         ])
         ->all();
+
+    $showBestSeller = filter_var($isBestSeller ?? false, FILTER_VALIDATE_BOOLEAN)
+        || filter_var($attributes->get('is-best-seller'), FILTER_VALIDATE_BOOLEAN)
+        || filter_var($attributes->get('is_best_seller'), FILTER_VALIDATE_BOOLEAN);
 @endphp
 
 @if ($template === 'glassmorphism' || $template === 'glassmorp')
@@ -71,7 +76,7 @@
                     </div>
                 @endif
 
-                {{-- Frosted Glass Category Pill --}}
+                {{-- Frosted Glass Category Pill Top Left --}}
                 @if ($category)
                     <div class="absolute top-3 left-3 z-10 pointer-events-none">
                         <span class="inline-flex items-center rounded-full bg-black/45 dark:bg-black/60 backdrop-blur-xl px-3 py-1 text-[11px] font-semibold text-white border border-white/30 shadow-md">
@@ -80,7 +85,7 @@
                     </div>
                 @endif
 
-                {{-- Glass Red Discount Pill --}}
+                {{-- Glass Red Discount Pill Top Right --}}
                 @if ($discountPercent)
                     <div class="absolute top-3 right-3 z-10 pointer-events-none">
                         <span class="inline-flex items-center rounded-full bg-rose-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/30 shadow-md">
@@ -89,9 +94,19 @@
                     </div>
                 @endif
 
-                {{-- Gallery Thumbnails --}}
+                {{-- Frosted Glass Best Seller Badge Bottom Left --}}
+                @if ($showBestSeller)
+                    <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/95 dark:bg-amber-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/40 shadow-lg">
+                            <svg class="h-3 w-3 text-amber-100 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span>Best Seller</span>
+                        </span>
+                    </div>
+                @endif
+
+                {{-- Gallery Thumbnails Bottom Right --}}
                 @if ($gallery->count() > 1)
-                    <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
                         @foreach ($gallery as $thumbIndex => $thumbPhoto)
                             <button
                                 type="button"
@@ -174,7 +189,7 @@
 @elseif ($template === 'foodie')
     {{-- Foodie Design Card --}}
     <article
-        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-surface-raised dark:bg-zinc-900/90 border border-border-subtle dark:border-zinc-800 p-4 shadow-xs hover:shadow-xl hover:border-primary/40 transition-all duration-300 hover:-translate-y-1']) }}
+        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-surface-raised dark:bg-zinc-900/90 border border-border-subtle dark:border-zinc-800 p-4 shadow-xs hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1.5 transition-all duration-300']) }}
         @if ($gallery->isNotEmpty())
             x-data="imagePreview(@js($previewImages))"
         @endif
@@ -202,7 +217,7 @@
                             <img
                                 src="{{ $galleryPhoto }}"
                                 alt="{{ $name }}"
-                                class="h-full w-full object-cover group-hover:scale-108 transition-transform duration-500"
+                                class="h-full w-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
                                 loading="lazy"
                             >
                         </button>
@@ -214,7 +229,7 @@
                     </div>
                 @endif
 
-                {{-- Floating Category Badge --}}
+                {{-- Floating Category Badge Top Left --}}
                 @if ($category)
                     <div class="absolute top-3 left-3 z-10 pointer-events-none">
                         <span class="inline-flex items-center rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-1 text-[11px] font-semibold text-white shadow-xs">
@@ -223,7 +238,7 @@
                     </div>
                 @endif
 
-                {{-- Floating Discount Badge --}}
+                {{-- Floating Discount Badge Top Right --}}
                 @if ($discountPercent)
                     <div class="absolute top-3 right-3 z-10 pointer-events-none">
                         <span class="inline-flex items-center rounded-lg bg-red-600 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-md">
@@ -232,14 +247,24 @@
                     </div>
                 @endif
 
-                {{-- Multiple Photo Thumbnails --}}
+                {{-- Floating Best Seller Badge Bottom Left --}}
+                @if ($showBestSeller)
+                    <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-md">
+                            <svg class="h-3 w-3 text-white fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span>Best Seller</span>
+                        </span>
+                    </div>
+                @endif
+
+                {{-- Multiple Photo Thumbnails Bottom Right --}}
                 @if ($gallery->count() > 1)
-                    <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
                         @foreach ($gallery as $thumbIndex => $thumbPhoto)
                             <button
                                 type="button"
-                                class="h-8 w-8 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition"
-                                :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : ''"
+                                class="h-8 w-8 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition-all duration-200 hover:scale-110"
+                                :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : 'hover:border-primary'"
                                 aria-label="Foto {{ $thumbIndex + 1 }}"
                                 @click.stop="openPreview({{ $thumbIndex }})"
                             >
@@ -252,7 +277,7 @@
 
             {{-- Foodie Content --}}
             <div class="mt-4">
-                <h3 class="font-display font-bold text-base sm:text-lg text-body group-hover:text-primary transition-colors line-clamp-1">
+                <h3 class="font-display font-bold text-base sm:text-lg text-body group-hover:text-primary transition-colors duration-200 line-clamp-1">
                     {{ $name }}
                 </h3>
 
@@ -290,14 +315,14 @@
             @if ($href)
                 <a
                     href="{{ $href }}"
-                    class="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary-dark px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:scale-105 transition-all"
+                    class="inline-flex items-center justify-center rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
                 >
                     Pesan
                 </a>
             @else
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary-dark px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:scale-105 transition-all"
+                    class="inline-flex items-center justify-center rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
                     @if ($gallery->isNotEmpty())
                         @click="openPreview(0)"
                     @endif
@@ -368,12 +393,26 @@
                 </div>
             @endif
 
+            {{-- Top Left Discount Badge --}}
             @if ($discountPercent)
-                <span class="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">-{{ $discountPercent }}%</span>
+                <div class="pointer-events-none absolute left-3 top-3 z-10">
+                    <span class="rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">-{{ $discountPercent }}%</span>
+                </div>
             @endif
 
+            {{-- Bottom Left Best Seller Badge --}}
+            @if ($showBestSeller)
+                <div class="pointer-events-none absolute left-3 bottom-3 z-10">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-md">
+                        <svg class="h-3 w-3 text-white fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span>Best Seller</span>
+                    </span>
+                </div>
+            @endif
+
+            {{-- Gallery Thumbnails Bottom Right --}}
             @if ($gallery->count() > 1)
-                <div class="dish-card-thumbs absolute bottom-2 left-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
                     @foreach ($gallery as $thumbIndex => $thumbPhoto)
                         <button
                             type="button"

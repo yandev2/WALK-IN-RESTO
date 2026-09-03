@@ -21,7 +21,7 @@
 
 @if ($total > 0)
     <div
-        class="relative overflow-hidden rounded-2xl shadow-[var(--card-shadow)] select-none"
+        class="relative overflow-hidden rounded-3xl shadow-sm border border-border-subtle/50 dark:border-white/5 select-none"
         x-data="{
             index: 0,
             total: {{ $total }},
@@ -73,7 +73,7 @@
         @touchstart.passive="onTouchStart($event)"
         @touchend.passive="onTouchEnd($event)"
     >
-        <div class="relative min-h-[12.5rem]">
+        <div class="relative min-h-[13.5rem]">
             @foreach ($slides as $slideIndex => $slide)
                 <div
                     x-show="index === {{ $slideIndex }}"
@@ -98,44 +98,58 @@
                     @endif
 
                     <div
-                        class="landing-media-overlay absolute inset-0"
+                        class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/25"
                         aria-hidden="true"
                     ></div>
                 </div>
             @endforeach
 
-            <div class="relative z-10 flex min-h-[12.5rem] flex-col justify-center gap-2.5 px-6 py-6 pb-10 sm:px-7">
+            <div class="relative z-10 flex min-h-[13.5rem] flex-col justify-center gap-2 p-5 sm:p-6 pb-9">
                 @foreach ($slides as $slideIndex => $slide)
                     <div
                         x-show="index === {{ $slideIndex }}"
-                        class="flex flex-col gap-2.5"
+                        class="flex flex-col gap-2"
                         @if ($slideIndex > 0) x-cloak @endif
                     >
-                        @if (filled($slide['badge']))
-                            <span class="w-fit rounded-full bg-white/20 px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-white backdrop-blur-sm">
-                                {{ $slide['badge'] }}
-                            </span>
-                        @endif
                         @if (filled($slide['title']))
-                            <p class="max-w-[17rem] font-display text-xl font-bold leading-tight text-white">{{ $slide['title'] }}</p>
+                            <h2 class="max-w-[18rem] font-display text-xl sm:text-2xl font-black leading-tight text-white tracking-tight">
+                                {{ $slide['title'] }}
+                            </h2>
                         @endif
+
                         @if (filled($slide['subtitle']))
-                            <p class="max-w-[18rem] text-sm leading-relaxed text-white/90">{{ $slide['subtitle'] }}</p>
+                            <p class="max-w-[19rem] text-xs sm:text-sm leading-relaxed text-zinc-200 line-clamp-2">
+                                {{ $slide['subtitle'] }}
+                            </p>
                         @endif
-                        @if (filled($slide['price']))
-                            <p class="text-sm font-semibold text-white">{{ $slide['price'] }}</p>
-                        @endif
-                        @if (filled($slide['cta']) && filled($slide['link']))
-                            <a
-                                href="{{ $slide['link'] }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="mt-0.5 w-fit rounded-full bg-white px-4 py-1.5 text-xs font-bold text-primary hover:bg-white/90"
-                                @click.stop
-                            >
-                                {{ $slide['cta'] }}
-                            </a>
-                        @endif
+
+                        {{-- Bottom Row: CTA Button + Price / Badges aligned side by side --}}
+                        <div class="mt-1 flex flex-wrap items-center gap-2">
+                            @if (filled($slide['cta']) && filled($slide['link']))
+                                <a
+                                    href="{{ $slide['link'] }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm hover:bg-zinc-100 active:scale-95 transition"
+                                    @click.stop
+                                >
+                                    <span>{{ $slide['cta'] }}</span>
+                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+                                </a>
+                            @endif
+
+                            @if (filled($slide['price']))
+                                <span class="inline-flex items-center rounded-xl bg-black/45 backdrop-blur-md border border-white/20 px-2.5 py-1 text-xs font-extrabold text-white shadow-xs">
+                                    {{ $slide['price'] }}
+                                </span>
+                            @endif
+
+                            @if (filled($slide['badge']))
+                                <span class="inline-flex items-center rounded-xl bg-amber-500/90 backdrop-blur-md border border-white/20 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-xs uppercase tracking-wide">
+                                    {{ $slide['badge'] }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 @endforeach
             </div>

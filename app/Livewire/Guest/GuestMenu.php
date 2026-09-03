@@ -190,6 +190,7 @@ class GuestMenu extends Component
                     ['%'.$normalizedSearch.'%'],
                 ))
                 ->when($this->categoryId, fn ($query) => $query->where('category_id', $this->categoryId))
+                ->orderByLandingPriority()
                 ->orderBy('sort_order')
                 ->get()
             : collect();

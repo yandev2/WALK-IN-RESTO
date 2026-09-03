@@ -22,6 +22,7 @@ class MenuItemResource extends JsonResource
             'photo_url' => CmsMedia::url($this->photo_path),
             'photo_urls' => $this->photoUrls(),
             'is_out_of_stock' => (bool) $this->is_out_of_stock,
+            'is_best_seller' => (bool) $this->is_best_seller,
             'category_id' => $this->category_id,
             'category_name' => $this->relationLoaded('category') ? $this->category?->name : null,
             'variants' => MenuVariantResource::collection($this->whenLoaded('variants')),

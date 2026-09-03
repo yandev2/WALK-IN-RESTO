@@ -9,7 +9,7 @@
             {{-- Left Column: Info & Status --}}
             <div class="lg:col-span-5">
                 @if (filled($copy['label'] ?? null))
-                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-3.5 py-1.5 rounded-full border border-primary/20 shadow-2xs">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary bg-linear-to-r from-primary/15 to-accent/15 px-3.5 py-1.5 rounded-full border border-primary/25 shadow-2xs">
                         {{ $copy['label'] }}
                     </span>
                 @endif
@@ -44,7 +44,7 @@
                             href="{{ $whatsappUrl }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center gap-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 text-sm font-bold shadow-md transition-all hover:scale-103"
+                            class="inline-flex items-center gap-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 text-sm font-bold shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
                         >
                             <span>WhatsApp Outlet ({{ $outlet->phone }})</span>
                         </a>
@@ -54,14 +54,14 @@
 
             {{-- Right Column: Weekly Schedule Card --}}
             <div class="lg:col-span-7">
-                <div class="overflow-hidden rounded-3xl bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 shadow-xl divide-y divide-border-subtle dark:divide-zinc-800">
+                <div class="overflow-hidden rounded-3xl bg-surface-raised dark:bg-zinc-900 border border-border-subtle dark:border-zinc-800 shadow-xl hover:shadow-2xl hover:border-primary/30 transition-all duration-300 divide-y divide-border-subtle dark:divide-zinc-800">
                     @forelse ($outlet?->operatingHours ?? [] as $hours)
                         @php
                             $isToday = $todayHours && $hours->day_of_week === $todayHours->day_of_week;
                         @endphp
                         <div @class([
-                            'flex items-center justify-between px-6 py-4 text-sm transition',
-                            'bg-primary/10 font-bold text-primary dark:text-primary' => $isToday,
+                            'flex items-center justify-between px-6 py-4 text-sm transition-all duration-200 hover:bg-primary/5 dark:hover:bg-primary/10 hover:pl-8',
+                            'bg-linear-to-r from-primary/15 to-accent/10 border-l-4 border-primary font-bold text-body' => $isToday,
                             'text-body' => ! $isToday,
                         ])>
                             <span class="flex items-center gap-2">
@@ -70,7 +70,7 @@
                                 @endif
                                 <span>{{ $dayNames[$hours->day_of_week] ?? $hours->day_name }}</span>
                                 @if ($isToday)
-                                    <span class="rounded-md bg-primary text-white text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider">
+                                    <span class="rounded-md bg-linear-to-r from-primary to-accent text-white text-[10px] font-extrabold px-2 py-0.5 uppercase tracking-wider shadow-2xs">
                                         Hari Ini
                                     </span>
                                 @endif

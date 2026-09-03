@@ -135,7 +135,41 @@ class DiningTableResource extends Resource
                 ->icon(Heroicon::OutlinedClipboardDocument)
                 ->action(function (DiningTable $record, $livewire): void {
                     $url = TableQrToken::url($record);
-                    $livewire->js('window.navigator.clipboard.writeText('.json_encode($url).')');
+                    $escapedUrl = json_encode($url);
+
+                    $livewire->js(<<<JS
+                        (function() {
+                            const text = {$escapedUrl};
+                            function fallbackCopy(val) {
+                                const ta = document.createElement('textarea');
+                                ta.value = val;
+                                ta.setAttribute('readonly', '');
+                                ta.style.position = 'fixed';
+                                ta.style.left = '-9999px';
+                                ta.style.top = '-9999px';
+                                ta.style.opacity = '0';
+                                document.body.appendChild(ta);
+                                ta.focus();
+                                ta.select();
+                                ta.setSelectionRange(0, 99999);
+                                try {
+                                    document.execCommand('copy');
+                                } catch (e) {
+                                    console.error('Copy fallback failed:', e);
+                                }
+                                document.body.removeChild(ta);
+                            }
+
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(text).catch(function() {
+                                    fallbackCopy(text);
+                                });
+                            } else {
+                                fallbackCopy(text);
+                            }
+                        })();
+                    JS);
+
                     Notification::make()
                         ->title('Tautan pemesanan disalin')
                         ->body($url)

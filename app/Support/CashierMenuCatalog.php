@@ -99,6 +99,7 @@ final class CashierMenuCatalog
                 ->where('is_active', true)
                 ->where('is_out_of_stock', false)
                 ->whereNotNull('station_id')
+                ->orderByLandingPriority()
                 ->orderBy('sort_order')
                 ->orderBy('name')
                 ->get([
@@ -107,6 +108,7 @@ final class CashierMenuCatalog
                     'name',
                     'price',
                     'discount_percent',
+                    'is_best_seller',
                     'photo_path',
                     'sort_order',
                 ]),
@@ -254,6 +256,7 @@ final class CashierMenuCatalog
                             ->where('is_active', true)
                             ->orderBy('sort_order'),
                     ])
+                    ->orderByLandingPriority()
                     ->orderBy('sort_order')
                     ->orderBy('name')
                     ->get([
@@ -261,6 +264,7 @@ final class CashierMenuCatalog
                         'name',
                         'price',
                         'discount_percent',
+                        'is_best_seller',
                         'photo_path',
                         'category_id',
                         'sort_order',
@@ -287,6 +291,7 @@ final class CashierMenuCatalog
                             'price' => (int) $item->price,
                             'effective_price' => $item->effectivePrice(),
                             'discount_percent' => $item->hasDiscount() ? (int) $item->discount_percent : 0,
+                            'is_best_seller' => (bool) $item->is_best_seller,
                             'photo_url' => CmsMedia::url($item->photo_path),
                             'category_id' => $item->category_id ? (int) $item->category_id : null,
                             'has_modifiers' => $modifiers !== [],

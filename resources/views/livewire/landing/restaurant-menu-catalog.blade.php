@@ -104,6 +104,7 @@
                             :price="CmsMedia::formatIdr($item->effectivePrice())"
                             :original-price="$item->hasDiscount() ? CmsMedia::formatIdr($item->price) : null"
                             :discount-percent="$item->hasDiscount() ? $item->discount_percent : null"
+                            :is-best-seller="(bool) $item->is_best_seller"
                             :template="$template ?? 'classic'"
                             :rating="$ratingSummary['average'] ? number_format($ratingSummary['average'], 1) : '5.0'"
                         />

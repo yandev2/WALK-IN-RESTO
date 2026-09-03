@@ -42,8 +42,8 @@
     "semantic_hash": "8f8e834ef306b70c419a513f8b766e1c"
   },
   "app/Filament/Auth/Login.php": {
-    "mtime": 1788243510.8914337,
-    "seen": 1788284156.3224444,
+    "mtime": 1788371342.2364774,
+    "seen": 1788371821.9710581,
     "ast_hash": "c4a66ba1c358f04c3eacd5d5e84aa91d",
     "semantic_hash": "c4a66ba1c358f04c3eacd5d5e84aa91d"
   },
@@ -414,10 +414,10 @@
     "semantic_hash": "e15f6723fe6a73fdf5b4d42442056d29"
   },
   "app/Filament/Resources/MenuItems/MenuItemResource.php": {
-    "mtime": 1788243510.9136393,
-    "seen": 1788284156.3225083,
-    "ast_hash": "175ee35782d4cfa1e756e9c8275d5d23",
-    "semantic_hash": "175ee35782d4cfa1e756e9c8275d5d23"
+    "mtime": 1788417898.6549962,
+    "seen": 1788418128.3548024,
+    "ast_hash": "48a856838694072d9897f1af67b60d14",
+    "semantic_hash": ""
   },
   "app/Filament/Resources/MenuItems/Pages/CreateMenuItem.php": {
     "mtime": 1788243510.9136393,
@@ -462,9 +462,9 @@
     "semantic_hash": "27202e4330a58b12474fa60627095f21"
   },
   "app/Filament/Resources/Orders/OrderResource.php": {
-    "mtime": 1788368566.035644,
-    "seen": 1788368734.1346426,
-    "ast_hash": "93998457916e0d05eb23fb87b38401c5",
+    "mtime": 1788425189.6722157,
+    "seen": 1788425300.523816,
+    "ast_hash": "2a9c0b3fc84866a2302a019771d84cd5",
     "semantic_hash": ""
   },
   "app/Filament/Resources/Orders/Pages/ListOrders.php": {
@@ -480,10 +480,10 @@
     "semantic_hash": "49fc27d8fa217e5b38d5cf7da01d3bfb"
   },
   "app/Filament/Resources/Outlets/OutletResource.php": {
-    "mtime": 1788243510.9168012,
-    "seen": 1788284156.3225195,
-    "ast_hash": "583ee1f879dcaa390baab45fb5ebf926",
-    "semantic_hash": "583ee1f879dcaa390baab45fb5ebf926"
+    "mtime": 1788369628.443159,
+    "seen": 1788370694.0598512,
+    "ast_hash": "0aad838bdf4ddee9459a30e9fbcaba1e",
+    "semantic_hash": ""
   },
   "app/Filament/Resources/Outlets/Pages/ManageOutlet.php": {
     "mtime": 1788243510.9168012,
@@ -894,10 +894,10 @@
     "semantic_hash": "be6306910a56f618d1be9ba010ba25b7"
   },
   "app/Http/Resources/Api/V1/MenuItemResource.php": {
-    "mtime": 1788243510.9373045,
-    "seen": 1788284156.322585,
-    "ast_hash": "988be413e9ce618014f7726897207c63",
-    "semantic_hash": "988be413e9ce618014f7726897207c63"
+    "mtime": 1788417883.3935773,
+    "seen": 1788418128.3549159,
+    "ast_hash": "44d66ec814c2c1f0f9165ea83af84c16",
+    "semantic_hash": ""
   },
   "app/Http/Resources/Api/V1/MenuVariantResource.php": {
     "mtime": 1788243510.9373045,
@@ -1008,10 +1008,10 @@
     "semantic_hash": "be379fb32bb9d5db3cc4cf64899ffba2"
   },
   "app/Livewire/Guest/GuestMenu.php": {
-    "mtime": 1788243510.9426863,
-    "seen": 1788284156.3226025,
-    "ast_hash": "f2f95c4b462b8ed4fdb8edf1ac6f0ba8",
-    "semantic_hash": "f2f95c4b462b8ed4fdb8edf1ac6f0ba8"
+    "mtime": 1788418439.272055,
+    "seen": 1788418536.5251925,
+    "ast_hash": "4461e8dcae4a71990def3f67a6b2c210",
+    "semantic_hash": ""
   },
   "app/Livewire/Guest/GuestPay.php": {
     "mtime": 1788243510.9426863,
@@ -1050,9 +1050,9 @@
     "semantic_hash": "820866ce522829fb3f20fdeab734cd91"
   },
   "app/Livewire/Landing/RestaurantMenuCatalog.php": {
-    "mtime": 1788316368.506333,
-    "seen": 1788316492.2102072,
-    "ast_hash": "a5838bd983254d3f8357c99d042cda93",
+    "mtime": 1788417918.7918315,
+    "seen": 1788418128.3549504,
+    "ast_hash": "430cac6bfd00194edfe7993116c07c34",
     "semantic_hash": ""
   },
   "app/Models/Activity.php": {
@@ -1134,10 +1134,10 @@
     "semantic_hash": "cf41aac906ee79eb93bcf4c9089338be"
   },
   "app/Models/MenuItem.php": {
-    "mtime": 1788243510.9511688,
-    "seen": 1788284156.3226225,
-    "ast_hash": "15bf7aa739d6951b3674d4d05f6ff3fb",
-    "semantic_hash": "15bf7aa739d6951b3674d4d05f6ff3fb"
+    "mtime": 1788418156.6796184,
+    "seen": 1788418215.7912178,
+    "ast_hash": "9c4b78ac4dcfc6acb895e43e52cfbf1a",
+    "semantic_hash": ""
   },
   "app/Models/MenuItemPhoto.php": {
     "mtime": 1788243510.9511688,
@@ -1518,10 +1518,10 @@
     "semantic_hash": "ca5abc41fe55fcffe2508f4686326030"
   },
   "app/Support/CashierMenuCatalog.php": {
-    "mtime": 1788243510.9704673,
-    "seen": 1788284156.3226805,
-    "ast_hash": "3d9467547f1abb62a389e94da00c5325",
-    "semantic_hash": "3d9467547f1abb62a389e94da00c5325"
+    "mtime": 1788419711.3798285,
+    "seen": 1788419898.3145292,
+    "ast_hash": "5362f28cdee08599bd64610766791a62",
+    "semantic_hash": ""
   },
   "app/Support/CashierOrderPreview.php": {
     "mtime": 1788243510.9704673,
@@ -2358,9 +2358,9 @@
     "semantic_hash": "ed589906b31e4df1ad96f8153e332ec5"
   },
   "resources/views/components/customer/dish-card.blade.php": {
-    "mtime": 1788319333.368007,
-    "seen": 1788320026.0710576,
-    "ast_hash": "81e2523cb0d9ff26ec6004d438f3436d",
+    "mtime": 1788425761.9849925,
+    "seen": 1788429314.0182598,
+    "ast_hash": "849643c0713d00425260403350047a1f",
     "semantic_hash": ""
   },
   "resources/views/components/customer/dropdown.blade.php": {
@@ -2442,10 +2442,10 @@
     "semantic_hash": "2b5c19957166a1f9e2151b813b7712a9"
   },
   "resources/views/components/directory/recommended-slider.blade.php": {
-    "mtime": 1788278644.3258746,
-    "seen": 1788284156.3228319,
-    "ast_hash": "b3bf9ef6abdc19b5af3edbaeccb558e0",
-    "semantic_hash": "b3bf9ef6abdc19b5af3edbaeccb558e0"
+    "mtime": 1788370975.435806,
+    "seen": 1788371033.7327013,
+    "ast_hash": "fcdbadb2efdddb0c7198ae98d8fb3f33",
+    "semantic_hash": ""
   },
   "resources/views/components/directory/restaurant-card.blade.php": {
     "mtime": 1788278664.0707865,
@@ -2460,16 +2460,16 @@
     "semantic_hash": "64a88b3f89e93866e70216f56dfe3f8a"
   },
   "resources/views/components/guest/add-to-cart-modal.blade.php": {
-    "mtime": 1788243511.061222,
-    "seen": 1788284156.3228347,
-    "ast_hash": "5be9e0c68a4643f9a7932cf9466e1205",
-    "semantic_hash": "5be9e0c68a4643f9a7932cf9466e1205"
+    "mtime": 1788423579.8179133,
+    "seen": 1788423687.4284306,
+    "ast_hash": "f0906ae5ba6ced662f6032d2133d5747",
+    "semantic_hash": ""
   },
   "resources/views/components/guest/menu-product-card.blade.php": {
-    "mtime": 1788243511.061222,
-    "seen": 1788284156.3228354,
-    "ast_hash": "a4a6cb3256e2205b707fa3e5aa855208",
-    "semantic_hash": "a4a6cb3256e2205b707fa3e5aa855208"
+    "mtime": 1788422489.0881286,
+    "seen": 1788422578.209517,
+    "ast_hash": "cfe40f2f21f80af5dddadbaf365fb9c2",
+    "semantic_hash": ""
   },
   "resources/views/components/guest/order-panel.blade.php": {
     "mtime": 1788243511.061222,
@@ -2478,10 +2478,10 @@
     "semantic_hash": "3da80b3eb0602454996e1c2b8773ab23"
   },
   "resources/views/components/guest/promo-hero.blade.php": {
-    "mtime": 1788243511.061222,
-    "seen": 1788284156.3228376,
-    "ast_hash": "eadf4945332471c5fba4d909f10b6b87",
-    "semantic_hash": "eadf4945332471c5fba4d909f10b6b87"
+    "mtime": 1788422686.259851,
+    "seen": 1788422763.411573,
+    "ast_hash": "eea1c338fa2dd63367ef73289baa7dc5",
+    "semantic_hash": ""
   },
   "resources/views/exports/katalog-menu.blade.php": {
     "mtime": 1788243511.061222,
@@ -2526,10 +2526,10 @@
     "semantic_hash": "3e34b95648dc628d0693f5b095e1c3f0"
   },
   "resources/views/filament/components/menu-item-select-option.blade.php": {
-    "mtime": 1788243511.0636759,
-    "seen": 1788284156.3228447,
-    "ast_hash": "e019737aa39c49dd2982e9fa7641e0f4",
-    "semantic_hash": "e019737aa39c49dd2982e9fa7641e0f4"
+    "mtime": 1788419745.445974,
+    "seen": 1788419898.3147798,
+    "ast_hash": "f91f7bdd9beb0a1022079114767c4672",
+    "semantic_hash": ""
   },
   "resources/views/filament/components/menu-item-select-styles.blade.php": {
     "mtime": 1788243511.0636759,
@@ -2562,9 +2562,9 @@
     "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/cashier-pos-shell.blade.php": {
-    "mtime": 1788367066.0032456,
-    "seen": 1788367160.6565154,
-    "ast_hash": "fa6c463161d9efbe56a57e160fd275f9",
+    "mtime": 1788420278.8293743,
+    "seen": 1788421789.209354,
+    "ast_hash": "41a78473c406b823e3c5230f753b8659",
     "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/kds-beep.blade.php": {
@@ -2712,10 +2712,10 @@
     "semantic_hash": "66cb929c096a89a6779c629ad8120bf8"
   },
   "resources/views/landing/pages/static-page.blade.php": {
-    "mtime": 1788252346.8408742,
-    "seen": 1788284156.322874,
-    "ast_hash": "e46f0324f6faf57e8a683a1f29d34f62",
-    "semantic_hash": "e46f0324f6faf57e8a683a1f29d34f62"
+    "mtime": 1788370628.7592595,
+    "seen": 1788370694.0604472,
+    "ast_hash": "0a921da306c09b504f21adf2300c15cc",
+    "semantic_hash": ""
   },
   "resources/views/landing/sections/about.blade.php": {
     "mtime": 1788245469.7581103,
@@ -2772,10 +2772,10 @@
     "semantic_hash": "0ca1b78a954e739918f89b44e8153149"
   },
   "resources/views/landing/sections/menu.blade.php": {
-    "mtime": 1788243511.0766008,
-    "seen": 1788284156.3228838,
-    "ast_hash": "e9dbc961b5db48f3f8ae005abe43aab4",
-    "semantic_hash": "e9dbc961b5db48f3f8ae005abe43aab4"
+    "mtime": 1788417995.097391,
+    "seen": 1788418128.3553536,
+    "ast_hash": "054934fccc46cb18acf93e7865023ff8",
+    "semantic_hash": ""
   },
   "resources/views/landing/sections/reviews.blade.php": {
     "mtime": 1788245418.0633283,
@@ -2814,34 +2814,34 @@
     "semantic_hash": "99a729778a74e8d890074f8681ac43ea"
   },
   "resources/views/livewire/guest/cart.blade.php": {
-    "mtime": 1788243511.082001,
-    "seen": 1788284156.3228908,
-    "ast_hash": "ff8ee5b615c609a066089ca936e2c75b",
-    "semantic_hash": "ff8ee5b615c609a066089ca936e2c75b"
+    "mtime": 1788424018.5092013,
+    "seen": 1788424121.822985,
+    "ast_hash": "0ded03c59d9559659f27ae62529b90b9",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/checkout.blade.php": {
-    "mtime": 1788243511.082001,
-    "seen": 1788284156.3228917,
-    "ast_hash": "8eb373e8389a7796624c5ca75ddea049",
-    "semantic_hash": "8eb373e8389a7796624c5ca75ddea049"
+    "mtime": 1788424026.9020262,
+    "seen": 1788424121.8229876,
+    "ast_hash": "2649d31820cd61b39d414ef312935617",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/menu.blade.php": {
-    "mtime": 1788243511.082001,
-    "seen": 1788284156.322893,
-    "ast_hash": "b670bc6aece574975a2678cac1852cd6",
-    "semantic_hash": "b670bc6aece574975a2678cac1852cd6"
+    "mtime": 1788423972.7033484,
+    "seen": 1788424121.8229887,
+    "ast_hash": "2c7877ce6fa3084b45651593048ed0e1",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/pay.blade.php": {
-    "mtime": 1788243511.0832705,
-    "seen": 1788284156.3228939,
-    "ast_hash": "bceee5b79270b57af24e4d1052d2a2ee",
-    "semantic_hash": "bceee5b79270b57af24e4d1052d2a2ee"
+    "mtime": 1788424036.8509989,
+    "seen": 1788424121.8229904,
+    "ast_hash": "567565a0c28bba7f0c2c813a074f2143",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/review.blade.php": {
-    "mtime": 1788243511.0832705,
-    "seen": 1788284156.3228948,
-    "ast_hash": "d0cd0bf2ee38991f4b1b201711835b96",
-    "semantic_hash": "d0cd0bf2ee38991f4b1b201711835b96"
+    "mtime": 1788424046.3881154,
+    "seen": 1788424121.8229918,
+    "ast_hash": "938d88357ff5d7cb42733801677b4456",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/scan-table.blade.php": {
     "mtime": 1788243511.0832705,
@@ -2850,10 +2850,10 @@
     "semantic_hash": "748d19d4b38c5e500453eab8898eec94"
   },
   "resources/views/livewire/guest/status.blade.php": {
-    "mtime": 1788243511.0832705,
-    "seen": 1788284156.3228967,
-    "ast_hash": "44a945b65488670f19d2021323953a8f",
-    "semantic_hash": "44a945b65488670f19d2021323953a8f"
+    "mtime": 1788425231.1242666,
+    "seen": 1788425300.525128,
+    "ast_hash": "a02b1a46bfaeab3111425342066835b8",
+    "semantic_hash": ""
   },
   "resources/views/livewire/landing/restaurant-directory.blade.php": {
     "mtime": 1788278726.7493613,
@@ -2862,9 +2862,9 @@
     "semantic_hash": "9847b544dbf98821146e041030d81442"
   },
   "resources/views/livewire/landing/restaurant-menu-catalog.blade.php": {
-    "mtime": 1788365874.7663062,
-    "seen": 1788365979.8518002,
-    "ast_hash": "c7ab55345453e2f85c94c55af2db42ec",
+    "mtime": 1788418020.8902202,
+    "seen": 1788418128.3554163,
+    "ast_hash": "16f73f3362a55bce8064b7d467c11f4b",
     "semantic_hash": ""
   },
   "resources/views/partials/customer/guest-header.blade.php": {
@@ -2874,10 +2874,10 @@
     "semantic_hash": "91d2552b54c5bcad8c8f347f9fb0c8e9"
   },
   "resources/views/partials/customer/guest-nav.blade.php": {
-    "mtime": 1788243511.0845938,
-    "seen": 1788284156.322901,
-    "ast_hash": "4f83d540b81446cc6c0b830f50084db4",
-    "semantic_hash": "4f83d540b81446cc6c0b830f50084db4"
+    "mtime": 1788423961.8700047,
+    "seen": 1788424121.8230014,
+    "ast_hash": "c4e6f7c4b85af8330bee2f30a0f7fc67",
+    "semantic_hash": ""
   },
   "resources/views/partials/customer/image-preview-alpine.blade.php": {
     "mtime": 1788243511.0845938,
@@ -3030,10 +3030,10 @@
     "semantic_hash": "3dddcd49bbbd42985d76269ae45bb06e"
   },
   "tests/Feature/CashierMenuCatalogTest.php": {
-    "mtime": 1788243511.0983899,
-    "seen": 1788284156.3229253,
-    "ast_hash": "682efeb0273abd11faf3d517c25d4c47",
-    "semantic_hash": "682efeb0273abd11faf3d517c25d4c47"
+    "mtime": 1788419823.1261427,
+    "seen": 1788419898.3149476,
+    "ast_hash": "866bf65589014aeaa4d2a03ef9f010b2",
+    "semantic_hash": ""
   },
   "tests/Feature/CashierOrderPreviewTest.php": {
     "mtime": 1788243511.0983899,
@@ -3402,9 +3402,9 @@
     "semantic_hash": "c31a3b57964196d6317c1118b3704100"
   },
   "vite.config.js": {
-    "mtime": 1788313864.333821,
-    "seen": 1788315826.3797092,
-    "ast_hash": "21ac53ab01e19435b577a878834f4d1e",
+    "mtime": 1788424219.8403752,
+    "seen": 1788424281.4791374,
+    "ast_hash": "1a75a3ab5efef71dc830106d29461e53",
     "semantic_hash": ""
   },
   "app/Filament/Forms/Components/TemplateRadioPicker.php": {
@@ -3444,9 +3444,9 @@
     "semantic_hash": ""
   },
   "app/Services/LandingPageDataService.php": {
-    "mtime": 1788312422.0064595,
-    "seen": 1788312964.1883283,
-    "ast_hash": "fcb4e4d345f0efe7111952ebdde510ec",
+    "mtime": 1788417910.6553779,
+    "seen": 1788418128.355032,
+    "ast_hash": "99f07ab543b8af27b8ecd3e281bc1b60",
     "semantic_hash": ""
   },
   "database/migrations/2026_09_02_012446_create_landing_templates_table.php": {
@@ -3480,33 +3480,33 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/faq.blade.php": {
-    "mtime": 1788315696.5066135,
-    "seen": 1788315826.3795297,
-    "ast_hash": "acf1ce022739b6123502451c01fc8fa4",
+    "mtime": 1788425725.9257414,
+    "seen": 1788429314.018464,
+    "ast_hash": "f4cc267545ccdf68ebfb64750a5ffcaf",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/footer.blade.php": {
-    "mtime": 1788319454.9346116,
-    "seen": 1788320026.071242,
-    "ast_hash": "a469d6c4f71a1f9251f7c1de3119baa8",
+    "mtime": 1788425747.349194,
+    "seen": 1788429314.0184662,
+    "ast_hash": "5c58db8dfd0bb8929ae975259a56018e",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/header.blade.php": {
-    "mtime": 1788315613.385394,
-    "seen": 1788315826.3795338,
-    "ast_hash": "fe6cf67d19bf7c48f25cd512eeb3ad96",
+    "mtime": 1788425592.7431765,
+    "seen": 1788429314.018471,
+    "ast_hash": "ce05efd746ae122c4c3bb2d7a148b67f",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/hero.blade.php": {
-    "mtime": 1788319386.6211002,
-    "seen": 1788320026.071247,
-    "ast_hash": "79da49910d67051897ea67c0cc4b8ea0",
+    "mtime": 1788425615.4136703,
+    "seen": 1788429314.0184734,
+    "ast_hash": "418eb9b40b37b897efc1138e8cafda9e",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/reviews.blade.php": {
-    "mtime": 1788319423.0700355,
-    "seen": 1788320026.0712569,
-    "ast_hash": "3cb20c43664ea85fd3987c66112c846f",
+    "mtime": 1788425673.2285533,
+    "seen": 1788429314.0184848,
+    "ast_hash": "8f0134244e66aea7609776fd47e75d44",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/show.blade.php": {
@@ -3636,9 +3636,9 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/about.blade.php": {
-    "mtime": 1788319443.4344404,
-    "seen": 1788320026.0712345,
-    "ast_hash": "acb1adb9afe19989c263b868fb6e9e1d",
+    "mtime": 1788425655.117193,
+    "seen": 1788429314.0184562,
+    "ast_hash": "181e5e9ffece6eda7394e330215e61db",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/banners.blade.php": {
@@ -3654,33 +3654,33 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/gallery.blade.php": {
-    "mtime": 1788315673.7662816,
-    "seen": 1788315826.3795323,
-    "ast_hash": "cb704bfe1f0b2845cfe2ebcb6c971a90",
+    "mtime": 1788425680.5389328,
+    "seen": 1788429314.0184686,
+    "ast_hash": "2f852c20e5c0cb74608a6afbcb18104f",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/hours.blade.php": {
-    "mtime": 1788315681.3579755,
-    "seen": 1788315826.3795362,
-    "ast_hash": "38214fd346f1f40ab706bc6e1303926b",
+    "mtime": 1788425691.860876,
+    "seen": 1788429314.0184758,
+    "ast_hash": "bb25eeab355955ca3cd1be1c11f571f1",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/how_to.blade.php": {
-    "mtime": 1788319919.6960385,
-    "seen": 1788320026.0712507,
-    "ast_hash": "e9499ffe390dd768146aca2e9822cc61",
+    "mtime": 1788425645.4702783,
+    "seen": 1788429314.0184782,
+    "ast_hash": "c4c7f66a34d29fa295d561d24dfeead1",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/location.blade.php": {
-    "mtime": 1788319409.797649,
-    "seen": 1788320026.071252,
-    "ast_hash": "513a5b8999238a613ae1fc20cbe9cf9b",
+    "mtime": 1788425705.482945,
+    "seen": 1788429314.0184803,
+    "ast_hash": "721f22f06b0ba0d6419a3a14b6494931",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/menu.blade.php": {
-    "mtime": 1788319400.6505747,
-    "seen": 1788320026.0712545,
-    "ast_hash": "4c0dec308e6ac7b882f1981258f90077",
+    "mtime": 1788425628.4657035,
+    "seen": 1788429314.0184827,
+    "ast_hash": "45f916092fd84e22b71debbdf3a62d0a",
     "semantic_hash": ""
   },
   "doc/context-add-template-leanding-page.md": {
@@ -3756,9 +3756,9 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/menu.blade.php": {
-    "mtime": 1788319175.6359217,
-    "seen": 1788320026.071285,
-    "ast_hash": "3a3b4b8a57ecdc55b98fab85d88748db",
+    "mtime": 1788418010.7635212,
+    "seen": 1788418128.3553956,
+    "ast_hash": "6214f7a8c8b003d8fcaeb37794b3fb57",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/reviews.blade.php": {
@@ -3804,9 +3804,21 @@
     "semantic_hash": ""
   },
   "tests/Feature/OrderTodayStatsWidgetTest.php": {
-    "mtime": 1788368636.0765383,
-    "seen": 1788368734.135573,
-    "ast_hash": "cb9617b6851c2fa5f8428ef57696b32e",
+    "mtime": 1788368916.718128,
+    "seen": 1788369030.5534623,
+    "ast_hash": "37858434c6cd92931c5d8f16ced9decc",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_09_03_140000_add_is_best_seller_to_menu_items_table.php": {
+    "mtime": 1788417849.1729786,
+    "seen": 1788418128.3551905,
+    "ast_hash": "71397e0ad944e021a5e4555be1ae7bd8",
+    "semantic_hash": ""
+  },
+  "tests/Feature/MenuItemBestSellerTest.php": {
+    "mtime": 1788418032.8571513,
+    "seen": 1788418128.355488,
+    "ast_hash": "733ab772e46b22dd32cdf0fbabe50f04",
     "semantic_hash": ""
   }
 }

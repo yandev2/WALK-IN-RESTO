@@ -29,27 +29,27 @@
 
             {{-- Desktop Navigation Links (Driven by visibleSections) --}}
             <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-muted">
-                <a href="#atas" class="hover:text-primary transition-colors">Beranda</a>
+                <a href="#atas" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Beranda</a>
                 @if (in_array('menu', $visibleSections, true))
-                    <a href="#menu" class="hover:text-primary transition-colors">Menu</a>
+                    <a href="#menu" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Menu</a>
                 @endif
                 @if (in_array('how_to', $visibleSections, true))
-                    <a href="#cara-pesan" class="hover:text-primary transition-colors">Cara Pesan</a>
+                    <a href="#cara-pesan" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Cara Pesan</a>
                 @endif
                 @if (in_array('about', $visibleSections, true))
-                    <a href="#tentang" class="hover:text-primary transition-colors">Tentang</a>
+                    <a href="#tentang" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Tentang</a>
                 @endif
                 @if (in_array('reviews', $visibleSections, true))
-                    <a href="#ulasan" class="hover:text-primary transition-colors">Ulasan</a>
+                    <a href="#ulasan" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Ulasan</a>
                 @endif
                 @if (in_array('gallery', $visibleSections, true))
-                    <a href="#galeri" class="hover:text-primary transition-colors">Galeri</a>
+                    <a href="#galeri" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Galeri</a>
                 @endif
                 @if (in_array('hours', $visibleSections, true) || in_array('location', $visibleSections, true))
-                    <a href="#lokasi" class="hover:text-primary transition-colors">Lokasi</a>
+                    <a href="#lokasi" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">Lokasi</a>
                 @endif
                 @if (in_array('faq', $visibleSections, true))
-                    <a href="#faq" class="hover:text-primary transition-colors">FAQ</a>
+                    <a href="#faq" class="hover:text-primary transition-all duration-200 hover:-translate-y-0.5">FAQ</a>
                 @endif
             </nav>
 
@@ -63,7 +63,7 @@
                         href="{{ $whatsappUrl }}"
                         target="_blank"
                         rel="noopener"
-                        class="hidden sm:inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2 text-xs font-semibold hover:bg-emerald-500/20 transition"
+                        class="hidden sm:inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2 text-xs font-semibold hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-200"
                     >
                         <span>WhatsApp</span>
                     </a>
@@ -72,10 +72,10 @@
                 @if ($menuItems->isNotEmpty())
                     <a
                         href="{{ route('landing.menu', $restaurant) }}"
-                        class="inline-flex items-center justify-center gap-2 rounded-full bg-primary hover:bg-primary-dark text-white px-5 py-2.5 text-xs sm:text-sm font-bold shadow-md shadow-primary/25 hover:shadow-lg transition-all hover:scale-103"
+                        class="inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs sm:text-sm font-bold shadow-md shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all duration-300 hover:scale-105 active:scale-95 border border-white/20"
                     >
                         <span>Daftar Menu</span>
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 @endif
             </div>

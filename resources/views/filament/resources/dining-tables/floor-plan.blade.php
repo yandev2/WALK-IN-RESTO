@@ -361,6 +361,31 @@
 
                                     <x-filament::dropdown.list.item
                                         icon="heroicon-m-clipboard-document"
+                                        x-on:click="
+                                            (function() {
+                                                const text = @js(\App\Support\TableQrToken::url($record));
+                                                function fallback(val) {
+                                                    const ta = document.createElement('textarea');
+                                                    ta.value = val;
+                                                    ta.setAttribute('readonly', '');
+                                                    ta.style.position = 'fixed';
+                                                    ta.style.left = '-9999px';
+                                                    ta.style.top = '-9999px';
+                                                    ta.style.opacity = '0';
+                                                    document.body.appendChild(ta);
+                                                    ta.focus();
+                                                    ta.select();
+                                                    ta.setSelectionRange(0, 99999);
+                                                    try { document.execCommand('copy'); } catch(e) {}
+                                                    document.body.removeChild(ta);
+                                                }
+                                                if (navigator.clipboard && window.isSecureContext) {
+                                                    navigator.clipboard.writeText(text).catch(() => fallback(text));
+                                                } else {
+                                                    fallback(text);
+                                                }
+                                            })()
+                                        "
                                         wire:click="mountTableAction('copyGuestOrder', '{{ $record->id }}')"
                                     >
                                         Salin tautan QR

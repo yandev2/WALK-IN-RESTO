@@ -82,6 +82,7 @@ class RestaurantMenuCatalog extends Component
                     ['%'.$normalizedSearch.'%'],
                 ))
                 ->when($this->categoryId, fn ($query) => $query->where('category_id', $this->categoryId))
+                ->orderByLandingPriority()
                 ->orderByEffectivePrice($this->priceSort)
                 ->orderBy('sort_order')
                 ->paginate(12)

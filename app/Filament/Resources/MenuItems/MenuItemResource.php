@@ -174,6 +174,11 @@ class MenuItemResource extends Resource
                             ->default(0)
                             ->required()
                             ->helperText('Angka kecil tampil lebih dulu. Bisa juga digeser di tabel.'),
+                        Toggle::make('is_best_seller')
+                            ->label('Best Seller')
+                            ->helperText('Badge Best Seller & prioritas tampil teratas.')
+                            ->default(false)
+                            ->inline(false),
                         Toggle::make('is_active')
                             ->label('Aktif di menu')
                             ->default(true)
@@ -304,6 +309,10 @@ class MenuItemResource extends Resource
                     ->badge()
                     ->color('success')
                     ->alignCenter(),
+                IconColumn::make('is_best_seller')
+                    ->label('Best Seller')
+                    ->boolean()
+                    ->toggleable(),
                 IconColumn::make('is_active')
                     ->label('Aktif')
                     ->boolean(),
@@ -319,6 +328,10 @@ class MenuItemResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
+                SelectFilter::make('is_best_seller')
+                    ->label('Best Seller')
+                    ->native(false)
+                    ->options([true => 'Best Seller', false => 'Biasa']),
                 SelectFilter::make('is_active')
                     ->label('Status Item')
                     ->native(false)

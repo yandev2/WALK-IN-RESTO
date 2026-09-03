@@ -3,7 +3,7 @@
 @endphp
 
 <div
-    class="guest-menu-shell mx-auto max-w-md px-4 pb-28 pt-2"
+    class="guest-menu-shell mx-auto max-w-md px-4 pb-28 pt-6"
     x-data="{
         cartOpen: false,
         favorites: JSON.parse(sessionStorage.getItem('guest_menu_favorites') || '[]'),
@@ -18,21 +18,28 @@
         },
     }"
 >
-    <div class="mb-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-muted">Menu</p>
-        <h1 class="font-display text-2xl font-bold text-body">Pilih hidangan</h1>
+    <div class="mb-4 flex items-center justify-between">
+        <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-muted dark:text-zinc-400">Pilihan Menu</p>
+            <h1 class="font-display text-2xl font-black text-body dark:text-white">Pilih hidangan</h1>
+        </div>
+        @if ($menuItems->isNotEmpty())
+            <span class="rounded-full bg-surface-muted dark:bg-zinc-800/80 px-3 py-1 text-xs font-bold text-muted dark:text-zinc-300 border border-border-subtle/60 dark:border-white/5">
+                {{ $menuItems->count() }} Menu
+            </span>
+        @endif
     </div>
 
     <label class="relative mb-4 block">
         <span class="sr-only">Cari menu</span>
-        <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
         </svg>
         <input
             type="search"
             wire:model.live.debounce.300ms="search"
-            placeholder="Mau makan apa hari ini?"
-            class="w-full rounded-2xl border border-border-subtle bg-surface-muted py-3.5 pl-12 pr-4 text-sm text-body placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder="Cari hidangan favoritmu..."
+            class="w-full rounded-2xl border border-border-subtle/80 dark:border-zinc-800 bg-surface-raised dark:bg-zinc-900 py-3.5 pl-12 pr-4 text-sm font-medium text-body dark:text-white placeholder:text-muted dark:placeholder:text-zinc-500 shadow-xs focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
         >
     </label>
 
@@ -47,16 +54,16 @@
     @endif
 
     @if ($categories->isNotEmpty())
-        <div class="mb-4 overflow-x-auto rounded-2xl bg-surface-muted p-1.5 ring-1 ring-border-subtle/50">
-            <div class="flex min-w-max gap-1">
+        <div class="mb-4 overflow-x-auto no-scrollbar py-1">
+            <div class="flex min-w-max gap-2">
                 <button
                     type="button"
                     wire:click="setCategory(null)"
                     @class([
-                        'shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition',
+                        'shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-xs duration-200',
                         $categoryId === null
-                            ? 'bg-surface-raised text-primary shadow-sm ring-1 ring-border-subtle/60'
-                            : 'text-muted hover:text-body',
+                            ? 'bg-primary text-white ring-2 ring-primary/30 shadow-primary/20'
+                            : 'bg-surface-raised dark:bg-zinc-900 text-muted dark:text-zinc-300 hover:text-body border border-border-subtle/80 dark:border-zinc-800',
                     ])
                 >
                     Semua
@@ -66,10 +73,10 @@
                         type="button"
                         wire:click="setCategory({{ $category->id }})"
                         @class([
-                            'shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition',
+                            'shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-xs duration-200',
                             $categoryId === $category->id
-                                ? 'bg-surface-raised text-primary shadow-sm ring-1 ring-border-subtle/60'
-                                : 'text-muted hover:text-body',
+                                ? 'bg-primary text-white ring-2 ring-primary/30 shadow-primary/20'
+                                : 'bg-surface-raised dark:bg-zinc-900 text-muted dark:text-zinc-300 hover:text-body border border-border-subtle/80 dark:border-zinc-800',
                         ])
                     >
                         {{ $category->name }}
@@ -160,5 +167,5 @@
         </div>
     @endif
 
-    @include('guest.partials.nav', ['cartCount' => $cartCount])
+    @include('guest.partials.nav', ['cartCount' => $cartCount, 'activeTab' => 'menu'])
 </div>

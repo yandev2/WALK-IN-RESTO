@@ -111,4 +111,69 @@ class CashierMenuCatalogTest extends TestCase
         $fresh = collect(CashierMenuCatalog::posPayload($restaurantId))->firstWhere('id', $world['item']->id);
         $this->assertSame('Es Teh Grid', $fresh['name']);
     }
+
+    public function test_cashier_menu_catalog_orders_best_seller_first_in_pos_and_select_options(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $restaurantId = $world['restaurant']->id;
+
+        // 1. Regular item
+        $regular = MenuItem::query()->create([
+            'restaurant_id' => $restaurantId,
+            'outlet_id' => $world['outlet']->id,
+            'category_id' => $world['item']->category_id,
+            'station_id' => $world['item']->station_id,
+            'name' => 'Menu Biasa',
+            'price' => 15000,
+            'is_active' => true,
+            'is_out_of_stock' => false,
+            'is_best_seller' => false,
+            'sort_order' => 1,
+        ]);
+
+        // 2. Discounted item
+        $discounted = MenuItem::query()->create([
+            'restaurant_id' => $restaurantId,
+            'outlet_id' => $world['outlet']->id,
+            'category_id' => $world['item']->category_id,
+            'station_id' => $world['item']->station_id,
+            'name' => 'Menu Diskon',
+            'price' => 20000,
+            'discount_percent' => 10,
+            'is_active' => true,
+            'is_out_of_stock' => false,
+            'is_best_seller' => false,
+            'sort_order' => 5,
+        ]);
+
+        // 3. Best Seller item
+        $bestSeller = MenuItem::query()->create([
+            'restaurant_id' => $restaurantId,
+            'outlet_id' => $world['outlet']->id,
+            'category_id' => $world['item']->category_id,
+            'station_id' => $world['item']->station_id,
+            'name' => 'Menu Best Seller Kasir',
+            'price' => 25000,
+            'is_active' => true,
+            'is_out_of_stock' => false,
+            'is_best_seller' => true,
+            'sort_order' => 10,
+        ]);
+
+        CashierMenuCatalog::forget($restaurantId);
+
+        // POS payload check
+        $posPayload = CashierMenuCatalog::posPayload($restaurantId);
+        $posNames = array_column($posPayload, 'name');
+
+        $this->assertSame('Menu Best Seller Kasir', $posNames[0]);
+        $this->assertTrue($posPayload[0]['is_best_seller']);
+
+        // Form select options check
+        $options = CashierMenuCatalog::selectOptions($restaurantId);
+        $optionKeys = array_keys($options);
+
+        $this->assertSame($bestSeller->id, $optionKeys[0]);
+        $this->assertStringContainsString('Best Seller', $options[$bestSeller->id]);
+    }
 }

@@ -49,31 +49,19 @@ class LandingPageDataService
                 ->where('is_active', true)
                 ->with(['category', 'photos']);
 
-            $discounted = $baseQuery()
-                ->whereNotNull('discount_percent')
-                ->where('discount_percent', '>', 0)
-                ->orderByDesc('updated_at')
+            $menuItems = $baseQuery()
+                ->orderByLandingPriority()
+                ->orderBy('sort_order')
+                ->orderByDesc('id')
+                ->limit(8)
+                ->get();
+
+            $bestSellerItems = $baseQuery()
+                ->orderByLandingPriority()
+                ->orderBy('sort_order')
                 ->orderByDesc('id')
                 ->limit(6)
                 ->get();
-
-            $newest = $baseQuery()
-                ->orderByDesc('created_at')
-                ->orderByDesc('id')
-                ->limit(6)
-                ->get();
-
-            $menuItems = $discounted
-                ->concat($newest)
-                ->unique('id')
-                ->take(8)
-                ->values();
-
-            $bestSellerItems = $discounted
-                ->concat($newest)
-                ->unique('id')
-                ->take(6)
-                ->values();
 
             $menuCategoryIds = $menuItems->pluck('category_id')->filter()->unique();
         }

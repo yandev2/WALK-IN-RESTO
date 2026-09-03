@@ -92,5 +92,5 @@
         </form>
     @endif
 
-    @include('guest.partials.nav', ['cartCount' => $cartCount])
+    @include('guest.partials.nav', ['cartCount' => $cartCount, 'activeTab' => 'status'])
 </div>

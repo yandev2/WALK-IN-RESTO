@@ -9,7 +9,7 @@
             {{-- Left Column: Address & Action --}}
             <div class="lg:col-span-5">
                 @if (filled($copy['label'] ?? null))
-                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-3.5 py-1.5 rounded-full border border-primary/20 shadow-2xs">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary bg-linear-to-r from-primary/15 to-accent/15 px-3.5 py-1.5 rounded-full border border-primary/25 shadow-2xs">
                         {{ $copy['label'] }}
                     </span>
                 @endif
@@ -19,13 +19,13 @@
                 </h2>
 
                 @if ($outlet?->address)
-                    <div class="mt-6 flex items-start gap-3 rounded-2xl bg-surface-raised dark:bg-zinc-900 p-5 border border-border-subtle dark:border-zinc-800 shadow-xs">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <div class="group mt-6 flex items-start gap-3.5 rounded-2xl bg-surface-raised dark:bg-zinc-900 p-5 border border-border-subtle dark:border-zinc-800 shadow-xs hover:shadow-xl hover:border-primary/50 hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary/20 to-accent/20 text-primary group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-2xs">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                         </div>
                         <div>
                             <span class="block text-xs text-muted font-medium uppercase tracking-wider">Alamat Lengkap</span>
-                            <p class="mt-1 text-sm sm:text-base font-semibold text-body leading-relaxed">
+                            <p class="mt-1 text-sm sm:text-base font-semibold text-body group-hover:text-primary transition-colors duration-200 leading-relaxed">
                                 {{ $outlet->address }}
                             </p>
                             @if ($outlet->name)
@@ -41,10 +41,10 @@
                             href="{{ $mapsUrl }}"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary hover:bg-primary-dark px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 hover:scale-103 transition-all"
+                            class="inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 hover:shadow-2xl hover:shadow-primary/35 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 group"
                         >
                             <span>{{ $copy['button'] ?? 'Buka di Google Maps' }}</span>
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                         </a>
                     </div>
                 @endif
@@ -52,7 +52,7 @@
 
             {{-- Right Column: Google Maps Embed Frame --}}
             <div class="lg:col-span-7">
-                <div class="overflow-hidden rounded-3xl bg-surface-muted shadow-xl border border-border-subtle dark:border-zinc-800">
+                <div class="overflow-hidden rounded-3xl bg-surface-muted shadow-xl hover:shadow-2xl hover:border-primary/30 transition-all duration-300 border border-border-subtle dark:border-zinc-800">
                     @if ($mapEmbedUrl)
                         <iframe
                             title="Peta {{ $restaurant->name }}"

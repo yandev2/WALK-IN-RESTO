@@ -332,7 +332,8 @@ class OrderResource extends Resource
                 Group::make('created_at')
                     ->label('Tanggal')
                     ->date()
-                    ->collapsible(),
+                    ->collapsible()
+                    ->orderQueryUsing(fn (Builder $query, string $direction = 'desc') => $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')),
             ])
             ->defaultGroup('created_at');
 
@@ -358,7 +359,9 @@ class OrderResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['visit.diningTable', 'payments', 'items']);
+            ->with(['visit.diningTable', 'payments', 'items'])
+            ->latest('created_at')
+            ->latest('id');
     }
 
     public static function getWidgets(): array
