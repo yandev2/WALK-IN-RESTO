@@ -125,6 +125,7 @@ class RestaurantProvisioner
         CmsProfile::query()->create([
             'restaurant_id' => $restaurant->id,
             'headline' => $restaurant->name,
+            'about_html' => '<p>Selamat datang di '.e($restaurant->name).'. Kami menyajikan aneka hidangan lezat dan berkualitas dengan pelayanan terbaik untuk Anda dan keluarga.</p>',
             'cta_label' => 'Lihat lokasi',
         ]);
     }

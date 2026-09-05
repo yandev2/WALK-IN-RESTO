@@ -108,6 +108,40 @@ class TenantIsolationTest extends TestCase
         );
     }
 
+    public function test_cms_profile_hydrates_facilities_and_auto_fills_legal_name(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $this->seed(RestaurantCategorySeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $owner = $this->staffUser($world['restaurant'], ['cms.manage']);
+        $restaurant = $world['restaurant'];
+
+        $restaurant->update([
+            'legal_name' => null,
+            'facilities' => ['wifi', 'parking'],
+        ]);
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        Livewire::test(ManageCmsProfile::class)
+            ->assertOk()
+            ->assertSet('data.legal_name', $restaurant->name)
+            ->assertSet('data.facilities', ['wifi', 'parking'])
+            ->fillForm([
+                'legal_name' => '',
+            ])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $fresh = $restaurant->fresh();
+        $this->assertSame($restaurant->name, $fresh->legal_name);
+        $this->assertTrue($fresh->hasFacility('wifi'));
+        $this->assertTrue($fresh->hasFacility('parking'));
+    }
+
     public function test_tenant_profile_route_and_header_menu_are_gone(): void
     {
         Filament::setCurrentPanel('admin');

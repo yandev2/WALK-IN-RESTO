@@ -92,6 +92,7 @@ class RestaurantMenuCatalog extends Component
             ?: CmsMedia::mapsSearchUrl($outlet?->address, $outlet?->latitude, $outlet?->longitude);
         $mapsUrl = CmsMedia::mapsSearchUrl($outlet?->address, $outlet?->latitude, $outlet?->longitude);
         $whatsappUrl = CmsMedia::whatsappUrl($outlet?->phone);
+        $instagramUrl = CmsMedia::instagramUrl($outlet?->instagram);
         $layout = LandingLayout::for($profile);
         $visibleSections = $layout->visibleIds([
             'hero' => true,
@@ -126,6 +127,7 @@ class RestaurantMenuCatalog extends Component
             'aboutImageUrl' => CmsMedia::url($profile?->about_image_path),
             'mapsUrl' => $mapsUrl,
             'whatsappUrl' => $whatsappUrl,
+            'instagramUrl' => $instagramUrl,
             'isOpenNow' => (bool) $outlet?->isOpenNow(),
             'ratingSummary' => $ratingSummary,
             'template' => $template,

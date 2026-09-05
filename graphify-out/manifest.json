@@ -216,15 +216,15 @@
     "semantic_hash": "881b5d2720a0c9b344932c68ad66f5cb"
   },
   "app/Filament/Pages/ManageCmsProfile.php": {
-    "mtime": 1788579781.9854138,
-    "seen": 1788580270.451764,
-    "ast_hash": "958787b5a5fbe03fc80785c911d71c73",
+    "mtime": 1788604297.4806638,
+    "seen": 1788604578.3904865,
+    "ast_hash": "ca5bf7cf7e4769a3e3532794f9646b91",
     "semantic_hash": ""
   },
   "app/Filament/Pages/ManageLandingLayout.php": {
-    "mtime": 1788581089.9746258,
-    "seen": 1788581256.8698437,
-    "ast_hash": "8916ef1d99a9940dfd65c02a4db9979b",
+    "mtime": 1788604307.3249483,
+    "seen": 1788604578.3904903,
+    "ast_hash": "770ad80eee63b0e3aafa299ee8ad5c5a",
     "semantic_hash": ""
   },
   "app/Filament/Pages/SoftDeleteTrashPage.php": {
@@ -480,9 +480,9 @@
     "semantic_hash": "49fc27d8fa217e5b38d5cf7da01d3bfb"
   },
   "app/Filament/Resources/Outlets/OutletResource.php": {
-    "mtime": 1788585328.593564,
-    "seen": 1788585421.0607715,
-    "ast_hash": "820c32a34d00fc876f62dec311dfaeb6",
+    "mtime": 1788609308.1792681,
+    "seen": 1788609665.7569678,
+    "ast_hash": "b03b550f940a2a685e45c58c40a71928",
     "semantic_hash": ""
   },
   "app/Filament/Resources/Outlets/Pages/ManageOutlet.php": {
@@ -942,10 +942,10 @@
     "semantic_hash": "d6f15e500f8948afa1a45385ec692d18"
   },
   "app/Http/Resources/Api/V1/RestaurantResource.php": {
-    "mtime": 1788243510.9397032,
-    "seen": 1788284156.3225923,
-    "ast_hash": "88dcc76d7d045daf9eb32ce824a6e2de",
-    "semantic_hash": "88dcc76d7d045daf9eb32ce824a6e2de"
+    "mtime": 1788609536.1992536,
+    "seen": 1788609665.757073,
+    "ast_hash": "c8cd7dbc48f5b5ecadd159250c6194b3",
+    "semantic_hash": ""
   },
   "app/Http/Resources/Api/V1/RestaurantReviewResource.php": {
     "mtime": 1788243510.9397032,
@@ -990,10 +990,10 @@
     "semantic_hash": "cf2eb619e1162d578841612e4a5886fb"
   },
   "app/Livewire/Auth/RegisterRestaurant.php": {
-    "mtime": 1788243510.9412055,
-    "seen": 1788284156.3225996,
-    "ast_hash": "d6de0a4e70bbd706d81c8f19a075a3fb",
-    "semantic_hash": "d6de0a4e70bbd706d81c8f19a075a3fb"
+    "mtime": 1788609379.4972453,
+    "seen": 1788609665.757084,
+    "ast_hash": "67481a5f497a0390e56083283961527f",
+    "semantic_hash": ""
   },
   "app/Livewire/Guest/GuestCart.php": {
     "mtime": 1788243510.9412055,
@@ -1050,9 +1050,9 @@
     "semantic_hash": "820866ce522829fb3f20fdeab734cd91"
   },
   "app/Livewire/Landing/RestaurantMenuCatalog.php": {
-    "mtime": 1788578236.435322,
-    "seen": 1788578539.085443,
-    "ast_hash": "d9d4ab8f8ee7b7932dec5d119f584c8e",
+    "mtime": 1788609419.8197527,
+    "seen": 1788609665.7570977,
+    "ast_hash": "3b147d3bd52a04b86395c2e44a164067",
     "semantic_hash": ""
   },
   "app/Models/Activity.php": {
@@ -1188,9 +1188,9 @@
     "semantic_hash": "fb0bbe7b34833fd3bc8df9d7d642a308"
   },
   "app/Models/Outlet.php": {
-    "mtime": 1788583672.9636154,
-    "seen": 1788584121.4908519,
-    "ast_hash": "e0a718866332c62eb754f477e989a583",
+    "mtime": 1788609296.265236,
+    "seen": 1788609665.7571309,
+    "ast_hash": "8d1b6633bd5488b37278442d94992cbe",
     "semantic_hash": ""
   },
   "app/Models/OutletClosedDate.php": {
@@ -1218,10 +1218,10 @@
     "semantic_hash": "8a42fa8f5939cf1848656a0211728ca4"
   },
   "app/Models/Restaurant.php": {
-    "mtime": 1788247607.6277082,
-    "seen": 1788284156.3226354,
-    "ast_hash": "40b87d3519fee909e70403709785263e",
-    "semantic_hash": "40b87d3519fee909e70403709785263e"
+    "mtime": 1788604246.6258945,
+    "seen": 1788604578.3908863,
+    "ast_hash": "836273c2fdc1546dbff8cf04775be184",
+    "semantic_hash": ""
   },
   "app/Models/RestaurantCategory.php": {
     "mtime": 1788243510.9559677,
@@ -1434,10 +1434,10 @@
     "semantic_hash": "078dc3c8f06b3599a50dc8692c7be16b"
   },
   "app/Services/RestaurantProvisioner.php": {
-    "mtime": 1788243510.9659908,
-    "seen": 1788284156.3226683,
-    "ast_hash": "9d990faf6a529c1713780accb42d2ca1",
-    "semantic_hash": "9d990faf6a529c1713780accb42d2ca1"
+    "mtime": 1788601912.2404695,
+    "seen": 1788602110.6216545,
+    "ast_hash": "5bcebdbc140598dbb6e494ccbce307c7",
+    "semantic_hash": ""
   },
   "app/Services/RestaurantReviewService.php": {
     "mtime": 1788243510.9659908,
@@ -2808,10 +2808,10 @@
     "semantic_hash": ""
   },
   "resources/views/livewire/auth/register-restaurant.blade.php": {
-    "mtime": 1788243511.082001,
-    "seen": 1788284156.3228896,
-    "ast_hash": "99a729778a74e8d890074f8681ac43ea",
-    "semantic_hash": "99a729778a74e8d890074f8681ac43ea"
+    "mtime": 1788609391.0625591,
+    "seen": 1788609665.7575638,
+    "ast_hash": "af0aa06079225dda0065d337417bde93",
+    "semantic_hash": ""
   },
   "resources/views/livewire/guest/cart.blade.php": {
     "mtime": 1788424018.5092013,
@@ -2886,9 +2886,9 @@
     "semantic_hash": "11f84f5e1f9a7343673551062862744d"
   },
   "resources/views/partials/customer/landing-footer.blade.php": {
-    "mtime": 1788581154.0957918,
-    "seen": 1788581256.8706253,
-    "ast_hash": "5ed2c3d28d5f100b04bb8bc9ed3a9fe1",
+    "mtime": 1788609471.2259302,
+    "seen": 1788609665.7575817,
+    "ast_hash": "e60c85785d723bb0505b064a24673584",
     "semantic_hash": ""
   },
   "resources/views/partials/customer/landing-header.blade.php": {
@@ -3336,10 +3336,10 @@
     "semantic_hash": "2456ec88d37db75f8ab68dd75373a5b9"
   },
   "tests/Feature/TenantIsolationTest.php": {
-    "mtime": 1788243511.1116772,
-    "seen": 1788284156.3229718,
-    "ast_hash": "e52204c386767a0dddb66bf4a019afbe",
-    "semantic_hash": "e52204c386767a0dddb66bf4a019afbe"
+    "mtime": 1788604433.1323345,
+    "seen": 1788604578.3915892,
+    "ast_hash": "7ca03d441cc97950f6b13f283ec0168b",
+    "semantic_hash": ""
   },
   "tests/Feature/VisitLifecycleServiceTest.php": {
     "mtime": 1788243511.1116772,
@@ -3444,9 +3444,9 @@
     "semantic_hash": ""
   },
   "app/Services/LandingPageDataService.php": {
-    "mtime": 1788417910.6553779,
-    "seen": 1788418128.355032,
-    "ast_hash": "99f07ab543b8af27b8ecd3e281bc1b60",
+    "mtime": 1788609408.8589697,
+    "seen": 1788609665.7571783,
+    "ast_hash": "22b6d778fdb6a837a6a21a24343ff18e",
     "semantic_hash": ""
   },
   "database/migrations/2026_09_02_012446_create_landing_templates_table.php": {
@@ -3486,9 +3486,9 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/footer.blade.php": {
-    "mtime": 1788430301.619162,
-    "seen": 1788430369.318509,
-    "ast_hash": "3f0f562a97f4e1f62be038de8e7d3c4e",
+    "mtime": 1788609489.8778436,
+    "seen": 1788609665.7575226,
+    "ast_hash": "0eb6504387ff397f84f35e4aaa0ed836",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/foodie/sections/header.blade.php": {
@@ -3516,9 +3516,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/LandingMultiTemplateTest.php": {
-    "mtime": 1788365728.2318983,
-    "seen": 1788365813.306532,
-    "ast_hash": "c0159b291ba2a2eef7aae49f7c775536",
+    "mtime": 1788609571.9568167,
+    "seen": 1788609665.7576487,
+    "ast_hash": "a98b26de9ea9225fb985f59f0dfeed5a",
     "semantic_hash": ""
   },
   ".agents/rules/graphify.md": {
@@ -3714,9 +3714,9 @@
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/footer.blade.php": {
-    "mtime": 1788319289.3718324,
-    "seen": 1788320026.0712714,
-    "ast_hash": "351477ae5175b27973e28522d6cc5f58",
+    "mtime": 1788609524.4842978,
+    "seen": 1788609665.7575428,
+    "ast_hash": "fdde3c3984da3493184ce9e596111ff0",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/glassmorphism/sections/gallery.blade.php": {
@@ -3855,6 +3855,18 @@
     "mtime": 1788584687.269462,
     "seen": 1788584912.9679053,
     "ast_hash": "88e0dbe301781397f225fc601614e359",
+    "semantic_hash": ""
+  },
+  "tests/Feature/RestaurantRegistrationStepperTest.php": {
+    "mtime": 1788609594.0461073,
+    "seen": 1788609665.75768,
+    "ast_hash": "e5eefacd3501c30e73704c0561cec535",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_09_05_000002_add_instagram_to_outlets_table.php": {
+    "mtime": 1788609274.1991599,
+    "seen": 1788609665.7573419,
+    "ast_hash": "f2fcc61484c015f9ecf3628d0a92cf66",
     "semantic_hash": ""
   }
 }

@@ -301,4 +301,67 @@ class LandingMultiTemplateTest extends TestCase
         $this->assertEquals('Eksklusif', $glass->badge);
         $this->assertTrue($glass->is_active);
     }
+
+    public function test_footer_renders_instagram_in_all_templates_when_configured(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $this->seed(LandingTemplateSeeder::class);
+
+        $world['outlet']->update([
+            'instagram' => '@kulinerlezat',
+        ]);
+
+        $expectedUrl = 'https://www.instagram.com/kulinerlezat';
+
+        // 1. Classic Template
+        CmsProfile::query()->updateOrCreate(
+            ['restaurant_id' => $world['restaurant']->id],
+            ['landing_template' => 'classic']
+        );
+        $resClassic = $this->get(route('landing.show', $world['restaurant']));
+        $resClassic->assertOk();
+        $resClassic->assertSee($expectedUrl, false);
+        $resClassic->assertSee('@kulinerlezat', false);
+
+        // 2. Foodie Template
+        CmsProfile::query()->updateOrCreate(
+            ['restaurant_id' => $world['restaurant']->id],
+            ['landing_template' => 'foodie']
+        );
+        $resFoodie = $this->get(route('landing.show', $world['restaurant']));
+        $resFoodie->assertOk();
+        $resFoodie->assertSee($expectedUrl, false);
+        $resFoodie->assertSee('@kulinerlezat', false);
+
+        // 3. Glassmorphism Template
+        CmsProfile::query()->updateOrCreate(
+            ['restaurant_id' => $world['restaurant']->id],
+            ['landing_template' => 'glassmorphism']
+        );
+        $resGlass = $this->get(route('landing.show', $world['restaurant']));
+        $resGlass->assertOk();
+        $resGlass->assertSee($expectedUrl, false);
+        $resGlass->assertSee('@kulinerlezat', false);
+    }
+
+    public function test_footer_does_not_render_instagram_when_not_configured(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $this->seed(LandingTemplateSeeder::class);
+
+        $world['outlet']->update([
+            'instagram' => null,
+        ]);
+
+        foreach (['classic', 'foodie', 'glassmorphism'] as $tpl) {
+            CmsProfile::query()->updateOrCreate(
+                ['restaurant_id' => $world['restaurant']->id],
+                ['landing_template' => $tpl]
+            );
+
+            $res = $this->get(route('landing.show', $world['restaurant']));
+            $res->assertOk();
+            $res->assertDontSee('instagram.com/', false);
+        }
+    }
 }

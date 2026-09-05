@@ -227,7 +227,17 @@ class Restaurant extends Model implements HasAvatar, HasName
 
     public function hasFacility(string $key): bool
     {
-        return (bool) data_get($this->facilities, $key, false);
+        $facilities = $this->facilities;
+
+        if (! is_array($facilities)) {
+            return false;
+        }
+
+        if (array_is_list($facilities)) {
+            return in_array($key, $facilities, true);
+        }
+
+        return (bool) data_get($facilities, $key, false);
     }
 
     /**

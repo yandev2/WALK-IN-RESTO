@@ -101,6 +101,8 @@ class RestaurantResource extends JsonResource
                 $outlet?->longitude,
             ),
             'whatsapp_url' => CmsMedia::whatsappUrl($outlet?->phone),
+            'instagram' => $outlet?->instagram,
+            'instagram_url' => CmsMedia::instagramUrl($outlet?->instagram),
             'is_open' => (bool) ($outlet?->is_open ?? false),
             'is_open_now' => (bool) $outlet?->isOpenNow(),
             'outlet_name' => $outlet?->name,

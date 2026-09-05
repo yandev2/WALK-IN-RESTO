@@ -168,7 +168,8 @@ class ManageLandingLayout extends Page
                         Actions::make([
                             Action::make('save')
                                 ->label('Simpan')
-                                ->submit('save'),
+                                ->action('save')
+                                ->keyBindings(['mod+s']),
                         ]),
                     ]),
             ]);

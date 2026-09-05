@@ -87,6 +87,7 @@ class LandingPageDataService
 
         $mapsUrl = CmsMedia::mapsSearchUrl($outlet?->address, $outlet?->latitude, $outlet?->longitude);
         $whatsappUrl = CmsMedia::whatsappUrl($outlet?->phone);
+        $instagramUrl = CmsMedia::instagramUrl($outlet?->instagram);
         $layout = LandingLayout::for($profile);
         $ratingSummary = RestaurantRatingSummary::for($restaurant);
 
@@ -123,6 +124,7 @@ class LandingPageDataService
             ),
             'mapsUrl' => $mapsUrl,
             'whatsappUrl' => $whatsappUrl,
+            'instagramUrl' => $instagramUrl,
             'isOpenNow' => (bool) $outlet?->isOpenNow(),
             'todayHours' => $outlet?->todayHours(),
             'dayNames' => $dayNames,

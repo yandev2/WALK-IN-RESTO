@@ -25,6 +25,7 @@ class Outlet extends Model
         'name',
         'address',
         'phone',
+        'instagram',
         'is_default',
         'is_open',
         'is_active',
@@ -49,6 +50,7 @@ class Outlet extends Model
                 'name',
                 'address',
                 'phone',
+                'instagram',
                 'is_open',
                 'is_active',
                 'pb1_pct',
@@ -171,6 +173,11 @@ class Outlet extends Model
         $at = $at?->copy()->timezone($timezone) ?? now($timezone);
 
         return $this->operatingHours->firstWhere('day_of_week', $at->dayOfWeek);
+    }
+
+    public function instagramUrl(): ?string
+    {
+        return \App\Support\CmsMedia::instagramUrl($this->instagram);
     }
 
     /**

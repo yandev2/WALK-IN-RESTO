@@ -94,10 +94,15 @@ class OutletResource extends Resource
                             ->label('Telepon')
                             ->tel()
                             ->maxLength(32),
+                        TextInput::make('instagram')
+                            ->label('Instagram')
+                            ->prefix('@')
+                            ->placeholder('username atau https://instagram.com/...')
+                            ->maxLength(255)
+                            ->nullable(),
                         TextInput::make('address')
                             ->label('Alamat')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
+                            ->maxLength(255),
                         Toggle::make('is_open')
                             ->label('Buka (open/closed)')
                             ->helperText('Off = selalu tutup. On = ikut jam operasional hari ini.')

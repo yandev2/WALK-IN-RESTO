@@ -25,6 +25,8 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Crypt;
@@ -90,15 +92,21 @@ class ManageCmsProfile extends Page
             ['restaurant_id' => $restaurant->getKey()],
         );
 
-        $this->form->fill([
-            ...$restaurant->only(self::RESTAURANT_FIELDS),
-            'price_level' => $restaurant->price_level,
-            'category_ids' => $restaurant->categories()->pluck('restaurant_categories.id')->all(),
-            'facilities' => collect($restaurant->facilities ?? [])
+        $rawFacilities = $restaurant->facilities ?? [];
+        $selectedFacilities = is_array($rawFacilities) && array_is_list($rawFacilities)
+            ? array_values(array_filter($rawFacilities, 'is_string'))
+            : collect($rawFacilities)
                 ->filter()
                 ->keys()
                 ->values()
-                ->all(),
+                ->all();
+
+        $this->form->fill([
+            ...$restaurant->only(self::RESTAURANT_FIELDS),
+            'legal_name' => filled($restaurant->legal_name) ? $restaurant->legal_name : $restaurant->name,
+            'price_level' => $restaurant->price_level,
+            'category_ids' => $restaurant->categories()->pluck('restaurant_categories.id')->all(),
+            'facilities' => $selectedFacilities,
             ...$profile->only([
                 'headline',
                 'about_html',
@@ -134,7 +142,13 @@ class ManageCmsProfile extends Page
                                 TextInput::make('name')
                                     ->label('Nama restoran')
                                     ->required()
-                                    ->maxLength(120),
+                                    ->maxLength(120)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (?string $state, Set $set, Get $get) {
+                                        if (blank($get('legal_name'))) {
+                                            $set('legal_name', $state);
+                                        }
+                                    }),
                                 TextInput::make('slug')
                                     ->prefix('/')
                                     ->helperText('Landing: /{slug} · Admin: /admin/{slug}')
@@ -143,6 +157,7 @@ class ManageCmsProfile extends Page
                                     ->unique(Restaurant::class, 'slug', ignorable: fn () => $this->restaurant()),
                                 TextInput::make('legal_name')
                                     ->label('Nama legal')
+                                    ->placeholder(fn (Get $get) => $get('name'))
                                     ->maxLength(191)
                                     ->columnSpanFull(),
                                 Select::make('timezone')
@@ -365,6 +380,9 @@ class ManageCmsProfile extends Page
         $data = $this->form->getState();
 
         $restaurantPayload = collect($data)->only(self::RESTAURANT_FIELDS)->all();
+        if (blank($restaurantPayload['legal_name'] ?? null) && filled($restaurantPayload['name'] ?? null)) {
+            $restaurantPayload['legal_name'] = $restaurantPayload['name'];
+        }
         $restaurantPayload['price_level'] = filled($data['price_level'] ?? null)
             ? (int) $data['price_level']
             : null;
@@ -435,7 +453,8 @@ class ManageCmsProfile extends Page
                         Actions::make([
                             Action::make('save')
                                 ->label('Simpan')
-                                ->submit('save'),
+                                ->action('save')
+                                ->keyBindings(['mod+s']),
                         ]),
                     ]),
             ]);
