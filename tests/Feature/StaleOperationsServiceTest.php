@@ -115,6 +115,39 @@ class StaleOperationsServiceTest extends TestCase
         $this->assertSame('awaiting_cashier', $order->fresh()->status);
     }
 
+    public function test_simple_mode_guest_visit_auto_closes_5_minutes_after_last_completed_order(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+
+        $order = $this->checkoutQris($world, 'ttl-simple-1');
+        app(OrderPaymentService::class)->approve($order, User::factory()->create());
+
+        foreach ($order->items as $item) {
+            $item->update(['kds_status' => 'served', 'served_at' => now()]);
+        }
+        app(\App\Services\KdsItemService::class)->syncOrder($order->fresh());
+
+        $this->assertSame(Order::STATUS_COMPLETED, $order->fresh()->status);
+        $visit = $order->visit->fresh();
+        $this->assertSame('open', $visit->status);
+
+        // At 2 minutes: sweep() does not close visit yet
+        $this->travel(2)->minutes();
+        app(StaleOperationsService::class)->sweep();
+        $this->assertSame('open', $visit->fresh()->status);
+
+        // At 6 minutes (past 5 minutes): sweep() auto closes visit and frees table
+        $this->travel(4)->minutes();
+        app(StaleOperationsService::class)->sweep();
+
+        $this->assertSame('closed', $visit->fresh()->status);
+        $table = DiningTable::query()->findOrFail($world['table']->id);
+        $this->assertNull($table->open_visit_id);
+        $this->assertFalse($table->needs_cleaning);
+        $this->assertSame('available', $table->floorStatus());
+    }
+
     /**
      * @param  array{token: string}  $world
      */

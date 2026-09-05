@@ -53,6 +53,8 @@ class CreateCashierOrder extends Page
 
     public ?array $data = [];
 
+    public ?array $simpleModeCompletedOrder = null;
+
     #[Session(key: 'cashier_order_ui')]
     public string $cashierUi = 'form';
 
@@ -159,7 +161,10 @@ class CreateCashierOrder extends Page
                             ->options(fn (): array => DiningTable::query()
                                 ->where('restaurant_id', TenantContext::restaurantId())
                                 ->where('is_out_of_service', false)
-                                ->where('needs_cleaning', false)
+                                ->where(function ($query) {
+                                    $query->where('needs_cleaning', false)
+                                        ->orWhereHas('outlet', fn ($q) => $q->where('simple_mode', true));
+                                })
                                 ->whereNull('open_visit_id')
                                 ->orderBy('code')
                                 ->pluck('code', 'id')
@@ -355,6 +360,33 @@ class CreateCashierOrder extends Page
             throw $e;
         }
 
+        $table->loadMissing('outlet');
+        if ((bool) $table->outlet?->simple_mode) {
+            $payment = $order->payments()->first();
+            $customerName = $data['customer_name'] ?? $order->visit?->customer_name;
+            $this->simpleModeCompletedOrder = [
+                'id' => $order->id,
+                'number' => $order->number,
+                'public_id' => $order->public_id,
+                'table_name' => $table->code,
+                'customer_name' => filled($customerName) ? (string) $customerName : 'Tamu Walk-in',
+                'grand_payable' => (int) $order->grand_payable,
+                'payment_method' => $order->payment_method === 'cash' ? 'Tunai' : 'QRIS',
+                'cash_received' => $payment?->cash_received,
+                'change_amount' => $payment?->change_amount,
+                'print_url' => route('receipts.print', ['order' => $order->public_id, 'auto' => 1]),
+            ];
+
+            $this->resetCashierForm();
+
+            Notification::make()
+                ->title('Pesanan #'.$order->number.' berhasil diselesaikan')
+                ->success()
+                ->send();
+
+            return;
+        }
+
         Notification::make()
             ->title('Order kasir masuk antrian')
             ->success()
@@ -363,13 +395,50 @@ class CreateCashierOrder extends Page
         $this->redirect(OrderResource::getUrl('view', ['record' => $order], tenant: $tenant));
     }
 
+    public function closeSimpleModeModal(): void
+    {
+        $this->simpleModeCompletedOrder = null;
+        $this->resetCashierForm();
+    }
+
+    public function resetCashierForm(): void
+    {
+        $defaultData = [
+            'table_id' => null,
+            'customer_wa' => null,
+            'customer_name' => null,
+            'send_receipt' => false,
+            'payment_method' => 'cash',
+            'cash_received' => null,
+            'lines' => $this->isPosUi() ? [] : [['qty' => 1]],
+        ];
+
+        $this->data = $defaultData;
+        $this->form->fill($defaultData);
+        $this->posEditor = null;
+        $this->posSearch = '';
+        $this->posCategory = 'all';
+
+        if ($this->isPosUi()) {
+            $this->cacheSchema('content', null);
+        }
+
+        $this->dispatch('cashier-reset-form');
+    }
+
     public function content(Schema $schema): Schema
     {
+        $modal = View::make('filament.pages.partials.cashier-simple-mode-modal')
+            ->viewData(fn (): array => [
+                'simpleModeCompletedOrder' => $this->simpleModeCompletedOrder,
+            ]);
+
         if ($this->isPosUi()) {
             return $schema
                 ->components([
                     View::make('filament.pages.partials.cashier-pos-shell')
                         ->viewData(fn (): array => $this->posShellViewData()),
+                    $modal,
                 ]);
         }
 
@@ -385,6 +454,7 @@ class CreateCashierOrder extends Page
                                 ->submit('create'),
                         ]),
                     ]),
+                $modal,
             ]);
     }
 
@@ -613,7 +683,10 @@ class CreateCashierOrder extends Page
         return DiningTable::query()
             ->where('restaurant_id', TenantContext::restaurantId())
             ->where('is_out_of_service', false)
-            ->where('needs_cleaning', false)
+            ->where(function ($query) {
+                $query->where('needs_cleaning', false)
+                    ->orWhereHas('outlet', fn ($q) => $q->where('simple_mode', true));
+            })
             ->whereNull('open_visit_id')
             ->orderBy('code')
             ->pluck('code', 'id')

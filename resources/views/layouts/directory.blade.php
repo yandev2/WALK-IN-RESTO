@@ -1,10 +1,14 @@
 @php
     $home = $home ?? \App\Models\PlatformSetting::homeViewData();
     $metaTitle = trim($__env->yieldContent('title', $title ?? ($home['meta_title'] ?? 'Temukan Restoran Terdekat')));
+    $metaTitle = html_entity_decode($metaTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $metaDescription = trim($__env->yieldContent('description', $description ?? ($home['meta_description'] ?? 'Temukan restoran terdekat, lihat menu, dan datang langsung.')));
     $metaKeywords = $home['meta_keywords'] ?? 'restoran terdekat, kuliner terdekat, menu restoran, cafe terdekat, walk-in resto';
     $canonicalUrl = $home['canonical_url'] ?? url()->current();
     $faviconUrl = $home['favicon_url'] ?? ($home['logo_url'] ?? asset('favicon.ico'));
+    if (filled($faviconUrl) && ! str_starts_with($faviconUrl, 'http://') && ! str_starts_with($faviconUrl, 'https://')) {
+        $faviconUrl = url($faviconUrl);
+    }
     $ogImageUrl = $home['og_image_url'] ?? ($home['hero_image_url'] ?? ($home['logo_url'] ?? null));
 
     $schemaOrg = [
@@ -58,6 +62,7 @@
         {{-- Favicon & App Icons --}}
         @if (filled($faviconUrl))
             <link rel="icon" href="{{ $faviconUrl }}">
+            <link rel="shortcut icon" href="{{ $faviconUrl }}">
             <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
         @endif
 

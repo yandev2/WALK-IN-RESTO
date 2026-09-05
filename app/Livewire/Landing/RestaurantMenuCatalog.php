@@ -134,6 +134,8 @@ class RestaurantMenuCatalog extends Component
             'visibleSections' => $visibleSections,
         ])->layout('layouts.landing', [
             'theme' => RestaurantTheme::for($this->restaurant),
+            'restaurant' => $this->restaurant,
+            'logoUrl' => CmsMedia::url($this->restaurant->logo_path),
         ]);
     }
 }

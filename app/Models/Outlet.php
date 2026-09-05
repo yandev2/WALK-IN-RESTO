@@ -39,6 +39,7 @@ class Outlet extends Model
         'claim_ttl_minutes',
         'awaiting_cashier_ttl_minutes',
         'auto_print_receipt',
+        'simple_mode',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -58,6 +59,7 @@ class Outlet extends Model
                 'claim_ttl_minutes',
                 'awaiting_cashier_ttl_minutes',
                 'auto_print_receipt',
+                'simple_mode',
             ])
             ->logOnlyDirty()
             ->useLogName('outlet')
@@ -71,6 +73,7 @@ class Outlet extends Model
             'is_open' => 'boolean',
             'is_active' => 'boolean',
             'auto_print_receipt' => 'boolean',
+            'simple_mode' => 'boolean',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'pb1_pct' => 'decimal:2',

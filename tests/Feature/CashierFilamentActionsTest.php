@@ -386,6 +386,101 @@ class CashierFilamentActionsTest extends TestCase
             ->assertDontSee('Tambah item');
     }
 
+    public function test_cashier_order_in_simple_mode_stays_on_page_and_shows_receipt_modal(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $test = Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'customer_name' => 'Budi Prasmanan',
+                'customer_wa' => '081234567890',
+                'payment_method' => 'cash',
+                'lines' => [
+                    [
+                        'menu_item_id' => $world['item']->id,
+                        'qty' => 1,
+                    ],
+                ],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors()
+            ->assertNoRedirect();
+
+        $completedOrder = $test->get('simpleModeCompletedOrder');
+        $this->assertNotNull($completedOrder);
+        $this->assertSame('Tunai', $completedOrder['payment_method']);
+        $this->assertSame($world['table']->code, $completedOrder['table_name']);
+        $this->assertSame('Budi Prasmanan', $completedOrder['customer_name']);
+        $this->assertStringContainsString('/receipts/', $completedOrder['print_url']);
+        $this->assertStringContainsString('/print?auto=1', $completedOrder['print_url']);
+
+        $test->assertSee('Pesanan Selesai')
+            ->assertSee('Cetak Struk')
+            ->assertSee('Tutup / Order Baru')
+            ->assertDispatched('cashier-reset-form')
+            ->assertSet('data.table_id', null)
+            ->assertSet('data.customer_name', null)
+            ->assertSet('data.customer_wa', null);
+
+        $test->call('closeSimpleModeModal')
+            ->assertSet('simpleModeCompletedOrder', null)
+            ->assertSet('data.table_id', null)
+            ->assertSet('data.customer_name', null)
+            ->assertSet('data.customer_wa', null)
+            ->assertDispatched('cashier-reset-form');
+    }
+
+    public function test_cashier_order_in_simple_mode_resets_form_in_pos_ui(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $test = Livewire::test(CreateCashierOrder::class)
+            ->callAction('toggleCashierUi')
+            ->assertSet('cashierUi', 'pos')
+            ->call('setPosField', 'table_id', $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Budi POS')
+            ->call('setPosField', 'customer_wa', '081299998888')
+            ->call('setPosField', 'cash_received', '50000')
+            ->call('addPosItem', $world['item']->id)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertNoRedirect();
+
+        $completedOrder = $test->get('simpleModeCompletedOrder');
+        $this->assertNotNull($completedOrder);
+        $this->assertSame($world['table']->code, $completedOrder['table_name']);
+        $this->assertSame('Budi POS', $completedOrder['customer_name']);
+
+        $test->assertDispatched('cashier-reset-form')
+            ->assertSet('data.table_id', null)
+            ->assertSet('data.customer_name', null)
+            ->assertSet('data.customer_wa', null)
+            ->assertSet('data.lines', []);
+
+        $test->call('closeSimpleModeModal')
+            ->assertSet('simpleModeCompletedOrder', null)
+            ->assertSet('data.table_id', null)
+            ->assertSet('data.customer_name', null)
+            ->assertDispatched('cashier-reset-form');
+    }
+
     /**
      * @param  list<string>  $permissions
      */

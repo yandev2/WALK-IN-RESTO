@@ -238,4 +238,86 @@ class CashierOrderServiceTest extends TestCase
         $this->assertSame(50000, (int) $payment->cash_received);
         $this->assertSame(50000 - (int) $order->grand_payable, (int) $payment->change_amount);
     }
+
+    public function test_cashier_order_in_simple_mode_completes_instantly_and_frees_table(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $user = User::factory()->create();
+
+        $order = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            '081234567890',
+            'Tamu Prasmanan',
+            'cash',
+            false,
+            [['menu_item_id' => $world['item']->id, 'qty' => 1]],
+            50000,
+        );
+
+        $this->assertSame('cashier', $order->source);
+        $this->assertSame(Order::STATUS_COMPLETED, $order->status);
+        $this->assertNotNull($order->paid_at);
+
+        $payment = $order->payments()->first();
+        $this->assertSame('paid', $payment->status);
+        $this->assertNotNull($payment->paid_at);
+        $this->assertSame($user->id, $payment->paid_by_user_id);
+        $this->assertSame(50000, (int) $payment->cash_received);
+        $this->assertSame(50000 - (int) $order->grand_payable, (int) $payment->change_amount);
+
+        $item = $order->items()->first();
+        $this->assertSame('served', $item->kds_status);
+        $this->assertNotNull($item->served_at);
+
+        // Verify visit is closed and table is released immediately without needing cleaning
+        $this->assertSame('closed', $order->visit->fresh()->status);
+        $this->assertNull($world['table']->fresh()->open_visit_id);
+        $this->assertFalse($world['table']->fresh()->needs_cleaning);
+        $this->assertSame('available', $world['table']->fresh()->floorStatus());
+
+        // Verify a second cashier order can be made on the same table immediately
+        $secondOrder = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            '081298765432',
+            'Tamu Prasmanan 2',
+            'cash',
+            false,
+            [['menu_item_id' => $world['item']->id, 'qty' => 2]],
+            100000,
+        );
+
+        $this->assertSame(Order::STATUS_COMPLETED, $secondOrder->status);
+        $this->assertNull($world['table']->fresh()->open_visit_id);
+        $this->assertFalse($world['table']->fresh()->needs_cleaning);
+        $this->assertSame('available', $world['table']->fresh()->floorStatus());
+    }
+
+    public function test_closing_visit_in_simple_mode_leaves_table_ready_without_cleaning(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $user = User::factory()->create();
+
+        $visit = app(\App\Services\VisitClaimService::class)->openByCashier(
+            $world['table'],
+            $user,
+            null,
+            'Walk-in Simple',
+        );
+
+        $this->assertSame('open', $visit->fresh()->status);
+        $this->assertSame($visit->id, $world['table']->fresh()->open_visit_id);
+
+        app(\App\Services\VisitLifecycleService::class)->closeByCashier($visit, $user);
+
+        $this->assertSame('closed', $visit->fresh()->status);
+        $table = $world['table']->fresh();
+        $this->assertNull($table->open_visit_id);
+        $this->assertFalse($table->needs_cleaning);
+        $this->assertSame('available', $table->floorStatus());
+    }
 }
+

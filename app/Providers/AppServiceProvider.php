@@ -11,6 +11,7 @@ use App\Policies\ExportFilePolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use App\Support\GuestContext;
+use App\Support\ImageOptimizer;
 use App\Support\PermissionTeam;
 use App\Support\RestaurantTheme;
 use Filament\Actions\Action;
@@ -39,6 +40,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\ComponentHookRegistry;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -127,6 +129,31 @@ class AppServiceProvider extends ServiceProvider
                     fn(string $file): bool => Storage::disk('public')->delete($file),
                 );
             }
+
+            $component->validationMessages([
+                'max' => 'Ukuran berkas terlalu besar (maksimal :max KB).',
+                'mimes' => 'Format berkas tidak didukung. Harap gunakan format: :values.',
+                'image' => 'Berkas harus berupa gambar yang valid (JPG, PNG, WEBP).',
+                'dimensions' => 'Dimensi gambar tidak sesuai dengan ketentuan.',
+            ]);
+
+            $component->saveUploadedFileUsing(static function (FileUpload $component, TemporaryUploadedFile $file): ?string {
+                $storedFile = $component->saveUploadedFile($file);
+
+                if ($storedFile && in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'], true)) {
+                    // Safety net server-side optimization:
+                    // Otomatis pastikan resolusi dan ukuran gambar di disk publik tetap terkendali (maks. 1 MB).
+                    ImageOptimizer::optimize(
+                        path: $storedFile,
+                        maxWidth: 1920,
+                        maxHeight: 1080,
+                        maxBytes: 1048576,
+                        disk: $component->getDiskName()
+                    );
+                }
+
+                return $storedFile;
+            });
         });
     }
 

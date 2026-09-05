@@ -134,15 +134,21 @@ class UserResource extends Resource
                                 FileUpload::make('avatar_path')
                                     ->hiddenLabel()
                                     ->image()
-                                    ->imageEditor()
-                                    ->imageCropAspectRatio('1:1')
-                                    ->imagePreviewHeight('160')
-                                    ->panelLayout('compact')
                                     ->avatar()
+                                    ->imageAspectRatio('1:1')
+                                    ->automaticallyCropImagesToAspectRatio()
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->automaticallyResizeImagesToWidth('500')
+                                    ->automaticallyResizeImagesToHeight('500')
+                                    ->automaticallyUpscaleImagesWhenResizing(false)
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios(['1:1'])
+                                    ->imagePreviewHeight('160')
                                     ->directory('users/avatars')
                                     ->disk('public')
-                                    ->maxSize(2048)
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
+                                    ->maxSize(15360)
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->helperText('Format: JPG, PNG, WEBP. Rasio 1:1, otomatis dipotong & dikompres (maks. 15 MB).'),
                             ]),
                     ]),
                 Section::make('Akses & status')

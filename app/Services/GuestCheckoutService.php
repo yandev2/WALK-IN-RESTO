@@ -192,13 +192,14 @@ class GuestCheckoutService
         $number = $this->nextOrderNumber($visit->restaurant_id, $outlet->id);
         $hasFonnte = $outlet->restaurant?->hasFonnteKey() ?? false;
         $canSendReceipt = $hasFonnte && $sendReceipt && filled($visit->customer_wa);
+        $isSimpleCashier = $source === 'cashier' && (bool) $outlet->simple_mode;
 
         $order = Order::query()->create([
             'restaurant_id' => $visit->restaurant_id,
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'number' => $number,
-            'status' => 'awaiting_cashier',
+            'status' => $isSimpleCashier ? Order::STATUS_COMPLETED : 'awaiting_cashier',
             'source' => $source,
             'payment_method' => $method,
             'created_by_user_id' => $createdByUserId,
@@ -215,6 +216,7 @@ class GuestCheckoutService
             'grand_payable' => $grandPayable,
             'send_receipt' => $canSendReceipt,
             'receipt_wa_snapshot' => $canSendReceipt ? $visit->customer_wa : null,
+            'paid_at' => $isSimpleCashier ? now() : null,
         ]);
 
         foreach ($lines as $line) {
@@ -229,8 +231,9 @@ class GuestCheckoutService
                 'unit_price' => $line['unit'],
                 'qty' => $line['qty'],
                 'notes' => $line['notes'],
-                'kds_status' => 'queued',
+                'kds_status' => $isSimpleCashier ? 'served' : 'queued',
                 'queued_at' => now(),
+                'served_at' => $isSimpleCashier ? now() : null,
             ]);
 
             foreach ($line['modifiers'] as $modifier) {
@@ -259,20 +262,33 @@ class GuestCheckoutService
             'order_id' => $order->id,
             'method' => $method,
             'provider' => 'manual',
-            'status' => 'awaiting_cashier',
+            'status' => $isSimpleCashier ? 'paid' : 'awaiting_cashier',
             'amount' => $grandPayable,
             'cash_received' => $tender['cash_received'],
             'change_amount' => $tender['change_amount'],
             'unique_add' => $uniqueAdd,
-            'qris_hold_amount' => $holdAmount,
+            'qris_hold_amount' => $isSimpleCashier ? null : $holdAmount,
             'qris_image_path_snapshot' => $qrisSnapshotPath,
             'gps_status' => $gpsResult['status'],
             'gps_latitude' => $gps['lat'] ?? null,
             'gps_longitude' => $gps['lng'] ?? null,
             'gps_accuracy_m' => $gps['accuracy'] ?? null,
             'gps_distance_m' => $gpsResult['distance'],
-            'awaiting_expires_at' => now()->addMinutes($ttl),
+            'awaiting_expires_at' => $isSimpleCashier ? null : now()->addMinutes($ttl),
+            'paid_at' => $isSimpleCashier ? now() : null,
+            'paid_by_user_id' => $isSimpleCashier ? $createdByUserId : null,
         ]);
+
+        if ($isSimpleCashier && $canSendReceipt && $createdByUserId) {
+            try {
+                $cashier = \App\Models\User::query()->find($createdByUserId);
+                if ($cashier) {
+                    app(\App\Services\OrderReceiptService::class)->afterPaid($order, $cashier);
+                }
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return $order;
     }
@@ -305,9 +321,15 @@ class GuestCheckoutService
             }
 
             if (! $item->station_id) {
-                throw ValidationException::withMessages([
-                    'menu' => $item->name.' belum punya stasiun dapur. Hubungi kasir.',
-                ]);
+                if ($visit->outlet?->simple_mode) {
+                    $item->station_id = $visit->outlet->kdsStations()->value('id');
+                }
+
+                if (! $item->station_id) {
+                    throw ValidationException::withMessages([
+                        'menu' => $item->name.' belum punya stasiun dapur. Hubungi kasir.',
+                    ]);
+                }
             }
 
             $variant = null;

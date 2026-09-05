@@ -206,4 +206,31 @@ class LandingLayoutTest extends TestCase
             ->assertSee('Meja depan', false)
             ->assertSee('https://example.com/galeri-1.jpg', false);
     }
+
+    public function test_custom_footer_visit_text_appears_on_landing(): void
+    {
+        $world = $this->createGuestRestaurant();
+
+        // Check default footer visit text
+        $this->get(route('landing.show', $world['restaurant']))
+            ->assertOk()
+            ->assertSee('Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.', false);
+
+        // Customize footer visit text
+        CmsProfile::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'landing_copy' => [
+                'cta' => [
+                    'subtitle' => 'Pesan langsung dari meja.',
+                    'footer_visit_text' => 'Silakan langsung datang ke outlet kami tanpa reservasi.',
+                ],
+            ],
+        ]);
+
+        $this->get(route('landing.show', $world['restaurant']))
+            ->assertOk()
+            ->assertSee('Silakan langsung datang ke outlet kami tanpa reservasi.', false)
+            ->assertDontSee('Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.', false);
+    }
 }
+

@@ -192,7 +192,10 @@ class DiningTable extends Model
             return 'out_of_service';
         }
 
-        if ($this->needs_cleaning) {
+        $this->loadMissing('outlet');
+        $isSimple = (bool) $this->outlet?->simple_mode;
+
+        if ($this->needs_cleaning && ! $isSimple) {
             return 'cleaning';
         }
 

@@ -175,12 +175,21 @@ class OutletResource extends Resource
                                 FileUpload::make('qris_image_path')
                                     ->hiddenLabel()
                                     ->image()
+                                    ->imageAspectRatio('1:1')
+                                    ->automaticallyCropImagesToAspectRatio()
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->automaticallyResizeImagesToWidth('1000')
+                                    ->automaticallyResizeImagesToHeight('1000')
+                                    ->automaticallyUpscaleImagesWhenResizing(false)
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios(['1:1'])
                                     ->imagePreviewHeight('180')
                                     ->panelLayout('compact')
                                     ->directory('outlets/qris')
                                     ->disk('public')
-                                    ->maxSize(2048)
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp']),
+                                    ->maxSize(15360)
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->helperText('Format: JPG, PNG, WEBP. Pastikan barcode QRIS berada di tengah rasio 1:1 (maks. 15 MB).'),
                             ]),
                     ]),
                 Section::make('Pajak & antrian kasir')
@@ -243,6 +252,11 @@ class OutletResource extends Resource
                         Toggle::make('auto_print_receipt')
                             ->label('Cetak struk otomatis setelah terima bayar')
                             ->helperText('Membuka PDF struk yang sama (80mm) di dialog cetak browser. Matikan jika kasir ingin cetak manual.')
+                            ->inline(false)
+                            ->columnSpanFull(),
+                        Toggle::make('simple_mode')
+                            ->label('Mode Kasir Sederhana (Simple Mode / Prasmanan)')
+                            ->helperText('Cocok untuk prasmanan atau lesehan. Order kasir langsung berstatus selesai & disajikan (dapur di-bypass) serta meja langsung bebas. Order tamu lewat scan HP akan otomatis menutup visit 5 menit setelah pesanan selesai.')
                             ->inline(false)
                             ->columnSpanFull(),
                     ]),

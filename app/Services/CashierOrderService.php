@@ -16,6 +16,7 @@ class CashierOrderService
     public function __construct(
         private VisitClaimService $claims,
         private GuestCheckoutService $checkout,
+        private VisitLifecycleService $visitLifecycle,
     ) {}
 
     /**
@@ -42,6 +43,7 @@ class CashierOrderService
         }
 
         return DB::transaction(function () use ($user, $table, $customerWa, $customerName, $method, $sendReceipt, $lines, $cashReceived) {
+            $table->loadMissing('outlet');
             $visit = $this->claims->openByCashier($table, $user, $customerWa, $customerName);
 
             $order = $this->checkout->placeOrder(
@@ -56,6 +58,15 @@ class CashierOrderService
                 $cashReceived,
             );
 
+            if ($table->outlet?->simple_mode) {
+                $this->visitLifecycle->close(
+                    $visit,
+                    needsCleaning: false,
+                    closedByUserId: $user->id,
+                    reason: 'simple_mode_cashier',
+                );
+            }
+
             ActivityLogger::log('order.create', [
                 'restaurant_id' => $order->restaurant_id,
                 'outlet_id' => $order->outlet_id,
@@ -66,6 +77,7 @@ class CashierOrderService
                     'source' => 'cashier',
                     'payment_method' => $method,
                     'table_id' => $table->id,
+                    'simple_mode' => (bool) $table->outlet?->simple_mode,
                 ],
             ]);
 

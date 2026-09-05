@@ -41,7 +41,11 @@ class VisitClaimService
             }
 
             if ($table->needs_cleaning) {
-                throw ValidationException::withMessages(['table' => 'Meja sedang dibersihkan. Mohon tunggu kasir menandai siap.']);
+                if ($table->outlet?->simple_mode) {
+                    $table->update(['needs_cleaning' => false]);
+                } else {
+                    throw ValidationException::withMessages(['table' => 'Meja sedang dibersihkan. Mohon tunggu kasir menandai siap.']);
+                }
             }
 
             if (filled($table->open_visit_id)) {
@@ -129,7 +133,11 @@ class VisitClaimService
             }
 
             if ($table->needs_cleaning) {
-                throw ValidationException::withMessages(['table' => 'Meja sedang dibersihkan. Tandai siap dulu.']);
+                if ($table->outlet?->simple_mode) {
+                    $table->update(['needs_cleaning' => false]);
+                } else {
+                    throw ValidationException::withMessages(['table' => 'Meja sedang dibersihkan. Tandai siap dulu.']);
+                }
             }
 
             if (filled($table->open_visit_id)) {

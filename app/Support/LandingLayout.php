@@ -177,6 +177,7 @@ final class LandingLayout
                 'footer_nav' => 'Navigasi',
                 'footer_contact' => 'Kontak',
                 'footer_visit' => 'Datang ke sini',
+                'footer_visit_text' => 'Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.',
                 'footer_maps' => 'Buka Google Maps',
                 'footer_home' => 'Beranda',
             ],

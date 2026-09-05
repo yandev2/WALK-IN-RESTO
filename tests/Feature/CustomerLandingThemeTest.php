@@ -233,6 +233,51 @@ class CustomerLandingThemeTest extends TestCase
             ->assertSee('data-theme-toggle', false);
     }
 
+    public function test_tenant_landing_renders_restaurant_logo_as_favicon(): void
+    {
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $restaurant = Restaurant::query()->where('slug', 'resto-demo')->firstOrFail();
+        $restaurant->update(['logo_path' => 'restaurants/logos/custom-demo-logo.png']);
+
+        $response = $this->get(route('landing.show', 'resto-demo'));
+
+        $response->assertOk()
+            ->assertSee('storage/restaurants/logos/custom-demo-logo.png', false)
+            ->assertSee('rel="icon"', false)
+            ->assertSee('rel="shortcut icon"', false)
+            ->assertSee('rel="apple-touch-icon"', false);
+    }
+
+    public function test_tenant_landing_falls_back_to_platform_favicon_when_no_logo(): void
+    {
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        \App\Models\PlatformSetting::current()->update([
+            'favicon_path' => 'platform/favicon/platform-fav.png',
+        ]);
+
+        $restaurant = Restaurant::query()->where('slug', 'resto-demo')->firstOrFail();
+        $restaurant->update(['logo_path' => null]);
+
+        $response = $this->get(route('landing.show', 'resto-demo'));
+
+        $response->assertOk()
+            ->assertSee('storage/platform/favicon/platform-fav.png', false);
+    }
+
+    public function test_guest_order_renders_restaurant_logo_as_favicon(): void
+    {
+        [$visit, $token] = $this->openGuestForMenuTest();
+
+        $visit->outlet->restaurant->update(['logo_path' => 'restaurants/logos/custom-guest-logo.png']);
+
+        $response = $this->withCookie('guest_device', $token)->get(route('guest.menu'));
+
+        $response->assertOk()
+            ->assertSee('storage/restaurants/logos/custom-guest-logo.png', false);
+    }
+
     /**
      * @return array{0: \App\Models\Visit, 1: string}
      */

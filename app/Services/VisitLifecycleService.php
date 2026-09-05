@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Models\User;
 use App\Models\Visit;
 use App\Support\ActivityLogger;
@@ -16,6 +17,12 @@ class VisitLifecycleService
             return;
         }
 
+        if ($this->shouldAutoCloseSimpleModeVisit($visit)) {
+            $this->close($visit, needsCleaning: false, reason: 'simple_mode_auto_close');
+
+            return;
+        }
+
         if ($visit->claim_expires_at?->isFuture()) {
             return;
         }
@@ -25,6 +32,60 @@ class VisitLifecycleService
         }
 
         $this->close($visit, needsCleaning: false, reason: 'claim_ttl');
+    }
+
+    public function shouldAutoCloseSimpleModeVisit(Visit $visit): bool
+    {
+        $visit->loadMissing(['outlet', 'orders']);
+
+        if (! (bool) $visit->outlet?->simple_mode) {
+            return false;
+        }
+
+        $orders = $visit->orders;
+
+        if ($orders->isEmpty()) {
+            return false;
+        }
+
+        $hasIncomplete = $orders->contains(
+            fn (Order $order): bool => in_array($order->status, ['awaiting_cashier', 'pending_payment', 'in_production', 'paid'], true)
+        );
+
+        if ($hasIncomplete) {
+            return false;
+        }
+
+        $hasCompleted = $orders->contains(fn (Order $order): bool => $order->status === 'completed');
+
+        if (! $hasCompleted) {
+            return false;
+        }
+
+        $latestTime = $orders->max(fn (Order $order) => $order->paid_at ?? $order->updated_at ?? $order->created_at);
+
+        return $latestTime && $latestTime->addMinutes(5)->isPast();
+    }
+
+    public function expireSimpleModeCompletedVisits(): int
+    {
+        $visits = Visit::query()
+            ->where('status', 'open')
+            ->whereHas('outlet', fn ($query) => $query->where('simple_mode', true))
+            ->whereHas('orders', fn ($query) => $query->where('status', 'completed'))
+            ->with(['orders', 'diningTable', 'outlet'])
+            ->get();
+
+        $closed = 0;
+
+        foreach ($visits as $visit) {
+            if ($this->shouldAutoCloseSimpleModeVisit($visit)) {
+                $this->close($visit, needsCleaning: false, reason: 'simple_mode_auto_close');
+                $closed++;
+            }
+        }
+
+        return $closed;
     }
 
     public function expireStaleClaims(): int
@@ -70,7 +131,15 @@ class VisitLifecycleService
             ]);
         }
 
-        $this->close($visit, needsCleaning: true, closedByUserId: $user->id, reason: 'cashier');
+        $visit->loadMissing(['outlet', 'diningTable.outlet']);
+        $isSimple = (bool) ($visit->outlet?->simple_mode ?? $visit->diningTable?->outlet?->simple_mode);
+
+        $this->close(
+            $visit,
+            needsCleaning: ! $isSimple,
+            closedByUserId: $user->id,
+            reason: $isSimple ? 'simple_mode_cashier' : 'cashier',
+        );
     }
 
     public function close(Visit $visit, bool $needsCleaning = true, ?int $closedByUserId = null, ?string $reason = null): void
@@ -88,11 +157,14 @@ class VisitLifecycleService
                 'closed_by_user_id' => $closedByUserId,
             ])->save();
 
-            $locked->loadMissing('diningTable');
+            $locked->loadMissing(['diningTable.outlet', 'outlet']);
+
+            $isSimple = (bool) ($locked->outlet?->simple_mode ?? $locked->diningTable?->outlet?->simple_mode);
+            $effectiveNeedsCleaning = $isSimple ? false : $needsCleaning;
 
             $locked->diningTable?->update([
                 'open_visit_id' => null,
-                'needs_cleaning' => $needsCleaning,
+                'needs_cleaning' => $effectiveNeedsCleaning,
             ]);
 
             $locked->cartItems()->delete();
@@ -104,7 +176,7 @@ class VisitLifecycleService
                 'actor_type' => $reason === 'claim_ttl' ? 'system' : 'staff',
                 'user_id' => $closedByUserId,
                 'old' => ['status' => 'open'],
-                'new' => ['status' => 'closed', 'needs_cleaning' => $needsCleaning],
+                'new' => ['status' => 'closed', 'needs_cleaning' => $effectiveNeedsCleaning],
                 'reason' => $reason,
             ]);
 

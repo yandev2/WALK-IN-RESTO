@@ -7,6 +7,7 @@ use App\Filament\Founder\Pages\Dashboard;
 use App\Filament\Profile\EditProfile;
 use App\Filament\Resources\RestaurantCategories\RestaurantCategoryResource;
 use App\Http\Middleware\ApplyPlatformBrandTheme;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Support\AuthGlass;
 use App\Support\RestaurantTheme;
@@ -39,6 +40,12 @@ class FounderPanelProvider extends PanelProvider
             ->path('founder')
             ->login(Login::class)
             ->brandName('RestoTerdekat Founder')
+            ->favicon(function (): ?string {
+                $platformFavicon = PlatformSetting::homeViewData()['favicon_url'] ?? asset('favicon.ico');
+                return filled($platformFavicon) && ! str_starts_with($platformFavicon, 'http://') && ! str_starts_with($platformFavicon, 'https://')
+                    ? url($platformFavicon)
+                    : $platformFavicon;
+            })
             ->colors([
                 'primary' => Color::hex(RestaurantTheme::DEFAULT_PRIMARY),
             ])

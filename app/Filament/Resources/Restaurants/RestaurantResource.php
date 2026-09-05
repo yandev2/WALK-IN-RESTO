@@ -97,8 +97,21 @@ class RestaurantResource extends Resource
                         FileUpload::make('logo_path')
                             ->label('Logo')
                             ->image()
+                            ->imageAspectRatio('1:1')
+                            ->automaticallyCropImagesToAspectRatio()
+                            ->automaticallyResizeImagesMode('cover')
+                            ->automaticallyResizeImagesToWidth('800')
+                            ->automaticallyResizeImagesToHeight('800')
+                            ->automaticallyUpscaleImagesWhenResizing(false)
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['1:1'])
+                            ->imagePreviewHeight('140')
+                            ->panelLayout('compact')
                             ->directory('restaurants/logos')
-                            ->disk('public'),
+                            ->disk('public')
+                            ->maxSize(15360)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->helperText('Format: JPG, PNG, WEBP transparan. Rasio 1:1 persegi, otomatis dipotong & dikompres (maks. 15 MB).'),
                         TextInput::make('timezone')
                             ->required()
                             ->default('Asia/Jakarta'),

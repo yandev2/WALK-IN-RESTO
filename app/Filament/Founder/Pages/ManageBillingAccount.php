@@ -114,14 +114,21 @@ class ManageBillingAccount extends Page
                                 FileUpload::make('qr_image_path')
                                     ->hiddenLabel()
                                     ->image()
+                                    ->imageAspectRatio('1:1')
+                                    ->automaticallyCropImagesToAspectRatio()
+                                    ->automaticallyResizeImagesMode('cover')
+                                    ->automaticallyResizeImagesToWidth('1000')
+                                    ->automaticallyResizeImagesToHeight('1000')
+                                    ->automaticallyUpscaleImagesWhenResizing(false)
                                     ->imageEditor()
-                                    ->imageCropAspectRatio('1:1')
+                                    ->imageEditorAspectRatios(['1:1'])
                                     ->imagePreviewHeight('180')
                                     ->panelLayout('compact')
                                     ->directory('platform/qr')
                                     ->disk('public')
-                                    ->maxSize(4096)
+                                    ->maxSize(15360)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->helperText('Format: JPG, PNG, WEBP. Kode QR transfer rasio 1:1 persegi (maks. 15 MB).')
                                     ->live(),
                             ]),
                     ]),

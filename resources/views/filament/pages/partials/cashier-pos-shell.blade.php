@@ -23,6 +23,9 @@
         'hasFonnte' => (bool) ($hasFonnte ?? false),
         'sendReceipt' => (bool) ($sendReceipt ?? false),
         'customerWa' => (string) ($customerWa ?? ''),
+        'customerName' => (string) ($customerName ?? ''),
+        'tableId' => $selectedTableId,
+        'tableLabel' => $selectedTableLabel,
         'cashReceived' => $cashReceived ?? null,
     ];
 @endphp
@@ -41,6 +44,9 @@
             hasFonnte: false,
             sendReceipt: false,
             customerWa: '',
+            customerName: '',
+            tableId: '',
+            tableLabel: 'Pilih meja',
             cashRaw: '',
             editor: null,
             indexCatalog() {
@@ -62,7 +68,23 @@
                 this.hasFonnte = !!next.hasFonnte;
                 this.sendReceipt = !!next.sendReceipt;
                 this.customerWa = next.customerWa || '';
+                this.customerName = next.customerName || '';
+                this.tableId = next.tableId || '';
+                this.tableLabel = next.tableLabel || 'Pilih meja';
                 this.cashRaw = next.cashReceived == null ? '' : String(next.cashReceived);
+                this.editor = null;
+            },
+            reset() {
+                this.tableId = '';
+                this.tableLabel = 'Pilih meja';
+                this.customerName = '';
+                this.customerWa = '';
+                this.sendReceipt = false;
+                this.paymentMethod = 'cash';
+                this.cashRaw = '';
+                this.plainQtyByItem = {};
+                this.cartLines = [];
+                this.preview = { subtotal: 0 };
                 this.editor = null;
             },
             cashParsed() {
@@ -143,7 +165,7 @@
     }
     Alpine.store('cashierPos').hydrate(boot);
     return {};
-})()" @keydown.escape.window="$store.cashierPos.editor = null">
+})()" @cashier-reset-form.window="$store.cashierPos.reset()" @keydown.escape.window="$store.cashierPos.editor = null">
     <div class="cashier-pos">
         <section class="cashier-pos-catalog" wire:ignore x-data="{
             query: '',
@@ -263,11 +285,10 @@
         <aside class="cashier-pos-summary">
             <div class="cashier-pos-section" x-data="{
                 tableOpen: false,
-                tableId: {{ \Illuminate\Support\Js::from($selectedTableId) }},
-                tableLabel: {{ \Illuminate\Support\Js::from($selectedTableLabel) }},
                 pickTable(id, label) {
-                    this.tableId = id;
-                    this.tableLabel = label;
+                    const pos = Alpine.store('cashierPos');
+                    pos.tableId = id;
+                    pos.tableLabel = label;
                     this.tableOpen = false;
                     this.$wire.setPosField('table_id', id);
                 },
@@ -279,6 +300,10 @@
                     }
                     this.$wire.setPosField('customer_wa', value);
                 },
+                onName(value) {
+                    Alpine.store('cashierPos').customerName = value;
+                    this.$wire.setPosField('customer_name', value);
+                },
             }" @click.outside="tableOpen = false">
                 <h2 class="cashier-pos-title mb-3.5">Ringkasan pesanan</h2>
                 <div class="cashier-pos-field">
@@ -287,16 +312,16 @@
                         <button type="button" id="cashier-pos-table" class="cashier-pos-select" aria-haspopup="listbox"
                             aria-labelledby="cashier-pos-table-label" :aria-expanded="tableOpen"
                             @click="tableOpen = ! tableOpen">
-                            <span x-text="tableLabel"></span>
+                            <span x-text="$store.cashierPos.tableLabel"></span>
                         </button>
                         <div class="cashier-pos-combobox__menu" x-show="tableOpen" x-cloak role="listbox"
                             aria-labelledby="cashier-pos-table-label">
                             <button type="button" class="cashier-pos-combobox__option"
-                                :class="tableId === '' && 'is-active'" role="option"
+                                :class="$store.cashierPos.tableId === '' && 'is-active'" role="option"
                                 @click="pickTable('', 'Pilih meja')">Pilih meja</button>
                             @foreach ($tables as $id => $code)
                                 <button type="button" class="cashier-pos-combobox__option"
-                                    :class="String(tableId) === '{{ $id }}' && 'is-active'" role="option"
+                                    :class="String($store.cashierPos.tableId) === '{{ $id }}' && 'is-active'" role="option"
                                     @click="pickTable('{{ $id }}', {{ \Illuminate\Support\Js::from((string) $code) }})">{{ $code }}</button>
                             @endforeach
                         </div>
@@ -305,13 +330,14 @@
                 <div class="cashier-pos-field">
                     <label class="cashier-pos-label" for="cashier-pos-name">Nama tamu</label>
                     <input id="cashier-pos-name" type="text" class="cashier-pos-input"
-                        value="{{ $customerName }}" maxlength="120"
-                        x-on:change="$wire.setPosField('customer_name', $event.target.value)">
+                        x-model="$store.cashierPos.customerName" maxlength="120"
+                        x-on:input="onName($event.target.value)">
                 </div>
                 <div class="cashier-pos-field">
                     <label class="cashier-pos-label" for="cashier-pos-wa">WhatsApp tamu</label>
-                    <input id="cashier-pos-wa" type="text" class="cashier-pos-input" value="{{ $customerWa }}"
-                        maxlength="20" placeholder="08xxxxxxxxxx" x-on:change="onWa($event.target.value)">
+                    <input id="cashier-pos-wa" type="text" class="cashier-pos-input"
+                        x-model="$store.cashierPos.customerWa"
+                        maxlength="20" placeholder="08xxxxxxxxxx" x-on:input="onWa($event.target.value)">
                 </div>
                 <label class="cashier-pos-check" style="margin-top: 0.7rem" x-show="$store.cashierPos.hasFonnte"
                     x-cloak>

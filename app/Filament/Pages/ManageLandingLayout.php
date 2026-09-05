@@ -285,6 +285,10 @@ class ManageLandingLayout extends Page
                     TextInput::make('footer_visit')
                         ->label('Heading lokasi')
                         ->maxLength(40),
+                    TextInput::make('footer_visit_text')
+                        ->label('Deskripsi lokasi footer')
+                        ->placeholder('Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.')
+                        ->maxLength(191),
                     TextInput::make('footer_maps')
                         ->label('Tombol maps')
                         ->maxLength(80)

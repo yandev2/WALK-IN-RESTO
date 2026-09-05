@@ -59,7 +59,7 @@
         </div>
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-primary">{{ $ctaCopy['footer_visit'] ?? 'Datang ke sini' }}</p>
-            <p class="mt-4 text-sm text-white/70 leading-relaxed">Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.</p>
+            <p class="mt-4 text-sm text-white/70 leading-relaxed">{{ !empty($ctaCopy['footer_visit_text']) ? $ctaCopy['footer_visit_text'] : 'Walk-in saja. Pilih meja kosong, scan QR, pesan dari HP.' }}</p>
             @if ($mapsUrl ?? null)
                 <a href="{{ $mapsUrl }}" rel="noopener noreferrer" class="landing-interactive mt-4 inline-flex rounded-full border border-white/25 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition">
                     {{ $ctaCopy['footer_maps'] ?? 'Buka Google Maps' }}

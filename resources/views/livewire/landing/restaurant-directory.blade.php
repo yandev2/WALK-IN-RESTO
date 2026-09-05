@@ -171,17 +171,13 @@
 
         const validPins = (pins || []).filter((pin) => pin.lat && pin.lng);
         const hasUser = userLocation && userLocation.lat && userLocation.lng;
-        const fallbackCenter = [-6.2088, 106.8456];
-        const center = hasUser
-            ? [userLocation.lat, userLocation.lng]
-            : validPins.length
-                ? [
-                    validPins.reduce((sum, pin) => sum + pin.lat, 0) / validPins.length,
-                    validPins.reduce((sum, pin) => sum + pin.lng, 0) / validPins.length,
-                ]
-                : fallbackCenter;
 
-        const map = L.map(mapId, { scrollWheelZoom: false }).setView(center, hasUser ? 14 : (validPins.length > 1 ? 12 : 14));
+        // Batas wilayah kepulauan Indonesia (Sabang hingga Merauke)
+        const indonesiaBounds = [[-11.0, 95.0], [6.0, 141.0]];
+        const indonesiaCenter = [-2.5489, 118.0149];
+        const indonesiaDefaultZoom = 5;
+
+        const map = L.map(mapId, { scrollWheelZoom: false });
         host._leafletMap = map;
         host.dataset.initialized = '1';
 
@@ -213,9 +209,17 @@
             if (bounds.isValid()) {
                 map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
             }
+        } else {
+            map.setView(indonesiaCenter, indonesiaDefaultZoom);
+            map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
         }
 
-        setTimeout(() => map.invalidateSize(), 200);
+        setTimeout(() => {
+            map.invalidateSize();
+            if (! hasUser) {
+                map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+            }
+        }, 200);
     };
 
     window.refreshDirectoryMap = window.refreshDirectoryMap || function (mapId, force = false) {

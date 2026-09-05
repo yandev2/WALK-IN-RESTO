@@ -196,4 +196,33 @@ class FilamentTenantThemeTest extends TestCase
             FilamentColor::getColor('primary'),
         );
     }
+
+    public function test_admin_panel_evaluates_tenant_logo_as_favicon(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $restaurant = $this->makeRestaurant();
+        $restaurant->update(['logo_path' => 'restaurants/logos/admin-fav.png']);
+        $owner = $this->makeOwner($restaurant);
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        $favicon = Filament::getPanel('admin')->getFavicon();
+
+        $this->assertNotNull($favicon);
+        $this->assertStringContainsString('storage/restaurants/logos/admin-fav.png', $favicon);
+    }
+
+    public function test_founder_panel_evaluates_platform_favicon(): void
+    {
+        PlatformSetting::current()->update(['favicon_path' => 'platform/favicon/custom-founder.png']);
+
+        Filament::setCurrentPanel('founder');
+        $favicon = Filament::getPanel('founder')->getFavicon();
+
+        $this->assertNotNull($favicon);
+        $this->assertStringContainsString('storage/platform/favicon/custom-founder.png', $favicon);
+    }
 }

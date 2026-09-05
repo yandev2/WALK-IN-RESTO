@@ -18,16 +18,17 @@ class StaleOperationsService
     {
         $cancelled = $this->payments->expireStaleAwaiting();
         $closed = $this->visits->expireStaleClaims();
+        $simpleClosed = $this->visits->expireSimpleModeCompletedVisits();
 
         return [
             'cancelled' => $cancelled,
-            'closed' => $closed,
+            'closed' => $closed + $simpleClosed,
         ];
     }
 
     public function sweepVisit(Visit $visit): void
     {
         $this->payments->expireStaleAwaitingForVisit($visit);
-        $this->visits->expireIfNeeded($visit->fresh(['orders', 'diningTable']));
+        $this->visits->expireIfNeeded($visit->fresh(['orders', 'diningTable', 'outlet']));
     }
 }

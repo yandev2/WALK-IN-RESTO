@@ -11,9 +11,11 @@ use App\Http\Middleware\ApplyPlatformBrandTheme;
 use App\Http\Middleware\ApplyRestaurantPanelTheme;
 use App\Http\Middleware\EnsureTenantSubscription;
 use App\Http\Middleware\SetPermissionsTeamId;
+use App\Models\PlatformSetting;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Support\AuthGlass;
+use App\Support\CmsMedia;
 use App\Support\FilamentTenantTheme;
 use App\Support\RestaurantTheme;
 use App\Support\SubscriptionGate;
@@ -51,6 +53,20 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->brandName('Resto Admin')
+            ->favicon(function (): ?string {
+                $restaurant = FilamentTenantTheme::restaurantForCurrentPanel();
+                if ($restaurant && filled($restaurant->logo_path)) {
+                    $url = CmsMedia::url($restaurant->logo_path);
+                    return filled($url) && ! str_starts_with($url, 'http://') && ! str_starts_with($url, 'https://')
+                        ? url($url)
+                        : $url;
+                }
+
+                $platformFavicon = PlatformSetting::homeViewData()['favicon_url'] ?? asset('favicon.ico');
+                return filled($platformFavicon) && ! str_starts_with($platformFavicon, 'http://') && ! str_starts_with($platformFavicon, 'https://')
+                    ? url($platformFavicon)
+                    : $platformFavicon;
+            })
             ->colors(fn(): array => [
                 'primary' => Color::hex(
                     RestaurantTheme::for(FilamentTenantTheme::restaurantForCurrentPanel())['primary']

@@ -77,12 +77,17 @@ class TableScanService
         }
 
         if ($table->needs_cleaning) {
-            return [
-                'mode' => 'blocked',
-                'message' => 'Meja sedang dibersihkan. Tunggu kasir menandai siap.',
-                'table' => $table,
-                'visit' => null,
-            ];
+            $table->loadMissing('outlet');
+            if ($table->outlet?->simple_mode) {
+                $table->update(['needs_cleaning' => false]);
+            } else {
+                return [
+                    'mode' => 'blocked',
+                    'message' => 'Meja sedang dibersihkan. Tunggu kasir menandai siap.',
+                    'table' => $table,
+                    'visit' => null,
+                ];
+            }
         }
 
         if (filled($table->open_visit_id)) {
