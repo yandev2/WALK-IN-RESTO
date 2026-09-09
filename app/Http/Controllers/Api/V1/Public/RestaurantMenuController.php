@@ -46,6 +46,8 @@ class RestaurantMenuController extends Controller
         $sort = strtolower((string) $request->query('sort', 'asc')) === 'desc' ? 'desc' : 'asc';
         $perPage = min(48, max(1, (int) $request->query('per_page', 12)));
 
+        $hidePrices = (bool) ($outlet->hide_landing_menu_prices ?? false);
+
         $items = MenuItem::query()
             ->where('outlet_id', $outlet->id)
             ->where('is_active', true)
@@ -55,9 +57,17 @@ class RestaurantMenuController extends Controller
                 ['%'.$normalizedSearch.'%'],
             ))
             ->when(filled($categoryId), fn ($query) => $query->where('category_id', $categoryId))
-            ->orderByEffectivePrice($sort)
+            ->when(! $hidePrices, fn ($query) => $query->orderByEffectivePrice($sort))
             ->orderBy('sort_order')
             ->paginate($perPage);
+
+        if ($hidePrices) {
+            $items->getCollection()->transform(function (MenuItem $item) {
+                $item->price_hidden = true;
+
+                return $item;
+            });
+        }
 
         return response()->json([
             'data' => [

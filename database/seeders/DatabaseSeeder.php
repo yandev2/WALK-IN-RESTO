@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             FacilitySeeder::class,
             PlatformSettingSeeder::class,
             DirectoryDemoRestaurantsSeeder::class,
+            DemoCommissionInvoicesSeeder::class,
         ]);
     }
 }

@@ -113,11 +113,31 @@
                                         <p class="mt-1 text-sm text-white/70">{{ $plan->description }}</p>
                                     </div>
                                 </div>
-                                <p class="shrink-0 text-sm font-bold text-white">{{ $plan->formattedPrice() }}/bln</p>
+                                <div class="shrink-0 text-right">
+                                    @if ($plan->isCommissionBased())
+                                        <span class="inline-block rounded-md bg-emerald-400/20 border border-emerald-300/40 px-2 py-0.5 text-xs font-bold text-emerald-300">
+                                            Bebas Biaya Bulanan
+                                        </span>
+                                        <p class="mt-1 text-xs font-semibold text-white/90">Komisi {{ $plan->formattedPrice() }}</p>
+                                    @else
+                                        <p class="text-sm font-bold text-white">{{ $plan->formattedPrice() }}/bln</p>
+                                    @endif
+                                </div>
                             </div>
                         </button>
                     @endforeach
                     @error('plan_code') <p class="auth-glass-error text-xs">{{ $message }}</p> @enderror
+
+                    <div class="rounded-xl border border-emerald-400/30 bg-emerald-950/40 p-3.5 text-xs text-emerald-200">
+                        <div class="flex items-start gap-2.5">
+                            <svg class="size-4 shrink-0 text-emerald-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <strong>Landing Page 100% Gratis:</strong> Restoran Anda otomatis mendapatkan website profil publik dan CMS tanpa biaya perpanjangan selamanya. Layanan kasir hanya dikenakan komisi omzet di akhir bulan setelah masa uji coba 30 hari berakhir.
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2 pt-2">

@@ -64,21 +64,31 @@
 
                 <div class="hidden w-px self-stretch {{ $isGlassmorphism ? 'bg-white/30 dark:bg-white/10' : 'bg-border-subtle dark:bg-zinc-800' }} lg:block"></div>
 
-                <div class="grid grid-cols-2 gap-2 lg:w-[28rem]">
-                    <x-customer.dropdown
-                        property="categoryId"
-                        :value="$categoryId"
-                        :options="collect([['value' => null, 'label' => 'Semua kategori']])->concat($categories->map(fn ($category) => ['value' => $category->id, 'label' => $category->name]))->all()"
-                    />
-                    <x-customer.dropdown
-                        property="priceSort"
-                        :value="$priceSort"
-                        :options="[
-                            ['value' => 'asc', 'label' => 'Harga terendah'],
-                            ['value' => 'desc', 'label' => 'Harga tertinggi'],
-                        ]"
-                    />
-                </div>
+                @if ($hidePrices)
+                    <div class="w-full lg:w-[16rem]">
+                        <x-customer.dropdown
+                            property="categoryId"
+                            :value="$categoryId"
+                            :options="collect([['value' => null, 'label' => 'Semua kategori']])->concat($categories->map(fn ($category) => ['value' => $category->id, 'label' => $category->name]))->all()"
+                        />
+                    </div>
+                @else
+                    <div class="grid grid-cols-2 gap-2 lg:w-[28rem]">
+                        <x-customer.dropdown
+                            property="categoryId"
+                            :value="$categoryId"
+                            :options="collect([['value' => null, 'label' => 'Semua kategori']])->concat($categories->map(fn ($category) => ['value' => $category->id, 'label' => $category->name]))->all()"
+                        />
+                        <x-customer.dropdown
+                            property="priceSort"
+                            :value="$priceSort"
+                            :options="[
+                                ['value' => 'asc', 'label' => 'Harga terendah'],
+                                ['value' => 'desc', 'label' => 'Harga tertinggi'],
+                            ]"
+                        />
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -105,6 +115,7 @@
                             :original-price="$item->hasDiscount() ? CmsMedia::formatIdr($item->price) : null"
                             :discount-percent="$item->hasDiscount() ? $item->discount_percent : null"
                             :is-best-seller="(bool) $item->is_best_seller"
+                            :hide-price="$hidePrices"
                             :template="$template ?? 'classic'"
                             :rating="$ratingSummary['average'] ? number_format($ratingSummary['average'], 1) : '5.0'"
                         />

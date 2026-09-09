@@ -12,9 +12,19 @@
     'template' => 'classic',
     'rating' => null,
     'isBestSeller' => false,
+    'hidePrice' => false,
 ])
 
 @php
+    $hidePrice = filter_var($hidePrice ?? false, FILTER_VALIDATE_BOOLEAN)
+        || filter_var($attributes->get('hide-price'), FILTER_VALIDATE_BOOLEAN)
+        || filter_var($attributes->get('hide_price'), FILTER_VALIDATE_BOOLEAN);
+
+    if ($hidePrice) {
+        $price = null;
+        $originalPrice = null;
+    }
+
     $gallery = collect($photos)->filter()->values();
 
     if ($gallery->isEmpty() && filled($photo)) {
@@ -153,9 +163,11 @@
                         {{ $originalPrice }}
                     </span>
                 @endif
-                <span class="font-display font-extrabold text-base sm:text-lg text-zinc-900 dark:text-white">
-                    {{ $price }}
-                </span>
+                @if (filled($price))
+                    <span class="font-display font-extrabold text-base sm:text-lg text-zinc-900 dark:text-white">
+                        {{ $price }}
+                    </span>
+                @endif
             </div>
 
             @if ($href)
@@ -307,9 +319,11 @@
                         {{ $originalPrice }}
                     </span>
                 @endif
-                <span class="font-display font-extrabold text-base sm:text-lg text-body">
-                    {{ $price }}
-                </span>
+                @if (filled($price))
+                    <span class="font-display font-extrabold text-base sm:text-lg text-body">
+                        {{ $price }}
+                    </span>
+                @endif
             </div>
 
             @if ($href)

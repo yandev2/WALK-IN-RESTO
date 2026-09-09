@@ -55,12 +55,14 @@ class PlatformSetting extends Model
         'bank_account',
         'qr_image_path',
         'trial_days',
+        'cashier_commission_percentage',
     ];
 
     protected function casts(): array
     {
         return [
             'trial_days' => 'integer',
+            'cashier_commission_percentage' => 'float',
         ];
     }
 
@@ -158,6 +160,7 @@ class PlatformSetting extends Model
             'bank_account' => (string) config('subscription.bank_account', '0000000000'),
             'qr_image_path' => null,
             'trial_days' => (int) config('subscription.trial_days', 30),
+            'cashier_commission_percentage' => 10.00,
         ];
     }
 
@@ -215,6 +218,17 @@ class PlatformSetting extends Model
         }
 
         return min(365, (int) $value);
+    }
+
+    public static function cashierCommissionPercentage(): float
+    {
+        $value = static::optional()?->cashier_commission_percentage;
+
+        if ($value === null || (float) $value < 0) {
+            return 10.00;
+        }
+
+        return (float) $value;
     }
 
     /**

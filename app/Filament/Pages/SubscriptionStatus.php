@@ -56,6 +56,14 @@ class SubscriptionStatus extends Page implements HasTable
         return auth()->user() instanceof User;
     }
 
+    public function mount(): void
+    {
+        $restaurant = $this->restaurant();
+        if ($restaurant && $restaurant->isCommissionPlan()) {
+            app(\App\Services\CashierCommissionBillingService::class)->syncRealtimeMonthInvoice($restaurant);
+        }
+    }
+
     /**
      * @return array<Action>
      */
@@ -73,11 +81,12 @@ class SubscriptionStatus extends Page implements HasTable
                 ->modalHeading('Cara kerja billing & langganan')
                 ->modalContent(fn (): View => view('filament.pages.info-billing', [
                     'trialDays' => PlatformSetting::trialDays(),
+                    'commissionPercent' => PlatformSetting::cashierCommissionPercentage(),
                 ])),
             Action::make('createInvoice')
                 ->label('Buat invoice')
                 ->icon(Heroicon::OutlinedPlus)
-                ->hidden(fn (): bool => $this->openInvoice() instanceof SubscriptionInvoice)
+                ->hidden(fn (): bool => $this->isCommissionPlan() || $this->openInvoice() instanceof SubscriptionInvoice)
                 ->fillForm(fn (): array => $this->invoiceFormState(
                     $this->restaurant()?->plan_code,
                     1,
@@ -138,15 +147,18 @@ class SubscriptionStatus extends Page implements HasTable
                 TextColumn::make('invoice_number')
                     ->label('Nomor')
                     ->searchable(),
-                TextColumn::make('requested_plan_code')
-                    ->label('Paket diminta')
-                    ->formatStateUsing(fn ($state, SubscriptionInvoice $record): string => $record->requestedPlan?->name
-                        ?? $record->effectivePlanCode()),
-                TextColumn::make('billing_months')
-                    ->label('Durasi')
-                    ->formatStateUsing(fn ($state): string => filled($state) ? $state.' bulan' : '—'),
+                TextColumn::make('invoice_type')
+                    ->label('Tipe')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\InvoiceType ? ($state === \App\Enums\InvoiceType::CashierCommission ? 'Komisi Kasir' : 'Flat Bulanan') : (string) $state),
+                TextColumn::make('period_month')
+                    ->label('Bulan')
+                    ->placeholder('—'),
+                TextColumn::make('total_omzet')
+                    ->label('Omzet Kasir')
+                    ->formatStateUsing(fn ($state): string => filled($state) ? 'Rp '.number_format((int) $state, 0, ',', '.') : '—'),
                 TextColumn::make('amount')
-                    ->label('Nominal')
+                    ->label('Nominal Tagihan')
                     ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
                 TextColumn::make('status')
                     ->label('Status')
@@ -169,10 +181,17 @@ class SubscriptionStatus extends Page implements HasTable
             ->emptyStateDescription('Buat invoice untuk memperpanjang atau mengganti paket.');
 
         return TableRightClick::apply($table, fn (): array => [
+            Action::make('pendingMonthEnd')
+                ->label(fn (SubscriptionInvoice $record): string => 'Bayar mulai ' . ($record->due_at ? $record->due_at->translatedFormat('d M Y') : 'akhir bulan'))
+                ->icon(Heroicon::OutlinedClock)
+                ->color('gray')
+                ->disabled()
+                ->visible(fn (SubscriptionInvoice $record): bool => $record->isOpen() && ! $this->canUploadProof($record))
+                ->tooltip(fn (SubscriptionInvoice $record): string => 'Pembayaran komisi kasir periode ' . ($record->period_month ?? 'bulan ini') . ' dibuka tepat pada akhir bulan (' . ($record->due_at ? $record->due_at->translatedFormat('d M Y') : 'akhir bulan') . ').'),
             Action::make('uploadProof')
                 ->label('Unggah bukti')
                 ->icon(Heroicon::OutlinedArrowUpTray)
-                ->visible(fn (SubscriptionInvoice $record): bool => $record->isOpen())
+                ->visible(fn (SubscriptionInvoice $record): bool => $this->canUploadProof($record))
                 ->fillForm(fn (SubscriptionInvoice $record): array => $this->invoiceFormState(
                     $record->effectivePlanCode(),
                     $record->billing_months ?? 1,
@@ -181,8 +200,8 @@ class SubscriptionStatus extends Page implements HasTable
                         'payment_notes' => $record->payment_notes,
                     ],
                 ))
-                ->schema([
-                    ...$this->invoicePlanFields(),
+                ->schema(fn (SubscriptionInvoice $record): array => [
+                    ...($record->isCashierCommission() ? [] : $this->invoicePlanFields()),
                     FileUpload::make('payment_proof_path')
                         ->label('Bukti transfer')
                         ->disk('local')
@@ -194,7 +213,7 @@ class SubscriptionStatus extends Page implements HasTable
                         ->automaticallyUpscaleImagesWhenResizing(false)
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
                         ->maxSize(15360)
-                        ->helperText('Format: JPG, PNG, WEBP, atau PDF. Maksimal 15 MB. Gambar otomatis dioptimasi tanpa memotong bukti transfer.')
+                        ->helperText('Format: JPG, PNG, WEBP, atau PDF. Maksimal 15 MB.')
                         ->required(),
                     Textarea::make('payment_notes')
                         ->label('Catatan (opsional)')
@@ -209,8 +228,8 @@ class SubscriptionStatus extends Page implements HasTable
                     try {
                         app(SubscriptionInvoiceService::class)->submitProof(
                             $record,
-                            (string) $data['requested_plan_code'],
-                            (int) $data['billing_months'],
+                            (string) ($data['requested_plan_code'] ?? $record->effectivePlanCode()),
+                            (int) ($data['billing_months'] ?? 1),
                             (string) $data['payment_proof_path'],
                             $data['payment_notes'] ?? null,
                         );
@@ -234,7 +253,7 @@ class SubscriptionStatus extends Page implements HasTable
                 ->label('Hapus')
                 ->icon(Heroicon::OutlinedTrash)
                 ->color('danger')
-                ->visible(fn (SubscriptionInvoice $record): bool => $record->isOpen())
+                ->visible(fn (SubscriptionInvoice $record): bool => ! $record->isCashierCommission() && $record->isOpen())
                 ->requiresConfirmation()
                 ->modalHeading('Hapus invoice?')
                 ->modalDescription('Invoice yang belum lunas akan dihapus dari riwayat. Invoice lunas tidak bisa dihapus.')
@@ -261,6 +280,31 @@ class SubscriptionStatus extends Page implements HasTable
                     $this->resetTable();
                 }),
         ]);
+    }
+
+    public function canUploadProof(SubscriptionInvoice $record): bool
+    {
+        if (! $record->isOpen()) {
+            return false;
+        }
+
+        if (! $record->isCashierCommission()) {
+            return true;
+        }
+
+        $currentMonth = now()->format('Y-m');
+
+        // Past months can be paid immediately
+        if ($record->period_month && $record->period_month < $currentMonth) {
+            return true;
+        }
+
+        // Current month commission invoice can only be paid on or after month-end date
+        $endOfMonth = $record->due_at
+            ? $record->due_at->copy()->startOfDay()
+            : now()->endOfMonth()->startOfDay();
+
+        return now()->greaterThanOrEqualTo($endOfMonth);
     }
 
     public function restaurant(): ?Restaurant
@@ -370,7 +414,71 @@ class SubscriptionStatus extends Page implements HasTable
             return '—';
         }
 
+        if ($this->isCommissionPlan()) {
+            return rtrim(rtrim(number_format($this->effectiveCommissionRate(), 2, ',', '.'), '0'), ',').'% omzet';
+        }
+
         return $plan->formattedPrice().'/bulan';
+    }
+
+    public function isCommissionPlan(): bool
+    {
+        return (bool) $this->restaurant()?->isCommissionPlan();
+    }
+
+    public function hasOverdueCashierInvoice(): bool
+    {
+        return (bool) $this->restaurant()?->hasOverdueCashierInvoice();
+    }
+
+    public function isTrialActive(): bool
+    {
+        return (bool) $this->restaurant()?->isTrialActive();
+    }
+
+    public function overdueInvoice(): ?SubscriptionInvoice
+    {
+        $restaurant = $this->restaurant();
+        if (! $restaurant) {
+            return null;
+        }
+
+        $now = now();
+        $currentMonth = $now->format('Y-m');
+
+        return SubscriptionInvoice::query()
+            ->where('restaurant_id', $restaurant->id)
+            ->where('invoice_type', \App\Enums\InvoiceType::CashierCommission->value)
+            ->where('status', '!=', \App\Enums\InvoiceStatus::Paid->value)
+            ->where(function ($query) use ($currentMonth, $now) {
+                $query->where('period_month', '<', $currentMonth)
+                    ->orWhere(function ($q) use ($now) {
+                        $q->whereNotNull('due_at')->where('due_at', '<=', $now);
+                    });
+            })
+            ->where('amount', '>', 0)
+            ->latest('id')
+            ->first();
+    }
+
+    public function currentMonthOmzet(): int
+    {
+        $restaurant = $this->restaurant();
+        if (! $restaurant) {
+            return 0;
+        }
+
+        return app(\App\Services\CashierCommissionBillingService::class)->calculateMonthNetOmzet($restaurant, now());
+    }
+
+    public function effectiveCommissionRate(): float
+    {
+        return (float) ($this->restaurant()?->effectiveCommissionPercentage() ?? 10.00);
+    }
+
+    public function currentMonthCommissionEstimate(): int
+    {
+        return (int) round($this->currentMonthOmzet() * ($this->effectiveCommissionRate() / 100));
     }
 
     /**

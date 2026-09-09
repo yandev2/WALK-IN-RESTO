@@ -52,6 +52,7 @@ class ManageBillingAccount extends Page
                 'qr_image_path',
             ]),
             'trial_days' => PlatformSetting::trialDays(),
+            'cashier_commission_percentage' => PlatformSetting::cashierCommissionPercentage(),
         ]);
     }
 
@@ -76,6 +77,15 @@ class ManageBillingAccount extends Page
                             ->maxValue(365)
                             ->suffix('hari')
                             ->default(fn (): int => PlatformSetting::trialDays()),
+                        TextInput::make('cashier_commission_percentage')
+                            ->label('Komisi kasir global')
+                            ->numeric()
+                            ->required()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->suffix('%')
+                            ->helperText('Persentase potongan omzet bulanan untuk layanan kasir (default: 10%). Dapat di-override per restoran.')
+                            ->default(fn (): float => PlatformSetting::cashierCommissionPercentage()),
                     ]),
                 Grid::make(3)
                     ->schema([

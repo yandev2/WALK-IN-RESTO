@@ -58,6 +58,8 @@ class RestaurantResource extends JsonResource
                 ->values()
             : collect();
 
+        $hidePrices = (bool) ($outlet?->hide_landing_menu_prices ?? false);
+
         $featuredMenu = $outlet
             ? MenuItem::query()
                 ->where('outlet_id', $outlet->id)
@@ -70,8 +72,8 @@ class RestaurantResource extends JsonResource
                     'id' => $item->id,
                     'name' => $item->name,
                     'description' => $item->description,
-                    'price' => $item->effectivePrice(),
-                    'original_price' => (int) $item->price,
+                    'price' => $hidePrices ? null : $item->effectivePrice(),
+                    'original_price' => $hidePrices ? null : (int) $item->price,
                     'discount_percent' => $item->hasDiscount() ? (int) $item->discount_percent : null,
                     'photo_url' => CmsMedia::url($item->photo_path),
                     'photo_urls' => $item->photoUrls(),

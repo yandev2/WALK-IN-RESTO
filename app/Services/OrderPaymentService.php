@@ -91,6 +91,12 @@ class OrderPaymentService
         } catch (\Throwable $e) {
             report($e);
         }
+
+        try {
+            app(CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function reject(Order $order, User $cashier, string $reason): void

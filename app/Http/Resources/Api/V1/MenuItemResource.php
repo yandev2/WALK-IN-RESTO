@@ -12,12 +12,14 @@ class MenuItemResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $hidePrice = (bool) ($this->price_hidden ?? false);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => (int) $this->effectivePrice(),
-            'original_price' => (int) $this->price,
+            'price' => $hidePrice ? null : (int) $this->effectivePrice(),
+            'original_price' => $hidePrice ? null : (int) $this->price,
             'discount_percent' => $this->hasDiscount() ? (int) $this->discount_percent : null,
             'photo_url' => CmsMedia::url($this->photo_path),
             'photo_urls' => $this->photoUrls(),

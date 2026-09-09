@@ -6,7 +6,7 @@
     $qrUrl = $qrUrl ?? 'https://picsum.photos/seed/founder-billing-qr/200/200';
 @endphp
 
-<div class="transfer-widget">
+<div class="transfer-widget" x-data="{ copied: false, qrModalOpen: false }">
     <style>
         .transfer-widget {
             --tw-bg: #fff7ed;
@@ -45,6 +45,29 @@
             border: 1px solid var(--tw-line);
             border-radius: 4px;
             background: #fff;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .transfer-widget__qr:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .transfer-widget__qr-hint {
+            position: absolute;
+            inset-inline: 0;
+            bottom: 0;
+            padding: 2px 0;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            font-size: 0.58rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1;
+            letter-spacing: -0.01em;
+            transition: opacity 0.2s ease;
         }
 
         .transfer-widget__qr img {
@@ -124,12 +147,18 @@
         }
     </style>
 
-    <div
-        class="transfer-widget__box"
-        x-data="{ copied: false }"
-    >
-        <div class="transfer-widget__qr">
+    <div class="transfer-widget__box">
+        <div
+            class="transfer-widget__qr"
+            @click="qrModalOpen = true"
+            title="Klik untuk memperbesar QR code"
+            role="button"
+            tabindex="0"
+            @keydown.enter="qrModalOpen = true"
+            @keydown.space.prevent="qrModalOpen = true"
+        >
             <img src="{{ $qrUrl }}" alt="QR pembayaran">
+            <span class="transfer-widget__qr-hint">Perbesar</span>
         </div>
 
         <div class="transfer-widget__body">
@@ -157,4 +186,111 @@
             @endif
         </div>
     </div>
+
+    {{-- QR Lightbox Modal --}}
+    <template x-teleport="body">
+        <div
+            x-show="qrModalOpen"
+            x-cloak
+            class="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            @keydown.escape.window="qrModalOpen = false"
+        >
+            {{-- Backdrop --}}
+            <div
+                x-show="qrModalOpen"
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm"
+                @click="qrModalOpen = false"
+            ></div>
+
+            {{-- Dialog Content --}}
+            <div
+                x-show="qrModalOpen"
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="relative z-10 w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-2xl border border-gray-200 dark:border-gray-800 text-center"
+                @click.stop
+            >
+                {{-- Close Button --}}
+                <button
+                    type="button"
+                    class="absolute top-3.5 right-3.5 inline-flex items-center justify-center rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+                    @click="qrModalOpen = false"
+                    aria-label="Tutup"
+                >
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                {{-- Title & Kicker --}}
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">QR Code Pembayaran</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Scan melalui BCA Mobile, Livin, BRImo, GoPay, OVO, atau aplikasi pembayaran lainnya</p>
+                </div>
+
+                {{-- QR Image Container --}}
+                <div class="mx-auto w-64 h-64 bg-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center">
+                    <img
+                        src="{{ $qrUrl }}"
+                        alt="QR Code Pembayaran Besar"
+                        class="w-full h-full object-contain"
+                    />
+                </div>
+
+                {{-- Account Details Card --}}
+                <div class="mt-4 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-900/60 p-3.5 text-left text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 dark:text-gray-400">Bank / Penerima:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ $bankName }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 dark:text-gray-400">Atas Nama:</span>
+                        <span class="font-semibold text-orange-600 dark:text-orange-400">{{ $bankHolder }}</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-orange-200/60 dark:border-orange-900/60">
+                        <span class="text-gray-500 dark:text-gray-400">No. Rekening:</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-mono font-bold text-sm text-gray-900 dark:text-white">{{ $bankAccount }}</span>
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white dark:bg-gray-800 border border-orange-300 dark:border-orange-800 text-[11px] font-medium text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors"
+                                :class="{ '!border-emerald-600 !text-emerald-600': copied }"
+                                @click="
+                                    navigator.clipboard.writeText(@js((string) $bankAccount)).then(() => {
+                                        copied = true;
+                                        setTimeout(() => copied = false, 1600);
+                                    })
+                                "
+                            >
+                                <span x-text="copied ? 'Disalin' : 'Salin'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Footer Button --}}
+                <div class="mt-5">
+                    <button
+                        type="button"
+                        class="w-full py-2.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold text-sm transition-colors"
+                        @click="qrModalOpen = false"
+                    >
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>

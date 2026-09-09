@@ -16,6 +16,8 @@ class SubscriptionPlanSeeder extends Seeder
                 'name' => 'Landing Page Only',
                 'description' => 'Halaman publik restoran, CMS, dan profil directory. Tanpa pemesanan, KDS, atau operasional.',
                 'price_monthly' => 99000,
+                'billing_type' => \App\Enums\BillingType::FixedMonthly->value,
+                'commission_percentage' => null,
                 'features' => [
                     'cms' => true,
                     'menu' => false,
@@ -23,7 +25,7 @@ class SubscriptionPlanSeeder extends Seeder
                     'analytics' => false,
                     'settings' => 'limited',
                 ],
-                'is_active' => true,
+                'is_active' => false, // Hidden for now (Landing Page 100% free with KDS)
                 'sort_order' => 1,
             ],
         );
@@ -32,8 +34,10 @@ class SubscriptionPlanSeeder extends Seeder
             ['code' => PlanCode::ManagementKds->value],
             [
                 'name' => 'Management KDS',
-                'description' => 'Semua fitur: CMS, menu, order, KDS, kasir, meja, dan laporan.',
-                'price_monthly' => 249000,
+                'description' => 'Layanan kasir POS, order meja, dapur KDS, analitik, serta bonus gratis landing page & CMS. Tanpa biaya bulanan, hanya komisi persentase omzet kasir di akhir bulan.',
+                'price_monthly' => 0,
+                'billing_type' => \App\Enums\BillingType::Commission->value,
+                'commission_percentage' => 10.00,
                 'features' => [
                     'cms' => true,
                     'menu' => true,

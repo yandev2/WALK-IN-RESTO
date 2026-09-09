@@ -137,25 +137,43 @@ class SubscriptionInvoiceService
                 ]);
             }
 
-            $months = max(1, min(12, $months));
-            $plan = SubscriptionPlan::query()
-                ->where('code', $planCode)
-                ->where('is_active', true)
-                ->firstOrFail();
+            if ($invoice->isCashierCommission()) {
+                $currentMonth = now()->format('Y-m');
+                $endOfMonth = $invoice->due_at
+                    ? $invoice->due_at->copy()->startOfDay()
+                    : now()->endOfMonth()->startOfDay();
 
+                if ($invoice->period_month === $currentMonth && now()->lt($endOfMonth)) {
+                    $dateStr = $invoice->due_at ? $invoice->due_at->translatedFormat('d M Y') : 'akhir bulan';
+                    throw ValidationException::withMessages([
+                        'payment_proof_path' => "Pembayaran tagihan komisi bulan berjalan baru dapat dilakukan tepat pada akhir bulan ({$dateStr}).",
+                    ]);
+                }
+            }
+
+            $months = max(1, min(12, $months));
             $previousProof = $invoice->payment_proof_path;
 
-            $invoice->forceFill([
-                'requested_plan_code' => $plan->code,
-                'billing_months' => $months,
-                'amount' => $this->calculateAmount($plan->code, $months),
+            $payload = [
                 'payment_proof_path' => $proofPath,
                 'payment_submitted_at' => now(),
                 'status' => InvoiceStatus::AwaitingVerification,
                 'payment_notes' => $paymentNotes,
                 'rejection_notes' => null,
                 'verified_by' => null,
-            ])->save();
+            ];
+
+            if (! $invoice->isCashierCommission()) {
+                $plan = SubscriptionPlan::query()
+                    ->where('code', $planCode)
+                    ->firstOrFail();
+
+                $payload['requested_plan_code'] = $plan->code;
+                $payload['billing_months'] = $months;
+                $payload['amount'] = $this->calculateAmount($plan->code, $months);
+            }
+
+            $invoice->forceFill($payload)->save();
 
             if (filled($previousProof) && $previousProof !== $proofPath) {
                 $this->deleteProofFile($previousProof);
@@ -195,6 +213,23 @@ class SubscriptionInvoiceService
 
             /** @var Restaurant $restaurant */
             $restaurant = Restaurant::query()->whereKey($invoice->restaurant_id)->lockForUpdate()->firstOrFail();
+
+            if ($invoice->isCashierCommission()) {
+                $invoice->forceFill([
+                    'status' => InvoiceStatus::Paid,
+                    'paid_at' => now(),
+                    'verified_by' => $verifier->id,
+                ])->save();
+
+                $restaurant->forceFill([
+                    'subscription_status' => SubscriptionStatus::Active,
+                    'grace_ends_at' => null,
+                ])->save();
+
+                $becamePaid = true;
+
+                return $invoice->fresh();
+            }
 
             $months = max(1, min(12, (int) ($invoice->billing_months ?: 1)));
             $planCode = $invoice->effectivePlanCode();
@@ -361,6 +396,10 @@ class SubscriptionInvoiceService
 
     private function paidNotificationBody(SubscriptionInvoice $invoice): string
     {
+        if ($invoice->isCashierCommission()) {
+            return "Invoice komisi kasir {$invoice->invoice_number} sudah dikonfirmasi lunas. Layanan kasir aktif normal.";
+        }
+
         $until = $invoice->period_end?->timezone(config('app.timezone'))->translatedFormat('d M Y');
 
         return filled($until)

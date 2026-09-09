@@ -1,3 +1,8 @@
+@php
+    $trialDays = $trialDays ?? \App\Models\PlatformSetting::trialDays();
+    $commissionPercent = $commissionPercent ?? \App\Models\PlatformSetting::cashierCommissionPercentage();
+@endphp
+
 <div class="billing-guide">
     <style>
         .billing-guide {
@@ -28,22 +33,48 @@
         }
 
         .billing-guide__lead {
-            margin-bottom: 3.75rem;
+            margin-bottom: 1.25rem;
             color: var(--muted);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .billing-guide__badge-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.6rem;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .dark .billing-guide__badge-highlight {
+            background: rgba(6, 78, 59, 0.4);
+            color: #6ee7b7;
+            border-color: #065f46;
         }
 
         .billing-guide__block {
             border: 1px solid var(--line);
-            border-radius: 6px;
+            border-radius: 8px;
             background: var(--bg);
             margin-bottom: 0.85rem;
+            overflow: hidden;
         }
 
         .billing-guide__block-head {
-            padding: 0.7rem 1rem;
+            padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--line);
+            background: var(--bg-muted);
             font-size: 0.8125rem;
-            font-weight: 600;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .billing-guide__block-body {
@@ -58,20 +89,20 @@
         .billing-guide__steps > li {
             position: relative;
             display: grid;
-            grid-template-columns: 1.6rem minmax(0, 1fr);
+            grid-template-columns: 1.75rem minmax(0, 1fr);
             column-gap: 0.85rem;
-            padding-bottom: 1.05rem;
+            padding-bottom: 1.15rem;
         }
 
         .billing-guide__steps > li:last-child {
-            padding-bottom: 0.35rem;
+            padding-bottom: 0.2rem;
         }
 
         .billing-guide__steps > li:not(:last-child)::before {
             content: '';
             position: absolute;
-            left: 0.72rem;
-            top: 1.7rem;
+            left: 0.85rem;
+            top: 1.85rem;
             bottom: 0;
             width: 1px;
             background: var(--line);
@@ -79,14 +110,14 @@
 
         .billing-guide__step-no {
             display: flex;
-            width: 1.6rem;
-            height: 1.6rem;
+            width: 1.75rem;
+            height: 1.75rem;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 9999px;
             background: var(--text);
             color: var(--bg);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 700;
             line-height: 1;
         }
@@ -98,30 +129,16 @@
 
         .billing-guide__step-title {
             display: block;
-            font-weight: 600;
-            line-height: 1.6rem;
+            font-weight: 700;
+            line-height: 1.75rem;
+            color: var(--text);
         }
 
         .billing-guide__step-copy {
-            margin-top: 0.15rem;
+            margin-top: 0.2rem;
             color: var(--muted);
             font-size: 0.78rem;
-        }
-
-        .billing-guide__outcomes {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.45rem;
-            padding-bottom: 0.85rem;
-        }
-
-        .billing-guide__meta {
-            margin-top: 0.35rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--line);
-            color: var(--muted);
-            font-size: 0.78rem;
+            line-height: 1.5;
         }
 
         .billing-guide__cols {
@@ -138,6 +155,8 @@
             padding: 0.55rem 0;
             border-top: 1px solid var(--line);
             color: var(--muted);
+            font-size: 0.78rem;
+            line-height: 1.45;
         }
 
         .billing-guide__list li:first-child {
@@ -199,29 +218,33 @@
         }
 
         .billing-guide__rule {
-            padding: 0.85rem 1rem;
+            padding: 0.9rem 1rem;
             border: 1px solid var(--line);
-            border-left: 3px solid var(--line);
+            border-left: 4px solid var(--line);
             border-radius: 6px;
+            background: var(--bg);
         }
 
-        .billing-guide__rule--keep { border-left-color: #047857; }
-        .billing-guide__rule--reset { border-left-color: #be123c; }
+        .billing-guide__rule--free { border-left-color: #047857; }
+        .billing-guide__rule--warn { border-left-color: #ea580c; }
 
         .billing-guide__rule h3 {
             font-size: 0.8125rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 0.35rem;
+            color: var(--text);
         }
 
         .billing-guide__rule p {
             color: var(--muted);
             font-size: 0.78rem;
+            line-height: 1.45;
         }
 
         .billing-guide__notes {
             padding: 0.85rem 1rem 1rem;
             color: var(--muted);
+            font-size: 0.78rem;
         }
 
         .billing-guide__notes ul {
@@ -244,143 +267,158 @@
         }
     </style>
 
-    <p class="billing-guide__lead">
-        Tagihan dibuat di halaman ini, dibayar lewat transfer, lalu Founder yang mengaktifkan paket.
-        Satu restoran hanya boleh punya satu invoice yang belum lunas.
-    </p>
+    <div class="billing-guide__lead">
+        <p>
+            Walk-In Resto menggunakan sistem <strong>komisi omzet kasir</strong> (Pay-as-you-earn).
+            Restoran tidak dibebani biaya langganan bulanan tetap. Anda hanya membayar komisi dari hasil pesanan yang sukses di kasir pada akhir bulan.
+        </p>
+    </div>
 
+    {{-- 5 Steps --}}
     <section class="billing-guide__block">
-        <div class="billing-guide__block-head">Alur transaksi</div>
+        <div class="billing-guide__block-head">
+            <span>Alur Transaksi &amp; Pembayaran Komisi</span>
+            <span class="billing-guide__badge-highlight">Periode Bulanan</span>
+        </div>
         <div class="billing-guide__block-body">
             <ol class="billing-guide__steps">
                 <li>
                     <span class="billing-guide__step-no">1</span>
                     <div>
-                        <span class="billing-guide__step-title">Invoice dibuat</span>
-                        <p class="billing-guide__step-copy">Owner, Founder, atau sistem H-7 membuat tagihan. Pilih paket dan durasi 1–12 bulan; nominal = harga paket × bulan.</p>
+                        <span class="billing-guide__step-title">Akumulasi Real-Time Setiap Transaksi</span>
+                        <p class="billing-guide__step-copy">
+                            Setiap pesanan kasir yang selesai dibayar (<strong>Paid / Success</strong>) secara otomatis dihitung komisinya (standar <strong>{{ number_format($commissionPercent, 0) }}%</strong>) dan mengakumulasi invoice bulan berjalan. Anda dapat memantau omzet dan estimasi tagihan setiap saat.
+                        </p>
                     </div>
                 </li>
                 <li>
                     <span class="billing-guide__step-no">2</span>
                     <div>
-                        <span class="billing-guide__step-title">Menunggu pembayaran</span>
-                        <p class="billing-guide__step-copy">Transfer sesuai nominal ke rekening yang tertera di kartu paket. Paket belum berubah di tahap ini.</p>
+                        <span class="billing-guide__step-title">Notifikasi Pengingat (H-3 Akhir Bulan)</span>
+                        <p class="billing-guide__step-copy">
+                            Tiga hari sebelum akhir bulan (H-3), sistem mengirim notifikasi pengingat ke panel dashboard agar owner dapat menyiapkan dana pelunasan tagihan komisi.
+                        </p>
                     </div>
                 </li>
                 <li>
                     <span class="billing-guide__step-no">3</span>
                     <div>
-                        <span class="billing-guide__step-title">Unggah bukti</span>
-                        <p class="billing-guide__step-copy">Dari baris invoice, unggah bukti transfer. Paket dan durasi masih bisa dipilih ulang sebelum dikirim.</p>
+                        <span class="billing-guide__step-title">Pembayaran Dibuka di Akhir Bulan</span>
+                        <p class="billing-guide__step-copy">
+                            Selama bulan masih berjalan, tombol unggah bukti pembayaran ditutup agar akumulasi omzet final selesai. Tombol pembayaran &amp; unggah bukti akan aktif tepat pada tanggal akhir bulan (tanggal 28–31 sesuai kalender).
+                        </p>
                     </div>
                 </li>
                 <li>
                     <span class="billing-guide__step-no">4</span>
                     <div>
-                        <span class="billing-guide__step-title">Menunggu verifikasi</span>
-                        <p class="billing-guide__step-copy">Founder meninjau bukti. Jika ditolak, status kembali ke menunggu pembayaran.</p>
+                        <span class="billing-guide__step-title">Transfer &amp; Unggah Bukti Bayar</span>
+                        <p class="billing-guide__step-copy">
+                            Transfer nominal tagihan ke rekening bank atau scan QR Code Founder yang tersedia di kartu transfer, lalu unggah bukti transfer dari baris tagihan terkait.
+                        </p>
                     </div>
                 </li>
                 <li>
                     <span class="billing-guide__step-no">5</span>
                     <div>
-                        <span class="billing-guide__step-title">Keputusan Founder</span>
-                        <p class="billing-guide__step-copy">Dua kemungkinan setelah tinjauan:</p>
-                        <div class="billing-guide__outcomes">
-                            <span class="billing-guide__tag billing-guide__tag--paid">Lunas</span>
-                            <span class="billing-guide__tag billing-guide__tag--reject">Ditolak</span>
-                        </div>
+                        <span class="billing-guide__step-title">Verifikasi Founder &amp; Akses Lancar</span>
+                        <p class="billing-guide__step-copy">
+                            Founder meninjau dan memvalidasi bukti pembayaran Anda. Setelah disetujui, status tagihan berubah menjadi <strong>Lunas</strong> dan seluruh operasional Kasir &amp; KDS berlanjut lancar ke bulan berikutnya.
+                        </p>
                     </div>
                 </li>
             </ol>
-            <p class="billing-guide__meta">
-                Nomor invoice unik, format <code>INV-YYYYMM-…</code>.
-                Invoice unpaid (termasuk H-7) boleh dihapus agar tombol Buat invoice terbuka lagi.
-                Invoice lunas tidak bisa dihapus.
-            </p>
         </div>
     </section>
 
+    {{-- 2 Cols --}}
     <div class="billing-guide__cols">
         <section class="billing-guide__block">
-            <div class="billing-guide__block-head">Di halaman Langganan</div>
+            <div class="billing-guide__block-head">Skema Paket &amp; Trial</div>
             <div class="billing-guide__block-body">
                 <ul class="billing-guide__list">
-                    <li><strong>Buat invoice</strong> hanya muncul jika tidak ada tagihan unpaid.</li>
-                    <li>Pilih paket dan durasi, lalu transfer sesuai nominal yang dihitung sistem.</li>
-                    <li><strong>Unggah bukti</strong> dari baris invoice yang masih terbuka.</li>
-                    <li><strong>Hapus</strong> hanya untuk status menunggu pembayaran atau menunggu verifikasi.</li>
+                    <li><strong>Biaya Dasar:</strong> Rp 0 / bulan (tanpa biaya langganan flat bulanan).</li>
+                    <li><strong>Tarif Komisi:</strong> {{ number_format($commissionPercent, 0) }}% per transaksi kasir yang berhasil dibayar.</li>
+                    <li><strong>Trial {{ $trialDays }} Hari Pertama:</strong> Restoran baru mendapat uji coba 100% <strong>bebas komisi (0%)</strong> selama {{ $trialDays }} hari masa trial.</li>
+                    <li><strong>Pembaruan Otomatis:</strong> Tagihan bulan baru dibuat otomatis oleh sistem di awal bulan.</li>
                 </ul>
             </div>
         </section>
 
         <section class="billing-guide__block">
-            <div class="billing-guide__block-head">Trial &amp; tagihan otomatis</div>
+            <div class="billing-guide__block-head">Landing Page vs Layanan Kasir</div>
             <div class="billing-guide__block-body">
                 <ul class="billing-guide__list">
-                    <li>Pendaftaran baru mendapat uji coba <strong>{{ $trialDays ?? \App\Models\PlatformSetting::trialDays() }} hari</strong>.</li>
-                    <li>Sistem bisa membuat invoice otomatis <strong>H-7</strong> jika belum ada yang unpaid.</li>
-                    <li>Setelah masa aktif habis ada tenggang <strong>7 hari</strong> (panel read-only), lalu akses ditutup sampai ada pembayaran yang disetujui.</li>
+                    <li><strong>Landing Page &amp; Web Profil:</strong> <strong>100% Gratis Selamanya</strong>. Seluruh profil resto, katalog menu digital publik, dan informasi resto tetap aktif tanpa biaya.</li>
+                    <li><strong>KDS &amp; Layanan Kasir:</strong> Fitur operasional kasir dan kitchen display hanya dikenakan komisi dari transaksi berhasil.</li>
+                    <li><strong>Perlindungan Publik:</strong> Pelanggan tetap bisa melihat menu dan katalog Anda meskipun kasir sedang jatuh tempo.</li>
                 </ul>
             </div>
         </section>
     </div>
 
+    {{-- Rules Split --}}
+    <div class="billing-guide__split">
+        <section class="billing-guide__rule billing-guide__rule--free">
+            <h3>Omzet Rp 0 = Otomatis Lunas</h3>
+            <p>
+                Jika dalam satu bulan resto Anda sedang libur atau tidak ada transaksi kasir yang sukses (omzet Rp 0), tagihan akan otomatis ditandai <strong>Lunas (Paid)</strong> tanpa perlu melakukan transfer.
+            </p>
+        </section>
+        <section class="billing-guide__rule billing-guide__rule--warn">
+            <h3>Konsekuensi Keterlambatan (Overdue)</h3>
+            <p>
+                Jika tagihan komisi belum dilunasi setelah jatuh tempo akhir bulan: menu <strong>Kasir</strong>, <strong>Kitchen (KDS)</strong>, dan <strong>Role Pengguna</strong> akan dinonaktifkan sementara. Landing page publik tetap aktif.
+            </p>
+        </section>
+    </div>
+
+    {{-- Status Table --}}
     <section class="billing-guide__block">
-        <div class="billing-guide__block-head">Status tagihan</div>
+        <div class="billing-guide__block-head">Arti Status Tagihan</div>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
                     <tr>
                         <th>Status</th>
-                        <th>Diubah oleh</th>
-                        <th>Dampak</th>
+                        <th>Keterangan</th>
+                        <th>Aksi yang Diperlukan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><span class="billing-guide__tag billing-guide__tag--wait">Menunggu pembayaran</span></td>
-                        <td>Owner / sistem / Founder</td>
-                        <td>Menunggu transfer; paket belum berubah</td>
+                        <td>Tagihan komisi periode berjalan sedang diakumulasikan atau sudah masuk tanggal akhir bulan dan belum dibayar.</td>
+                        <td>Tunggu tanggal akhir bulan untuk finalisasi, lalu lakukan transfer dan unggah bukti pembayaran.</td>
                     </tr>
                     <tr>
                         <td><span class="billing-guide__tag billing-guide__tag--check">Menunggu verifikasi</span></td>
-                        <td>Owner setelah unggah bukti</td>
-                        <td>Founder meninjau bukti transfer</td>
+                        <td>Bukti transfer telah berhasil Anda unggah dan sedang ditinjau oleh Founder.</td>
+                        <td>Tunggu konfirmasi Founder. Fitur kasir tetap dapat berjalan selagi verifikasi berlangsung.</td>
                     </tr>
                     <tr>
                         <td><span class="billing-guide__tag billing-guide__tag--paid">Lunas</span></td>
-                        <td>Founder menyetujui</td>
-                        <td>Paket &amp; masa aktif diperbarui; tidak bisa dihapus</td>
+                        <td>Pembayaran telah diverifikasi Founder, atau otomatis lunas karena omzet kasir Rp 0.</td>
+                        <td>Tidak ada tindakan diperlukan. Layanan Kasir &amp; KDS aktif penuh.</td>
                     </tr>
                     <tr>
                         <td><span class="billing-guide__tag billing-guide__tag--reject">Ditolak</span></td>
-                        <td>Founder menolak bukti</td>
-                        <td>Kembali menunggu pembayaran; paket tidak berubah</td>
+                        <td>Bukti pembayaran yang diunggah tidak valid atau nominal tidak sesuai.</td>
+                        <td>Periksa kembali catatan penolakan dari Founder dan unggah ulang bukti transfer yang benar.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </section>
 
-    <div class="billing-guide__split">
-        <section class="billing-guide__rule billing-guide__rule--keep">
-            <h3>Paket sama, masa aktif masih jalan</h3>
-            <p>Durasi baru ditambahkan ke tanggal berlaku lama. Sisa hari tidak hangus.</p>
-        </section>
-        <section class="billing-guide__rule billing-guide__rule--reset">
-            <h3>Ganti paket, atau sudah kedaluwarsa</h3>
-            <p>Hitungan mulai dari hari Founder menyetujui. Sisa masa paket lama hangus.</p>
-        </section>
-    </div>
-
+    {{-- Additional Notes --}}
     <section class="billing-guide__block">
-        <div class="billing-guide__block-head">Catatan</div>
+        <div class="billing-guide__block-head">Catatan Tambahan</div>
         <div class="billing-guide__notes">
             <ul>
-                <li>Transfer sesuai total tagihan dan unggah bukti yang jelas.</li>
-                <li>Jangan buat tagihan ganda; hapus yang unpaid dulu jika ingin ganti paket atau durasi.</li>
-                <li>Ganti paket memotong sisa masa aktif paket lama.</li>
+                <li><strong>Kemudahan Pembayaran:</strong> Klik gambar QR code pada kartu info rekening untuk memperbesar gambar QR dan memindai langsung menggunakan aplikasi m-Banking atau e-Wallet favorit Anda.</li>
+                <li><strong>Nomor Rekening:</strong> Gunakan tombol <strong>Salin</strong> di samping nomor rekening untuk mencegah kesalahan input saat melakukan transfer antar-bank.</li>
+                <li><strong>Pertanyaan &amp; Bantuan:</strong> Jika membutuhkan bantuan terkait rincian transaksi atau verifikasi pembayaran, hubungi kontak email atau WhatsApp pengelola yang tertera di bagian bawah halaman ini.</li>
             </ul>
         </div>
     </section>

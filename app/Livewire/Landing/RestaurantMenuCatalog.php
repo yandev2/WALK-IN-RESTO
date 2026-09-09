@@ -72,6 +72,8 @@ class RestaurantMenuCatalog extends Component
 
         $normalizedSearch = MenuSearch::normalize($this->search);
 
+        $hidePrices = (bool) ($outlet?->hide_landing_menu_prices ?? false);
+
         $menuItems = $outlet
             ? MenuItem::query()
                 ->where('outlet_id', $outlet->id)
@@ -83,7 +85,7 @@ class RestaurantMenuCatalog extends Component
                 ))
                 ->when($this->categoryId, fn ($query) => $query->where('category_id', $this->categoryId))
                 ->orderByLandingPriority()
-                ->orderByEffectivePrice($this->priceSort)
+                ->when(! $hidePrices, fn ($query) => $query->orderByEffectivePrice($this->priceSort))
                 ->orderBy('sort_order')
                 ->paginate(12)
             : MenuItem::query()->whereRaw('0 = 1')->paginate(12);
@@ -134,6 +136,7 @@ class RestaurantMenuCatalog extends Component
             'previewMenuItems' => collect(),
             'layout' => $layout,
             'visibleSections' => $visibleSections,
+            'hidePrices' => $hidePrices,
         ])->layout('layouts.landing', [
             'theme' => RestaurantTheme::for($this->restaurant),
             'restaurant' => $this->restaurant,

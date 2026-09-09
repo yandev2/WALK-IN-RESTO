@@ -112,6 +112,15 @@ class OutletResource extends Resource
                             ->helperText('Nonaktifkan untuk menutup outlet sepenuhnya.')
                             ->inline(false),
                     ]),
+                Section::make('Tampilan Landing Page & Katalog')
+                    ->description('Pengaturan tampilan menu pada landing page dan katalog web publik.')
+                    ->icon(Heroicon::OutlinedEyeSlash)
+                    ->schema([
+                        Toggle::make('hide_landing_menu_prices')
+                            ->label('Sembunyikan harga menu di landing page')
+                            ->helperText('Jika diaktifkan, nominal harga menu tidak akan ditampilkan pada katalog menu dan landing page publik. Harga tetap normal ditampilkan untuk pesanan tamu yang scan QR meja.')
+                            ->inline(false),
+                    ]),
                 Section::make('Jam operasional')
                     ->description('Atur jam buka per hari. Centang libur untuk hari tanpa operasional.')
                     ->icon(Heroicon::OutlinedClock)

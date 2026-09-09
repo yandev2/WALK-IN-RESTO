@@ -55,6 +55,7 @@ class Restaurant extends Model implements HasAvatar, HasName
         'trial_ends_at',
         'grace_ends_at',
         'subscribed_until',
+        'commission_percentage',
         'fonnte_api_key_encrypted',
         'settings',
     ];
@@ -70,6 +71,7 @@ class Restaurant extends Model implements HasAvatar, HasName
             'trial_ends_at' => 'datetime',
             'grace_ends_at' => 'datetime',
             'subscribed_until' => 'datetime',
+            'commission_percentage' => 'float',
             'facilities' => 'array',
             'settings' => 'array',
         ];
@@ -246,5 +248,59 @@ class Restaurant extends Model implements HasAvatar, HasName
     protected function storedFileAttributes(): array
     {
         return ['logo_path'];
+    }
+
+    public function effectiveCommissionPercentage(): float
+    {
+        if ($this->commission_percentage !== null) {
+            return (float) $this->commission_percentage;
+        }
+
+        return PlatformSetting::cashierCommissionPercentage();
+    }
+
+    public function isCommissionPlan(): bool
+    {
+        $plan = $this->relationLoaded('subscriptionPlan')
+            ? $this->subscriptionPlan
+            : $this->subscriptionPlan()->first();
+
+        if (! $plan instanceof SubscriptionPlan) {
+            $plan = SubscriptionPlan::query()->where('code', $this->plan_code)->first();
+        }
+
+        return $plan?->isCommissionBased() ?? ($this->plan_code === \App\Enums\PlanCode::ManagementKds->value);
+    }
+
+    public function isTrialActive(?\DateTimeInterface $now = null): bool
+    {
+        $now = $now ? \Illuminate\Support\Carbon::parse($now) : now();
+
+        return $this->subscription_status === SubscriptionStatus::Trial
+            && $this->trial_ends_at !== null
+            && $this->trial_ends_at->isFuture();
+    }
+
+    public function hasOverdueCashierInvoice(?\DateTimeInterface $now = null): bool
+    {
+        if (! $this->isCommissionPlan()) {
+            return false;
+        }
+
+        $now = $now ? \Illuminate\Support\Carbon::parse($now) : now();
+        $currentMonth = $now->format('Y-m');
+
+        return SubscriptionInvoice::query()
+            ->where('restaurant_id', $this->id)
+            ->where('invoice_type', \App\Enums\InvoiceType::CashierCommission->value)
+            ->where('status', '!=', \App\Enums\InvoiceStatus::Paid->value)
+            ->where(function ($query) use ($currentMonth, $now) {
+                $query->where('period_month', '<', $currentMonth)
+                    ->orWhere(function ($q) use ($now) {
+                        $q->whereNotNull('due_at')->where('due_at', '<=', $now);
+                    });
+            })
+            ->where('amount', '>', 0)
+            ->exists();
     }
 }

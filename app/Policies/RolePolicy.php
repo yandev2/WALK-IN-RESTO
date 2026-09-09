@@ -2,13 +2,21 @@
 
 namespace App\Policies;
 
+use App\Models\Restaurant;
 use App\Models\Role;
 use App\Models\User;
+use Filament\Facades\Filament;
 
 class RolePolicy
 {
     public function viewAny(User $user): bool
     {
+        $tenant = Filament::getTenant();
+
+        if ($tenant instanceof Restaurant && $tenant->hasOverdueCashierInvoice()) {
+            return false;
+        }
+
         return $user->isSuperAdmin() || $user->can('settings.manage');
     }
 

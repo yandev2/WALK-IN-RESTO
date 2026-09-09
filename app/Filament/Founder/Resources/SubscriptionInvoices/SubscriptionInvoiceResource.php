@@ -117,11 +117,27 @@ class SubscriptionInvoiceResource extends Resource
                     ->schema([
                         TextEntry::make('invoice_number')->label('Nomor'),
                         TextEntry::make('restaurant.name')->label('Tenant'),
+                        TextEntry::make('invoice_type')
+                            ->label('Tipe Invoice')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\InvoiceType ? $state->label() : (string) $state),
+                        TextEntry::make('period_month')->label('Bulan Tagihan')->placeholder('—'),
                         TextEntry::make('plan_code')->label('Paket invoice'),
                         TextEntry::make('requested_plan_code')->label('Paket diminta')->placeholder('—'),
-                        TextEntry::make('billing_months')->label('Durasi (bulan)')->placeholder('—'),
+                        TextEntry::make('total_omzet')
+                            ->label('Total Omzet Kasir')
+                            ->visible(fn (SubscriptionInvoice $record): bool => $record->isCashierCommission())
+                            ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
+                        TextEntry::make('commission_percentage')
+                            ->label('Tarif Komisi')
+                            ->visible(fn (SubscriptionInvoice $record): bool => $record->isCashierCommission())
+                            ->formatStateUsing(fn ($state): string => number_format((float) $state, 1, ',', '.').'%'),
+                        TextEntry::make('billing_months')
+                            ->label('Durasi (bulan)')
+                            ->visible(fn (SubscriptionInvoice $record): bool => ! $record->isCashierCommission())
+                            ->placeholder('—'),
                         TextEntry::make('amount')
-                            ->label('Nominal')
+                            ->label('Nominal Tagihan')
                             ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
                         TextEntry::make('status')
                             ->badge()
@@ -158,6 +174,13 @@ class SubscriptionInvoiceResource extends Resource
                 TextColumn::make('restaurant.name')
                     ->label('Tenant')
                     ->searchable(),
+                TextColumn::make('invoice_type')
+                    ->label('Tipe')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state instanceof \App\Enums\InvoiceType ? ($state === \App\Enums\InvoiceType::CashierCommission ? 'Komisi' : 'Flat') : (string) $state),
+                TextColumn::make('period_month')
+                    ->label('Bulan')
+                    ->placeholder('—'),
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn ($state): string => $state instanceof InvoiceStatus ? $state->label() : (string) $state),

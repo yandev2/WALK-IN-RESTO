@@ -82,6 +82,7 @@
                             :original-price="$item->hasDiscount() ? CmsMedia::formatIdr($item->price) : null"
                             :discount-percent="$item->hasDiscount() ? $item->discount_percent : null"
                             :is-best-seller="(bool) $item->is_best_seller"
+                            :hide-price="(bool) ($outlet?->hide_landing_menu_prices ?? false)"
                             template="glassmorphism"
                             :rating="$avgRating"
                             :href="route('landing.menu', $restaurant)"

@@ -56,6 +56,12 @@ class OrderVoidService
                 'reason' => $reason,
             ]);
         });
+
+        try {
+            app(CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function voidOrder(Order $order, User $user, string $reason): void
@@ -121,6 +127,12 @@ class OrderVoidService
                 'reason' => $reason,
             ]);
         });
+
+        try {
+            app(CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     private function assertVoidable(Order $order, OrderItem $item): void

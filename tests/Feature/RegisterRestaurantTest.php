@@ -105,11 +105,10 @@ class RegisterRestaurantTest extends TestCase
             ->set('slug', 'warung-paket')
             ->call('nextFromRestaurant')
             ->assertSet('step', 3)
-            ->assertSet('plan_code', PlanCode::LandingOnly->value)
-            ->assertSee('Landing Page Only', false)
-            ->assertSee('auth-glass-plan', false)
-            ->call('selectPlan', PlanCode::ManagementKds->value)
-            ->assertSet('plan_code', PlanCode::ManagementKds->value);
+            ->assertSet('plan_code', PlanCode::ManagementKds->value)
+            ->assertSee('Management KDS', false)
+            ->assertDontSee('Landing Page Only', false)
+            ->assertSee('auth-glass-plan', false);
     }
 
     public function test_registration_rejects_reserved_slug(): void

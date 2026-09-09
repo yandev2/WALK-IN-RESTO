@@ -31,7 +31,8 @@ class SubscriptionGateTest extends TestCase
 
         $this->assertFalse($gate->canAccessPanel($restaurant));
         $this->assertFalse($gate->isReadOnly($restaurant));
-        $this->assertFalse($gate->hasFeature($restaurant, 'cms'));
+        $this->assertFalse($gate->hasFeature($restaurant, 'operations'));
+        $this->assertTrue($gate->hasFeature($restaurant, 'cms'));
     }
 
     public function test_grace_is_read_only_and_keeps_features(): void

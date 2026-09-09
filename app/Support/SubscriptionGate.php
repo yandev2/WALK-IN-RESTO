@@ -30,8 +30,20 @@ class SubscriptionGate
 
     public function hasFeature(Restaurant $restaurant, string $feature): bool
     {
+        // Landing page & CMS profile is 100% free and always accessible
+        if ($feature === 'cms') {
+            return true;
+        }
+
         if ($this->status($restaurant) === SubscriptionStatus::Expired) {
             return false;
+        }
+
+        // If cashier commission has overdue unpaid invoice, suspend cashier operations and roles
+        if ($restaurant->hasOverdueCashierInvoice()) {
+            if (in_array($feature, ['operations', 'roles', 'settings_full'], true)) {
+                return false;
+            }
         }
 
         $plan = $restaurant->relationLoaded('subscriptionPlan')
@@ -44,6 +56,15 @@ class SubscriptionGate
 
         if (! $plan instanceof SubscriptionPlan) {
             return in_array($feature, ['cms', 'menu', 'operations', 'analytics', 'settings', 'settings_full'], true);
+        }
+
+        // Bonus: If restaurant is on commission plan (management_kds), cms & landing page is always granted as a free bonus
+        if ($feature === 'cms' && $plan->isCommissionBased()) {
+            return true;
+        }
+
+        if ($feature === 'roles') {
+            return $plan->hasFeature('settings_full');
         }
 
         return $plan->hasFeature($feature);

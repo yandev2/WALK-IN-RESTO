@@ -9,6 +9,7 @@ use App\Filament\Founder\Resources\Tenants\Pages\EditTenant;
 use App\Filament\Founder\Resources\Tenants\Pages\ListTenants;
 use App\Filament\Pages\Dashboard as TenantDashboard;
 use App\Filament\Support\TableRightClick;
+use App\Models\PlatformSetting;
 use App\Models\Restaurant;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
@@ -116,6 +117,14 @@ class TenantResource extends Resource
                             ->required()
                             ->native(false)
                             ->default(PlanCode::ManagementKds->value),
+                        TextInput::make('commission_percentage')
+                            ->label('Tarif komisi khusus (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->suffix('%')
+                            ->placeholder(fn (): string => 'Default: '.PlatformSetting::cashierCommissionPercentage().'% (Platform)')
+                            ->helperText('Kosongkan untuk memakai tarif komisi global platform.'),
                         Select::make('subscription_status')
                             ->label('Status')
                             ->options(collect(SubscriptionStatus::cases())->mapWithKeys(
@@ -151,6 +160,19 @@ class TenantResource extends Resource
                     ->label('Paket')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => PlanCode::tryFrom((string) $state)?->label() ?? (string) $state),
+                TextColumn::make('effective_commission')
+                    ->label('Komisi')
+                    ->badge()
+                    ->state(fn (Restaurant $record): string => $record->isCommissionPlan()
+                        ? ($record->commission_percentage !== null
+                            ? rtrim(rtrim(number_format((float) $record->commission_percentage, 2, ',', '.'), '0'), ',').'% (Khusus)'
+                            : rtrim(rtrim(number_format(PlatformSetting::cashierCommissionPercentage(), 2, ',', '.'), '0'), ',').'% (Global)')
+                        : 'Flat'),
+                TextColumn::make('overdue_status')
+                    ->label('Tunggakan')
+                    ->badge()
+                    ->state(fn (Restaurant $record): string => $record->hasOverdueCashierInvoice() ? 'Ada Tunggakan' : 'Lancar')
+                    ->color(fn (Restaurant $record): string => $record->hasOverdueCashierInvoice() ? 'danger' : 'success'),
                 TextColumn::make('subscription_status')
                     ->label('Status')
                     ->badge()

@@ -290,6 +290,14 @@ class GuestCheckoutService
             }
         }
 
+        if ($isSimpleCashier) {
+            try {
+                app(\App\Services\CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
         return $order;
     }
 

@@ -2,17 +2,20 @@
 
 namespace App\Filament\Founder\Resources\SubscriptionPlans;
 
+use App\Enums\BillingType;
 use App\Filament\Founder\Resources\SubscriptionPlans\Pages\EditSubscriptionPlan;
 use App\Filament\Founder\Resources\SubscriptionPlans\Pages\ListSubscriptionPlans;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -69,11 +72,26 @@ class SubscriptionPlanResource extends Resource
                             ->label('Nama')
                             ->required()
                             ->maxLength(120),
+                        Select::make('billing_type')
+                            ->label('Model Billing')
+                            ->options(collect(BillingType::cases())->mapWithKeys(
+                                fn (BillingType $type) => [$type->value => $type->label()],
+                            ))
+                            ->required()
+                            ->native(false)
+                            ->live(),
                         TextInput::make('price_monthly')
                             ->label('Harga per bulan')
                             ->numeric()
-                            ->required()
-                            ->prefix('Rp'),
+                            ->prefix('Rp')
+                            ->visible(fn (Get $get): bool => ($get('billing_type') ?? BillingType::FixedMonthly->value) === BillingType::FixedMonthly->value)
+                            ->required(fn (Get $get): bool => ($get('billing_type') ?? BillingType::FixedMonthly->value) === BillingType::FixedMonthly->value),
+                        TextInput::make('commission_percentage')
+                            ->label('Tarif komisi omzet')
+                            ->numeric()
+                            ->suffix('%')
+                            ->visible(fn (Get $get): bool => $get('billing_type') === BillingType::Commission->value)
+                            ->required(fn (Get $get): bool => $get('billing_type') === BillingType::Commission->value),
                         TextInput::make('sort_order')
                             ->label('Urutan')
                             ->numeric()
@@ -99,9 +117,13 @@ class SubscriptionPlanResource extends Resource
                     ->searchable(),
                 TextColumn::make('code')
                     ->badge(),
-                TextColumn::make('price_monthly')
-                    ->label('Harga / bln')
-                    ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
+                TextColumn::make('billing_type')
+                    ->label('Tipe')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state instanceof BillingType ? $state->label() : (string) $state),
+                TextColumn::make('pricing')
+                    ->label('Tarif / Biaya')
+                    ->state(fn (SubscriptionPlan $record): string => $record->formattedPrice()),
                 IconColumn::make('is_active')
                     ->boolean(),
             ])

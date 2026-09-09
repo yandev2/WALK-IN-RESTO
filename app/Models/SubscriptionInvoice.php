@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\InvoiceSource;
 use App\Enums\InvoiceStatus;
+use App\Enums\InvoiceType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,12 +14,16 @@ class SubscriptionInvoice extends Model
         'invoice_number',
         'restaurant_id',
         'plan_code',
+        'invoice_type',
         'requested_plan_code',
         'billing_months',
         'amount',
+        'total_omzet',
+        'commission_percentage',
         'status',
         'source',
         'period_key',
+        'period_month',
         'period_start',
         'period_end',
         'due_at',
@@ -35,8 +40,11 @@ class SubscriptionInvoice extends Model
     protected function casts(): array
     {
         return [
+            'invoice_type' => InvoiceType::class,
             'billing_months' => 'integer',
             'amount' => 'integer',
+            'total_omzet' => 'integer',
+            'commission_percentage' => 'float',
             'status' => InvoiceStatus::class,
             'source' => InvoiceSource::class,
             'period_start' => 'datetime',
@@ -85,5 +93,15 @@ class SubscriptionInvoice extends Model
     public function formattedAmount(): string
     {
         return 'Rp '.number_format((int) $this->amount, 0, ',', '.');
+    }
+
+    public function isCashierCommission(): bool
+    {
+        return $this->invoice_type === InvoiceType::CashierCommission;
+    }
+
+    public function formattedOmzet(): string
+    {
+        return 'Rp '.number_format((int) ($this->total_omzet ?? 0), 0, ',', '.');
     }
 }
