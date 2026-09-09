@@ -3,26 +3,29 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Orders\OrderResource;
-use App\Filament\Support\TableRightClick;
 use App\Models\Order;
+use App\Models\Restaurant;
 use App\Models\User;
 use App\Support\SubscriptionAccess;
-use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\Concerns\CanPoll;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Collection;
 
-class PendingPaymentsWidget extends TableWidget
+class PendingPaymentsWidget extends Widget
 {
+    use CanPoll;
+
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 10;
+    protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = [
         'default' => 'full',
+        'xl' => 7,
     ];
+
+    protected string $view = 'filament.widgets.pending-payments';
 
     public static function canView(): bool
     {
@@ -32,37 +35,63 @@ class PendingPaymentsWidget extends TableWidget
             return false;
         }
 
+        $restaurant = Filament::getTenant();
+
+        if ($restaurant instanceof Restaurant && ($restaurant->hasOverdueCashierInvoice() || $restaurant->hasUnpaidOverdueInvoice())) {
+            return false;
+        }
+
         return ($user->isSuperAdmin()
             || $user->can('order.verify_payment')
             || $user->can('order.reject_payment'))
             && SubscriptionAccess::allows('operations');
     }
 
-    public function table(Table $table): Table
+    protected function getPollingInterval(): ?string
     {
-        $table = $table
-            ->heading('Antrian kasir')
-            ->description('Pesanan menunggu verifikasi pembayaran.')
-            ->query(fn (): Builder => Order::query()
-                ->with(['visit.diningTable'])
-                ->when(Filament::getTenant()?->getKey(), fn (Builder $query, $tenantId) => $query->where('restaurant_id', $tenantId))
-                ->where('status', 'awaiting_cashier')
-                ->latest())
-            ->columns([
-                TextColumn::make('number')->label('No'),
-                TextColumn::make('visit.diningTable.code')->label('Meja'),
-                TextColumn::make('payment_method')->label('Metode'),
-                TextColumn::make('grand_payable')->label('Tagihan')->money('IDR', locale: 'id'),
-                TextColumn::make('visit.customer_wa')->label('WA'),
-                TextColumn::make('created_at')->label('Masuk')->since(),
-            ])
-            ->paginated([5, 10])
-            ->emptyStateHeading('Antrian kosong')
-            ->emptyStateDescription('Pesanan baru akan muncul di sini setelah tamu checkout.');
+        return '15s';
+    }
 
-        return TableRightClick::apply($table, fn (): array => [
-            ViewAction::make()
-                ->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record])),
-        ]);
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getPendingOrders(): Collection
+    {
+        $restaurant = Filament::getTenant();
+
+        if (! $restaurant) {
+            return new Collection();
+        }
+
+        return Order::query()
+            ->with(['visit.diningTable', 'items.menuItem'])
+            ->where('restaurant_id', $restaurant->id)
+            ->where('status', 'awaiting_cashier')
+            ->latest()
+            ->limit(4)
+            ->get();
+    }
+
+    public function getPendingCount(): int
+    {
+        $restaurant = Filament::getTenant();
+
+        if (! $restaurant) {
+            return 0;
+        }
+
+        return Order::query()
+            ->where('restaurant_id', $restaurant->id)
+            ->where('status', 'awaiting_cashier')
+            ->count();
+    }
+
+    public function getOrdersUrl(): string
+    {
+        try {
+            return OrderResource::getUrl();
+        } catch (\Throwable) {
+            return url('/admin/orders');
+        }
     }
 }

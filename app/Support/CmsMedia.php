@@ -90,6 +90,37 @@ final class CmsMedia
         return 'Rp '.number_format((int) $amount, 0, ',', '.');
     }
 
+    public static function formatShortIdr(int|string|null $amount): string
+    {
+        $val = (int) $amount;
+
+        if ($val >= 1_000_000_000) {
+            $m = $val / 1_000_000_000;
+            if ($m == (int) $m) {
+                return 'Rp '.((int) $m).' M';
+            }
+            $formatted = number_format($m, 2, ',', '.');
+            $parts = explode(',', $formatted);
+            $dec = rtrim($parts[1] ?? '', '0');
+
+            return 'Rp '.$parts[0].($dec !== '' ? ','.$dec : '').' M';
+        }
+
+        if ($val >= 1_000_000) {
+            $jt = $val / 1_000_000;
+            if ($jt == (int) $jt) {
+                return 'Rp '.((int) $jt).' jt';
+            }
+            $formatted = number_format($jt, 2, ',', '.');
+            $parts = explode(',', $formatted);
+            $dec = rtrim($parts[1] ?? '', '0');
+
+            return 'Rp '.$parts[0].($dec !== '' ? ','.$dec : '').' jt';
+        }
+
+        return self::formatIdr($val);
+    }
+
     public static function delete(?string $path, string $disk = 'public'): void
     {
         if (blank($path) || self::isExternalUrl($path)) {

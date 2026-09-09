@@ -13,12 +13,9 @@ class AnalyticsPeriodSummaryWidget extends Widget
 
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 6;
 
-    protected int|string|array $columnSpan = [
-        'default' => 'full',
-        'xl' => 4,
-    ];
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'filament.widgets.analytics.period-summary';
 

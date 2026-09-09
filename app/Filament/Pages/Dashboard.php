@@ -8,6 +8,7 @@ use App\Filament\Widgets\AnalyticsRevenueBarWidget;
 use App\Filament\Widgets\AnalyticsSidebarWidget;
 use App\Filament\Widgets\AnalyticsTopMenuWidget;
 use App\Filament\Widgets\PendingPaymentsWidget;
+use App\Filament\Widgets\RestaurantReadinessWidget;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\ExportFile;
 use App\Models\Restaurant;
@@ -69,11 +70,11 @@ class Dashboard extends BaseDashboard
     {
         return [
             AnalyticsKpiWidget::class,
-            AnalyticsRevenueBarWidget::class,
-            AnalyticsSidebarWidget::class,
-            AnalyticsPeriodSummaryWidget::class,
-            AnalyticsTopMenuWidget::class,
+            RestaurantReadinessWidget::class,
             PendingPaymentsWidget::class,
+            AnalyticsRevenueBarWidget::class,
+            AnalyticsTopMenuWidget::class,
+            AnalyticsPeriodSummaryWidget::class,
         ];
     }
 

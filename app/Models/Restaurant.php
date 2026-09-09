@@ -303,4 +303,23 @@ class Restaurant extends Model implements HasAvatar, HasName
             ->where('amount', '>', 0)
             ->exists();
     }
+
+    public function hasUnpaidOverdueInvoice(?\DateTimeInterface $now = null): bool
+    {
+        $now = $now ? \Illuminate\Support\Carbon::parse($now) : now();
+        $currentMonth = $now->format('Y-m');
+
+        return SubscriptionInvoice::query()
+            ->where('restaurant_id', $this->id)
+            ->where('status', '!=', \App\Enums\InvoiceStatus::Paid->value)
+            ->where('status', '!=', \App\Enums\InvoiceStatus::Void->value)
+            ->where(function ($query) use ($currentMonth, $now) {
+                $query->where('period_month', '<', $currentMonth)
+                    ->orWhere(function ($q) use ($now) {
+                        $q->whereNotNull('due_at')->where('due_at', '<=', $now);
+                    });
+            })
+            ->where('amount', '>', 0)
+            ->exists();
+    }
 }

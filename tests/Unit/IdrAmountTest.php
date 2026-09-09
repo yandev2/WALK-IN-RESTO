@@ -44,4 +44,15 @@ class IdrAmountTest extends TestCase
         $this->expectException(ValidationException::class);
         CashTender::resolve('cash', 9240, 5000);
     }
+
+    public function test_format_short_idr_compacts_millions_and_billions(): void
+    {
+        $this->assertSame('Rp 0', \App\Support\CmsMedia::formatShortIdr(0));
+        $this->assertSame('Rp 500.000', \App\Support\CmsMedia::formatShortIdr(500000));
+        $this->assertSame('Rp 1 jt', \App\Support\CmsMedia::formatShortIdr(1000000));
+        $this->assertSame('Rp 1,5 jt', \App\Support\CmsMedia::formatShortIdr(1500000));
+        $this->assertSame('Rp 1,25 jt', \App\Support\CmsMedia::formatShortIdr(1250000));
+        $this->assertSame('Rp 10 jt', \App\Support\CmsMedia::formatShortIdr(10000000));
+        $this->assertSame('Rp 1 M', \App\Support\CmsMedia::formatShortIdr(1000000000));
+    }
 }

@@ -16,11 +16,10 @@ class AnalyticsRevenueBarWidget extends Widget
 
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = [
         'default' => 'full',
-        'xl' => 8,
     ];
 
     protected string $view = 'filament.widgets.analytics.revenue-bar';
@@ -33,6 +32,42 @@ class AnalyticsRevenueBarWidget extends Widget
     protected function getPollingInterval(): ?string
     {
         return '30s';
+    }
+
+    /**
+     * @return array{
+     *     series: list<int>,
+     *     categories: list<string>,
+     *     today_omzet: string,
+     *     seven_days_omzet: string,
+     *     total_omzet: string,
+     *     range_label: string,
+     * }
+     */
+    public function getVisionAreaData(): array
+    {
+        $snapshot = $this->analyticsSnapshot();
+        $trend = $snapshot['trend'] ?? [];
+        $values = array_column($trend, 'omzet');
+        $dates = array_column($trend, 'date');
+
+        $categories = [];
+        foreach ($dates as $date) {
+            $categories[] = Carbon::parse($date)->translatedFormat('d M');
+        }
+
+        $totalOmzet = (int) array_sum($values);
+        $sevenDays = (int) array_sum(array_slice($values, -7));
+        $todayOmzet = (int) ($snapshot['today']['omzet'] ?? 0);
+
+        return [
+            'series' => array_map('intval', $values),
+            'categories' => $categories,
+            'today_omzet' => \App\Support\CmsMedia::formatIdr($todayOmzet),
+            'seven_days_omzet' => \App\Support\CmsMedia::formatIdr($sevenDays),
+            'total_omzet' => \App\Support\CmsMedia::formatIdr($totalOmzet),
+            'range_label' => $this->analyticsRangeLabel(),
+        ];
     }
 
     /**

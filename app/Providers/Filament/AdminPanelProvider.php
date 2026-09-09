@@ -121,10 +121,22 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn(): HtmlString => new HtmlString(
-                    AuthGlass::headHtml()->toHtml()
-                        . <<<'HTML'
+                function (): HtmlString {
+                    $restaurant = FilamentTenantTheme::restaurantForCurrentPanel();
+                    $theme = RestaurantTheme::for($restaurant);
+                    $primary = $theme['primary'];
+                    $accent = $theme['accent'];
+
+                    return new HtmlString(
+                        AuthGlass::headHtml()->toHtml()
+                            . app(\Illuminate\Foundation\Vite::class)(['resources/js/app.js'])->toHtml()
+                            . <<<HTML
                     <style>
+                        :root {
+                            --resto-primary: {$primary};
+                            --resto-accent: {$accent};
+                        }
+
                         .fi-page-dashboard .fi-wi-analytics-kpi,
                         .fi-page-dashboard .fi-wi-analytics-period-summary,
                         .fi-page-dashboard .fi-wi-analytics-revenue,
@@ -182,8 +194,9 @@ class AdminPanelProvider extends PanelProvider
                             --tw-shadow: 0 0 #0000;
                         }
                     </style>
-                    HTML
-                ),
+HTML
+                    );
+                },
             )
             ->renderHook(
                 PanelsRenderHook::BODY_START,

@@ -16,10 +16,7 @@ class AnalyticsTopMenuWidget extends Widget
 
     protected static ?int $sort = 5;
 
-    protected int|string|array $columnSpan = [
-        'default' => 'full',
-        'xl' => 8,
-    ];
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'filament.widgets.analytics.top-menu';
 

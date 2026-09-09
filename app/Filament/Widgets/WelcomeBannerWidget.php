@@ -6,6 +6,7 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Support\CmsMedia;
 use App\Support\RestaurantTheme;
+use App\Support\SubscriptionAccess;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Carbon;
@@ -53,6 +54,43 @@ class WelcomeBannerWidget extends Widget
 
         $theme = RestaurantTheme::for($restaurant instanceof Restaurant ? $restaurant : null);
 
+        $pendingOrders = 0;
+        $publicUrl = null;
+        $orderUrl = null;
+        $menuUrl = null;
+
+        if ($restaurant instanceof Restaurant) {
+            $pendingOrders = \App\Models\Order::query()
+                ->where('restaurant_id', $restaurant->id)
+                ->where('status', 'awaiting_cashier')
+                ->count();
+
+            try {
+                $publicUrl = route('landing.show', $restaurant);
+            } catch (\Throwable) {
+                $publicUrl = url('/');
+            }
+        }
+
+        try {
+            $orderUrl = \App\Filament\Resources\Orders\OrderResource::getUrl();
+            $menuUrl = \App\Filament\Resources\MenuItems\MenuItemResource::getUrl();
+        } catch (\Throwable) {
+            // fallback
+        }
+
+        $hasOverdueInvoice = $restaurant instanceof Restaurant
+            && ($restaurant->hasOverdueCashierInvoice() || $restaurant->hasUnpaidOverdueInvoice());
+
+        $isKdsActive = ! $hasOverdueInvoice && SubscriptionAccess::allows('operations');
+
+        $billingUrl = null;
+        try {
+            $billingUrl = \App\Filament\Pages\SubscriptionStatus::getUrl();
+        } catch (\Throwable) {
+            // fallback
+        }
+
         return [
             'greeting' => $this->greetingFor($timezone),
             'user_name' => $name,
@@ -62,6 +100,14 @@ class WelcomeBannerWidget extends Widget
             'timezone' => $timezone,
             'timezone_label' => $this->timezoneLabel($timezone),
             'theme' => $theme,
+            'pending_orders' => $pendingOrders,
+            'public_url' => $publicUrl,
+            'order_url' => $orderUrl,
+            'menu_url' => $menuUrl,
+            'billing_url' => $billingUrl,
+            'is_kds_active' => $isKdsActive,
+            'has_overdue_invoice' => $hasOverdueInvoice,
+            'role_name' => $user instanceof User ? ($user->isRestaurantOwner() ? 'Owner Restoran' : 'Staff Operasional') : 'Pengguna',
         ];
     }
 

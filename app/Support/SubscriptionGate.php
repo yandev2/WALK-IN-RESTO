@@ -39,9 +39,9 @@ class SubscriptionGate
             return false;
         }
 
-        // If cashier commission has overdue unpaid invoice, suspend cashier operations and roles
-        if ($restaurant->hasOverdueCashierInvoice()) {
-            if (in_array($feature, ['operations', 'roles', 'settings_full'], true)) {
+        // If cashier commission or billing invoice is unpaid/overdue, suspend cashier operations, kds, and roles
+        if ($restaurant->hasOverdueCashierInvoice() || $restaurant->hasUnpaidOverdueInvoice()) {
+            if (in_array($feature, ['operations', 'roles', 'settings_full', 'kds'], true)) {
                 return false;
             }
         }

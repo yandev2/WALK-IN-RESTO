@@ -1,11 +1,10 @@
-<x-filament-widgets::widget class="fi-wi-welcome-banner">
+<x-filament-widgets::widget class="fi-wi-welcome-banner w-full">
     @php
         $banner = $this->getBannerData();
         $theme = $banner['theme'];
     @endphp
 
-    <div
-        class="welcome-banner"
+    <div class="vision-card p-6 sm:p-7 relative overflow-hidden"
         style="--wb-primary: {{ $theme['primary'] }}; --wb-primary-dark: {{ $theme['primary_dark'] }}; --wb-accent: {{ $theme['accent'] }};"
         x-data="{
             time: '00:00:00',
@@ -21,9 +20,9 @@
                     second: '2-digit',
                     hour12: false,
                 }).formatToParts(now);
-
+        
                 const pick = (type) => timeParts.find(part => part.type === type)?.value ?? '00';
-
+        
                 this.time = `${pick('hour')}:${pick('minute')}:${pick('second')}`;
                 this.date = now.toLocaleDateString('id-ID', {
                     timeZone: this.timezone,
@@ -37,229 +36,142 @@
                 this.tick();
                 this.timer = setInterval(() => this.tick(), 1000);
             },
-        }"
-        x-init="
-            start();
-            return () => { timer && clearInterval(timer) };
-        "
-    >
-        <style>
-            .welcome-banner {
-                --wb-surface: #ffffff;
-                --wb-muted: #f8fafc;
-                --wb-border: #e2e8f0;
-                --wb-text: #0f172a;
-                --wb-text-muted: #64748b;
-                position: relative;
-                overflow: hidden;
-                border-radius: 1.25rem;
-                border: 1px solid var(--wb-border);
-                background: var(--wb-surface);
-                box-shadow: 0 10px 30px -18px rgb(15 23 42 / 0.28);
-            }
+        }" x-init="start();
+        return () => { timer && clearInterval(timer) };">
+        {{-- Background Soft Glow Gradient Accents --}}
+        <div
+            class="absolute -top-24 -left-24 w-60 h-60 bg-sky-500/10 dark:bg-sky-500/15 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div
+            class="absolute -bottom-24 -right-24 w-60 h-60 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl pointer-events-none">
+        </div>
 
-            .dark .welcome-banner {
-                --wb-surface: #111827;
-                --wb-muted: #1f2937;
-                --wb-border: #374151;
-                --wb-text: #f8fafc;
-                --wb-text-muted: #94a3b8;
-                box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.55);
-            }
+        {{-- Top Status Pills Row --}}
+        <div
+            class="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-white/5">
+            <div class="flex items-center gap-2">
+                <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-sky-500/10 dark:bg-sky-400/10 text-sky-600 dark:text-cyan-400 border border-sky-500/20">
+                    <span class="w-2 h-2 rounded-full bg-sky-500 dark:bg-cyan-400 animate-pulse"></span>
+                    OVERVIEW RESTORAN & AKTIVITAS
+                </span>
+            </div>
 
-            .welcome-banner__accent {
-                position: absolute;
-                inset: 0 auto 0 0;
-                width: 0.35rem;
-                background: linear-gradient(180deg, var(--wb-primary-dark), var(--wb-primary), var(--wb-accent));
-            }
+            <div class="flex items-center gap-3">
+                @if ($banner['is_kds_active'])
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+                        Layanan Kasir & KDS Aktif
+                    </span>
+                @else
+                    <a href="{{ $banner['billing_url'] ?? '#' }}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25 hover:bg-rose-500/25 transition-colors">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                        Layanan Kasir & KDS Non-Aktif (Ada Tunggakan)
+                    </a>
+                @endif
 
-            .welcome-banner__inner {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 1.25rem;
-                padding: 1.35rem 1.5rem 1.35rem 1.75rem;
-            }
-
-            .welcome-banner__profile {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                min-width: 0;
-                flex: 1;
-            }
-
-            .welcome-banner__avatar {
-                width: 3.75rem;
-                height: 3.75rem;
-                border-radius: 9999px;
-                overflow: hidden;
-                flex-shrink: 0;
-                border: 3px solid color-mix(in srgb, var(--wb-primary) 35%, white);
-                background: color-mix(in srgb, var(--wb-primary) 12%, white);
-                box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--wb-primary) 55%, rgb(15 23 42));
-            }
-
-            .dark .welcome-banner__avatar {
-                border-color: color-mix(in srgb, var(--wb-primary) 45%, #111827);
-                background: color-mix(in srgb, var(--wb-primary) 18%, #1f2937);
-            }
-
-            .welcome-banner__avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .welcome-banner__avatar-initials {
-                display: grid;
-                place-items: center;
-                width: 100%;
-                height: 100%;
-                font-size: 1rem;
-                font-weight: 700;
-                letter-spacing: 0.04em;
-                color: var(--wb-primary-dark);
-            }
-
-            .dark .welcome-banner__avatar-initials {
-                color: var(--wb-accent);
-            }
-
-            .welcome-banner__eyebrow {
-                margin: 0;
-                font-size: 0.8125rem;
-                font-weight: 600;
-                color: var(--wb-text-muted);
-            }
-
-            .welcome-banner__title {
-                margin: 0.25rem 0 0;
-                font-size: clamp(1.25rem, 2.2vw, 1.65rem);
-                font-weight: 700;
-                line-height: 1.2;
-                letter-spacing: -0.03em;
-                color: var(--wb-text);
-            }
-
-            .welcome-banner__subtitle {
-                margin: 0.35rem 0 0;
-                font-size: 0.875rem;
-                color: var(--wb-text-muted);
-            }
-
-            .welcome-banner__clock {
-                display: none;
-                text-align: right;
-                padding: 0.85rem 1rem;
-                border-radius: 1rem;
-                background: var(--wb-muted);
-                border: 1px solid var(--wb-border);
-                min-width: 11rem;
-            }
-
-            .welcome-banner__clock-label {
-                margin: 0;
-                font-size: 0.6875rem;
-                font-weight: 600;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                color: var(--wb-text-muted);
-            }
-
-            .welcome-banner__clock-face {
-                margin-top: 0.35rem;
-                font-size: 1.65rem;
-                font-weight: 700;
-                letter-spacing: -0.04em;
-                font-variant-numeric: tabular-nums;
-                color: var(--wb-text);
-            }
-
-            .welcome-banner__clock-sep,
-            .welcome-banner__clock-hours,
-            .welcome-banner__clock-minutes,
-            .welcome-banner__clock-seconds {
-                display: none;
-            }
-
-            .welcome-banner__date {
-                margin: 0.35rem 0 0;
-                font-size: 0.75rem;
-                line-height: 1.35;
-                color: var(--wb-text-muted);
-            }
-
-            .welcome-banner__timezone {
-                margin: 0.2rem 0 0;
-                font-size: 0.6875rem;
-                font-weight: 600;
-                letter-spacing: 0.04em;
-                color: var(--wb-primary-dark);
-            }
-
-            @keyframes wb-blink {
-                50% { opacity: 0.25; }
-            }
-
-            @media (min-width: 640px) {
-                .welcome-banner__clock {
-                    display: block;
-                }
-            }
-
-            @media (max-width: 639px) {
-                .welcome-banner__inner {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .welcome-banner__clock {
-                    display: block;
-                    width: 100%;
-                    text-align: left;
-                }
-
-                .welcome-banner__clock-face {
-                    justify-content: flex-start;
-                }
-            }
-        </style>
-
-        <div class="welcome-banner__accent" aria-hidden="true"></div>
-
-        <div class="welcome-banner__inner">
-            <div class="welcome-banner__profile">
-                <div class="welcome-banner__avatar" aria-hidden="true">
-                    @if (filled($banner['avatar_url']))
-                        <img src="{{ $banner['avatar_url'] }}" alt="">
-                    @else
-                        <span class="welcome-banner__avatar-initials">{{ $banner['user_initials'] }}</span>
-                    @endif
+                {{-- Live Clock Capsule --}}
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+                    <x-filament::icon icon="heroicon-o-clock" class="h-3.5 w-3.5 text-sky-500 dark:text-cyan-400" />
+                    <span class="sr-only">Waktu sekarang</span>
+                    <span x-text="time" class="font-mono font-bold"></span>
+                    <span class="text-slate-400">·</span>
+                    <span x-text="date" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
+                    <span
+                        class="text-[10px] uppercase font-bold text-sky-600 dark:text-cyan-400">{{ $banner['timezone_label'] }}</span>
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <p class="welcome-banner__eyebrow">{{ $banner['greeting'] }}</p>
-                    <h2 class="welcome-banner__title">Halo, {{ $banner['user_name'] }}</h2>
-                    <p class="welcome-banner__subtitle">
-                        Cek aktivitas dan omzet di dashboard ini
-                        @if (filled($banner['restaurant_name']))
-                            · {{ $banner['restaurant_name'] }}
+        {{-- Main Greeting & Bio Row --}}
+        <div class="relative z-10 mt-5">
+            <h2
+                class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                <span class="sr-only">Halo, {{ $banner['user_name'] }}</span>
+                <span>{{ $banner['greeting'] }},</span>
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-sky-500 to-cyan-500 dark:from-sky-400 dark:via-cyan-300 dark:to-cyan-400">
+                    {{ $banner['user_name'] }}!
+                </span>
+                <span></span>
+            </h2>
+
+            <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-4xl">
+                <strong class="font-semibold text-slate-800 dark:text-white">{{ $banner['role_name'] }}.</strong>
+                Selamat datang di pusat kendali restoran
+                @if (filled($banner['restaurant_name']))
+                    <span class="font-semibold text-sky-600 dark:text-cyan-300">{{ $banner['restaurant_name'] }}</span>.
+                @endif
+                Pantau interaksi pengunjung, tanggapi pesanan kasir, dan kelola operasional menu Anda secara
+                terstruktur.
+            </p>
+        </div>
+
+        {{-- Quick Actions Buttons Row --}}
+        <div
+            class="relative z-10 mt-6 pt-5 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2.5">
+                {{-- Primary Action: Buat Pesanan Baru (Hanya tampil jika KDS aktif) --}}
+                @if ($banner['is_kds_active'] && filled($banner['order_url']))
+                    <a href="{{ $banner['order_url'] }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 shadow-md shadow-sky-500/25 transition-all duration-200 hover:-translate-y-0.5">
+                        <x-filament::icon icon="heroicon-o-plus-circle" class="h-4 w-4" />
+                        <span>+ Buat Pesanan Baru</span>
+                    </a>
+                @endif
+
+                {{-- Action 2: Pesanan Masuk Pill (Hanya tampil jika KDS aktif) --}}
+                @if ($banner['is_kds_active'] && filled($banner['order_url']))
+                    <a href="{{ $banner['order_url'] }}"
+                        class="vision-pill-card inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold hover:-translate-y-0.5">
+                        <x-filament::icon icon="heroicon-o-inbox" class="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                        <span>Pesanan Masuk</span>
+                        @if ($banner['pending_orders'] > 0)
+                            <span
+                                class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500 text-white shadow-sm animate-pulse">
+                                {{ $banner['pending_orders'] }} Baru
+                            </span>
+                        @else
+                            <span
+                                class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                                0
+                            </span>
                         @endif
-                    </p>
-                </div>
+                    </a>
+                @endif
+
+                {{-- Tombol bayar jika ada tagihan overdue / KDS non-aktif --}}
+                @if (! $banner['is_kds_active'] && filled($banner['billing_url']))
+                    <a href="{{ $banner['billing_url'] }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 shadow-md shadow-rose-500/25 transition-all duration-200 hover:-translate-y-0.5">
+                        <x-filament::icon icon="heroicon-o-credit-card" class="h-4 w-4" />
+                        <span>Bayar Tagihan Billing</span>
+                    </a>
+                @endif
+
+                {{-- Action 3: Kelola Menu --}}
+                @if (filled($banner['menu_url']))
+                    <a href="{{ $banner['menu_url'] }}"
+                        class="vision-pill-card inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold hover:-translate-y-0.5">
+                        <x-filament::icon icon="heroicon-o-squares-2x2"
+                            class="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                        <span>Kelola Menu</span>
+                    </a>
+                @endif
             </div>
 
-            <div class="welcome-banner__clock">
-                <p class="welcome-banner__clock-label">Waktu sekarang</p>
-                <div class="welcome-banner__clock-face" aria-live="polite" aria-atomic="true">
-                    <span x-text="time"></span>
-                </div>
-                <p class="welcome-banner__date" x-text="date"></p>
-                <p class="welcome-banner__timezone">{{ $banner['timezone_label'] }}</p>
-            </div>
+            {{-- Right Aligned: Lihat Situs Publik --}}
+            @if (filled($banner['public_url']))
+                <a href="{{ $banner['public_url'] }}" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-all duration-200 hover:-translate-y-0.5">
+                    <x-filament::icon icon="heroicon-o-arrow-top-right-on-square"
+                        class="h-4 w-4 text-sky-500 dark:text-cyan-400" />
+                    <span>Lihat Situs Publik</span>
+                </a>
+            @endif
         </div>
     </div>
 </x-filament-widgets::widget>

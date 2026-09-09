@@ -21,8 +21,13 @@ use App\Models\SubscriptionInvoice;
 use App\Models\SubscriptionPlan;
 use App\Models\Visit;
 use App\Services\CashierCommissionBillingService;
+use App\Filament\Widgets\AnalyticsKpiWidget;
+use App\Filament\Widgets\PendingPaymentsWidget;
+use App\Filament\Widgets\RestaurantReadinessWidget;
+use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Services\SubscriptionInvoiceService;
 use App\Services\SubscriptionPlanSync;
+use Livewire\Livewire;
 use Illuminate\Validation\ValidationException;
 use App\Support\SubscriptionGate;
 use Database\Seeders\RolePermissionSeeder;
@@ -549,5 +554,58 @@ class CashierCommissionBillingTest extends TestCase
         ]);
 
         return $order;
+    }
+
+    public function test_dashboard_hides_kds_widgets_when_billing_invoice_unpaid_overdue(): void
+    {
+        $restaurant = $this->makeRestaurant([
+            'plan_code' => PlanCode::ManagementKds->value,
+            'trial_ends_at' => now()->subMonths(2),
+        ]);
+        $owner = $this->makeOwner($restaurant);
+
+        app(SubscriptionPlanSync::class)->syncOwnerPermissions($restaurant, PlanCode::ManagementKds->value);
+
+        // Create overdue unpaid cashier commission invoice
+        $previousMonth = now()->subMonth()->format('Y-m');
+        SubscriptionInvoice::query()->create([
+            'invoice_number' => 'INV-OVERDUE-001',
+            'restaurant_id' => $restaurant->id,
+            'plan_code' => PlanCode::ManagementKds->value,
+            'requested_plan_code' => PlanCode::ManagementKds->value,
+            'invoice_type' => InvoiceType::CashierCommission->value,
+            'billing_months' => 1,
+            'total_omzet' => 5000000,
+            'commission_percentage' => 10.00,
+            'amount' => 500000,
+            'status' => InvoiceStatus::Sent->value,
+            'period_month' => $previousMonth,
+            'due_at' => now()->startOfMonth()->subDays(1),
+        ]);
+
+        $this->actingAs($owner);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        // PendingPaymentsWidget (Antrian Kasir) must be hidden
+        $this->assertFalse(PendingPaymentsWidget::canView());
+
+        // RestaurantReadinessWidget dynamically spans full width when PendingPaymentsWidget is hidden
+        $readinessWidget = new RestaurantReadinessWidget();
+        $this->assertSame('full', $readinessWidget->getColumnSpan());
+
+        // WelcomeBannerWidget reflects KDS inactive and offers pay billing action
+        Livewire::test(WelcomeBannerWidget::class)
+            ->assertOk()
+            ->assertSee('Layanan Kasir & KDS Non-Aktif (Ada Tunggakan)', false)
+            ->assertSee('Bayar Tagihan Billing')
+            ->assertDontSee('+ Buat Pesanan Baru');
+
+        // AnalyticsKpiWidget reflects non-aktif kasir with link to billing
+        Livewire::test(AnalyticsKpiWidget::class)
+            ->assertOk()
+            ->assertSee('LAYANAN KASIR')
+            ->assertSee('Ada Tunggakan')
+            ->assertSee('Bayar Tagihan →');
     }
 }
