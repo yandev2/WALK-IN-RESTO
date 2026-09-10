@@ -192,7 +192,8 @@ class GuestCheckoutService
         $number = $this->nextOrderNumber($visit->restaurant_id, $outlet->id);
         $hasFonnte = $outlet->restaurant?->hasFonnteKey() ?? false;
         $canSendReceipt = $hasFonnte && $sendReceipt && filled($visit->customer_wa);
-        $isSimpleCashier = $source === 'cashier' && (bool) $outlet->simple_mode;
+        $isSimple = (bool) $outlet->simple_mode;
+        $isSimpleCashier = $source === 'cashier' && $isSimple;
 
         $order = Order::query()->create([
             'restaurant_id' => $visit->restaurant_id,
@@ -231,9 +232,9 @@ class GuestCheckoutService
                 'unit_price' => $line['unit'],
                 'qty' => $line['qty'],
                 'notes' => $line['notes'],
-                'kds_status' => $isSimpleCashier ? 'served' : 'queued',
+                'kds_status' => $isSimple ? 'served' : 'queued',
                 'queued_at' => now(),
-                'served_at' => $isSimpleCashier ? now() : null,
+                'served_at' => $isSimple ? now() : null,
             ]);
 
             foreach ($line['modifiers'] as $modifier) {

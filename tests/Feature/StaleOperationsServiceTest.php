@@ -123,12 +123,8 @@ class StaleOperationsServiceTest extends TestCase
         $order = $this->checkoutQris($world, 'ttl-simple-1');
         app(OrderPaymentService::class)->approve($order, User::factory()->create());
 
-        foreach ($order->items as $item) {
-            $item->update(['kds_status' => 'served', 'served_at' => now()]);
-        }
-        app(\App\Services\KdsItemService::class)->syncOrder($order->fresh());
-
         $this->assertSame(Order::STATUS_COMPLETED, $order->fresh()->status);
+        $this->assertTrue($order->fresh()->items->every(fn ($i) => $i->kds_status === 'served'));
         $visit = $order->visit->fresh();
         $this->assertSame('open', $visit->status);
 

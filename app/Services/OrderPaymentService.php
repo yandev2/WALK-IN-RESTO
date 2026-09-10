@@ -63,6 +63,16 @@ class OrderPaymentService
 
             $oldStatus = $locked->status;
 
+            $locked->loadMissing('outlet');
+            if ((bool) $locked->outlet?->simple_mode) {
+                $locked->items()
+                    ->whereIn('kds_status', ['queued', 'preparing', 'ready'])
+                    ->update([
+                        'kds_status' => 'served',
+                        'served_at' => now(),
+                    ]);
+            }
+
             $locked->forceFill([
                 'status' => 'paid',
                 'paid_at' => now(),
@@ -78,7 +88,7 @@ class OrderPaymentService
                 'payment_id' => $payment?->id,
                 'user_id' => $cashier->id,
                 'old' => ['status' => $oldStatus],
-                'new' => ['status' => 'paid'],
+                'new' => ['status' => $locked->status],
                 'reason' => $gpsOverrideReason,
             ]);
 

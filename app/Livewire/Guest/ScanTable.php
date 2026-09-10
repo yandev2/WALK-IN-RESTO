@@ -137,10 +137,15 @@ class ScanTable extends Component
         }
 
         if ($table->needs_cleaning) {
-            $this->mode = 'blocked';
-            $this->message = 'Meja sedang dibersihkan. Tunggu kasir menandai siap.';
+            $table->loadMissing('outlet');
+            if ($table->outlet?->simple_mode) {
+                $table->update(['needs_cleaning' => false]);
+            } else {
+                $this->mode = 'blocked';
+                $this->message = 'Meja sedang dibersihkan. Tunggu kasir menandai siap.';
 
-            return;
+                return;
+            }
         }
 
         if (filled($table->open_visit_id)) {
