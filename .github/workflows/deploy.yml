@@ -85,7 +85,7 @@ jobs:
 
       - name: Package artifact
         run: |
-          rm -rf .git tests node_modules vendor storage bootstrap/cache
+          rm -rf .git .github .agents graphify-out tests node_modules vendor storage bootstrap/cache
           tar -czf ../app.tar.gz ./
           mv ../app.tar.gz .
 
@@ -136,8 +136,8 @@ jobs:
             cd $REL
             
             # --- LINKING & PREPARATION (FIX DOUBLE STORAGE) ---
-            # 1. Hapus folder storage fisik bawaan rilis agar tidak menjadi storage/storage
-            rm -rf storage
+            # 1. Hapus folder storage fisik bawaan rilis dan folder graphify / agents
+            rm -rf storage graphify-out .agents
             
             # 2. Link ke shared storage yang asli
             ln -sfn ${{ secrets.APP_DIR }}/shared/storage storage
