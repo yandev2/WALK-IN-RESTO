@@ -69,7 +69,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-001',
+            'number' => 101,
             'status' => Order::STATUS_COMPLETED,
             'payment_method' => 'cash',
             'subtotal' => 100000,
@@ -95,7 +95,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-002',
+            'number' => 102,
             'status' => Order::STATUS_PAID,
             'payment_method' => 'qris',
             'subtotal' => 50000,
@@ -178,7 +178,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-VOID',
+            'number' => 201,
             'status' => Order::STATUS_VOIDED,
             'payment_method' => 'cash',
             'subtotal' => 80000,
@@ -242,7 +242,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-TRIAL',
+            'number' => 301,
             'status' => Order::STATUS_COMPLETED,
             'payment_method' => 'cash',
             'subtotal' => 200000,
@@ -300,7 +300,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-PAGE-1',
+            'number' => 401,
             'status' => Order::STATUS_COMPLETED,
             'payment_method' => 'qris',
             'subtotal' => 100000,
@@ -324,7 +324,7 @@ class CommissionReconciliationTest extends TestCase
             ->assertSee('Komisi Platform')
             ->assertSee('Hak Bersih Restoran')
             ->assertSee('Realisasi Kas Masuk')
-            ->assertSee('#ORD-PAGE-1');
+            ->assertSee('#401');
     }
 
     public function test_owner_can_export_commission_reconciliation_excel_and_csv(): void
@@ -349,7 +349,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-EXP-1',
+            'number' => 501,
             'status' => Order::STATUS_COMPLETED,
             'payment_method' => 'cash',
             'subtotal' => 75000,
@@ -365,7 +365,7 @@ class CommissionReconciliationTest extends TestCase
 
         $payload = $export->buildPayload($restaurant, $from, $to);
         $this->assertCount(1, $payload['rows']);
-        $this->assertSame('ORD-EXP-1', $payload['rows'][0]['number']);
+        $this->assertSame(501, $payload['rows'][0]['number']);
         $this->assertSame(75000, $payload['rows'][0]['net_sales']);
         $this->assertSame(7500, $payload['rows'][0]['commission_amount']);
         $this->assertSame(67500, $payload['rows'][0]['net_resto']);
@@ -440,7 +440,7 @@ class CommissionReconciliationTest extends TestCase
             'outlet_id' => $outlet->id,
             'visit_id' => $visit->id,
             'source' => 'cashier',
-            'number' => 'ORD-PB1-SVC',
+            'number' => 601,
             'status' => Order::STATUS_COMPLETED,
             'payment_method' => 'qris',
             'subtotal' => 100000,
@@ -503,8 +503,11 @@ class CommissionReconciliationTest extends TestCase
 
     private function createTestOrder(array $attributes): Order
     {
+        static $orderNumber = 1000;
+
         return Order::query()->create(array_merge([
             'source' => 'cashier',
+            'number' => ++$orderNumber,
             'idempotency_key' => (string) Str::uuid(),
             'currency' => 'IDR',
             'pb1_pct_snapshot' => 0,
