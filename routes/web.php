@@ -49,6 +49,10 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/receipts/{order:public_id}/print/pdf', [OrderReceiptPrintController::class, 'pdf'])
         ->middleware('throttle:30,1')
         ->name('receipts.print.pdf');
+
+    Route::get('/shifts/{shift:public_id}/print', \App\Http\Controllers\CashierShiftPrintController::class)
+        ->middleware('throttle:30,1')
+        ->name('shifts.print');
 });
 
 Route::middleware('identify.guest')->prefix('order')->group(function (): void {

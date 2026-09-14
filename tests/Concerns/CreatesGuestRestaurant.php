@@ -140,15 +140,27 @@ trait CreatesGuestRestaurant
      * @param  array{restaurant: Restaurant, item: MenuItem, token: string}  $world
      * @param  list<int>  $menuItemIds
      */
-    protected function paidGuestOrder(array $world, string $idempotencyKey, array $menuItemIds = [], bool $sendReceipt = false): Order
-    {
+    protected function paidGuestOrder(
+        array $world,
+        string $idempotencyKey,
+        array $menuItemIds = [],
+        bool $sendReceipt = false,
+        ?string $customerWa = null,
+        ?string $customerName = null,
+    ): Order {
         $device = $this->newDeviceToken();
         $headers = $this->deviceHeaders($device);
 
+        $claimPayload = [
+            'customer_wa' => $customerWa ?: '081234567890',
+        ];
+
+        if (filled($customerName)) {
+            $claimPayload['customer_name'] = $customerName;
+        }
+
         $this->withHeaders($headers)
-            ->postJson('/api/v1/guest/tables/'.$world['token'].'/claim', [
-                'customer_wa' => '081234567890',
-            ])
+            ->postJson('/api/v1/guest/tables/'.$world['token'].'/claim', $claimPayload)
             ->assertCreated();
 
         foreach ($menuItemIds ?: [$world['item']->id] as $menuItemId) {

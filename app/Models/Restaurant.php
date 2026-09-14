@@ -322,4 +322,54 @@ class Restaurant extends Model implements HasAvatar, HasName
             ->where('amount', '>', 0)
             ->exists();
     }
+
+    /**
+     * @return array{
+     *     enabled: bool,
+     *     spend_per_point: int,
+     *     points_earned: int,
+     *     silver_min_spent: int,
+     *     gold_min_spent: int,
+     *     vip_min_spent: int,
+     *     point_redemption_rate: int,
+     *     min_redeem_points: int,
+     *     max_redeem_percentage: int
+     * }
+     */
+    public function loyaltySettings(): array
+    {
+        $defaults = [
+            'enabled' => true,
+            'spend_per_point' => 10000,
+            'points_earned' => 1,
+            'silver_min_spent' => 500000,
+            'gold_min_spent' => 1500000,
+            'vip_min_spent' => 5000000,
+            'point_redemption_rate' => 1000,
+            'min_redeem_points' => 10,
+            'max_redeem_percentage' => 50,
+        ];
+
+        $stored = is_array($this->settings['loyalty'] ?? null) ? $this->settings['loyalty'] : [];
+
+        return [
+            'enabled' => (bool) ($stored['enabled'] ?? $defaults['enabled']),
+            'spend_per_point' => max(1, (int) ($stored['spend_per_point'] ?? $defaults['spend_per_point'])),
+            'points_earned' => max(1, (int) ($stored['points_earned'] ?? $defaults['points_earned'])),
+            'silver_min_spent' => max(0, (int) ($stored['silver_min_spent'] ?? $defaults['silver_min_spent'])),
+            'gold_min_spent' => max(0, (int) ($stored['gold_min_spent'] ?? $defaults['gold_min_spent'])),
+            'vip_min_spent' => max(0, (int) ($stored['vip_min_spent'] ?? $defaults['vip_min_spent'])),
+            'point_redemption_rate' => max(1, (int) ($stored['point_redemption_rate'] ?? $defaults['point_redemption_rate'])),
+            'min_redeem_points' => max(1, (int) ($stored['min_redeem_points'] ?? $defaults['min_redeem_points'])),
+            'max_redeem_percentage' => min(100, max(1, (int) ($stored['max_redeem_percentage'] ?? $defaults['max_redeem_percentage']))),
+        ];
+    }
+
+    public function updateLoyaltySettings(array $settings): void
+    {
+        $current = $this->settings ?? [];
+        $current['loyalty'] = array_merge($this->loyaltySettings(), $settings);
+
+        $this->forceFill(['settings' => $current])->save();
+    }
 }

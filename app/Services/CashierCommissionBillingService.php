@@ -48,7 +48,7 @@ class CashierCommissionBillingService
 
         $netOmzet = 0;
         foreach ($orders as $order) {
-            $netOmzet += $this->dailyOmzetService->netOmzet($order);
+            $netOmzet += $this->dailyOmzetService->netMenuOmzet($order);
         }
 
         return $netOmzet;

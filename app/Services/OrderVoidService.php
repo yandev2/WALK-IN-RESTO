@@ -133,6 +133,20 @@ class OrderVoidService
         } catch (\Throwable $e) {
             report($e);
         }
+
+        try {
+            app(CashierShiftService::class)->recordVoid($order, $user, $reason);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        if ($order->hasPointsRedeemed()) {
+            try {
+                app(CustomerCrmService::class)->refundPointsForOrder($order);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
     }
 
     private function assertVoidable(Order $order, OrderItem $item): void

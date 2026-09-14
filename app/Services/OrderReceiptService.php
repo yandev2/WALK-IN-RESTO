@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\SendWhatsappReceiptJob;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderReceipt;
 use App\Models\User;
@@ -50,11 +51,39 @@ class OrderReceiptService
 
         $payment = $order->payments()->with('paidByUser')->latest('id')->first();
 
+        $customer = null;
+        $earnedPoints = 0;
+        $showLoyalty = false;
+
+        $rawPhone = $order->receipt_wa_snapshot ?: $order->visit?->customer_wa;
+        if (filled($rawPhone)) {
+            $phone = WhatsAppNumber::normalize($rawPhone);
+            if (is_string($phone)) {
+                $customer = Customer::withoutRestaurantScope()
+                    ->where('restaurant_id', $order->restaurant_id)
+                    ->where('phone', $phone)
+                    ->first();
+            }
+        }
+
+        $loyaltySettings = $order->restaurant?->loyaltySettings() ?? [];
+        if ($customer instanceof Customer && ($loyaltySettings['enabled'] ?? false)) {
+            $showLoyalty = true;
+            $earnedMutation = $customer->loyaltyPoints()
+                ->where('order_id', $order->id)
+                ->where('type', 'earn')
+                ->first();
+            $earnedPoints = $earnedMutation ? (int) $earnedMutation->points : 0;
+        }
+
         $path = 'receipts/'.$order->public_id.'.pdf';
         $pdf = Pdf::loadView('receipts.order', [
             'order' => $order,
             'payment' => $payment,
             'logoDataUri' => ReceiptLogo::dataUri($order->restaurant),
+            'customer' => $customer,
+            'earnedPoints' => $earnedPoints,
+            'showLoyalty' => $showLoyalty,
         ])->setPaper([0, 0, 226.77, 1200], 'portrait');
 
         Storage::disk('local')->put($path, $pdf->output());

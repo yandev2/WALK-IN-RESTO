@@ -651,7 +651,7 @@
     font-weight: 700;
 }
 
-.cashier-pos-modal__panel h3 span {
+.cashier-pos-modal__panel h3#cashier-pos-modal-title span {
     display: block;
     margin-top: 0.2rem;
     font-size: 0.82rem;

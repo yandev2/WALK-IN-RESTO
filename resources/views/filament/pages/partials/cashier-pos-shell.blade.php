@@ -27,6 +27,10 @@
         'tableId' => $selectedTableId,
         'tableLabel' => $selectedTableLabel,
         'cashReceived' => $cashReceived ?? null,
+        'activeShift' => $activeShift ?? null,
+        'canViewDrawerCash' => (bool) ($canViewDrawerCash ?? false),
+        'pointsToRedeem' => (int) ($pointsToRedeem ?? 0),
+        'loyaltySettings' => $loyaltySettings ?? [],
     ];
 @endphp
 
@@ -48,6 +52,11 @@
             tableId: '',
             tableLabel: 'Pilih meja',
             cashRaw: '',
+            activeShift: null,
+            canViewDrawerCash: false,
+            pointsToRedeem: 0,
+            loyaltySettings: {},
+            customerInfo: null,
             editor: null,
             indexCatalog() {
                 const map = {};
@@ -72,6 +81,11 @@
                 this.tableId = next.tableId || '';
                 this.tableLabel = next.tableLabel || 'Pilih meja';
                 this.cashRaw = next.cashReceived == null ? '' : String(next.cashReceived);
+                this.activeShift = next.activeShift || null;
+                this.canViewDrawerCash = !!next.canViewDrawerCash;
+                this.pointsToRedeem = next.pointsToRedeem || 0;
+                this.loyaltySettings = next.loyaltySettings || {};
+                this.customerInfo = null;
                 this.editor = null;
             },
             reset() {
@@ -82,6 +96,8 @@
                 this.sendReceipt = false;
                 this.paymentMethod = 'cash';
                 this.cashRaw = '';
+                this.pointsToRedeem = 0;
+                this.customerInfo = null;
                 this.plainQtyByItem = {};
                 this.cartLines = [];
                 this.preview = { subtotal: 0 };
@@ -200,8 +216,342 @@
                 Alpine.store('cashierPos').apply(await this.$wire.changePosItemQty(id, delta));
             },
         }">
-            <div class="cashier-pos-head">
-                <h2 class="cashier-pos-title">Semua menu</h2>
+            <div class="cashier-pos-head flex flex-wrap items-center justify-between gap-2.5 pb-2 mb-3 border-b border-gray-100 dark:border-gray-800"
+                @open-cashier-shift-modal.window="openModal = true"
+                @open-cashier-close-modal.window="closeModal = true"
+                x-data="{
+                    openModal: false,
+                    movementModal: false,
+                    closeModal: false,
+                    summaryModal: false,
+                    closedSummary: null,
+                    startingCashRaw: '100000',
+                    startingCashNotes: '',
+                    moveType: 'cash_out',
+                    moveAmountRaw: '',
+                    moveCategory: 'operasional',
+                    moveNotes: '',
+                    actualCashRaw: '',
+                    diffReason: '',
+                    closeNotes: '',
+                    isSubmitting: false,
+                    setStarting(val) {
+                        this.startingCashRaw = String(val);
+                    },
+                    setMovementAmount(val) {
+                        this.moveAmountRaw = String(val);
+                    },
+                    async submitOpen() {
+                        if (!this.startingCashRaw) return;
+                        this.isSubmitting = true;
+                        try {
+                            const res = await this.$wire.openShift(this.startingCashRaw, this.startingCashNotes);
+                            if (res && res.activeShift) {
+                                Alpine.store('cashierPos').activeShift = res.activeShift;
+                                this.openModal = false;
+                                this.startingCashNotes = '';
+                            }
+                        } finally {
+                            this.isSubmitting = false;
+                        }
+                    },
+                    async submitMovement() {
+                        if (!this.moveAmountRaw) return;
+                        this.isSubmitting = true;
+                        try {
+                            const res = await this.$wire.recordCashMovement(this.moveType, this.moveAmountRaw, this.moveCategory, this.moveNotes);
+                            if (res && res.activeShift) {
+                                Alpine.store('cashierPos').activeShift = res.activeShift;
+                                this.movementModal = false;
+                                this.moveAmountRaw = '';
+                                this.moveNotes = '';
+                            }
+                        } finally {
+                            this.isSubmitting = false;
+                        }
+                    },
+                    async submitClose() {
+                        if (this.actualCashRaw === '') return;
+                        this.isSubmitting = true;
+                        try {
+                            const res = await this.$wire.closeShift(this.actualCashRaw, this.diffReason, this.closeNotes);
+                            if (res && res.closedShift) {
+                                this.closedSummary = res.closedShift;
+                                Alpine.store('cashierPos').activeShift = null;
+                                this.closeModal = false;
+                                this.summaryModal = true;
+                                this.actualCashRaw = '';
+                                this.diffReason = '';
+                                this.closeNotes = '';
+                            }
+                        } finally {
+                            this.isSubmitting = false;
+                        }
+                    }
+                }">
+                <div class="flex items-center gap-2 shrink-0">
+                    <h2 class="cashier-pos-title">Semua menu</h2>
+                </div>
+
+                {{-- Shift Control Bar --}}
+                <div class="flex items-center gap-2 shrink-0">
+                    {{-- When Shift is Active --}}
+                    <template x-if="$store.cashierPos.activeShift">
+                        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                            <div class="inline-flex items-center gap-1.5 rounded-md bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 px-2.5 py-1 text-xs text-emerald-950 dark:text-emerald-100 shadow-xs">
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-sm bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-sm h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <span class="font-bold text-emerald-800 dark:text-emerald-200 whitespace-nowrap" x-text="$store.cashierPos.activeShift.user_name"></span>
+                                <span class="text-emerald-300 dark:text-emerald-700">|</span>
+                                <span class="text-emerald-700 dark:text-emerald-300 whitespace-nowrap">Modal: <strong x-text="$store.cashierPos.cashFormat($store.cashierPos.activeShift.starting_cash)"></strong></span>
+                                <template x-if="$store.cashierPos.canViewDrawerCash && $store.cashierPos.activeShift.expected_cash !== null">
+                                    <span class="inline-flex items-center gap-1 whitespace-nowrap">
+                                        <span class="text-emerald-300 dark:text-emerald-700">|</span>
+                                        <span class="text-emerald-800 dark:text-emerald-200">Laci: <strong class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="$store.cashierPos.cashFormat($store.cashierPos.activeShift.expected_cash)"></strong></span>
+                                    </span>
+                                </template>
+                            </div>
+
+                            <button type="button" @click="movementModal = true"
+                                class="inline-flex items-center gap-1 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200 shadow-xs transition whitespace-nowrap cursor-pointer"
+                                title="Catat Kas Masuk / Kas Keluar">
+                                <svg class="w-3.5 h-3.5 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                                <span>+/- Kas</span>
+                            </button>
+                        </div>
+                    </template>
+
+                    {{-- When Shift is NOT Active --}}
+                    <template x-if="!$store.cashierPos.activeShift">
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" @click="openModal = true"
+                                class="inline-flex items-center gap-2 rounded-md bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 border border-amber-300 dark:border-amber-700/80 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300 whitespace-nowrap shadow-xs transition cursor-pointer"
+                                title="Klik untuk membuka shift kasir">
+                                <span class="h-2 w-2 rounded-sm bg-amber-500 shrink-0"></span>
+                                <span>Shift Belum Dibuka</span>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Modals --}}
+                {{-- 1. Modal Buka Shift --}}
+                <div class="cashier-pos-modal" x-show="openModal" x-cloak role="dialog" aria-modal="true">
+                    <div class="cashier-pos-modal__backdrop" @click="openModal = false"></div>
+                    <div class="cashier-pos-modal__panel" @click.stop>
+                        <div class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-2">
+                            <span class="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </span>
+                            <span class="text-base font-bold text-gray-900 dark:text-white leading-tight">Buka Shift Kasir Baru</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                            Masukkan modal awal (float cash) uang kembalian yang ada di laci kas saat ini.
+                        </p>
+
+                        <label class="cashier-pos-label font-semibold" for="shift-starting-cash">Modal Awal Kasir (Rp)</label>
+                        <input type="text" id="shift-starting-cash" class="cashier-pos-search w-full mb-2 font-bold text-base"
+                            x-model="startingCashRaw" placeholder="Contoh: 100000" autocomplete="off">
+
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setStarting(50000)">50 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setStarting(100000)">100 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setStarting(200000)">200 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setStarting(500000)">500 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setStarting(0)">Rp 0</button>
+                        </div>
+
+                        <label class="cashier-pos-label font-semibold" for="shift-notes">Catatan Shift (Opsional)</label>
+                        <input type="text" id="shift-notes" class="cashier-pos-search w-full mb-4 text-xs"
+                            x-model="startingCashNotes" placeholder="Misal: Uang receh 2 ribuan 20 lembar">
+
+                        <div class="cashier-pos-editor-actions flex justify-end gap-2">
+                            <button type="button" class="cashier-pos-muted px-4 py-2 text-xs rounded-xl" @click="openModal = false">Batal</button>
+                            <button type="button" class="cashier-pos-add cashier-pos-modal__save px-5 py-2 text-xs font-bold rounded-xl"
+                                :disabled="isSubmitting" @click="submitOpen()">
+                                <span x-show="!isSubmitting">Mulai Shift Kasir</span>
+                                <span x-show="isSubmitting" x-cloak>Menyimpan...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- 2. Modal Kas Masuk / Keluar --}}
+                <div class="cashier-pos-modal" x-show="movementModal" x-cloak role="dialog" aria-modal="true">
+                    <div class="cashier-pos-modal__backdrop" @click="movementModal = false"></div>
+                    <div class="cashier-pos-modal__panel" @click.stop>
+                        <div class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-2">
+                            <span class="p-1.5 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                            </span>
+                            <span class="text-base font-bold text-gray-900 dark:text-white leading-tight">Catat Kas Masuk / Keluar Laci</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                            Catat arus kas kecil (petty cash) seperti belanja darurat, beli es batu, atau tambah modal.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <button type="button" class="py-2 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5"
+                                :class="moveType === 'cash_out' ? 'bg-rose-50 dark:bg-rose-950/50 border-rose-400 text-rose-700 dark:text-rose-300 shadow-sm' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'"
+                                @click="moveType = 'cash_out'">
+                                <span class="text-sm font-bold text-rose-500">-</span> Kas Keluar (Pengeluaran)
+                            </button>
+                            <button type="button" class="py-2 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5"
+                                :class="moveType === 'cash_in' ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-400 text-emerald-700 dark:text-emerald-300 shadow-sm' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'"
+                                @click="moveType = 'cash_in'">
+                                <span class="text-sm font-bold text-emerald-500">+</span> Kas Masuk (Pemasukan)
+                            </button>
+                        </div>
+
+                        <label class="cashier-pos-label font-semibold">Nominal (Rp)</label>
+                        <input type="text" class="cashier-pos-search w-full mb-2 font-bold text-base"
+                            x-model="moveAmountRaw" placeholder="Contoh: 25000" autocomplete="off">
+
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setMovementAmount(10000)">10 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setMovementAmount(20000)">20 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setMovementAmount(50000)">50 Rb</button>
+                            <button type="button" class="cashier-pos-chip text-xs py-1" @click="setMovementAmount(100000)">100 Rb</button>
+                        </div>
+
+                        <label class="cashier-pos-label font-semibold">Kategori</label>
+                        <select class="cashier-pos-search w-full mb-3 text-xs" x-model="moveCategory">
+                            <template x-if="moveType === 'cash_out'">
+                                <optgroup label="Pengeluaran">
+                                    <option value="operasional">Operasional (Belanja darurat/bahan)</option>
+                                    <option value="es_batu_galon">Es Batu / Air Galon</option>
+                                    <option value="kebersihan">Kebersihan & Plastik</option>
+                                    <option value="kasbon">Kasbon / Konsumsi Karyawan</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </optgroup>
+                            </template>
+                            <template x-if="moveType === 'cash_in'">
+                                <optgroup label="Pemasukan">
+                                    <option value="tambah_modal">Tambah Modal dari Owner/Brankas</option>
+                                    <option value="tukar_receh">Tukar Uang Pecahan</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </optgroup>
+                            </template>
+                        </select>
+
+                        <label class="cashier-pos-label font-semibold">Keterangan / Catatan</label>
+                        <input type="text" class="cashier-pos-search w-full mb-4 text-xs"
+                            x-model="moveNotes" placeholder="Misal: Beli 2 bungkus es batu kristal">
+
+                        <div class="cashier-pos-editor-actions flex justify-end gap-2">
+                            <button type="button" class="cashier-pos-muted px-4 py-2 text-xs rounded-xl" @click="movementModal = false">Batal</button>
+                            <button type="button" class="cashier-pos-add cashier-pos-modal__save px-5 py-2 text-xs font-bold rounded-xl"
+                                :disabled="isSubmitting" @click="submitMovement()">
+                                <span x-show="!isSubmitting">Simpan Mutasi</span>
+                                <span x-show="isSubmitting" x-cloak>Menyimpan...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- 3. Modal Tutup Shift (Blind Cash Count) --}}
+                <div class="cashier-pos-modal" x-show="closeModal" x-cloak role="dialog" aria-modal="true">
+                    <div class="cashier-pos-modal__backdrop" @click="closeModal = false"></div>
+                    <div class="cashier-pos-modal__panel" @click.stop>
+                        <div class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                            <span class="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                            </span>
+                            <span class="text-base font-bold text-gray-900 dark:text-white leading-tight">Tutup Shift Kasir & Rekonsiliasi</span>
+                        </div>
+
+                        <div class="rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 p-3 mb-3 text-xs text-amber-800 dark:text-amber-200 leading-relaxed">
+                            <strong>🔒 Blind Cash Count:</strong> Hitung seluruh uang fisik tunai yang ada di laci kas saat ini. Sistem akan mencocokkan dengan catatan transaksi secara otomatis.
+                        </div>
+
+                        <label class="cashier-pos-label font-semibold" for="close-shift-actual-cash">Total Uang Fisik di Laci Kas (Rp)</label>
+                        <input type="text" id="close-shift-actual-cash" class="cashier-pos-search w-full font-bold text-lg text-emerald-600 dark:text-emerald-400"
+                            x-model="actualCashRaw" placeholder="Contoh: 750000" autocomplete="off">
+                        <template x-if="actualCashRaw">
+                            <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 mb-2">
+                                Terbaca: <span x-text="$store.cashierPos.cashFormat(actualCashRaw)"></span>
+                            </div>
+                        </template>
+                        <template x-if="!actualCashRaw">
+                            <div class="mb-2"></div>
+                        </template>
+
+                        <label class="cashier-pos-label font-semibold" for="close-shift-diff-reason">Catatan / Alasan Selisih (Opsional)</label>
+                        <input type="text" id="close-shift-diff-reason" class="cashier-pos-search w-full mb-4 text-xs"
+                            x-model="diffReason" placeholder="Isi jika ada selisih kas fisik vs sistem">
+
+                        <div class="cashier-pos-editor-actions flex justify-end gap-2">
+                            <button type="button" class="cashier-pos-muted px-4 py-2 text-xs rounded-xl" @click="closeModal = false">Batal</button>
+                            <button type="button" class="cashier-pos-add bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 text-xs font-bold rounded-xl shadow transition"
+                                :disabled="isSubmitting || actualCashRaw === ''" @click="submitClose()">
+                                <span x-show="!isSubmitting">Hitung & Tutup Shift</span>
+                                <span x-show="isSubmitting" x-cloak>Memproses...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- 4. Modal Hasil Tutup Shift & Cetak Struk --}}
+                <div class="cashier-pos-modal" x-show="summaryModal" x-cloak role="dialog" aria-modal="true">
+                    <div class="cashier-pos-modal__backdrop" @click="summaryModal = false"></div>
+                    <template x-if="closedSummary">
+                        <div class="cashier-pos-modal__panel" @click.stop>
+                            <div class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                <span class="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </span>
+                                <span class="text-base font-bold text-gray-900 dark:text-white leading-tight">Shift #<span x-text="closedSummary.id"></span> Berhasil Ditutup</span>
+                            </div>
+
+                            <div class="divide-y divide-gray-100 dark:divide-gray-800 text-xs my-3 bg-gray-50 dark:bg-gray-900/60 rounded-xl p-3 border border-gray-200 dark:border-gray-800">
+                                <div class="flex justify-between py-1.5">
+                                    <span class="text-gray-500">Modal Awal</span>
+                                    <span class="font-bold" x-text="$store.cashierPos.cashFormat(closedSummary.starting_cash)"></span>
+                                </div>
+                                <div class="flex justify-between py-1.5">
+                                    <span class="text-gray-500">(+) Penjualan Tunai</span>
+                                    <span class="font-bold" x-text="$store.cashierPos.cashFormat(closedSummary.cash_sales)"></span>
+                                </div>
+                                <div class="flex justify-between py-1.5">
+                                    <span class="text-gray-500">(+) Kas Masuk</span>
+                                    <span class="font-bold" x-text="$store.cashierPos.cashFormat(closedSummary.cash_in)"></span>
+                                </div>
+                                <div class="flex justify-between py-1.5">
+                                    <span class="text-gray-500">(-) Kas Keluar</span>
+                                    <span class="font-bold" x-text="$store.cashierPos.cashFormat(closedSummary.cash_out)"></span>
+                                </div>
+                                <div class="flex justify-between py-1.5 border-t border-gray-200 dark:border-gray-700">
+                                    <span class="font-semibold text-gray-700 dark:text-gray-300">Total Kas Sistem</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="$store.cashierPos.cashFormat(closedSummary.expected_cash)"></span>
+                                </div>
+                                <div class="flex justify-between py-1.5">
+                                    <span class="font-semibold text-gray-700 dark:text-gray-300">Uang Fisik Kasir</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="$store.cashierPos.cashFormat(closedSummary.actual_cash)"></span>
+                                </div>
+                                <div class="flex justify-between py-2 border-t border-gray-200 dark:border-gray-700">
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">Selisih Kas</span>
+                                    <span class="font-black text-sm"
+                                        :class="closedSummary.difference === 0 ? 'text-emerald-600 dark:text-emerald-400' : (closedSummary.difference < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400')"
+                                        x-text="closedSummary.difference === 0 ? 'PAS (Rp 0)' : (closedSummary.difference < 0 ? 'MINUS ' + $store.cashierPos.cashFormat(Math.abs(closedSummary.difference)) : 'LEBIH +' + $store.cashierPos.cashFormat(closedSummary.difference))">
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="cashier-pos-editor-actions flex justify-between gap-2 mt-4">
+                                <a :href="closedSummary.print_url" target="_blank"
+                                    class="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 hover:bg-black text-white px-4 py-2 text-xs font-bold shadow transition">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24-1.04-.37-2.126-.37-3.239A8.962 8.962 0 0112 1.62c4.97 0 9 4.03 9 9 0 1.113-.13 2.199-.37 3.239M6.72 13.829A8.992 8.992 0 0012 17.25c2.052 0 3.935-.688 5.438-1.844M6.72 13.829l-3.37 3.37m13.79-3.37l3.37 3.37"/></svg>
+                                    <span>Cetak Struk Shift (PDF)</span>
+                                </a>
+                                <button type="button" class="cashier-pos-muted px-4 py-2 text-xs rounded-xl" @click="summaryModal = false">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
 
             <div class="cashier-pos-search-row">
@@ -305,11 +655,29 @@
                     this.tableOpen = false;
                     this.$wire.setPosField('table_id', id);
                 },
-                onWa(value) {
+                async onWa(value) {
                     const pos = Alpine.store('cashierPos');
                     pos.customerWa = value;
                     if (!value) {
                         pos.sendReceipt = false;
+                        pos.customerInfo = null;
+                        if (pos.pointsToRedeem > 0) {
+                            pos.pointsToRedeem = 0;
+                            pos.apply(await this.$wire.setPosPoints(0));
+                        }
+                    } else if (value.replace(/\D/g, '').length >= 9) {
+                        const info = await this.$wire.checkCustomerPoints(value);
+                        if (info && info.found) {
+                            pos.customerInfo = info;
+                            if (!pos.customerName && info.name) {
+                                pos.customerName = info.name;
+                                this.$wire.setPosField('customer_name', info.name);
+                            }
+                        } else {
+                            pos.customerInfo = null;
+                        }
+                    } else {
+                        pos.customerInfo = null;
                     }
                     this.$wire.setPosField('customer_wa', value);
                 },
@@ -352,6 +720,60 @@
                         x-model="$store.cashierPos.customerWa"
                         maxlength="20" placeholder="08xxxxxxxxxx" x-on:input="onWa($event.target.value)">
                 </div>
+
+                {{-- Member Loyalty Point Redemption Card --}}
+                <div x-show="$store.cashierPos.customerInfo && $store.cashierPos.customerInfo.loyalty_enabled && $store.cashierPos.customerInfo.points >= $store.cashierPos.customerInfo.min_points"
+                    x-cloak
+                    class="mt-2.5 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-500/10 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z"/></svg>
+                            <span x-text="'Member: ' + ($store.cashierPos.customerInfo ? $store.cashierPos.customerInfo.tier : '')"></span>
+                        </span>
+                        <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-300"
+                            x-text="'Saldo: ' + ($store.cashierPos.customerInfo ? $store.cashierPos.customerInfo.points : 0) + ' Poin'"></span>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                        1 Poin = <span x-text="$store.cashierPos.cashFormat($store.cashierPos.customerInfo ? $store.cashierPos.customerInfo.rate : 1000)"></span>. Tukar poin:
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="number" min="0"
+                            :max="$store.cashierPos.customerInfo ? $store.cashierPos.customerInfo.points : 0"
+                            class="cashier-pos-input text-xs py-1 px-2.5 w-24 tabular-nums text-center"
+                            placeholder="0"
+                            x-model.number="$store.cashierPos.pointsToRedeem"
+                            @change="async () => {
+                                const pts = Math.max(0, Number($store.cashierPos.pointsToRedeem || 0));
+                                $store.cashierPos.pointsToRedeem = pts;
+                                const state = await $wire.setPosPoints(pts);
+                                $store.cashierPos.apply(state);
+                            }">
+                        <button type="button"
+                            class="text-[11px] font-bold text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 underline underline-offset-2"
+                            @click="async () => {
+                                if (!$store.cashierPos.customerInfo) return;
+                                const maxPts = $store.cashierPos.customerInfo.points;
+                                $store.cashierPos.pointsToRedeem = maxPts;
+                                const state = await $wire.setPosPoints(maxPts);
+                                $store.cashierPos.apply(state);
+                            }">
+                            Maksimal
+                        </button>
+                        <button type="button"
+                            x-show="$store.cashierPos.pointsToRedeem > 0"
+                            class="text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                            @click="async () => {
+                                $store.cashierPos.pointsToRedeem = 0;
+                                const state = await $wire.setPosPoints(0);
+                                $store.cashierPos.apply(state);
+                            }">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+
                 <label class="cashier-pos-check" style="margin-top: 0.7rem" x-show="$store.cashierPos.hasFonnte"
                     x-cloak>
                     <input type="checkbox" x-model="$store.cashierPos.sendReceipt"
@@ -447,6 +869,16 @@
                                 <dt class="text-gray-500 dark:text-gray-400">Subtotal</dt>
                                 <dd class="font-medium tabular-nums text-gray-950 dark:text-white"
                                     x-text="$store.cashierPos.preview.subtotal_label"></dd>
+                            </div>
+                            <div class="flex items-baseline justify-between gap-3 text-emerald-600 dark:text-emerald-400 font-medium"
+                                x-show="$store.cashierPos.preview.discount_amount > 0">
+                                <dt class="flex items-center gap-1">
+                                    <span>Diskon Poin</span>
+                                    <span class="text-[10px] bg-emerald-500/10 px-1.5 py-0.5 rounded-full"
+                                        x-text="'(' + ($store.cashierPos.preview.points_redeemed || 0) + ' Poin)'"></span>
+                                </dt>
+                                <dd class="tabular-nums font-bold"
+                                    x-text="'-' + $store.cashierPos.preview.discount_label"></dd>
                             </div>
                             <div class="flex items-baseline justify-between gap-3"
                                 x-show="$store.cashierPos.preview.service_amount > 0">

@@ -79,6 +79,25 @@ class DailyOmzetServiceTest extends TestCase
         $this->assertStringContainsString('tanggal,zona_waktu,omzet,jumlah_order,qris,tunai,void,waste', $lines[0]);
     }
 
+    public function test_net_menu_omzet_calculates_pure_menu_sales_excluding_pb1_and_service(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $order = $this->placeAndPay($world, 'omzet-pure-menu');
+
+        // $order has PB1 10% and Service 5%
+        $dailyOmzet = app(DailyOmzetService::class);
+        $netWithTaxAndService = $dailyOmzet->netOmzet($order);
+        $netMenuOmzet = $dailyOmzet->netMenuOmzet($order);
+
+        // netOmzet includes tax and service
+        $this->assertSame((int) $order->grand_before, $netWithTaxAndService);
+
+        // netMenuOmzet strictly equals subtotal - discount
+        $this->assertSame((int) ($order->subtotal - $order->discount_amount), $netMenuOmzet);
+        $this->assertLessThan($netWithTaxAndService, $netMenuOmzet);
+        $this->assertSame((int) ($order->pb1_amount + $order->service_amount), $netWithTaxAndService - $netMenuOmzet);
+    }
+
     /**
      * @param  array{restaurant: Restaurant, item: MenuItem, token: string}  $world
      */

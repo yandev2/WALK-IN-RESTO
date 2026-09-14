@@ -417,6 +417,76 @@ class CommissionReconciliationTest extends TestCase
             ->assertSee('Rincian transaksi');
     }
 
+    public function test_platform_commission_is_calculated_strictly_on_pure_menu_sales_exempting_pb1_and_service_charge(): void
+    {
+        Carbon::setTestNow('2026-09-14 12:00:00');
+
+        $world = $this->createGuestRestaurant();
+        /** @var Restaurant $restaurant */
+        $restaurant = $world['restaurant'];
+        $restaurant->update([
+            'plan_code' => PlanCode::ManagementKds->value,
+            'commission_percentage' => 10.00,
+            'trial_ends_at' => now()->subMonths(1),
+        ]);
+
+        $outlet = $world['outlet'];
+        $table = $world['table'];
+        $visit = $this->createTestVisit($restaurant, $outlet, $table);
+
+        // Order with Menu 100k, PB1 (10%) 10k, Service (5%) 5k -> Grand Total 115k
+        $order = $this->createTestOrder([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'visit_id' => $visit->id,
+            'source' => 'cashier',
+            'number' => 'ORD-PB1-SVC',
+            'status' => Order::STATUS_COMPLETED,
+            'payment_method' => 'qris',
+            'subtotal' => 100000,
+            'discount_amount' => 0,
+            'pb1_pct_snapshot' => 10,
+            'service_pct_snapshot' => 5,
+            'pb1_amount' => 10000,
+            'service_amount' => 5000,
+            'grand_before' => 115000,
+            'grand_payable' => 115000,
+            'paid_at' => now(),
+        ]);
+        OrderItem::query()->create([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'order_id' => $order->id,
+            'station_id' => $world['item']->station_id,
+            'name_snapshot' => 'Paket Premium',
+            'unit_price' => 100000,
+            'qty' => 1,
+            'kds_status' => 'served',
+        ]);
+
+        $service = app(CommissionReconciliationService::class);
+        $billingService = app(CashierCommissionBillingService::class);
+
+        // Order details check
+        $detail = $service->orderCommissionDetail($order, $restaurant);
+        $this->assertSame(100000, $detail['net_sales'], 'Net sales must be pure menu price');
+        $this->assertSame(15000, $detail['tax_service'], 'Tax and service must be 15,000');
+        $this->assertSame(10000, $detail['commission_amount'], 'Commission must be 10% of 100k, not 115k');
+        $this->assertSame(105000, $detail['net_resto'], 'Resto gets 90k menu + 15k tax/service = 105k');
+
+        // Summary for period check
+        $summary = $service->summaryForPeriod($restaurant, now()->startOfMonth(), now()->endOfMonth());
+        $this->assertSame(100000, $summary['net_sales']);
+        $this->assertSame(15000, $summary['tax_service_amount']);
+        $this->assertSame(10000, $summary['commission_amount']);
+        $this->assertSame(115000, $summary['total_collected']);
+        $this->assertSame(105000, $summary['net_payout']);
+
+        // CashierCommissionBillingService month net omzet check
+        $billingNetOmzet = $billingService->calculateMonthNetOmzet($restaurant, now());
+        $this->assertSame(100000, $billingNetOmzet, 'Monthly invoice must only bill pure menu sales');
+    }
+
     private function createTestVisit(Restaurant $restaurant, Outlet $outlet, DiningTable $table): Visit
     {
         return Visit::query()->create([

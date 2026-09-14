@@ -97,6 +97,12 @@ class OrderPaymentService
         });
 
         try {
+            app(CustomerCrmService::class)->recordOrderLoyalty($order->refresh());
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        try {
             app(OrderReceiptService::class)->afterPaid($order->refresh(), $cashier);
         } catch (\Throwable $e) {
             report($e);
@@ -104,6 +110,15 @@ class OrderPaymentService
 
         try {
             app(CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        try {
+            $payment = $order->payments()->latest('id')->first();
+            if ($payment instanceof Payment) {
+                app(CashierShiftService::class)->recordPayment($payment, $cashier);
+            }
         } catch (\Throwable $e) {
             report($e);
         }
@@ -231,6 +246,14 @@ class OrderPaymentService
 
             $order->setRawAttributes($locked->getAttributes());
             $order->syncOriginal();
+
+            if ($locked->hasPointsRedeemed()) {
+                try {
+                    app(CustomerCrmService::class)->refundPointsForOrder($locked);
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
 
             return true;
         });

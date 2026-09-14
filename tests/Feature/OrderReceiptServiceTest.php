@@ -227,7 +227,7 @@ class OrderReceiptServiceTest extends TestCase
         $pdf = Storage::disk('local')->get($order->receipt->file_path);
         $this->assertNotFalse($pdf);
         $this->assertStringStartsWith('%PDF', $pdf);
-        $this->assertStringContainsString((string) $order->payments->first()?->paidByUser?->name, $html);
+        $this->assertStringContainsString(e((string) $order->payments->first()?->paidByUser?->name), $html);
     }
 
     public function test_cash_receipt_includes_tender_and_change(): void

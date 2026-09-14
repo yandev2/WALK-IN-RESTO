@@ -270,9 +270,35 @@
     <div class="billing-guide__lead">
         <p>
             Walk-In Resto menggunakan sistem <strong>komisi omzet kasir</strong> (Pay-as-you-earn).
-            Restoran tidak dibebani biaya langganan bulanan tetap. Anda hanya membayar komisi dari hasil pesanan yang sukses di kasir pada akhir bulan.
+            Restoran tidak dibebani biaya langganan bulanan tetap. Anda hanya membayar komisi dari hasil penjualan murni menu pesanan kasir (bebas pajak &amp; service charge) pada akhir bulan.
         </p>
     </div>
+
+    {{-- Kebijakan Komisi Murni Menu & Bebas Pajak/Service --}}
+    <section class="billing-guide__block" style="border-left: 4px solid #10b981;">
+        <div class="billing-guide__block-head" style="background: rgba(16, 185, 129, 0.08); color: #047857;">
+            <span style="font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                🛡️ Dasar Komisi: Murni Harga Menu (Bebas Pajak PB1 &amp; Service Charge)
+            </span>
+            <span class="billing-guide__badge-highlight">100% Adil &amp; Transparan</span>
+        </div>
+        <div class="billing-guide__block-body">
+            <ul class="billing-guide__list">
+                <li>
+                    <strong>Hanya Omzet Murni Menu:</strong> Komisi platform ({{ number_format($commissionPercent, 0) }}%) <em>hanya</em> diambil dari subtotal harga makanan/minuman setelah dikurangi diskon &amp; pembatalan (void).
+                </li>
+                <li>
+                    <strong>Pajak Daerah (PB1 10%) Bebas Komisi (Rp 0):</strong> Pajak restoran adalah titipan kas pemerintah daerah yang dipungut dari tamu. Platform <strong>sama sekali TIDAK mengambil komisi</strong> dari komponen pajak PB1.
+                </li>
+                <li>
+                    <strong>Service Charge (5%) Bebas Komisi (Rp 0):</strong> Biaya layanan kasir sepenuhnya diperuntukkan bagi kesejahteraan kru dan operasional resto. Platform <strong>TIDAK memotong komisi</strong> dari service charge.
+                </li>
+                <li>
+                    <strong>Diskon Poin Loyalitas Bebas Komisi:</strong> Ketika pelanggan menukar poin member untuk potongan harga, potongan tersebut langsung mengurangi dasar omzet perhitungan komisi. Restoran <strong>TIDAK dikenakan komisi</strong> atas diskon poin yang diberikan kepada pelanggan!
+                </li>
+            </ul>
+        </div>
+    </section>
 
     {{-- 5 Steps --}}
     <section class="billing-guide__block">
@@ -287,7 +313,7 @@
                     <div>
                         <span class="billing-guide__step-title">Akumulasi Real-Time Setiap Transaksi</span>
                         <p class="billing-guide__step-copy">
-                            Setiap pesanan kasir yang selesai dibayar (<strong>Paid / Success</strong>) secara otomatis dihitung komisinya (standar <strong>{{ number_format($commissionPercent, 0) }}%</strong>) dan mengakumulasi invoice bulan berjalan. Anda dapat memantau omzet dan estimasi tagihan setiap saat.
+                            Setiap pesanan kasir yang selesai dibayar (<strong>Paid / Success</strong>) secara otomatis dihitung komisinya (standar <strong>{{ number_format($commissionPercent, 0) }}%</strong> dari omzet murni menu, tidak termasuk pajak &amp; service) dan mengakumulasi invoice bulan berjalan. Anda dapat memantau omzet dan estimasi tagihan setiap saat.
                         </p>
                     </div>
                 </li>
@@ -338,7 +364,7 @@
             <div class="billing-guide__block-body">
                 <ul class="billing-guide__list">
                     <li><strong>Biaya Dasar:</strong> Rp 0 / bulan (tanpa biaya langganan flat bulanan).</li>
-                    <li><strong>Tarif Komisi:</strong> {{ number_format($commissionPercent, 0) }}% per transaksi kasir yang berhasil dibayar.</li>
+                    <li><strong>Tarif Komisi:</strong> {{ number_format($commissionPercent, 0) }}% dari penjualan murni harga menu per transaksi kasir yang berhasil dibayar (PB1 &amp; Service Charge 0% komisi).</li>
                     <li><strong>Trial {{ $trialDays }} Hari Pertama:</strong> Restoran baru mendapat uji coba 100% <strong>bebas komisi (0%)</strong> selama {{ $trialDays }} hari masa trial.</li>
                     <li><strong>Pembaruan Otomatis:</strong> Tagihan bulan baru dibuat otomatis oleh sistem di awal bulan.</li>
                 </ul>

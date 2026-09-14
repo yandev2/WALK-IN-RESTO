@@ -14,7 +14,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\View as SchemaView;
@@ -164,10 +163,10 @@ class CommissionReconciliation extends Page implements HasTable
                         $this->resetTable();
                     }),
             ])
-            ->label('Periode Cepat')
-            ->icon(Heroicon::OutlinedCalendarDays)
-            ->color('gray')
-            ->button(),
+                ->label('Periode Cepat')
+                ->icon(Heroicon::OutlinedCalendarDays)
+                ->color('gray')
+                ->button(),
 
             Action::make('filterRange')
                 ->label('Ubah Rentang')
@@ -208,10 +207,10 @@ class CommissionReconciliation extends Page implements HasTable
                     ->icon(Heroicon::OutlinedTableCells)
                     ->action(fn (): BinaryFileResponse => $this->exportCsv()),
             ])
-            ->label('Unduh Laporan')
-            ->icon(Heroicon::OutlinedArrowDownTray)
-            ->color('primary')
-            ->button(),
+                ->label('Unduh Laporan')
+                ->icon(Heroicon::OutlinedArrowDownTray)
+                ->color('primary')
+                ->button(),
         ];
     }
 
@@ -265,7 +264,7 @@ class CommissionReconciliation extends Page implements HasTable
 
                 TextColumn::make('visit.diningTable.code')
                     ->label('Lokasi')
-                    ->formatStateUsing(fn ($state) => filled($state) ? 'Meja ' . $state : 'Bungkus / Kasir')
+                    ->formatStateUsing(fn ($state) => filled($state) ? 'Meja '.$state : 'Bungkus / Kasir')
                     ->badge()
                     ->icon(fn ($state) => filled($state) ? 'heroicon-m-map-pin' : 'heroicon-m-shopping-bag')
                     ->color('gray'),
@@ -284,7 +283,7 @@ class CommissionReconciliation extends Page implements HasTable
                         default => strtoupper((string) $state),
                     })
                     ->color(fn (?string $state): string => match (strtolower((string) $state)) {
-                        'cash' => 'emerald',
+                        'cash' => 'warning',
                         'qris' => 'info',
                         default => 'gray',
                     }),
@@ -292,12 +291,12 @@ class CommissionReconciliation extends Page implements HasTable
                 TextColumn::make('subtotal')
                     ->label('Subtotal')
                     ->alignEnd()
-                    ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((int) $state, 0, ',', '.')),
+                    ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('discount_amount')
                     ->label('Diskon')
                     ->alignEnd()
-                    ->formatStateUsing(fn ($state): string => (int) $state > 0 ? '-Rp ' . number_format((int) $state, 0, ',', '.') : '—')
+                    ->formatStateUsing(fn ($state): string => (int) $state > 0 ? '-Rp '.number_format((int) $state, 0, ',', '.') : '—')
                     ->color(fn ($state): ?string => (int) $state > 0 ? 'warning' : null),
 
                 TextColumn::make('void_cut')
@@ -308,15 +307,15 @@ class CommissionReconciliation extends Page implements HasTable
                             ->filter(fn (OrderItem $item): bool => $item->void_omzet_policy === 'cut')
                             ->sum(fn (OrderItem $item): int => (int) $item->unit_price * (int) $item->qty);
                     })
-                    ->formatStateUsing(fn ($state): string => (int) $state > 0 ? '-Rp ' . number_format((int) $state, 0, ',', '.') : '—')
+                    ->formatStateUsing(fn ($state): string => (int) $state > 0 ? '-Rp '.number_format((int) $state, 0, ',', '.') : '—')
                     ->color(fn ($state): ?string => (int) $state > 0 ? 'danger' : null),
 
                 TextColumn::make('net_sales')
                     ->label('Penjualan Bersih')
                     ->alignEnd()
                     ->weight('bold')
-                    ->state(fn (Order $record): int => $dailyOmzet->netOmzet($record))
-                    ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((int) $state, 0, ',', '.')),
+                    ->state(fn (Order $record): int => $dailyOmzet->netMenuOmzet($record))
+                    ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('commission_amount')
                     ->label('Komisi Platform')
@@ -338,7 +337,7 @@ class CommissionReconciliation extends Page implements HasTable
                             return 'Rp 0';
                         }
 
-                        return 'Rp ' . number_format((int) $state, 0, ',', '.');
+                        return 'Rp '.number_format((int) $state, 0, ',', '.');
                     })
                     ->description(function (Order $record) use ($reconciliationService, $restaurant): ?string {
                         if (! $restaurant) {
@@ -346,7 +345,7 @@ class CommissionReconciliation extends Page implements HasTable
                         }
                         $detail = $reconciliationService->orderCommissionDetail($record, $restaurant);
 
-                        return $detail['is_exempt'] ? $detail['exempt_reason'] : ($detail['commission_rate'] . '%');
+                        return $detail['is_exempt'] ? $detail['exempt_reason'] : ($detail['commission_rate'].'%');
                     })
                     ->color(fn ($state): ?string => (int) $state > 0 ? 'danger' : 'gray'),
 
@@ -363,7 +362,7 @@ class CommissionReconciliation extends Page implements HasTable
 
                         return $detail['net_resto'];
                     })
-                    ->formatStateUsing(fn ($state): string => 'Rp ' . number_format((int) $state, 0, ',', '.')),
+                    ->formatStateUsing(fn ($state): string => 'Rp '.number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('status')
                     ->label('Status')

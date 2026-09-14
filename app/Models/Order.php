@@ -22,6 +22,7 @@ class Order extends Model
         'source',
         'payment_method',
         'created_by_user_id',
+        'cashier_shift_id',
         'idempotency_key',
         'currency',
         'pb1_pct_snapshot',
@@ -29,6 +30,7 @@ class Order extends Model
         'tax_mode_snapshot',
         'subtotal',
         'discount_amount',
+        'points_redeemed',
         'service_amount',
         'pb1_amount',
         'grand_before',
@@ -65,6 +67,13 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'points_redeemed' => 'integer',
+            'subtotal' => 'integer',
+            'discount_amount' => 'integer',
+            'service_amount' => 'integer',
+            'pb1_amount' => 'integer',
+            'grand_before' => 'integer',
+            'grand_payable' => 'integer',
             'send_receipt' => 'boolean',
             'paid_at' => 'datetime',
             'cancelled_at' => 'datetime',
@@ -121,8 +130,23 @@ class Order extends Model
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
+    public function cashierShift(): BelongsTo
+    {
+        return $this->belongsTo(CashierShift::class, 'cashier_shift_id');
+    }
+
     public function isAccepted(): bool
     {
         return in_array($this->status, self::ACCEPTED_STATUSES, true);
+    }
+
+    public function hasPointsRedeemed(): bool
+    {
+        return ((int) $this->points_redeemed) > 0;
+    }
+
+    public function pointsDiscountAmount(): int
+    {
+        return (int) $this->discount_amount;
     }
 }

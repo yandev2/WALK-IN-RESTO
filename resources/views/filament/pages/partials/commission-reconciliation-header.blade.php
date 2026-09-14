@@ -70,7 +70,7 @@
                 <div class="flex items-center justify-between gap-2">
                     <div class="min-w-0 flex-1">
                         <p class="text-[11px] font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400">
-                            Penjualan Kotor
+                            Penjualan Kotor (Menu)
                         </p>
                     </div>
                     <div class="vision-icon-box vision-icon-box-blue shadow-md shadow-sky-500/20">
@@ -93,11 +93,19 @@
             </div>
 
             <div
-                class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span>Diskon & Void:</span>
-                <span class="font-semibold text-rose-600 dark:text-rose-400">
-                    -{{ $fmt(($summary['discount_amount'] ?? 0) + ($summary['void_cut_amount'] ?? 0)) }}
-                </span>
+                class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
+                <div class="flex items-center justify-between">
+                    <span>Diskon & Void:</span>
+                    <span class="font-semibold text-rose-600 dark:text-rose-400">
+                        -{{ $fmt(($summary['discount_amount'] ?? 0) + ($summary['void_cut_amount'] ?? 0)) }}
+                    </span>
+                </div>
+                @if (($summary['points_discount_amount'] ?? 0) > 0)
+                    <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center justify-between">
+                        <span>✨ Diskon Poin ({{ $summary['points_redeemed'] ?? 0 }} Poin):</span>
+                        <span class="font-bold">-{{ $fmt($summary['points_discount_amount'] ?? 0) }} (Bebas Komisi)</span>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -108,7 +116,7 @@
                 <div class="flex items-center justify-between gap-2">
                     <div class="min-w-0 flex-1">
                         <p class="text-[11px] font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400">
-                            Penjualan Bersih
+                            Penjualan Bersih (Menu)
                         </p>
                     </div>
                     <div class="vision-icon-box vision-icon-box-purple shadow-md shadow-indigo-500/20">
@@ -124,7 +132,7 @@
                     <div class="mt-2.5">
                         <span
                             class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-full border bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">
-                            Dasar Komisi Platform
+                            Dasar Komisi (Murni Menu)
                         </span>
                     </div>
                 </div>
@@ -132,8 +140,8 @@
 
             <div
                 class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span>Omzet sah resto:</span>
-                <span class="font-semibold text-sky-600 dark:text-cyan-400">100% Realtime</span>
+                <span>PB1 & Service:</span>
+                <span class="font-semibold text-emerald-600 dark:text-emerald-400">+{{ $fmt($summary['tax_service_amount'] ?? 0) }} (Bebas Komisi)</span>
             </div>
         </div>
 
@@ -185,16 +193,8 @@
 
             <div
                 class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span>Status:</span>
-                @if (!empty($relatedInvoice))
-                    <span class="font-semibold text-amber-600 dark:text-amber-400 capitalize">
-                        {{ $relatedInvoice['status'] }}
-                    </span>
-                @else
-                    <span class="font-semibold text-slate-600 dark:text-slate-300">
-                        Otomatis Akhir Bulan
-                    </span>
-                @endif
+                <span>Dasar hitung:</span>
+                <span class="font-semibold text-sky-600 dark:text-cyan-400">Murni Menu Saja (0% Pajak)</span>
             </div>
         </div>
 
@@ -221,7 +221,7 @@
                     <div class="mt-2.5">
                         <span
                             class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-full border bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
-                            Hak Penuh Restoran
+                            Total Kas Masuk - Komisi
                         </span>
                     </div>
                 </div>
@@ -230,7 +230,7 @@
             <div
                 class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                 <span>Hasil operasional:</span>
-                <span class="font-semibold text-emerald-600 dark:text-emerald-400">Milik Resto</span>
+                <span class="font-semibold text-emerald-600 dark:text-emerald-400">100% Hak Resto</span>
             </div>
         </div>
     </div>
@@ -293,6 +293,14 @@
                             {{ $fmt($summary['qris_collected'] ?? 0) }}
                         </span>
                     </div>
+
+                    @if (($summary['tax_service_amount'] ?? 0) > 0)
+                        {{-- Tax & Service Breakdown Pill --}}
+                        <div class="px-3.5 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-slate-700 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2">
+                            <span>Omzet Murni Menu: <strong>{{ $fmt($summary['net_sales'] ?? 0) }}</strong></span>
+                            <span class="text-emerald-700 dark:text-emerald-400 font-bold">+ Titipan Pajak & Service: {{ $fmt($summary['tax_service_amount'] ?? 0) }} (Bebas Komisi)</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -340,6 +348,42 @@
                         </span>
                     </div>
 
+                    {{-- Loyalty Points Policy Pill --}}
+                    <div class="vision-pill-card px-4 py-3 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                                <x-filament::icon icon="heroicon-o-ticket" class="h-4 w-4" />
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-800 dark:text-white block">Diskon Poin Member</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Potongan harga ditukar dari poin loyalitas</span>
+                            </div>
+                        </div>
+                        <span
+                            class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            Bebas Komisi (Rp 0)
+                        </span>
+                    </div>
+
+                    {{-- Tax & Service Charge Policy Pill --}}
+                    <div class="vision-pill-card px-4 py-3 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shrink-0">
+                                <x-filament::icon icon="heroicon-o-receipt-percent" class="h-4 w-4" />
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-800 dark:text-white block">Pajak PB1 &amp; Service Charge</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Titipan kas daerah &amp; hak layanan staf</span>
+                            </div>
+                        </div>
+                        <span
+                            class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            Bebas Komisi (Rp 0)
+                        </span>
+                    </div>
+
                     {{-- Invoice Link Pill --}}
                     <div class="vision-pill-card px-4 py-3 flex items-center justify-between text-xs">
                         <div class="flex items-center gap-2.5">
@@ -378,8 +422,7 @@
 
             <div
                 class="mt-4 pt-3 border-t border-slate-100 dark:border-white/5 text-xs text-slate-500 dark:text-slate-400 italic">
-                * Rekonsiliasi ini menyajikan Penjualan Bersih kasir & komisi platform. Belum memperhitungkan biaya
-                bahan baku (HPP) dan operasional internal restoran.
+                * Platform HANYA mengambil komisi dari penjualan murni harga menu makanan/minuman saja. Pajak PB1 daerah, Service Charge, Void, dan Diskon Poin 100% bebas dari potongan komisi platform.
             </div>
         </div>
     </div>

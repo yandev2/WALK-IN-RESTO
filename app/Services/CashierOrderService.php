@@ -31,6 +31,7 @@ class CashierOrderService
         bool $sendReceipt,
         array $lines,
         mixed $cashReceived = null,
+        int $pointsToRedeem = 0,
     ): Order {
         if ($lines === []) {
             throw ValidationException::withMessages(['lines' => 'Pilih minimal satu menu.']);
@@ -42,7 +43,7 @@ class CashierOrderService
             ]);
         }
 
-        return DB::transaction(function () use ($user, $table, $customerWa, $customerName, $method, $sendReceipt, $lines, $cashReceived) {
+        return DB::transaction(function () use ($user, $table, $customerWa, $customerName, $method, $sendReceipt, $lines, $cashReceived, $pointsToRedeem) {
             $table->loadMissing('outlet');
             $visit = $this->claims->openByCashier($table, $user, $customerWa, $customerName);
 
@@ -56,7 +57,33 @@ class CashierOrderService
                 [],
                 $user->id,
                 $cashReceived,
+                $pointsToRedeem,
             );
+
+            try {
+                $shiftService = app(CashierShiftService::class);
+                $shift = $shiftService->getCurrentOpenShift($user, $table->outlet_id);
+                if ($shift) {
+                    $order->forceFill(['cashier_shift_id' => $shift->id])->save();
+                    $payment = $order->payments()->first();
+                    if ($payment) {
+                        $payment->forceFill(['cashier_shift_id' => $shift->id])->save();
+                        if ($payment->status === 'paid') {
+                            $shiftService->recordPayment($payment, $user);
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
+            try {
+                if ($order->status === Order::STATUS_PAID || $order->status === Order::STATUS_COMPLETED) {
+                    app(CustomerCrmService::class)->recordOrderLoyalty($order);
+                }
+            } catch (\Throwable $e) {
+                report($e);
+            }
 
             if ($table->outlet?->simple_mode) {
                 $this->visitLifecycle->close(

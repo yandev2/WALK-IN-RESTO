@@ -146,6 +146,24 @@ class DailyOmzetService
         return max(0, (int) $order->grand_before - (int) $cut);
     }
 
+    public function netMenuOmzet(Order $order): int
+    {
+        $items = $order->items;
+        $cut = $items
+            ->filter(fn (OrderItem $item): bool => $item->void_omzet_policy === 'cut')
+            ->sum(fn (OrderItem $item): int => (int) $item->unit_price * (int) $item->qty);
+
+        if ($order->status === 'voided' && $items->isNotEmpty() && $items->every(
+            fn (OrderItem $item): bool => $item->void_omzet_policy === 'cut',
+        )) {
+            return 0;
+        }
+
+        $subtotalNet = max(0, (int) $order->subtotal - (int) $order->discount_amount);
+
+        return max(0, $subtotalNet - (int) $cut);
+    }
+
     public function wasteAmount(Order $order): int
     {
         return (int) $order->items

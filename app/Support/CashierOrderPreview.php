@@ -31,7 +31,7 @@ final class CashierOrderPreview
      *     cash_short: bool
      * }
      */
-    public static function estimateFromLines(array $lines, ?Outlet $outlet, string $paymentMethod = 'cash', mixed $cashReceived = null): array
+    public static function estimateFromLines(array $lines, ?Outlet $outlet, string $paymentMethod = 'cash', mixed $cashReceived = null, int $discountAmount = 0): array
     {
         $itemIds = [];
         $modifierIds = [];
@@ -90,7 +90,7 @@ final class CashierOrderPreview
             $totalQty += (int) ($line['qty'] ?? 0);
         }
 
-        $totals = CheckoutTotals::forSubtotal($subtotal, $outlet);
+        $totals = CheckoutTotals::forSubtotal($subtotal, $outlet, $discountAmount);
         $isQris = $paymentMethod === 'qris';
         $grandPayable = $totals['grand_before'];
         $received = $isQris ? null : IdrAmount::parse($cashReceived);

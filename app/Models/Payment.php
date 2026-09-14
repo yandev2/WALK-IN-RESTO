@@ -27,6 +27,7 @@ class Payment extends Model
         'restaurant_id',
         'outlet_id',
         'order_id',
+        'cashier_shift_id',
         'method',
         'provider',
         'status',
@@ -88,6 +89,11 @@ class Payment extends Model
     public function paidByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'paid_by_user_id');
+    }
+
+    public function cashierShift(): BelongsTo
+    {
+        return $this->belongsTo(CashierShift::class, 'cashier_shift_id');
     }
 
     /**

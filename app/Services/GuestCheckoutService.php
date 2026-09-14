@@ -26,7 +26,7 @@ class GuestCheckoutService
     /**
      * @param  array{lat?: float|null, lng?: float|null, accuracy?: float|null, gps_status?: string|null}  $gps
      */
-    public function checkout(Visit $visit, string $method, bool $sendReceipt, string $idempotencyKey, array $gps = []): Order
+    public function checkout(Visit $visit, string $method, bool $sendReceipt, string $idempotencyKey, array $gps = [], int $pointsToRedeem = 0): Order
     {
         $this->assertMethod($method);
         $this->assertVisitReady($visit);
@@ -49,7 +49,7 @@ class GuestCheckoutService
             ]);
         }
 
-        return DB::transaction(function () use ($visit, $method, $sendReceipt, $idempotencyKey, $outlet, $gpsResult, $gps) {
+        return DB::transaction(function () use ($visit, $method, $sendReceipt, $idempotencyKey, $outlet, $gpsResult, $gps, $pointsToRedeem) {
             $cart = VisitCartItem::query()
                 ->where('visit_id', $visit->id)
                 ->with(['menuItem.station', 'variant', 'modifiers'])
@@ -79,6 +79,8 @@ class GuestCheckoutService
                 $gpsResult,
                 $gps,
                 null,
+                null,
+                $pointsToRedeem,
             );
 
             VisitCartItem::query()->where('visit_id', $visit->id)->delete();
@@ -102,6 +104,7 @@ class GuestCheckoutService
         array $gps = [],
         ?int $createdByUserId = null,
         mixed $cashReceived = null,
+        int $pointsToRedeem = 0,
     ): Order {
         $this->assertMethod($method);
         if ($source !== 'cashier') {
@@ -132,7 +135,7 @@ class GuestCheckoutService
             throw ValidationException::withMessages(['lines' => 'Pilih minimal satu menu.']);
         }
 
-        return DB::transaction(function () use ($visit, $outlet, $method, $sendReceipt, $idempotencyKey, $source, $lineInputs, $gpsResult, $gps, $createdByUserId, $cashReceived) {
+        return DB::transaction(function () use ($visit, $outlet, $method, $sendReceipt, $idempotencyKey, $source, $lineInputs, $gpsResult, $gps, $createdByUserId, $cashReceived, $pointsToRedeem) {
             $order = $this->createOrder(
                 $visit,
                 $outlet,
@@ -145,6 +148,7 @@ class GuestCheckoutService
                 $gps,
                 $createdByUserId,
                 $cashReceived,
+                $pointsToRedeem,
             );
 
             $this->extendClaimIfNeeded($visit, $outlet);
@@ -170,15 +174,41 @@ class GuestCheckoutService
         array $gps,
         ?int $createdByUserId,
         mixed $cashReceived = null,
+        int $pointsToRedeem = 0,
     ): Order {
         $lines = $this->resolveLines($visit, $lineInputs);
         $subtotal = collect($lines)->sum(fn (array $line): int => $line['unit'] * $line['qty']);
 
+        $discountAmount = 0;
+        $actualPointsRedeemed = 0;
+        $customer = null;
+
+        if ($pointsToRedeem > 0 && filled($visit->customer_wa)) {
+            $crmService = app(CustomerCrmService::class);
+            $normalizedPhone = \App\Support\WhatsAppNumber::normalize($visit->customer_wa);
+            if (is_string($normalizedPhone) && \App\Support\WhatsAppNumber::isValid($normalizedPhone)) {
+                $customer = \App\Models\Customer::withoutRestaurantScope()
+                    ->where('restaurant_id', $visit->restaurant_id)
+                    ->where('phone', $normalizedPhone)
+                    ->first();
+
+                if ($customer) {
+                    $redemption = $crmService->calculateRedemption($customer, $subtotal, $pointsToRedeem, $outlet->restaurant);
+                    if ($redemption['allowed']) {
+                        $actualPointsRedeemed = $redemption['points'];
+                        $discountAmount = $redemption['discount_amount'];
+                    }
+                }
+            }
+        }
+
+        $subtotalNet = max(0, $subtotal - $discountAmount);
+
         $pb1Pct = (float) $outlet->pb1_pct;
         $servicePct = (float) $outlet->service_pct;
-        $service = (int) round($subtotal * $servicePct / 100);
-        $pb1 = (int) round(($subtotal + $service) * $pb1Pct / 100);
-        $grandBefore = $subtotal + $service + $pb1;
+        $service = (int) round($subtotalNet * $servicePct / 100);
+        $pb1 = (int) round(($subtotalNet + $service) * $pb1Pct / 100);
+        $grandBefore = $subtotalNet + $service + $pb1;
 
         $uniqueAdd = 0;
         $holdAmount = null;
@@ -210,7 +240,8 @@ class GuestCheckoutService
             'service_pct_snapshot' => $servicePct,
             'tax_mode_snapshot' => $outlet->tax_mode ?: 'exclusive',
             'subtotal' => $subtotal,
-            'discount_amount' => 0,
+            'discount_amount' => $discountAmount,
+            'points_redeemed' => $actualPointsRedeemed,
             'service_amount' => $service,
             'pb1_amount' => $pb1,
             'grand_before' => $grandBefore,
@@ -294,6 +325,14 @@ class GuestCheckoutService
         if ($isSimpleCashier) {
             try {
                 app(\App\Services\CashierCommissionBillingService::class)->recordOrderPaidHook($order);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        if ($actualPointsRedeemed > 0 && $customer instanceof \App\Models\Customer) {
+            try {
+                app(CustomerCrmService::class)->redeemPointsForOrder($customer, $order, $actualPointsRedeemed, $discountAmount);
             } catch (\Throwable $e) {
                 report($e);
             }

@@ -8,6 +8,7 @@ use App\Models\KdsStation;
 use App\Models\Outlet;
 use App\Models\OutletOperatingHour;
 use App\Models\Restaurant;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 
 class RestaurantProvisioner
@@ -19,6 +20,7 @@ class RestaurantProvisioner
             $this->ensureOperatingHours($restaurant, $outlet);
             $this->ensureOutletSequence($restaurant, $outlet);
             $this->ensureCmsProfile($restaurant);
+            $this->ensureMandatoryRoles($restaurant);
 
             if ($planCode === PlanCode::ManagementKds->value) {
                 $this->ensureKdsStations($restaurant, $outlet);
@@ -51,6 +53,17 @@ class RestaurantProvisioner
                     'sort_order' => $station['sort_order'],
                 ],
             );
+        }
+    }
+
+    public function ensureMandatoryRoles(Restaurant $restaurant): void
+    {
+        foreach ([Role::OWNER, Role::KASIR, Role::DAPUR] as $roleName) {
+            Role::query()->firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+                'restaurant_id' => $restaurant->id,
+            ]);
         }
     }
 

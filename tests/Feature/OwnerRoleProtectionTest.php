@@ -83,24 +83,96 @@ class OwnerRoleProtectionTest extends TestCase
             'restaurant_id' => $restaurant->id,
         ]);
 
+        $dapurRole = Role::query()->create([
+            'name' => 'dapur',
+            'guard_name' => 'web',
+            'restaurant_id' => $restaurant->id,
+        ]);
+
+        $customRole = Role::query()->create([
+            'name' => 'pelayan',
+            'guard_name' => 'web',
+            'restaurant_id' => $restaurant->id,
+        ]);
+
+        // Policy authorizations:
+        // Owner: cannot update permissions, cannot delete
         $this->assertFalse($owner->can('update', $ownerRole));
         $this->assertFalse($owner->can('delete', $ownerRole));
-        $this->assertTrue($owner->can('update', $kasirRole));
-        $this->assertTrue($owner->can('delete', $kasirRole));
 
+        // Kasir: CAN edit permissions, CANNOT delete
+        $this->assertTrue($owner->can('update', $kasirRole));
+        $this->assertFalse($owner->can('delete', $kasirRole));
+
+        // Dapur: CAN edit permissions, CANNOT delete
+        $this->assertTrue($owner->can('update', $dapurRole));
+        $this->assertFalse($owner->can('delete', $dapurRole));
+
+        // Custom role: CAN edit, CAN delete
+        $this->assertTrue($owner->can('update', $customRole));
+        $this->assertTrue($owner->can('delete', $customRole));
+
+        // Deletion protections
         $this->assertFalse($ownerRole->delete());
         $this->assertDatabaseHas('roles', ['id' => $ownerRole->id, 'name' => Role::OWNER]);
 
-        $ownerRole->name = 'bukan-owner';
-        $this->assertFalse($ownerRole->save());
-        $this->assertSame(Role::OWNER, $ownerRole->fresh()->name);
+        $this->assertFalse($kasirRole->delete());
+        $this->assertDatabaseHas('roles', ['id' => $kasirRole->id, 'name' => Role::KASIR]);
+
+        $this->assertFalse($dapurRole->delete());
+        $this->assertDatabaseHas('roles', ['id' => $dapurRole->id, 'name' => Role::DAPUR]);
 
         Livewire::test(ListRoles::class)
             ->assertOk()
             ->assertTableActionHidden('edit', $ownerRole)
             ->assertTableActionHidden('delete', $ownerRole)
             ->assertTableActionVisible('edit', $kasirRole)
-            ->assertTableActionVisible('delete', $kasirRole);
+            ->assertTableActionHidden('delete', $kasirRole)
+            ->assertTableActionVisible('edit', $dapurRole)
+            ->assertTableActionHidden('delete', $dapurRole);
+
+        // Renaming protections (mandatory roles cannot be renamed)
+        $ownerRole->name = 'bukan-owner';
+        $this->assertFalse($ownerRole->save());
+        $this->assertSame(Role::OWNER, $ownerRole->fresh()->name);
+
+        $kasirRole->name = 'bukan-kasir';
+        $this->assertFalse($kasirRole->save());
+        $this->assertSame(Role::KASIR, $kasirRole->fresh()->name);
+
+        $dapurRole->name = 'bukan-dapur';
+        $this->assertFalse($dapurRole->save());
+        $this->assertSame(Role::DAPUR, $dapurRole->fresh()->name);
+    }
+
+    public function test_custom_role_can_be_updated_and_deleted(): void
+    {
+        $restaurant = $this->makeRestaurant();
+        $owner = $this->makeOwner($restaurant);
+
+        app(SubscriptionPlanSync::class)->syncOwnerPermissions(
+            $restaurant,
+            PlanCode::ManagementKds->value,
+        );
+
+        $this->actingAsTenant($owner, $restaurant);
+
+        $customRole = Role::query()->create([
+            'name' => 'pelayan',
+            'guard_name' => 'web',
+            'restaurant_id' => $restaurant->id,
+        ]);
+
+        $this->assertTrue($owner->can('update', $customRole));
+        $this->assertTrue($owner->can('delete', $customRole));
+
+        Livewire::test(ListRoles::class)
+            ->assertOk()
+            ->assertTableActionVisible('edit', $customRole)
+            ->assertTableActionVisible('delete', $customRole);
+
+        $this->assertTrue($customRole->delete());
+        $this->assertDatabaseMissing('roles', ['id' => $customRole->id]);
     }
 
     public function test_tenant_boot_syncs_owner_permissions_from_plan(): void

@@ -123,9 +123,16 @@
             </tr>
             @if ((int) $order->discount_amount > 0)
                 <tr>
-                    <td class="label">Diskon</td>
+                    <td class="label">Diskon @if((int) $order->points_redeemed > 0) ({{ $order->points_redeemed }} Poin) @endif</td>
                     <td class="value">-{{ number_format((int) $order->discount_amount, 0, ',', '.') }}</td>
                 </tr>
+                @if((int) $order->points_redeemed > 0)
+                    <tr>
+                        <td colspan="2" style="font-size: 8px; color: #555; text-align: left; padding: 1px 0 3px 0;">
+                            * Rp {{ number_format((int) $order->discount_amount, 0, ',', '.') }} ditukar via {{ $order->points_redeemed }} Poin Member
+                        </td>
+                    </tr>
+                @endif
             @endif
             <tr>
                 <td class="label">Service</td>
@@ -150,6 +157,26 @@
                 </tr>
             @endif
         </table>
+
+        @if (!empty($showLoyalty) && !empty($customer))
+            <hr class="dash">
+            <table class="totals" style="margin-top: 4px;">
+                <tr>
+                    <td class="label" style="font-weight: bold; text-transform: uppercase;">Member Tier</td>
+                    <td class="value" style="font-weight: bold; text-transform: uppercase;">{{ $customer->tierLabel() }}</td>
+                </tr>
+                @if (!empty($earnedPoints) && $earnedPoints > 0)
+                    <tr>
+                        <td class="label">Poin Didapat</td>
+                        <td class="value" style="font-weight: bold;">+{{ number_format($earnedPoints, 0, ',', '.') }}</td>
+                    </tr>
+                @endif
+                <tr>
+                    <td class="label">Total Poin Member</td>
+                    <td class="value" style="font-weight: bold;">{{ number_format((int) $customer->points_balance, 0, ',', '.') }}</td>
+                </tr>
+            </table>
+        @endif
 
         @if (filled($methodLabel))
             <hr class="dash">

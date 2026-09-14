@@ -25,9 +25,12 @@ class CommissionReconciliationService
      *     total_orders: int,
      *     gross_sales: int,
      *     discount_amount: int,
+     *     points_discount_amount: int,
+     *     points_redeemed: int,
      *     void_cut_amount: int,
      *     void_waste_amount: int,
      *     net_sales: int,
+     *     tax_service_amount: int,
      *     is_commission_plan: bool,
      *     commission_rate: float,
      *     commission_eligible_omzet: int,
@@ -35,6 +38,7 @@ class CommissionReconciliationService
      *     net_payout: int,
      *     cash_collected: int,
      *     qris_collected: int,
+     *     total_collected: int,
      *     is_trial_active_throughout: bool,
      *     trial_ends_at: Carbon|null,
      *     related_invoice: array{number: string, status: string, amount: int, due_at: string|null}|null
@@ -56,11 +60,14 @@ class CommissionReconciliationService
 
         $grossSales = 0;
         $discountAmount = 0;
+        $pointsDiscountAmount = 0;
+        $pointsRedeemed = 0;
         $voidCutAmount = 0;
         $voidWasteAmount = 0;
         $netSales = 0;
         $cashCollected = 0;
         $qrisCollected = 0;
+        $taxServiceAmount = 0;
         $commissionEligibleOmzet = 0;
 
         $trialEndsAt = $restaurant->trial_ends_at ? $restaurant->trial_ends_at->copy()->timezone($timezone) : null;
@@ -73,11 +80,15 @@ class CommissionReconciliationService
         foreach ($orders as $order) {
             $subtotal = (int) $order->subtotal;
             $discount = (int) $order->discount_amount;
-            $net = $this->dailyOmzetService->netOmzet($order);
+            $orderPointsRedeemed = (int) $order->points_redeemed;
+            $netMenu = $this->dailyOmzetService->netMenuOmzet($order);
+            $orderPaid = (int) ($order->grand_payable ?: $order->grand_before);
 
             $grossSales += $subtotal;
             $discountAmount += $discount;
-            $netSales += $net;
+            $pointsDiscountAmount += $orderPointsRedeemed > 0 ? $discount : 0;
+            $pointsRedeemed += $orderPointsRedeemed;
+            $netSales += $netMenu;
 
             $cut = (int) $order->items
                 ->filter(fn (OrderItem $item): bool => $item->void_omzet_policy === 'cut')
@@ -89,11 +100,15 @@ class CommissionReconciliationService
                 ->sum(fn (OrderItem $item): int => (int) $item->unit_price * (int) $item->qty);
             $voidWasteAmount += $waste;
 
+            $taxService = (int) $order->pb1_amount + (int) $order->service_amount;
+            $taxServiceAmount += $taxService;
+
             // Cash collections breakdown based on actual paid order
+            $orderRealCollected = max(0, $orderPaid - $cut);
             if ($order->payment_method === 'cash') {
-                $cashCollected += $net;
+                $cashCollected += $orderRealCollected;
             } elseif ($order->payment_method === 'qris') {
-                $qrisCollected += $net;
+                $qrisCollected += $orderRealCollected;
             }
 
             // Commission eligibility check per order (matches CashierCommissionBillingService trial cut-off)
@@ -105,8 +120,8 @@ class CommissionReconciliationService
                 }
             }
 
-            if (! $isOrderTrialExempt && $net > 0 && $isCommissionPlan) {
-                $commissionEligibleOmzet += $net;
+            if (! $isOrderTrialExempt && $netMenu > 0 && $isCommissionPlan) {
+                $commissionEligibleOmzet += $netMenu;
             }
         }
 
@@ -114,7 +129,8 @@ class CommissionReconciliationService
             ? (int) round($commissionEligibleOmzet * ($commissionRate / 100))
             : 0;
 
-        $netPayout = max(0, $netSales - $commissionAmount);
+        $totalCollected = $cashCollected + $qrisCollected;
+        $netPayout = max(0, $totalCollected - $commissionAmount);
 
         // Find related monthly commission invoice if looking at a single month
         $relatedInvoice = null;
@@ -143,9 +159,12 @@ class CommissionReconciliationService
             'total_orders' => $orders->whereIn('status', Order::ACCEPTED_STATUSES)->count(),
             'gross_sales' => $grossSales,
             'discount_amount' => $discountAmount,
+            'points_discount_amount' => $pointsDiscountAmount,
+            'points_redeemed' => $pointsRedeemed,
             'void_cut_amount' => $voidCutAmount,
             'void_waste_amount' => $voidWasteAmount,
             'net_sales' => $netSales,
+            'tax_service_amount' => $taxServiceAmount,
             'is_commission_plan' => $isCommissionPlan,
             'commission_rate' => $commissionRate,
             'commission_eligible_omzet' => $commissionEligibleOmzet,
@@ -153,6 +172,7 @@ class CommissionReconciliationService
             'net_payout' => $netPayout,
             'cash_collected' => $cashCollected,
             'qris_collected' => $qrisCollected,
+            'total_collected' => $totalCollected,
             'is_trial_active_throughout' => (bool) $isTrialActiveThroughout,
             'trial_ends_at' => $trialEndsAt,
             'related_invoice' => $relatedInvoice,
@@ -163,9 +183,12 @@ class CommissionReconciliationService
      * @return array{
      *     subtotal: int,
      *     discount: int,
+     *     points_redeemed: int,
+     *     points_discount: int,
      *     void_cut: int,
      *     void_waste: int,
      *     net_sales: int,
+     *     tax_service: int,
      *     is_exempt: bool,
      *     exempt_reason: string|null,
      *     commission_rate: float,
@@ -178,7 +201,9 @@ class CommissionReconciliationService
         $timezone = $restaurant->timezone ?: 'Asia/Jakarta';
         $subtotal = (int) $order->subtotal;
         $discount = (int) $order->discount_amount;
-        $net = $this->dailyOmzetService->netOmzet($order);
+        $orderPointsRedeemed = (int) $order->points_redeemed;
+        $netMenu = $this->dailyOmzetService->netMenuOmzet($order);
+        $orderPaid = (int) ($order->grand_payable ?: $order->grand_before);
 
         $voidCut = (int) $order->items
             ->filter(fn (OrderItem $item): bool => $item->void_omzet_policy === 'cut')
@@ -187,6 +212,8 @@ class CommissionReconciliationService
         $voidWaste = (int) $order->items
             ->filter(fn (OrderItem $item): bool => $item->void_omzet_policy === 'waste')
             ->sum(fn (OrderItem $item): int => (int) $item->unit_price * (int) $item->qty);
+
+        $totalNetOrder = max(0, $orderPaid - $voidCut);
 
         $trialEndsAt = $restaurant->trial_ends_at ? $restaurant->trial_ends_at->copy()->timezone($timezone) : null;
         $paidAtLocal = $order->paid_at ? $order->paid_at->copy()->timezone($timezone) : null;
@@ -204,23 +231,26 @@ class CommissionReconciliationService
         } elseif ($isTrialExempt) {
             $isExempt = true;
             $exemptReason = 'Masa Uji Coba (Bebas Komisi)';
-        } elseif ($net <= 0) {
+        } elseif ($netMenu <= 0) {
             $isExempt = true;
             $exemptReason = $order->status === Order::STATUS_VOIDED ? 'Pesanan Dibatalkan (Void Rp 0)' : 'Penjualan Rp 0';
         }
 
-        $commissionAmount = (! $isExempt && $net > 0)
-            ? (int) round($net * ($commissionRate / 100))
+        $commissionAmount = (! $isExempt && $netMenu > 0)
+            ? (int) round($netMenu * ($commissionRate / 100))
             : 0;
 
-        $netResto = max(0, $net - $commissionAmount);
+        $netResto = max(0, $totalNetOrder - $commissionAmount);
 
         return [
             'subtotal' => $subtotal,
             'discount' => $discount,
+            'points_redeemed' => $orderPointsRedeemed,
+            'points_discount' => $orderPointsRedeemed > 0 ? $discount : 0,
             'void_cut' => $voidCut,
             'void_waste' => $voidWaste,
-            'net_sales' => $net,
+            'net_sales' => $netMenu,
+            'tax_service' => (int) $order->pb1_amount + (int) $order->service_amount,
             'is_exempt' => $isExempt,
             'exempt_reason' => $exemptReason,
             'commission_rate' => $commissionRate,

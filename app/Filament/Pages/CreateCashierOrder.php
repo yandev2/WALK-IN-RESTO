@@ -3,10 +3,12 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
+use App\Models\CashierShift;
 use App\Models\DiningTable;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CashierOrderService;
+use App\Services\CashierShiftService;
 use App\Support\CashierMenuCatalog;
 use App\Support\CashierOrderPreview;
 use App\Support\CmsMedia;
@@ -16,28 +18,14 @@ use App\Support\TenantContext;
 use App\Support\WhatsAppNumber;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\EmbeddedSchema;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
-use Livewire\Attributes\Session;
 
 class CreateCashierOrder extends Page
 {
@@ -54,9 +42,6 @@ class CreateCashierOrder extends Page
     public ?array $data = [];
 
     public ?array $simpleModeCompletedOrder = null;
-
-    #[Session(key: 'cashier_order_ui')]
-    public string $cashierUi = 'form';
 
     /**
      * @var array{type: 'new'|'edit', menu_item_id: int, index?: int, variant_id?: int|null, modifier_ids: list<int>, notes: string}|null
@@ -81,20 +66,21 @@ class CreateCashierOrder extends Page
 
     public function mount(): void
     {
-        $this->form->fill([
+        $this->data = [
+            'table_id' => null,
+            'customer_wa' => null,
+            'customer_name' => null,
             'send_receipt' => false,
             'payment_method' => 'cash',
-            'lines' => [['qty' => 1]],
-        ]);
-
-        if ($this->isPosUi()) {
-            $this->data['lines'] = $this->linesForPos($this->data['lines'] ?? []);
-        }
+            'cash_received' => null,
+            'points_to_redeem' => 0,
+            'lines' => [],
+        ];
     }
 
     public function getMaxContentWidth(): Width|string|null
     {
-        return $this->isPosUi() ? Width::Full : null;
+        return Width::Full;
     }
 
     /**
@@ -103,237 +89,88 @@ class CreateCashierOrder extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('toggleCashierUi')
-                ->label(fn (): string => $this->isPosUi() ? 'Tampilan form' : 'Tampilan grid')
-                ->icon(fn (): Heroicon => $this->isPosUi() ? Heroicon::OutlinedQueueList : Heroicon::OutlinedSquares2x2)
-                ->action(function (): void {
-                    $this->toggleCashierUi();
+            Action::make('openShift')
+                ->label('Buka Shift Kasir')
+                ->icon(Heroicon::OutlinedPlusCircle)
+                ->color('success')
+                ->visible(fn (): bool => $this->activeShift === null)
+                ->extraAttributes([
+                    'x-on:click' => "window.dispatchEvent(new CustomEvent('open-cashier-shift-modal'))",
+                ])
+                ->action(function (array $arguments = []): void {
+                    if (! empty($arguments['starting_cash'])) {
+                        $this->openShift($arguments['starting_cash'], $arguments['notes'] ?? null);
+
+                        return;
+                    }
+
+                    $this->dispatch('open-cashier-shift-modal');
+                }),
+
+            Action::make('closeShift')
+                ->label('Tutup Shift')
+                ->icon(Heroicon::OutlinedLockClosed)
+                ->color('warning')
+                ->visible(fn (): bool => $this->activeShift !== null)
+                ->extraAttributes([
+                    'x-on:click' => "window.dispatchEvent(new CustomEvent('open-cashier-close-modal'))",
+                ])
+                ->action(function (array $arguments = []): void {
+                    if (isset($arguments['actual_cash'])) {
+                        $this->closeShift(
+                            $arguments['actual_cash'],
+                            $arguments['difference_reason'] ?? null,
+                            $arguments['notes'] ?? null,
+                        );
+
+                        return;
+                    }
+
+                    $this->dispatch('open-cashier-close-modal');
                 }),
         ];
     }
 
     public function isPosUi(): bool
     {
-        return $this->cashierUi === 'pos';
-    }
-
-    public function toggleCashierUi(): void
-    {
-        if ($this->isPosUi()) {
-            $this->data['lines'] = $this->linesForForm($this->data['lines'] ?? []);
-            $this->cashierUi = 'form';
-            $this->posEditor = null;
-            $this->cacheSchema('content', null);
-            $this->form->fill($this->data);
-
-            return;
-        }
-
-        $this->data['lines'] = $this->linesForPos($this->data['lines'] ?? []);
-        $this->cashierUi = 'pos';
-        $this->posEditor = null;
-        $this->posSearch = '';
-        $this->posCategory = 'all';
-        $this->cacheSchema('content', null);
-    }
-
-    public function defaultForm(Schema $schema): Schema
-    {
-        return $schema
-            ->statePath('data')
-            ->columns(1);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        $hasFonnte = TenantContext::restaurant()?->hasFonnteKey() ?? false;
-
-        return $schema
-            ->components([
-
-                Section::make('Tamu')
-                    ->description('Data meja dan tamu untuk visit baru.')
-                    ->icon(Heroicon::OutlinedUser)
-                    ->columns(4)
-                    ->schema([
-                        Select::make('table_id')
-                            ->label('Meja')
-                            ->options(fn (): array => DiningTable::query()
-                                ->where('restaurant_id', TenantContext::restaurantId())
-                                ->where('is_out_of_service', false)
-                                ->where(function ($query) {
-                                    $query->where('needs_cleaning', false)
-                                        ->orWhereHas('outlet', fn ($q) => $q->where('simple_mode', true));
-                                })
-                                ->whereNull('open_visit_id')
-                                ->orderBy('code')
-                                ->pluck('code', 'id')
-                                ->all())
-                            ->required()
-                            ->searchable()
-                            ->native(false)
-                            ->helperText('Hanya meja kosong dan siap dipakai.'),
-                        TextInput::make('customer_wa')
-                            ->label('WhatsApp tamu')
-                            ->placeholder('08xxxxxxxxxx')
-                            ->maxLength(20)
-                            ->live()
-                            ->helperText('Opsional. Wajib jika struk dikirim via WhatsApp.')
-                            ->afterStateUpdated(function (Set $set, mixed $state): void {
-                                if (blank($state)) {
-                                    $set('send_receipt', false);
-
-                                    return;
-                                }
-
-                                if (TenantContext::restaurant()?->hasFonnteKey()) {
-                                    $set('send_receipt', true);
-                                }
-                            }),
-                        TextInput::make('customer_name')
-                            ->label('Nama tamu')
-                            ->maxLength(120),
-                        Select::make('payment_method')
-                            ->label('Metode bayar')
-                            ->options([
-                                'cash' => 'Tunai',
-                                'qris' => 'QRIS',
-                            ])
-                            ->required()
-                            ->native(false)
-                            ->live()
-                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
-                        Toggle::make('send_receipt')
-                            ->label('Kirim struk WhatsApp')
-                            ->visible($hasFonnte)
-                            ->default($hasFonnte)
-                            ->live()
-                            ->disabled(fn (Get $get): bool => blank($get('customer_wa')))
-                            ->dehydrated()
-                            ->helperText('Kirim ringkasan order ke nomor tamu setelah dibuat.')
-                            ->inline(false)
-                            ->columnSpanFull(),
-                    ]),
-
-                Grid::make(5)
-                    ->columnSpanFull()
-                    ->schema([
-                        Section::make('Menu')
-                            ->columnSpan(3)
-                            ->description('Tambah satu atau lebih item ke pesanan.')
-                            ->icon(Heroicon::OutlinedShoppingBag)
-                            ->schema([
-                                View::make('filament.components.menu-item-select-styles'),
-                                Repeater::make('lines')
-                                    ->hiddenLabel()
-                                    ->schema([
-                                        Select::make('menu_item_id')
-                                            ->label('Menu')
-                                            ->options(fn (): array => CashierMenuCatalog::selectOptions(TenantContext::restaurantId()))
-                                            ->getOptionLabelUsing(fn (mixed $value): ?string => CashierMenuCatalog::optionLabel(
-                                                TenantContext::restaurantId(),
-                                                $value,
-                                            ))
-                                            ->required()
-                                            ->searchable()
-                                            ->preload()
-                                            ->native(false)
-                                            ->allowHtml()
-                                            ->live()
-                                            ->afterStateUpdated(function (Set $set): void {
-                                                $set('variant_id', null);
-                                                $set('modifier_ids', []);
-                                            })
-                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
-                                            ->columnSpanFull(),
-                                        TextInput::make('qty')
-                                            ->label('Jumlah')
-                                            ->numeric()
-                                            ->minValue(1)
-                                            ->default(1)
-                                            ->required()
-                                            ->suffix('x')
-                                            ->live()
-                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
-                                        Select::make('variant_id')
-                                            ->label('Varian')
-                                            ->placeholder('Pilih varian')
-                                            ->options(fn (Get $get): array => CashierMenuCatalog::variantSelectOptions($get('menu_item_id')))
-                                            ->visible(fn (Get $get): bool => CashierMenuCatalog::hasVariants($get('menu_item_id')))
-                                            ->required(fn (Get $get): bool => CashierMenuCatalog::hasVariants($get('menu_item_id')))
-                                            ->native(false)
-                                            ->live()
-                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
-                                        Select::make('modifier_ids')
-                                            ->label('Extra')
-                                            ->multiple()
-                                            ->options(fn (Get $get): array => CashierMenuCatalog::modifierSelectOptions($get('menu_item_id')))
-                                            ->native(false)
-                                            ->live()
-                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
-                                            ->columnSpan(fn (Get $get): int => CashierMenuCatalog::hasVariants($get('menu_item_id')) ? 2 : 1),
-                                        Textarea::make('notes')
-                                            ->label('Catatan')
-                                            ->rows(2)
-                                            ->columnSpanFull(),
-                                    ])
-                                    ->columns(2)
-                                    ->minItems(1)
-                                    ->required()
-                                    ->columnSpanFull()
-                                    ->collapsible()
-                                    ->itemLabel(fn (array $state): string => CashierMenuCatalog::itemName(
-                                        TenantContext::restaurantId(),
-                                        $state['menu_item_id'] ?? null,
-                                    ))
-                                    ->addActionLabel('Tambah item')
-                                    ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
-                            ]),
-
-                        Section::make('Ringkasan pembayaran')
-                            ->columnSpan(2)
-                            ->description('Perkiraan total dihitung otomatis dari item yang dipilih.')
-                            ->icon(Heroicon::OutlinedReceiptPercent)
-                            ->schema([
-                                Hidden::make('cash_received')
-                                    ->dehydrated(fn (Get $get): bool => ($get('payment_method') ?? 'cash') === 'cash'),
-                                View::make('filament.pages.partials.cashier-order-totals')
-                                    ->key('cashier-order-totals')
-                                    ->viewData(fn (Get $get): array => [
-                                        'preview' => CashierOrderPreview::estimateFromLines(
-                                            $get('lines') ?? [],
-                                            TenantContext::outlet(),
-                                            (string) ($get('payment_method') ?? 'cash'),
-                                        ),
-                                        'cashReceived' => $get('cash_received'),
-                                    ]),
-                            ]),
-                    ]),
-
-            ]);
+        return true;
     }
 
     public function create(): void
     {
-        try {
-            $data = $this->isPosUi()
-                ? $this->validatedPosData()
-                : $this->form->getState();
-        } catch (ValidationException $e) {
-            if ($this->isPosUi()) {
-                Notification::make()
-                    ->title(collect($e->errors())->flatten()->first() ?: 'Order tidak bisa dibuat')
-                    ->danger()
-                    ->send();
-            }
-
-            throw $e;
-        }
         $tenant = Filament::getTenant();
         $user = auth()->user();
 
         if (! $tenant instanceof Restaurant || ! $user instanceof User) {
             return;
+        }
+
+        $outlet = TenantContext::outlet();
+        $activeShift = ($user instanceof User && $outlet)
+            ? app(CashierShiftService::class)->getCurrentOpenShift($user, $outlet)
+            : null;
+
+        $isOwnerOrSuperAdmin = $user->isSuperAdmin() || $user->isRestaurantOwner();
+
+        if (! $activeShift && ! $isOwnerOrSuperAdmin) {
+            Notification::make()
+                ->title('Shift kasir belum dibuka!')
+                ->body('Silakan buka shift kasir dan masukkan modal awal sebelum membuat pesanan.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        try {
+            $data = $this->validatedPosData();
+        } catch (ValidationException $e) {
+            Notification::make()
+                ->title(collect($e->errors())->flatten()->first() ?: 'Order tidak bisa dibuat')
+                ->danger()
+                ->send();
+
+            throw $e;
         }
 
         $table = DiningTable::query()
@@ -364,6 +201,7 @@ class CreateCashierOrder extends Page
                 $sendReceipt,
                 $data['lines'] ?? [],
                 IdrAmount::parse($data['cash_received'] ?? null),
+                (int) ($data['points_to_redeem'] ?? 0),
             );
         } catch (ValidationException $e) {
             Notification::make()
@@ -424,18 +262,16 @@ class CreateCashierOrder extends Page
             'send_receipt' => false,
             'payment_method' => 'cash',
             'cash_received' => null,
-            'lines' => $this->isPosUi() ? [] : [['qty' => 1]],
+            'points_to_redeem' => 0,
+            'lines' => [],
         ];
 
         $this->data = $defaultData;
-        $this->form->fill($defaultData);
         $this->posEditor = null;
         $this->posSearch = '';
         $this->posCategory = 'all';
 
-        if ($this->isPosUi()) {
-            $this->cacheSchema('content', null);
-        }
+        $this->cacheSchema('content', null);
 
         $this->dispatch('cashier-reset-form');
     }
@@ -447,27 +283,10 @@ class CreateCashierOrder extends Page
                 'simpleModeCompletedOrder' => $this->simpleModeCompletedOrder,
             ]);
 
-        if ($this->isPosUi()) {
-            return $schema
-                ->components([
-                    View::make('filament.pages.partials.cashier-pos-shell')
-                        ->viewData(fn (): array => $this->posShellViewData()),
-                    $modal,
-                ]);
-        }
-
         return $schema
             ->components([
-                Form::make([EmbeddedSchema::make('form')])
-                    ->id('form')
-                    ->livewireSubmitHandler('create')
-                    ->footer([
-                        Actions::make([
-                            Action::make('create')
-                                ->label('Buat pesanan')
-                                ->submit('create'),
-                        ]),
-                    ]),
+                View::make('filament.pages.partials.cashier-pos-shell')
+                    ->viewData(fn (): array => $this->posShellViewData()),
                 $modal,
             ]);
     }
@@ -569,7 +388,7 @@ class CreateCashierOrder extends Page
     #[Renderless]
     public function setPosField(string $field, mixed $value): void
     {
-        if (! $this->isPosUi() || ! in_array($field, ['table_id', 'customer_name', 'customer_wa', 'send_receipt', 'cash_received'], true)) {
+        if (! $this->isPosUi() || ! in_array($field, ['table_id', 'customer_name', 'customer_wa', 'send_receipt', 'cash_received', 'points_to_redeem'], true)) {
             return;
         }
 
@@ -579,15 +398,70 @@ class CreateCashierOrder extends Page
             return;
         }
 
+        if ($field === 'points_to_redeem') {
+            $this->data[$field] = max(0, (int) $value);
+
+            return;
+        }
+
         $this->data[$field] = $value === '' ? null : $value;
 
         if ($field === 'customer_wa') {
             if (blank($this->data['customer_wa'] ?? null)) {
                 $this->data['send_receipt'] = false;
+                $this->data['points_to_redeem'] = 0;
             } elseif (TenantContext::restaurant()?->hasFonnteKey()) {
                 $this->data['send_receipt'] = true;
             }
         }
+    }
+
+    #[Renderless]
+    public function setPosPoints(int $points): array
+    {
+        if (! $this->isPosUi()) {
+            return $this->posUiState();
+        }
+
+        $this->data['points_to_redeem'] = max(0, $points);
+
+        return $this->posUiState();
+    }
+
+    #[Renderless]
+    public function checkCustomerPoints(string $wa): array
+    {
+        $restaurant = TenantContext::restaurant();
+        if (! $restaurant) {
+            return ['found' => false];
+        }
+
+        $normalized = WhatsAppNumber::normalize($wa);
+        if (! $normalized) {
+            return ['found' => false];
+        }
+
+        $customer = \App\Models\Customer::query()
+            ->where('restaurant_id', $restaurant->id)
+            ->where('phone', $normalized)
+            ->first();
+
+        if (! $customer) {
+            return ['found' => false];
+        }
+
+        $settings = $restaurant->loyaltySettings();
+
+        return [
+            'found' => true,
+            'name' => $customer->name,
+            'tier' => $customer->tierLabel(),
+            'points' => (int) $customer->points_balance,
+            'min_points' => (int) ($settings['min_redeem_points'] ?? 10),
+            'rate' => (int) ($settings['point_redemption_rate'] ?? 1000),
+            'max_percentage' => (int) ($settings['max_redeem_percentage'] ?? 50),
+            'loyalty_enabled' => (bool) ($settings['enabled'] ?? true),
+        ];
     }
 
     #[Renderless]
@@ -640,7 +514,11 @@ class CreateCashierOrder extends Page
         $catalog = CashierMenuCatalog::posPayload($restaurantId);
         $state = $this->posUiState($catalog);
 
+        $user = auth()->user();
+        $isOwnerOrOperator = $user instanceof User && ($user->isPlatformOperator() || $user->isRestaurantOwner());
+
         return [
+            'canViewDrawerCash' => $isOwnerOrOperator,
             'catalog' => $catalog,
             'categories' => CashierMenuCatalog::categories($restaurantId),
             'hasUncategorized' => collect($catalog)->contains(fn (array $item): bool => blank($item['category_id'] ?? null)),
@@ -652,6 +530,9 @@ class CreateCashierOrder extends Page
             'customerWa' => $this->data['customer_wa'] ?? '',
             'sendReceipt' => (bool) ($this->data['send_receipt'] ?? false),
             'cashReceived' => $this->data['cash_received'] ?? null,
+            'pointsToRedeem' => (int) ($this->data['points_to_redeem'] ?? 0),
+            'loyaltySettings' => TenantContext::restaurant()?->loyaltySettings() ?? [],
+            'activeShift' => $this->activeShift,
             ...$state,
         ];
     }
@@ -666,16 +547,50 @@ class CreateCashierOrder extends Page
         $lines = array_values($this->data['lines'] ?? []);
         $paymentMethod = (string) ($this->data['payment_method'] ?? 'cash');
 
+        $restaurant = TenantContext::restaurant();
+        $pointsRequested = (int) ($this->data['points_to_redeem'] ?? 0);
+        $customerWa = $this->data['customer_wa'] ?? null;
+        $discountAmount = 0;
+        $pointsRedeemed = 0;
+
+        if ($restaurant && filled($customerWa) && $pointsRequested > 0) {
+            $normalizedWa = WhatsAppNumber::normalize((string) $customerWa);
+            if ($normalizedWa) {
+                $customer = \App\Models\Customer::query()
+                    ->where('restaurant_id', $restaurant->id)
+                    ->where('phone', $normalizedWa)
+                    ->first();
+
+                if ($customer) {
+                    $rawSubtotal = 0;
+                    foreach ($lines as $line) {
+                        $rawSubtotal += CashierOrderPreview::lineTotal($line);
+                    }
+
+                    $calc = app(\App\Services\CustomerCrmService::class)
+                        ->calculateRedemption($customer, $rawSubtotal, $pointsRequested, $restaurant);
+
+                    if ($calc['allowed']) {
+                        $discountAmount = $calc['discount_amount'];
+                        $pointsRedeemed = $calc['points'];
+                    }
+                }
+            }
+        }
+
+        $estimate = CashierOrderPreview::estimateFromLines(
+            $lines,
+            TenantContext::outlet(),
+            $paymentMethod,
+            $this->data['cash_received'] ?? null,
+            $discountAmount,
+        );
+        $estimate['points_redeemed'] = $pointsRedeemed;
+
         return [
             'plainQtyByItem' => $this->plainQtyByItem($lines),
             'cartLines' => $this->posCartLines($catalog, $lines),
-            'preview' => $this->presentPreview(
-                CashierOrderPreview::estimateFromLines(
-                    $lines,
-                    TenantContext::outlet(),
-                    $paymentMethod,
-                ),
-            ),
+            'preview' => $this->presentPreview($estimate),
             'paymentMethod' => $paymentMethod,
         ];
     }
@@ -692,6 +607,7 @@ class CreateCashierOrder extends Page
 
         return [
             ...$preview,
+            'discount_label' => CmsMedia::formatIdr((int) ($preview['discount_amount'] ?? 0)),
             'subtotal_label' => CmsMedia::formatIdr((int) ($preview['subtotal'] ?? 0)),
             'service_label' => CmsMedia::formatIdr((int) ($preview['service_amount'] ?? 0)),
             'pb1_label' => CmsMedia::formatIdr((int) ($preview['pb1_amount'] ?? 0)),
@@ -907,17 +823,6 @@ class CreateCashierOrder extends Page
     }
 
     /**
-     * @param  list<array<string, mixed>>  $lines
-     * @return list<array<string, mixed>>
-     */
-    private function linesForForm(array $lines): array
-    {
-        $normalized = $this->linesForPos($lines);
-
-        return $normalized === [] ? [['qty' => 1]] : $normalized;
-    }
-
-    /**
      * @return list<int>
      */
     private function normalizedModifierIds(mixed $modifierIds): array
@@ -967,7 +872,157 @@ class CreateCashierOrder extends Page
             'payment_method' => $data['payment_method'] ?? 'cash',
             'send_receipt' => (bool) ($data['send_receipt'] ?? false),
             'cash_received' => $data['cash_received'] ?? null,
+            'points_to_redeem' => (int) ($data['points_to_redeem'] ?? 0),
             'lines' => $lines,
         ];
+    }
+
+    public function getActiveShiftProperty(): ?array
+    {
+        $user = auth()->user();
+        if (! $user instanceof User) {
+            return null;
+        }
+
+        $outlet = TenantContext::outlet();
+        if (! $outlet) {
+            return null;
+        }
+
+        $shift = app(CashierShiftService::class)->getCurrentOpenShift($user, $outlet);
+        if (! $shift) {
+            return null;
+        }
+
+        $calc = app(CashierShiftService::class)->calculateExpectedCash($shift);
+        $isOwnerOrOperator = $user->isPlatformOperator() || $user->isRestaurantOwner();
+
+        return [
+            'id' => $shift->id,
+            'public_id' => $shift->public_id,
+            'user_name' => $shift->user?->name ?? 'Kasir',
+            'starting_cash' => $calc['starting_cash'],
+            'cash_sales' => $isOwnerOrOperator ? $calc['cash_sales'] : null,
+            'non_cash_sales' => $isOwnerOrOperator ? $calc['non_cash_sales'] : null,
+            'cash_in' => $isOwnerOrOperator ? $calc['cash_in'] : null,
+            'cash_out' => $isOwnerOrOperator ? $calc['cash_out'] : null,
+            'expected_cash' => $isOwnerOrOperator ? $calc['expected_cash'] : null,
+            'total_sales' => $isOwnerOrOperator ? $calc['total_sales'] : null,
+            'opened_at' => $shift->opened_at->format('H:i'),
+            'print_url' => route('shifts.print', ['shift' => $shift->public_id]),
+        ];
+    }
+
+    public function openShift(mixed $startingCash, ?string $notes = null): ?array
+    {
+        $user = auth()->user();
+        $outlet = TenantContext::outlet();
+        if (! $user instanceof User || ! $outlet) {
+            return null;
+        }
+
+        $parsed = IdrAmount::parse($startingCash) ?? 0;
+        if ($parsed < 0) {
+            Notification::make()->title('Modal awal tidak valid')->danger()->send();
+
+            return null;
+        }
+
+        try {
+            app(CashierShiftService::class)->openShift($user, $outlet, $parsed, $notes);
+            Notification::make()->title('Shift kasir berhasil dibuka')->success()->send();
+
+            return ['activeShift' => $this->activeShift];
+        } catch (ValidationException $e) {
+            Notification::make()->title(collect($e->errors())->flatten()->first() ?: 'Gagal membuka shift')->danger()->send();
+
+            return null;
+        }
+    }
+
+    #[Renderless]
+    public function recordCashMovement(string $type, mixed $amount, string $category = 'lainnya', ?string $notes = null): ?array
+    {
+        $user = auth()->user();
+        $outlet = TenantContext::outlet();
+        if (! $user instanceof User || ! $outlet) {
+            return null;
+        }
+
+        $shift = app(CashierShiftService::class)->getCurrentOpenShift($user, $outlet);
+        if (! $shift) {
+            Notification::make()->title('Tidak ada shift aktif')->danger()->send();
+
+            return null;
+        }
+
+        $parsedAmount = IdrAmount::parse($amount) ?? 0;
+        if ($parsedAmount <= 0) {
+            Notification::make()->title('Nominal mutasi kas harus lebih dari 0')->danger()->send();
+
+            return null;
+        }
+
+        try {
+            app(CashierShiftService::class)->recordCashMovement($shift, $user, $type, $parsedAmount, $category, $notes);
+            $label = $type === 'cash_in' ? 'Kas masuk' : 'Kas keluar';
+            Notification::make()->title("{$label} berhasil dicatat")->success()->send();
+
+            return ['activeShift' => $this->activeShift];
+        } catch (ValidationException $e) {
+            Notification::make()->title(collect($e->errors())->flatten()->first() ?: 'Gagal mencatat mutasi kas')->danger()->send();
+
+            return null;
+        }
+    }
+
+    public function closeShift(mixed $actualEndingCash, ?string $differenceReason = null, ?string $notes = null): ?array
+    {
+        $user = auth()->user();
+        $outlet = TenantContext::outlet();
+        if (! $user instanceof User || ! $outlet) {
+            return null;
+        }
+
+        $shift = app(CashierShiftService::class)->getCurrentOpenShift($user, $outlet);
+        if (! $shift) {
+            Notification::make()->title('Tidak ada shift aktif untuk ditutup')->danger()->send();
+
+            return null;
+        }
+
+        $parsedActual = IdrAmount::parse($actualEndingCash) ?? 0;
+        if ($parsedActual < 0) {
+            Notification::make()->title('Uang fisik di laci tidak valid')->danger()->send();
+
+            return null;
+        }
+
+        try {
+            $closed = app(CashierShiftService::class)->closeShift($shift, $user, $parsedActual, $differenceReason, $notes);
+            Notification::make()->title('Shift kasir #'.$closed->id.' berhasil ditutup')->success()->send();
+
+            return [
+                'closedShift' => [
+                    'id' => $closed->id,
+                    'public_id' => $closed->public_id,
+                    'starting_cash' => (int) $closed->starting_cash,
+                    'cash_sales' => (int) $closed->cash_sales,
+                    'non_cash_sales' => (int) $closed->non_cash_sales,
+                    'cash_in' => (int) $closed->cash_in,
+                    'cash_out' => (int) $closed->cash_out,
+                    'expected_cash' => (int) $closed->expected_ending_cash,
+                    'actual_cash' => (int) $closed->actual_ending_cash,
+                    'difference' => (int) $closed->cash_difference,
+                    'difference_reason' => $closed->difference_reason,
+                    'print_url' => route('shifts.print', ['shift' => $closed->public_id]),
+                ],
+                'activeShift' => null,
+            ];
+        } catch (ValidationException $e) {
+            Notification::make()->title(collect($e->errors())->flatten()->first() ?: 'Gagal menutup shift')->danger()->send();
+
+            return null;
+        }
     }
 }

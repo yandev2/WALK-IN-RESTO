@@ -4,11 +4,11 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\CreateCashierOrder;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Models\MenuVariant;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CashierOrderService;
-use App\Support\CashierOrderPreview;
-use App\Support\CmsMedia;
+use App\Services\CashierShiftService;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,12 +75,12 @@ class CashierFilamentActionsTest extends TestCase
         Livewire::test(CreateCashierOrder::class)
             ->assertOk()
             ->assertSee('Buat order kasir')
-            ->assertSee('Opsional')
-            ->assertSee('Ringkasan pembayaran')
-            ->assertSee('Tambah item');
+            ->assertSee('Semua menu')
+            ->assertSee('Ringkasan pesanan')
+            ->assertDontSee('Tambah item');
     }
 
-    public function test_cashier_order_can_add_another_menu_line_after_selecting_item(): void
+    public function test_cashier_order_can_add_multiple_menu_items(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -88,48 +88,34 @@ class CashierFilamentActionsTest extends TestCase
         $user = $this->staffUser($world['restaurant'], ['order.create']);
         $other = $this->extraMenuItem($world, 'Kentang Goreng', 15000);
 
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
+
         $this->actingAs($user);
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
         $page = Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'payment_method' => 'cash',
-                'lines' => [
-                    [
-                        'menu_item_id' => $world['item']->id,
-                        'qty' => 1,
-                    ],
-                ],
-            ]);
-
-        $page->assertSee('Uang diterima')
-            ->assertDontSee('raw: ""', false)
-            ->callFormComponentAction('lines', 'add');
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosPaymentMethod', 'cash')
+            ->call('addPosItem', $world['item']->id)
+            ->call('addPosItem', $other->id)
+            ->call('addPosItem', $other->id);
 
         $this->assertCount(2, $page->instance()->data['lines'] ?? []);
 
-        $page->fillForm([
-            'lines' => [
-                [
-                    'menu_item_id' => $world['item']->id,
-                    'qty' => 1,
-                ],
-                [
-                    'menu_item_id' => $other->id,
-                    'qty' => 2,
-                ],
-            ],
-        ])->call('create')->assertHasNoFormErrors();
+        $page->call('create')->assertHasNoErrors();
 
         $this->assertDatabaseHas('order_items', [
             'menu_item_id' => $other->id,
             'qty' => 2,
         ]);
+        $this->assertDatabaseHas('order_items', [
+            'menu_item_id' => $world['item']->id,
+            'qty' => 1,
+        ]);
     }
 
-    public function test_cashier_order_totals_update_when_repeater_line_is_deleted(): void
+    public function test_cashier_order_totals_update_when_pos_line_is_deleted(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -141,41 +127,17 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
-        $twoLines = [
-            ['menu_item_id' => $world['item']->id, 'qty' => 1],
-            ['menu_item_id' => $other->id, 'qty' => 2],
-        ];
-        $oneLine = [
-            ['menu_item_id' => $world['item']->id, 'qty' => 1],
-        ];
-
-        $totalForTwo = CmsMedia::formatIdr(
-            CashierOrderPreview::estimateFromLines($twoLines, $world['outlet'], 'cash')['grand_payable'],
-        );
-        $totalForOne = CmsMedia::formatIdr(
-            CashierOrderPreview::estimateFromLines($oneLine, $world['outlet'], 'cash')['grand_payable'],
-        );
-
         $page = Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'payment_method' => 'cash',
-                'lines' => $twoLines,
-            ])
-            ->assertSee($totalForTwo)
-            ->assertSee('2 baris');
+            ->call('addPosItem', $world['item']->id)
+            ->call('addPosItem', $other->id);
 
-        $itemKey = array_key_last($page->instance()->data['lines'] ?? []);
+        $this->assertCount(2, $page->instance()->data['lines'] ?? []);
 
-        $page->callFormComponentAction('lines', 'delete', [], ['item' => $itemKey]);
+        $page->call('removePosLine', 1);
 
-        $this->assertCount(1, $page->instance()->data['lines'] ?? []);
-        $this->assertNotSame($totalForTwo, $totalForOne);
-
-        $partialHtml = implode("\n", invade($page)->lastState->getEffects()['partials'] ?? []);
-
-        $this->assertStringContainsString($totalForOne, $partialHtml);
-        $this->assertStringContainsString('1 baris', $partialHtml);
+        $lines = array_values($page->instance()->data['lines'] ?? []);
+        $this->assertCount(1, $lines);
+        $this->assertSame($world['item']->id, (int) $lines[0]['menu_item_id']);
     }
 
     public function test_cashier_order_can_be_created_without_whatsapp(): void
@@ -184,28 +146,21 @@ class CashierFilamentActionsTest extends TestCase
 
         $world = $this->createGuestRestaurant();
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
 
         $this->actingAs($user);
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
         Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'customer_wa' => null,
-                'customer_name' => 'Walk-in',
-                'payment_method' => 'cash',
-                'send_receipt' => false,
-                'cash_received' => '20.000',
-                'lines' => [
-                    [
-                        'menu_item_id' => $world['item']->id,
-                        'qty' => 1,
-                    ],
-                ],
-            ])
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_wa', null)
+            ->call('setPosField', 'customer_name', 'Walk-in')
+            ->call('setPosField', 'send_receipt', false)
+            ->call('setPosField', 'cash_received', '20.000')
+            ->call('addPosItem', $world['item']->id)
             ->call('create')
-            ->assertHasNoFormErrors();
+            ->assertHasNoErrors();
 
         $this->assertDatabaseHas('visits', [
             'table_id' => $world['table']->id,
@@ -249,7 +204,7 @@ class CashierFilamentActionsTest extends TestCase
         $this->assertSame(20000 - (int) $order->grand_payable, (int) $payment->change_amount);
     }
 
-    public function test_cashier_order_defaults_to_form_ui_with_grid_toggle(): void
+    public function test_cashier_order_renders_grid_without_toggle_action(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -262,13 +217,25 @@ class CashierFilamentActionsTest extends TestCase
 
         Livewire::test(CreateCashierOrder::class)
             ->assertOk()
-            ->assertSet('cashierUi', 'form')
-            ->assertActionVisible('toggleCashierUi')
-            ->assertSee('Tambah item')
-            ->assertDontSee('Semua menu');
+            ->assertDontSee('Tampilan form')
+            ->assertDontSee('Tampilan grid')
+            ->assertActionVisible('openShift')
+            ->assertActionHidden('closeShift')
+            ->assertSee('Shift Belum Dibuka')
+            ->assertSee('Buat order kasir')
+            ->assertSee('Semua menu')
+            ->assertSee('Ringkasan pesanan')
+            ->assertDontSee('Tambah item');
+
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->assertOk()
+            ->assertActionHidden('openShift')
+            ->assertActionVisible('closeShift');
     }
 
-    public function test_cashier_order_can_switch_to_grid_and_merge_qty(): void
+    public function test_cashier_order_merges_qty_when_item_clicked_multiple_times(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -280,8 +247,6 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setTenant($world['restaurant']);
 
         $page = Livewire::test(CreateCashierOrder::class)
-            ->callAction('toggleCashierUi')
-            ->assertSet('cashierUi', 'pos')
             ->assertSee('Semua menu')
             ->assertDontSee('Tambah item')
             ->call('addPosItem', $world['item']->id)
@@ -300,18 +265,18 @@ class CashierFilamentActionsTest extends TestCase
 
         $world = $this->createGuestRestaurant();
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
 
         $this->actingAs($user);
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
         Livewire::test(CreateCashierOrder::class)
-            ->callAction('toggleCashierUi')
-            ->set('data.table_id', $world['table']->id)
-            ->set('data.customer_name', 'Walk-in')
-            ->set('data.payment_method', 'cash')
-            ->set('data.send_receipt', false)
-            ->set('data.cash_received', '20000')
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Walk-in')
+            ->call('setPosPaymentMethod', 'cash')
+            ->call('setPosField', 'send_receipt', false)
+            ->call('setPosField', 'cash_received', '20000')
             ->call('addPosItem', $world['item']->id)
             ->call('create')
             ->assertHasNoErrors();
@@ -327,7 +292,7 @@ class CashierFilamentActionsTest extends TestCase
         ]);
     }
 
-    public function test_cashier_order_ui_roundtrip_keeps_selected_menu(): void
+    public function test_cashier_order_grid_change_qty_and_removes_when_zero(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -339,31 +304,19 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setTenant($world['restaurant']);
 
         $page = Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'payment_method' => 'cash',
-                'lines' => [
-                    [
-                        'menu_item_id' => $world['item']->id,
-                        'qty' => 1,
-                    ],
-                ],
-            ])
-            ->callAction('toggleCashierUi')
-            ->assertSet('cashierUi', 'pos')
-            ->assertSee('Es Teh')
-            ->callAction('toggleCashierUi')
-            ->assertSet('cashierUi', 'form')
-            ->assertSee('Tambah item');
+            ->call('addPosItem', $world['item']->id)
+            ->call('changePosQty', 0, 1);
 
-        $lines = array_values($page->instance()->data['lines'] ?? []);
-        $this->assertSame($world['item']->id, (int) ($lines[0]['menu_item_id'] ?? 0));
+        $this->assertSame(2, (int) $page->instance()->data['lines'][0]['qty']);
 
-        $page->callFormComponentAction('lines', 'add');
-        $this->assertCount(2, $page->instance()->data['lines'] ?? []);
+        $page->call('changePosQty', 0, -1);
+        $this->assertSame(1, (int) $page->instance()->data['lines'][0]['qty']);
+
+        $page->call('changePosQty', 0, -1);
+        $this->assertEmpty($page->instance()->data['lines']);
     }
 
-    public function test_cashier_order_grid_ui_persists_in_session(): void
+    public function test_cashier_order_grid_resets_form(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
@@ -375,15 +328,14 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setTenant($world['restaurant']);
 
         Livewire::test(CreateCashierOrder::class)
-            ->callAction('toggleCashierUi')
-            ->assertSet('cashierUi', 'pos');
-
-        $this->assertSame('pos', session('cashier_order_ui'));
-
-        Livewire::test(CreateCashierOrder::class)
-            ->assertSet('cashierUi', 'pos')
-            ->assertSee('Semua menu')
-            ->assertDontSee('Tambah item');
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Budi')
+            ->call('addPosItem', $world['item']->id)
+            ->call('resetCashierForm')
+            ->assertSet('data.table_id', null)
+            ->assertSet('data.customer_name', null)
+            ->assertSet('data.lines', [])
+            ->assertDispatched('cashier-reset-form');
     }
 
     public function test_cashier_order_in_simple_mode_stays_on_page_and_shows_receipt_modal(): void
@@ -393,26 +345,20 @@ class CashierFilamentActionsTest extends TestCase
         $world = $this->createGuestRestaurant();
         $world['outlet']->update(['simple_mode' => true]);
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
 
         $this->actingAs($user);
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
         $test = Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'customer_name' => 'Budi Prasmanan',
-                'customer_wa' => '081234567890',
-                'payment_method' => 'cash',
-                'lines' => [
-                    [
-                        'menu_item_id' => $world['item']->id,
-                        'qty' => 1,
-                    ],
-                ],
-            ])
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Budi Prasmanan')
+            ->call('setPosField', 'customer_wa', '081234567890')
+            ->call('setPosPaymentMethod', 'cash')
+            ->call('addPosItem', $world['item']->id)
             ->call('create')
-            ->assertHasNoFormErrors()
+            ->assertHasNoErrors()
             ->assertNoRedirect();
 
         $completedOrder = $test->get('simpleModeCompletedOrder');
@@ -446,15 +392,14 @@ class CashierFilamentActionsTest extends TestCase
         $world = $this->createGuestRestaurant();
         $world['outlet']->update(['simple_mode' => true]);
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
 
         $this->actingAs($user);
         Filament::setCurrentPanel('admin');
         Filament::setTenant($world['restaurant']);
 
         $test = Livewire::test(CreateCashierOrder::class)
-            ->callAction('toggleCashierUi')
-            ->assertSet('cashierUi', 'pos')
-            ->call('setPosField', 'table_id', $world['table']->id)
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
             ->call('setPosField', 'customer_name', 'Budi POS')
             ->call('setPosField', 'customer_wa', '081299998888')
             ->call('setPosField', 'cash_received', '50000')
@@ -487,9 +432,10 @@ class CashierFilamentActionsTest extends TestCase
 
         $world = $this->createGuestRestaurant();
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
         $item = $world['item'];
 
-        $variant = \App\Models\MenuVariant::query()->create([
+        $variant = MenuVariant::query()->create([
             'restaurant_id' => $world['restaurant']->id,
             'outlet_id' => $world['outlet']->id,
             'menu_item_id' => $item->id,
@@ -503,7 +449,6 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setTenant($world['restaurant']);
 
         $test = Livewire::test(CreateCashierOrder::class)
-            ->set('cashierUi', 'pos')
             ->call('setPosField', 'table_id', (string) $world['table']->id)
             ->call('setPosField', 'customer_name', 'Tamu Jumbo')
             ->call('commitPosEditor', 'new', $item->id, null, $variant->id, [], null)
@@ -517,15 +462,16 @@ class CashierFilamentActionsTest extends TestCase
         ]);
     }
 
-    public function test_cashier_order_with_variant_in_form_mode(): void
+    public function test_cashier_order_with_variant_and_increased_qty(): void
     {
         $this->seed(RolePermissionSeeder::class);
 
         $world = $this->createGuestRestaurant();
         $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
         $item = $world['item'];
 
-        $variant = \App\Models\MenuVariant::query()->create([
+        $variant = MenuVariant::query()->create([
             'restaurant_id' => $world['restaurant']->id,
             'outlet_id' => $world['outlet']->id,
             'menu_item_id' => $item->id,
@@ -539,19 +485,12 @@ class CashierFilamentActionsTest extends TestCase
         Filament::setTenant($world['restaurant']);
 
         Livewire::test(CreateCashierOrder::class)
-            ->fillForm([
-                'table_id' => $world['table']->id,
-                'payment_method' => 'cash',
-                'lines' => [
-                    [
-                        'menu_item_id' => $item->id,
-                        'variant_id' => $variant->id,
-                        'qty' => 2,
-                    ],
-                ],
-            ])
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Tamu Large')
+            ->call('commitPosEditor', 'new', $item->id, null, $variant->id, [], null)
+            ->call('changePosQty', 0, 1)
             ->call('create')
-            ->assertHasNoFormErrors();
+            ->assertHasNoErrors();
 
         $this->assertDatabaseHas('order_items', [
             'menu_item_id' => $item->id,

@@ -41,7 +41,7 @@ class RolePolicy
 
     public function delete(User $user, Role $role): bool
     {
-        if (in_array($role->name, Role::LOCKED_NAMES, true)) {
+        if ($role->isProtectedFromDeletion()) {
             return false;
         }
 

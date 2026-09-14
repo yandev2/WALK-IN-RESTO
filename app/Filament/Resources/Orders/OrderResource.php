@@ -133,6 +133,18 @@ class OrderResource extends Resource
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('subtotal')->money('IDR', locale: 'id')->badge()->color('success'),
+                        TextEntry::make('discount_amount')
+                            ->label('Diskon Poin Loyalty')
+                            ->formatStateUsing(function (Order $record): string {
+                                if ((int) $record->discount_amount <= 0) {
+                                    return 'Tidak ada';
+                                }
+                                $points = (int) $record->points_redeemed;
+
+                                return CmsMedia::formatIdr((int) $record->discount_amount).($points > 0 ? " ({$points} Poin)" : '');
+                            })
+                            ->badge()
+                            ->color(fn (Order $record): string => (int) $record->discount_amount > 0 ? 'warning' : 'gray'),
                         TextEntry::make('service_amount')->label('Service')->money('IDR', locale: 'id')->badge()->color('success'),
                         TextEntry::make('pb1_amount')->label('PB1')->money('IDR', locale: 'id')->badge()->color('success'),
                         TextEntry::make('grand_before')->label('Omzet (grand before)')->money('IDR', locale: 'id')->badge()->color('success'),
@@ -252,6 +264,12 @@ class OrderResource extends Resource
                 TextColumn::make('grand_payable')
                     ->label('Tagihan')
                     ->money('IDR', locale: 'id'),
+                TextColumn::make('points_redeemed')
+                    ->label('Poin Ditukar')
+                    ->formatStateUsing(fn (int $state): string => $state > 0 ? "{$state} Poin" : '—')
+                    ->badge()
+                    ->color(fn (int $state): string => $state > 0 ? 'warning' : 'gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('visit.customer_wa')
                     ->searchable()
                     ->label('WA'),

@@ -44,7 +44,10 @@ final class OrderReceiptWhatsappMessage
         $lines[] = 'Subtotal: Rp '.self::money($order->subtotal);
 
         if ((int) $order->discount_amount > 0) {
-            $lines[] = 'Diskon order: -Rp '.self::money($order->discount_amount);
+            $discountLabel = (int) $order->points_redeemed > 0
+                ? 'Diskon Poin ('.$order->points_redeemed.' Poin): -Rp '.self::money($order->discount_amount)
+                : 'Diskon order: -Rp '.self::money($order->discount_amount);
+            $lines[] = $discountLabel;
         }
 
         $lines[] = 'Service: Rp '.self::money($order->service_amount);
