@@ -14,7 +14,7 @@
 
     <div class="space-y-3 w-full">
         {{-- Row 1: Vision UI Main Stat Cards (2 Columns Grid) --}}
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-5">
             @foreach ($cards as $card)
                 <div
                     class="vision-card p-4 sm:p-5 flex flex-col justify-between h-full group hover:-translate-y-1 transition-all duration-300">
@@ -35,10 +35,8 @@
 
                         {{-- Value & Badge Stack --}}
                         <div class="mt-3">
-                            <div
-                                class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white cursor-default"
-                                @if (filled($card['raw_value'] ?? null)) title="{{ $card['raw_value'] }}" @endif
-                            >
+                            <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white cursor-default"
+                                @if (filled($card['raw_value'] ?? null)) title="{{ $card['raw_value'] }}" @endif>
                                 {{ $card['value'] }}
                             </div>
                             @if (filled($card['badge']))
@@ -89,7 +87,7 @@
         {{-- Sub-Row: Operational Breakdown Pills --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             @foreach ($pills as $pill)
-                <div class="vision-pill-card px-3.5 py-2 flex items-center justify-between text-xs">
+                <div class="vision-pill-card px-3.5 py-2 flex items-center justify-between text-sm">
                     <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium">
                         <x-filament::icon :icon="$pill['icon']" class="h-4 w-4 text-sky-500 dark:text-cyan-400" />
                         <span>{{ $pill['label'] }}</span>

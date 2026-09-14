@@ -7,6 +7,7 @@ use App\Models\DiningTable;
 use App\Models\KdsStation;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Services\KdsItemService;
 use App\Support\SubscriptionAccess;
@@ -107,11 +108,6 @@ class KitchenDisplay extends Page implements HasTable
     public function getMaxContentWidth(): Width|string|null
     {
         return Width::Full;
-    }
-
-    public function getFooter(): ?View
-    {
-        return view('filament.pages.partials.kds-beep');
     }
 
     public function content(Schema $schema): Schema
@@ -284,10 +280,18 @@ class KitchenDisplay extends Page implements HasTable
         $fresh = array_values(array_diff($ids, $this->announcedOrderIds));
 
         if ($fresh !== []) {
-            $this->dispatch('kds-beep');
+            $this->dispatch('kds-beep', count: count($fresh), soundUrl: PlatformSetting::kitchenSoundUrl());
+
+            Notification::make()
+                ->title('Pesanan Baru Masuk ke Dapur!')
+                ->body(count($fresh) . ' pesanan baru siap diproses')
+                ->success()
+                ->duration(8000)
+                ->send();
         }
 
-        $this->announcedOrderIds = array_values(array_unique(array_merge($this->announcedOrderIds, $ids)));
+        $merged = array_values(array_unique(array_merge($this->announcedOrderIds, $ids)));
+        $this->announcedOrderIds = array_slice($merged, -150);
     }
 
     public function canAdvance(): bool

@@ -122,11 +122,14 @@
                 if (!item) {
                     return;
                 }
+                const defaultVariant = (item.variants && item.variants.length > 0) ? item.variants[0].id : null;
                 this.editor = {
                     type: 'new',
                     index: null,
                     menu_item_id: item.id,
                     name: item.name,
+                    variants: item.variants || [],
+                    variant_id: defaultVariant,
                     modifiers: item.modifiers || [],
                     modifier_ids: [],
                     notes: '',
@@ -135,11 +138,15 @@
             openLine(line) {
                 const item = this.catalogById[line.menu_item_id] ||
                     this.catalog.find((row) => Number(row.id) === Number(line.menu_item_id));
+                const itemVariants = item ? (item.variants || []) : [];
+                const defaultVariant = (itemVariants.length > 0) ? itemVariants[0].id : null;
                 this.editor = {
                     type: 'edit',
                     index: line.index,
                     menu_item_id: line.menu_item_id,
                     name: line.name,
+                    variants: itemVariants,
+                    variant_id: line.variant_id ?? defaultVariant,
                     modifiers: item ? (item.modifiers || []) : [],
                     modifier_ids: (line.modifier_ids || []).map(Number),
                     notes: line.notes || '',
@@ -255,10 +262,16 @@
                                             class="cashier-pos-card__discount">-{{ (int) $item['discount_percent'] }}%</span>
                                     @endif
                                 </div>
-                                @if ($item['has_modifiers'] ?? false)
+                                @if (!empty($item['has_variants']) || !empty($item['has_modifiers']))
                                     <button type="button" class="cashier-pos-add"
                                         @click="openExtra({{ (int) $item['id'] }})">
-                                        Pilih extra
+                                        @if (!empty($item['has_variants']) && !empty($item['has_modifiers']))
+                                            Pilih opsi
+                                        @elseif (!empty($item['has_variants']))
+                                            Pilih varian
+                                        @else
+                                            Pilih extra
+                                        @endif
                                     </button>
                                 @else
                                     <template x-if="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) > 0">
@@ -368,8 +381,11 @@
                             <div class="cashier-pos-cart-item__ph">Menu</div>
                         </template>
                         <div>
-                            <p class="cashier-pos-cart-item__name"><span x-text="line.name"></span> <span
-                                    x-text="'x' + line.qty"></span></p>
+                            <p class="cashier-pos-cart-item__name">
+                                <span x-text="line.name"></span>
+                                <span x-show="line.variant_name" class="font-medium text-primary-600 dark:text-primary-400" x-text="' (' + line.variant_name + ')'"></span>
+                                <span x-text="' x' + line.qty"></span>
+                            </p>
                             <p class="cashier-pos-cart-item__meta" x-show="line.extras.length"
                                 x-text="line.extras.join(', ')"></p>
                             <p class="cashier-pos-cart-item__meta" x-show="line.notes" x-text="line.notes"></p>
@@ -528,6 +544,7 @@
                 pos.editor.type,
                 pos.editor.menu_item_id,
                 pos.editor.index,
+                pos.editor.variant_id ?? null,
                 pos.editor.modifier_ids || [],
                 pos.editor.notes || null,
             ));
@@ -540,21 +557,49 @@
         <template x-if="$store.cashierPos.editor">
             <div class="cashier-pos-modal__panel" @click.stop>
                 <h3 id="cashier-pos-modal-title">
-                    <span x-text="$store.cashierPos.editor.type === 'edit' ? 'Ubah extra' : 'Pilih extra'"></span>
+                    <span x-text="$store.cashierPos.editor.type === 'edit' ? 'Ubah opsi' : 'Pilih opsi'"></span>:
                     <span x-text="$store.cashierPos.editor.name"></span>
                 </h3>
-                <div class="cashier-pos-modal__options">
-                    <p class="cashier-pos-empty" x-show="$store.cashierPos.editor.modifiers.length === 0">Tidak ada
-                        extra untuk menu ini.</p>
-                    <template x-for="mod in $store.cashierPos.editor.modifiers" :key="mod.id">
-                        <label class="cashier-pos-modal__option"
-                            :class="$store.cashierPos.isModOn(mod.id) && 'is-checked'">
-                            <input type="checkbox" :checked="$store.cashierPos.isModOn(mod.id)"
-                                @change="$store.cashierPos.toggleMod(mod.id)">
-                            <span x-text="mod.label"></span>
-                        </label>
-                    </template>
-                </div>
+
+                {{-- Pilihan Varian (Wajib jika ada) --}}
+                <template x-if="$store.cashierPos.editor.variants && $store.cashierPos.editor.variants.length > 0">
+                    <div style="margin-bottom: 0.9rem">
+                        <p class="cashier-pos-label" style="margin-bottom: 0.4rem">Varian <span class="text-xs text-primary-600 dark:text-primary-400 font-normal">· Pilih salah satu</span></p>
+                        <div class="cashier-pos-modal__options" style="margin-bottom: 0">
+                            <template x-for="v in $store.cashierPos.editor.variants" :key="v.id">
+                                <label class="cashier-pos-modal__option"
+                                    :class="Number($store.cashierPos.editor.variant_id) === Number(v.id) && 'is-checked'">
+                                    <input type="radio" name="pos_variant_choice" :value="v.id"
+                                        :checked="Number($store.cashierPos.editor.variant_id) === Number(v.id)"
+                                        @change="$store.cashierPos.editor.variant_id = Number(v.id)">
+                                    <span x-text="v.label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                {{-- Pilihan Extra / Modifier (Opsional) --}}
+                <template x-if="$store.cashierPos.editor.modifiers && $store.cashierPos.editor.modifiers.length > 0">
+                    <div style="margin-bottom: 0.9rem">
+                        <p class="cashier-pos-label" style="margin-bottom: 0.4rem">Extra / Tambahan <span class="text-xs text-gray-500 font-normal">· Opsional</span></p>
+                        <div class="cashier-pos-modal__options" style="margin-bottom: 0">
+                            <template x-for="mod in $store.cashierPos.editor.modifiers" :key="mod.id">
+                                <label class="cashier-pos-modal__option"
+                                    :class="$store.cashierPos.isModOn(mod.id) && 'is-checked'">
+                                    <input type="checkbox" :checked="$store.cashierPos.isModOn(mod.id)"
+                                        @change="$store.cashierPos.toggleMod(mod.id)">
+                                    <span x-text="mod.label"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="(!$store.cashierPos.editor.variants || $store.cashierPos.editor.variants.length === 0) && (!$store.cashierPos.editor.modifiers || $store.cashierPos.editor.modifiers.length === 0)">
+                    <p class="cashier-pos-empty">Tidak ada opsi tambahan untuk menu ini.</p>
+                </template>
+
                 <label class="cashier-pos-label" for="cashier-pos-notes">Catatan</label>
                 <textarea id="cashier-pos-notes" class="cashier-pos-textarea" rows="2"
                     x-model="$store.cashierPos.editor.notes" placeholder="Opsional"></textarea>

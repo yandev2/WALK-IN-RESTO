@@ -54,6 +54,8 @@ class PlatformSetting extends Model
         'bank_holder',
         'bank_account',
         'qr_image_path',
+        'cashier_sound_path',
+        'kitchen_sound_path',
         'trial_days',
         'cashier_commission_percentage',
     ];
@@ -159,6 +161,8 @@ class PlatformSetting extends Model
             'bank_holder' => (string) config('subscription.bank_holder', 'RestoTerdekat'),
             'bank_account' => (string) config('subscription.bank_account', '0000000000'),
             'qr_image_path' => null,
+            'cashier_sound_path' => null,
+            'kitchen_sound_path' => null,
             'trial_days' => (int) config('subscription.trial_days', 30),
             'cashier_commission_percentage' => 10.00,
         ];
@@ -317,11 +321,50 @@ class PlatformSetting extends Model
             .substr($escapedTitle, $pos + strlen($escapedHighlight));
     }
 
+    public static function cashierSoundUrl(): ?string
+    {
+        $path = static::optional()?->cashier_sound_path;
+
+        if (filled($path)) {
+            return CmsMedia::url($path);
+        }
+
+        if (file_exists(public_path('sounds/cashier-order.mp3'))) {
+            return asset('sounds/cashier-order.mp3');
+        }
+
+        return null;
+    }
+
+    public static function kitchenSoundUrl(): ?string
+    {
+        $path = static::optional()?->kitchen_sound_path;
+
+        if (filled($path)) {
+            return CmsMedia::url($path);
+        }
+
+        if (file_exists(public_path('sounds/kitchen-order.mp3'))) {
+            return asset('sounds/kitchen-order.mp3');
+        }
+
+        return null;
+    }
+
     /**
      * @return list<string>
      */
     protected function storedFileAttributes(): array
     {
-        return ['hero_image_path', 'logo_path', 'favicon_path', 'og_image_path', 'qr_image_path', 'auth_background_path'];
+        return [
+            'hero_image_path',
+            'logo_path',
+            'favicon_path',
+            'og_image_path',
+            'qr_image_path',
+            'auth_background_path',
+            'cashier_sound_path',
+            'kitchen_sound_path',
+        ];
     }
 }

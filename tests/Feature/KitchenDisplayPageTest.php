@@ -13,6 +13,7 @@ use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -92,6 +93,62 @@ class KitchenDisplayPageTest extends TestCase
             ->filterTable('table_id', $world['table']->id)
             ->assertCanSeeTableRecords([$itemA])
             ->assertCanNotSeeTableRecords([$itemB]);
+    }
+
+    public function test_kitchen_display_dispatches_kds_beep_and_notification_on_paid_order_in_non_simple_mode(): void
+    {
+        [$user, $restaurant, $world] = $this->kitchenUser();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        // Mount KDS page first
+        $page = Livewire::test(KitchenDisplay::class)
+            ->assertOk()
+            ->assertSee('Tes Bel')
+            ->assertSee('Bel Dapur');
+
+        // Cashier confirms guest order in non-simple mode
+        $order = $this->paidGuestOrder($world, 'kds-beep-order-1');
+        $this->assertSame('in_production', $order->status);
+        $this->assertSame('queued', $order->items()->first()->kds_status);
+
+        // Polling alerts should trigger beep and notification
+        $page->call('pollAlerts')
+            ->assertDispatched('kds-beep', count: 1)
+            ->assertNotified('Pesanan Baru Masuk ke Dapur!');
+
+        // Second poll should not re-trigger
+        $page->call('pollAlerts')
+            ->assertNotDispatched('kds-beep');
+
+        // Verify transient notification without saving to database
+        $this->assertSame(0, DB::table('notifications')->count());
+    }
+
+    public function test_kitchen_display_does_not_beep_in_simple_mode(): void
+    {
+        [$user, $restaurant, $world] = $this->kitchenUser();
+
+        // Enable simple mode on outlet
+        $world['outlet']->update(['simple_mode' => true]);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        $page = Livewire::test(KitchenDisplay::class)
+            ->assertOk();
+
+        // Cashier confirms order in simple mode -> items automatically marked as served
+        $order = $this->paidGuestOrder($world, 'kds-simple-order-1');
+        $this->assertSame('completed', $order->status);
+        $this->assertSame('served', $order->items()->first()->kds_status);
+
+        // Polling should NOT dispatch kds-beep
+        $page->call('pollAlerts')
+            ->assertNotDispatched('kds-beep');
     }
 
     /**

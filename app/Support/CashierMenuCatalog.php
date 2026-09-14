@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\MenuVariant;
 use App\Models\Modifier;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -26,6 +27,11 @@ final class CashierMenuCatalog
      * @var array<int, array<int, string>>
      */
     private static array $modifierOptionsMemo = [];
+
+    /**
+     * @var array<int, array<int, string>>
+     */
+    private static array $variantOptionsMemo = [];
 
     /**
      * @var array<int, list<array<string, mixed>>>
@@ -70,6 +76,7 @@ final class CashierMenuCatalog
             self::$categoriesMemo[$restaurantId],
         );
         self::$modifierOptionsMemo = [];
+        self::$variantOptionsMemo = [];
 
         Cache::forget(self::itemsKey($restaurantId));
         Cache::forget(self::optionsKey($restaurantId));
@@ -219,6 +226,47 @@ final class CashierMenuCatalog
     }
 
     /**
+     * @return array<int, string>
+     */
+    public static function variantSelectOptions(mixed $menuItemId): array
+    {
+        $itemId = (int) $menuItemId;
+
+        if ($itemId < 1) {
+            return [];
+        }
+
+        if (isset(self::$variantOptionsMemo[$itemId])) {
+            return self::$variantOptionsMemo[$itemId];
+        }
+
+        return self::$variantOptionsMemo[$itemId] = MenuVariant::query()
+            ->where('menu_item_id', $itemId)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->mapWithKeys(fn (MenuVariant $variant): array => [
+                $variant->id => $variant->name.(
+                    $variant->price_delta
+                        ? ' ('.($variant->price_delta > 0 ? '+' : '').CmsMedia::formatIdr((int) $variant->price_delta).')'
+                        : ''
+                ),
+            ])
+            ->all();
+    }
+
+    public static function hasVariants(mixed $menuItemId): bool
+    {
+        $itemId = (int) $menuItemId;
+
+        if ($itemId < 1) {
+            return false;
+        }
+
+        return self::variantSelectOptions($itemId) !== [];
+    }
+
+    /**
      * @return list<array{
      *     id: int,
      *     name: string,
@@ -227,8 +275,11 @@ final class CashierMenuCatalog
      *     discount_percent: int,
      *     photo_url: string|null,
      *     category_id: int|null,
+     *     has_variants: bool,
+     *     variants: list<array{id: int, name: string, price_delta: int, label: string}>,
      *     has_modifiers: bool,
-     *     modifiers: list<array{id: int, label: string, price: int}>
+     *     modifiers: list<array{id: int, label: string, price: int}>,
+     *     has_options: bool
      * }>
      */
     public static function posPayload(?int $restaurantId): array
@@ -252,6 +303,9 @@ final class CashierMenuCatalog
                     ->where('is_out_of_stock', false)
                     ->whereNotNull('station_id')
                     ->with([
+                        'variants' => fn ($query) => $query
+                            ->where('is_active', true)
+                            ->orderBy('sort_order'),
                         'modifierGroups.modifiers' => fn ($query) => $query
                             ->where('is_active', true)
                             ->orderBy('sort_order'),
@@ -270,6 +324,20 @@ final class CashierMenuCatalog
                         'sort_order',
                     ])
                     ->map(function (MenuItem $item): array {
+                        $variants = $item->variants
+                            ->map(fn (MenuVariant $variant): array => [
+                                'id' => $variant->id,
+                                'name' => $variant->name,
+                                'price_delta' => (int) $variant->price_delta,
+                                'label' => $variant->name.(
+                                    $variant->price_delta
+                                        ? ' ('.($variant->price_delta > 0 ? '+' : '').CmsMedia::formatIdr((int) $variant->price_delta).')'
+                                        : ''
+                                ),
+                            ])
+                            ->values()
+                            ->all();
+
                         $modifiers = $item->modifierGroups
                             ->flatMap(fn ($group) => $group->modifiers)
                             ->unique('id')
@@ -294,8 +362,11 @@ final class CashierMenuCatalog
                             'is_best_seller' => (bool) $item->is_best_seller,
                             'photo_url' => CmsMedia::url($item->photo_path),
                             'category_id' => $item->category_id ? (int) $item->category_id : null,
+                            'has_variants' => $variants !== [],
+                            'variants' => $variants,
                             'has_modifiers' => $modifiers !== [],
                             'modifiers' => $modifiers,
+                            'has_options' => $variants !== [] || $modifiers !== [],
                         ];
                     })
                     ->values()

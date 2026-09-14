@@ -67,6 +67,40 @@ class CashierOrderPreviewTest extends TestCase
         );
     }
 
+    public function test_estimate_includes_variant_price_delta(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $item = $world['item'];
+
+        $variant = \App\Models\MenuVariant::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'outlet_id' => $world['outlet']->id,
+            'menu_item_id' => $item->id,
+            'name' => 'Large',
+            'price_delta' => 5000,
+            'is_active' => true,
+        ]);
+
+        $lines = [
+            [
+                'menu_item_id' => $item->id,
+                'variant_id' => $variant->id,
+                'qty' => 2,
+                'modifier_ids' => [],
+            ],
+        ];
+
+        $expectedSubtotal = ((int) $item->effectivePrice() + 5000) * 2;
+
+        $preview = CashierOrderPreview::estimateFromLines($lines, $world['outlet'], 'cash');
+
+        $this->assertSame($expectedSubtotal, $preview['subtotal']);
+        $this->assertSame(
+            CheckoutTotals::forSubtotal($expectedSubtotal, $world['outlet'])['grand_before'],
+            $preview['grand_payable'],
+        );
+    }
+
     public function test_empty_or_invalid_lines_are_ignored(): void
     {
         $world = $this->createGuestRestaurant();

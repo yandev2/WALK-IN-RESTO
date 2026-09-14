@@ -176,4 +176,41 @@ class CashierMenuCatalogTest extends TestCase
         $this->assertSame($bestSeller->id, $optionKeys[0]);
         $this->assertStringContainsString('Best Seller', $options[$bestSeller->id]);
     }
+
+    public function test_pos_payload_includes_variants_and_variant_select_options(): void
+    {
+        $world = $this->createGuestRestaurant();
+        $restaurantId = $world['restaurant']->id;
+        $item = $world['item'];
+
+        $variant = \App\Models\MenuVariant::query()->create([
+            'restaurant_id' => $restaurantId,
+            'outlet_id' => $world['outlet']->id,
+            'menu_item_id' => $item->id,
+            'name' => 'Ukuran Besar',
+            'price_delta' => 4000,
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+
+        CashierMenuCatalog::forget($restaurantId);
+
+        $payload = CashierMenuCatalog::posPayload($restaurantId);
+        $found = collect($payload)->firstWhere('id', $item->id);
+
+        $this->assertNotNull($found);
+        $this->assertTrue($found['has_variants']);
+        $this->assertTrue($found['has_options']);
+        $this->assertCount(1, $found['variants']);
+        $this->assertSame('Ukuran Besar', $found['variants'][0]['name']);
+        $this->assertSame(4000, $found['variants'][0]['price_delta']);
+        $this->assertStringContainsString('Ukuran Besar (+Rp 4.000)', $found['variants'][0]['label']);
+
+        $this->assertTrue(CashierMenuCatalog::hasVariants($item->id));
+        $this->assertFalse(CashierMenuCatalog::hasVariants(999999));
+
+        $variantOptions = CashierMenuCatalog::variantSelectOptions($item->id);
+        $this->assertArrayHasKey($variant->id, $variantOptions);
+        $this->assertStringContainsString('Ukuran Besar', $variantOptions[$variant->id]);
+    }
 }

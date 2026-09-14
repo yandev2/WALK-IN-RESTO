@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\InvoiceStatus;
 use App\Enums\SubscriptionStatus as SubscriptionStatusEnum;
+use App\Filament\Pages\CommissionReconciliation;
 use App\Filament\Support\TableRightClick;
 use App\Models\PlatformSetting;
 use App\Models\Restaurant;
@@ -181,6 +182,14 @@ class SubscriptionStatus extends Page implements HasTable
             ->emptyStateDescription('Buat invoice untuk memperpanjang atau mengganti paket.');
 
         return TableRightClick::apply($table, fn (): array => [
+            Action::make('viewReconciliation')
+                ->label('Rincian transaksi')
+                ->icon(Heroicon::OutlinedScale)
+                ->color('primary')
+                ->visible(fn (SubscriptionInvoice $record): bool => $record->isCashierCommission() && filled($record->period_month))
+                ->url(fn (SubscriptionInvoice $record): string => CommissionReconciliation::getUrl([
+                    'month' => $record->period_month,
+                ])),
             Action::make('pendingMonthEnd')
                 ->label(fn (SubscriptionInvoice $record): string => 'Bayar mulai ' . ($record->due_at ? $record->due_at->translatedFormat('d M Y') : 'akhir bulan'))
                 ->icon(Heroicon::OutlinedClock)

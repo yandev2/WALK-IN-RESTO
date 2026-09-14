@@ -10,11 +10,11 @@ use App\Models\Order;
 use App\Models\User;
 use App\Support\SubscriptionAccess;
 use BackedEnum;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\ImageEntry;
 use Carbon\Carbon;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -185,7 +185,7 @@ class OrderResource extends Resource
                     ]),
 
                 Section::make('Item')
-                ->columnSpanFull()
+                    ->columnSpanFull()
                     ->schema([
                         RepeatableEntry::make('items')
                             ->schema([
@@ -257,8 +257,7 @@ class OrderResource extends Resource
                     ->label('WA'),
                 TextColumn::make('created_at')
                     ->label('Waktu')
-                    ->since()
-                    ->sortable(),
+                    ->since(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -299,11 +298,11 @@ class OrderResource extends Resource
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = 'Dari: ' . Carbon::parse($data['created_from'])->format('d/m/Y');
+                            $indicators['created_from'] = 'Dari: '.Carbon::parse($data['created_from'])->format('d/m/Y');
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = 'Sampai: ' . Carbon::parse($data['created_until'])->format('d/m/Y');
+                            $indicators['created_until'] = 'Sampai: '.Carbon::parse($data['created_until'])->format('d/m/Y');
                         }
 
                         return $indicators;

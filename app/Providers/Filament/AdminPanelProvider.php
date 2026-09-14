@@ -218,6 +218,27 @@ HTML
                     ])->render());
                 },
             )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                function (): HtmlString {
+                    $tenant = Filament::getTenant();
+                    $user = auth()->user();
+
+                    if (! $tenant instanceof Restaurant || ! $user instanceof User || $user->isPlatformOperator()) {
+                        return new HtmlString('');
+                    }
+
+                    if (! ($user->isSuperAdmin() || $user->can('order.verify_payment') || $user->can('order.view'))) {
+                        return new HtmlString('');
+                    }
+
+                    if (request()->routeIs('filament.admin.pages.kds')) {
+                        return new HtmlString('');
+                    }
+
+                    return new HtmlString(view('filament.hooks.cashier-sound-alert-hook')->render());
+                },
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

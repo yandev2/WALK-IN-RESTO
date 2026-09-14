@@ -59,7 +59,7 @@ class CreateCashierOrder extends Page
     public string $cashierUi = 'form';
 
     /**
-     * @var array{type: 'new'|'edit', menu_item_id: int, index?: int, modifier_ids: list<int>, notes: string}|null
+     * @var array{type: 'new'|'edit', menu_item_id: int, index?: int, variant_id?: int|null, modifier_ids: list<int>, notes: string}|null
      */
     public ?array $posEditor = null;
 
@@ -240,6 +240,10 @@ class CreateCashierOrder extends Page
                                             ->native(false)
                                             ->allowHtml()
                                             ->live()
+                                            ->afterStateUpdated(function (Set $set): void {
+                                                $set('variant_id', null);
+                                                $set('modifier_ids', []);
+                                            })
                                             ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
                                             ->columnSpanFull(),
                                         TextInput::make('qty')
@@ -251,13 +255,23 @@ class CreateCashierOrder extends Page
                                             ->suffix('x')
                                             ->live()
                                             ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
+                                        Select::make('variant_id')
+                                            ->label('Varian')
+                                            ->placeholder('Pilih varian')
+                                            ->options(fn (Get $get): array => CashierMenuCatalog::variantSelectOptions($get('menu_item_id')))
+                                            ->visible(fn (Get $get): bool => CashierMenuCatalog::hasVariants($get('menu_item_id')))
+                                            ->required(fn (Get $get): bool => CashierMenuCatalog::hasVariants($get('menu_item_id')))
+                                            ->native(false)
+                                            ->live()
+                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
                                         Select::make('modifier_ids')
                                             ->label('Extra')
                                             ->multiple()
                                             ->options(fn (Get $get): array => CashierMenuCatalog::modifierSelectOptions($get('menu_item_id')))
                                             ->native(false)
                                             ->live()
-                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals']),
+                                            ->partiallyRenderComponentsAfterStateUpdated(['/form.cashier-order-totals'])
+                                            ->columnSpan(fn (Get $get): int => CashierMenuCatalog::hasVariants($get('menu_item_id')) ? 2 : 1),
                                         Textarea::make('notes')
                                             ->label('Catatan')
                                             ->rows(2)
@@ -471,11 +485,11 @@ class CreateCashierOrder extends Page
             return $this->posUiState();
         }
 
-        if ($item['has_modifiers']) {
+        if ($item['has_modifiers'] || ! empty($item['has_variants'])) {
             return $this->posUiState();
         }
 
-        $this->incrementOrPushLine($menuItemId, [], null);
+        $this->incrementOrPushLine($menuItemId, null, [], null);
 
         return $this->posUiState();
     }
@@ -577,29 +591,41 @@ class CreateCashierOrder extends Page
     }
 
     #[Renderless]
-    public function commitPosEditor(string $type, int $menuItemId, ?int $index, array $modifierIds, ?string $notes): array
+    public function commitPosEditor(string $type, int $menuItemId, ?int $index, ?int $variantId, array $modifierIds, ?string $notes): array
     {
         if (! $this->isPosUi()) {
             return $this->posUiState();
         }
 
         $modifierIds = $this->normalizedModifierIds($modifierIds);
+        $variantId = $variantId ? (int) $variantId : null;
         $notes = filled($notes) ? (string) $notes : null;
 
-        if ($menuItemId < 1 || $this->posItem($menuItemId) === null) {
+        $item = $this->posItem($menuItemId);
+        if ($menuItemId < 1 || $item === null) {
             return $this->posUiState();
+        }
+
+        if (! empty($item['has_variants'])) {
+            $validVariantIds = collect($item['variants'] ?? [])->pluck('id')->all();
+            if ($variantId === null || ! in_array($variantId, $validVariantIds, true)) {
+                $variantId = $validVariantIds[0] ?? null;
+            }
+        } else {
+            $variantId = null;
         }
 
         if ($type === 'edit') {
             $lines = array_values($this->data['lines'] ?? []);
 
             if (isset($lines[(int) $index])) {
+                $lines[(int) $index]['variant_id'] = $variantId;
                 $lines[(int) $index]['modifier_ids'] = $modifierIds;
                 $lines[(int) $index]['notes'] = $notes;
                 $this->data['lines'] = $lines;
             }
         } else {
-            $this->incrementOrPushLine($menuItemId, $modifierIds, $notes);
+            $this->incrementOrPushLine($menuItemId, $variantId, $modifierIds, $notes);
         }
 
         return $this->posUiState();
@@ -719,12 +745,25 @@ class CreateCashierOrder extends Page
                 }
             }
 
+            $variantId = filled($line['variant_id'] ?? null) ? (int) $line['variant_id'] : null;
+            $variantName = null;
+            if ($variantId && is_array($item)) {
+                foreach ($item['variants'] ?? [] as $v) {
+                    if ((int) ($v['id'] ?? 0) === $variantId) {
+                        $variantName = (string) ($v['name'] ?? '');
+                        break;
+                    }
+                }
+            }
+
             $notes = filled($line['notes'] ?? null) ? (string) $line['notes'] : null;
             $total = CashierOrderPreview::lineTotal($line);
 
             $cart[] = [
                 'index' => $index,
                 'menu_item_id' => $itemId,
+                'variant_id' => $variantId,
+                'variant_name' => $variantName,
                 'qty' => (int) ($line['qty'] ?? 0),
                 'name' => is_array($item) ? (string) $item['name'] : 'Item',
                 'photo_url' => is_array($item) ? ($item['photo_url'] ?? null) : null,
@@ -733,7 +772,7 @@ class CreateCashierOrder extends Page
                 'notes' => $notes,
                 'total' => $total,
                 'total_label' => CmsMedia::formatIdr($total),
-                'is_plain' => $modifierIds === [] && $notes === null,
+                'is_plain' => $variantId === null && $modifierIds === [] && $notes === null,
             ];
         }
 
@@ -777,14 +816,20 @@ class CreateCashierOrder extends Page
     /**
      * @param  list<int>  $modifierIds
      */
-    private function incrementOrPushLine(int $menuItemId, array $modifierIds, ?string $notes): void
+    private function incrementOrPushLine(int $menuItemId, ?int $variantId, array $modifierIds, ?string $notes): void
     {
         $lines = array_values($this->data['lines'] ?? []);
+        $variantId = $variantId ? (int) $variantId : null;
         $modifierIds = $this->normalizedModifierIds($modifierIds);
         $notes = filled($notes) ? $notes : null;
 
         foreach ($lines as $index => $line) {
             if ((int) ($line['menu_item_id'] ?? 0) !== $menuItemId) {
+                continue;
+            }
+
+            $lineVariantId = filled($line['variant_id'] ?? null) ? (int) $line['variant_id'] : null;
+            if ($lineVariantId !== $variantId) {
                 continue;
             }
 
@@ -806,6 +851,7 @@ class CreateCashierOrder extends Page
 
         $lines[] = [
             'menu_item_id' => $menuItemId,
+            'variant_id' => $variantId,
             'qty' => 1,
             'modifier_ids' => $modifierIds,
             'notes' => $notes,
@@ -830,7 +876,8 @@ class CreateCashierOrder extends Page
      */
     private function isPlainLine(array $line): bool
     {
-        return $this->normalizedModifierIds($line['modifier_ids'] ?? []) === []
+        return blank($line['variant_id'] ?? null)
+            && $this->normalizedModifierIds($line['modifier_ids'] ?? []) === []
             && blank($line['notes'] ?? null);
     }
 
@@ -849,6 +896,7 @@ class CreateCashierOrder extends Page
 
             $normalized[] = [
                 'menu_item_id' => (int) $line['menu_item_id'],
+                'variant_id' => filled($line['variant_id'] ?? null) ? (int) $line['variant_id'] : null,
                 'qty' => max(1, (int) ($line['qty'] ?? 1)),
                 'modifier_ids' => $this->normalizedModifierIds($line['modifier_ids'] ?? []),
                 'notes' => filled($line['notes'] ?? null) ? (string) $line['notes'] : null,
@@ -902,6 +950,7 @@ class CreateCashierOrder extends Page
                 'payment_method' => ['required', 'in:cash,qris'],
                 'lines' => ['required', 'array', 'min:1'],
                 'lines.*.menu_item_id' => ['required', 'integer'],
+                'lines.*.variant_id' => ['nullable', 'integer'],
                 'lines.*.qty' => ['required', 'integer', 'min:1'],
             ],
             [

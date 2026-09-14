@@ -481,6 +481,85 @@ class CashierFilamentActionsTest extends TestCase
             ->assertDispatched('cashier-reset-form');
     }
 
+    public function test_cashier_order_with_variant_in_pos_mode(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        $item = $world['item'];
+
+        $variant = \App\Models\MenuVariant::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'outlet_id' => $world['outlet']->id,
+            'menu_item_id' => $item->id,
+            'name' => 'Jumbo',
+            'price_delta' => 3000,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $test = Livewire::test(CreateCashierOrder::class)
+            ->set('cashierUi', 'pos')
+            ->call('setPosField', 'table_id', (string) $world['table']->id)
+            ->call('setPosField', 'customer_name', 'Tamu Jumbo')
+            ->call('commitPosEditor', 'new', $item->id, null, $variant->id, [], null)
+            ->call('create')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('order_items', [
+            'menu_item_id' => $item->id,
+            'variant_name_snapshot' => 'Jumbo',
+            'qty' => 1,
+        ]);
+    }
+
+    public function test_cashier_order_with_variant_in_form_mode(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        $item = $world['item'];
+
+        $variant = \App\Models\MenuVariant::query()->create([
+            'restaurant_id' => $world['restaurant']->id,
+            'outlet_id' => $world['outlet']->id,
+            'menu_item_id' => $item->id,
+            'name' => 'Large Form',
+            'price_delta' => 4000,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->fillForm([
+                'table_id' => $world['table']->id,
+                'payment_method' => 'cash',
+                'lines' => [
+                    [
+                        'menu_item_id' => $item->id,
+                        'variant_id' => $variant->id,
+                        'qty' => 2,
+                    ],
+                ],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('order_items', [
+            'menu_item_id' => $item->id,
+            'variant_name_snapshot' => 'Large Form',
+            'qty' => 2,
+        ]);
+    }
+
     /**
      * @param  list<string>  $permissions
      */
