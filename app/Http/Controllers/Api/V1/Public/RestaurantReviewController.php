@@ -17,6 +17,7 @@ class RestaurantReviewController extends Controller
         $perPage = min(48, max(1, (int) $request->query('per_page', 12)));
 
         $reviews = $restaurant->reviews()
+            ->published()
             ->latest('submitted_at')
             ->latest('id')
             ->paginate($perPage);

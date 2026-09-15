@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CustomerCrmService;
+use App\Support\SubscriptionAccess;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -30,7 +31,7 @@ class CustomerAnalytics extends Page
 
     protected static ?string $slug = 'crm-analitik';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     protected string $view = 'filament.pages.customer-analytics';
 
@@ -42,7 +43,8 @@ class CustomerAnalytics extends Page
             return false;
         }
 
-        return $user->isPlatformOperator() || $user->isRestaurantOwner() || $user->can('order.verify_payment');
+        return ($user->isPlatformOperator() || $user->isRestaurantOwner() || $user->can('order.verify_payment'))
+            && SubscriptionAccess::allows('crm');
     }
 
     protected function getHeaderActions(): array

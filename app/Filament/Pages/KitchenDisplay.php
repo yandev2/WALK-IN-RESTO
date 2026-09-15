@@ -8,9 +8,11 @@ use App\Models\KdsStation;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PlatformSetting;
+use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\KdsItemService;
 use App\Support\SubscriptionAccess;
+use App\Support\SubscriptionGate;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
@@ -86,13 +88,18 @@ class KitchenDisplay extends Page implements HasTable
             || $user->can('kds.view')
             || $user->can('kds.update_status')
             || $user->can('order.verify_payment'))
-            && SubscriptionAccess::allows('operations');
+            && SubscriptionAccess::allows('kds');
     }
 
     public static function getNavigationBadge(): ?string
     {
+        $tenant = Filament::getTenant();
+        if (! $tenant instanceof Restaurant || ! app(SubscriptionGate::class)->hasFeature($tenant, 'kds')) {
+            return null;
+        }
+
         $count = OrderItem::query()
-            ->where('restaurant_id', Filament::getTenant()?->getKey())
+            ->where('restaurant_id', $tenant->getKey())
             ->whereIn('kds_status', ['queued', 'preparing', 'ready'])
             ->whereHas('order', fn ($query) => $query->whereIn('status', Order::ACCEPTED_STATUSES))
             ->count();
@@ -303,7 +310,7 @@ class KitchenDisplay extends Page implements HasTable
         }
 
         return ($user->isSuperAdmin() || $user->can('kds.update_status'))
-            && SubscriptionAccess::allows('operations', mutate: true);
+            && SubscriptionAccess::allows('kds', mutate: true);
     }
 
     public function canMarkServed(): bool
@@ -314,7 +321,10 @@ class KitchenDisplay extends Page implements HasTable
             return false;
         }
 
-        return $this->canAdvance() || $user->can('order.verify_payment');
+        $canVerify = $user->isSuperAdmin() || $user->can('order.verify_payment');
+
+        return ($this->canAdvance() || $canVerify)
+            && SubscriptionAccess::allows('kds', mutate: true);
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Services\CommissionReconciliationService;
 use App\Services\DailyOmzetService;
 use App\Services\Export\CommissionReconciliationExport;
 use App\Support\SubscriptionAccess;
+use App\Support\SubscriptionGate;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
@@ -68,8 +69,13 @@ class CommissionReconciliation extends Page implements HasTable
             return false;
         }
 
+        $tenant = Filament::getTenant();
+        if (! $tenant instanceof Restaurant) {
+            return false;
+        }
+
         return ($user->isSuperAdmin() || $user->can('analytics.view') || $user->isRestaurantOwner())
-            && SubscriptionAccess::allows('analytics');
+            && app(SubscriptionGate::class)->canAccessPanel($tenant);
     }
 
     public function mount(): void

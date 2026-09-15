@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\CustomerLoyaltyPoint;
 use App\Models\Order;
+use App\Models\Outlet;
 use App\Models\Restaurant;
+use App\Models\RestaurantReview;
 use App\Models\User;
 use App\Support\WhatsAppNumber;
 use Illuminate\Support\Collection;
@@ -426,6 +428,96 @@ class CustomerCrmService
             'tier_counts' => $tierCounts,
             'top_frequent' => $topFrequent,
             'top_spenders' => $topSpenders,
+        ];
+    }
+
+    /**
+     * Mengambil data analitik kepuasan pelanggan (CSAT, distribusi bintang, & sentimen ulasan).
+     *
+     * @return array<string, mixed>
+     */
+    public function getSatisfactionAnalytics(Restaurant $restaurant): array
+    {
+        $base = RestaurantReview::withoutRestaurantScope()
+            ->where('restaurant_id', $restaurant->id);
+
+        $totalReviews = (clone $base)->count();
+        $avgRating = $totalReviews > 0 ? round((float) (clone $base)->avg('rating'), 2) : 0.0;
+
+        // Distribusi bintang 1 - 5
+        $distributionRaw = (clone $base)
+            ->selectRaw('rating, count(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating')
+            ->toArray();
+
+        $starCounts = [];
+        $starPercentages = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $cnt = (int) ($distributionRaw[$i] ?? 0);
+            $starCounts[$i] = $cnt;
+            $starPercentages[$i] = $totalReviews > 0 ? round(($cnt / $totalReviews) * 100, 1) : 0.0;
+        }
+
+        // Klasifikasi sentimen
+        $positiveCount = ($starCounts[5] ?? 0) + ($starCounts[4] ?? 0);
+        $neutralCount = $starCounts[3] ?? 0;
+        $criticalCount = ($starCounts[2] ?? 0) + ($starCounts[1] ?? 0);
+
+        $satisfactionRate = $totalReviews > 0 ? round(($positiveCount / $totalReviews) * 100, 1) : 0.0;
+        $neutralRate = $totalReviews > 0 ? round(($neutralCount / $totalReviews) * 100, 1) : 0.0;
+        $criticalRate = $totalReviews > 0 ? round(($criticalCount / $totalReviews) * 100, 1) : 0.0;
+
+        // Statistik bulan ini vs bulan lalu
+        $thisMonthReviews = (clone $base)->where('submitted_at', '>=', now()->startOfMonth())->count();
+        $thisMonthAvg = $thisMonthReviews > 0
+            ? round((float) (clone $base)->where('submitted_at', '>=', now()->startOfMonth())->avg('rating'), 2)
+            : 0.0;
+
+        $lastMonthStart = now()->subMonth()->startOfMonth();
+        $lastMonthEnd = now()->subMonth()->endOfMonth();
+        $lastMonthReviews = (clone $base)->whereBetween('submitted_at', [$lastMonthStart, $lastMonthEnd])->count();
+        $lastMonthAvg = $lastMonthReviews > 0
+            ? round((float) (clone $base)->whereBetween('submitted_at', [$lastMonthStart, $lastMonthEnd])->avg('rating'), 2)
+            : 0.0;
+
+        // Performa per outlet
+        $byOutlet = Outlet::withoutRestaurantScope()
+            ->where('restaurant_id', $restaurant->id)
+            ->withCount(['reviews as total_reviews'])
+            ->withAvg('reviews as avg_rating', 'rating')
+            ->get()
+            ->map(fn ($outlet) => [
+                'id' => $outlet->id,
+                'name' => $outlet->name,
+                'total_reviews' => (int) $outlet->total_reviews,
+                'avg_rating' => $outlet->total_reviews > 0 ? round((float) $outlet->avg_rating, 2) : 0.0,
+            ]);
+
+        // Ulasan terbaru
+        $recentReviews = (clone $base)
+            ->with(['visit.diningTable', 'order', 'outlet'])
+            ->latest('submitted_at')
+            ->limit(6)
+            ->get();
+
+        return [
+            'total_reviews' => $totalReviews,
+            'avg_rating' => $avgRating,
+            'satisfaction_rate' => $satisfactionRate,
+            'positive_count' => $positiveCount,
+            'neutral_count' => $neutralCount,
+            'neutral_rate' => $neutralRate,
+            'critical_count' => $criticalCount,
+            'critical_rate' => $criticalRate,
+            'star_counts' => $starCounts,
+            'star_percentages' => $starPercentages,
+            'this_month_reviews' => $thisMonthReviews,
+            'this_month_avg' => $thisMonthAvg,
+            'last_month_reviews' => $lastMonthReviews,
+            'last_month_avg' => $lastMonthAvg,
+            'by_outlet' => $byOutlet,
+            'recent_reviews' => $recentReviews,
         ];
     }
 }

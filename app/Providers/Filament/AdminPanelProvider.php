@@ -71,6 +71,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex(
                     RestaurantTheme::for(FilamentTenantTheme::restaurantForCurrentPanel())['primary']
                 ),
+                'amber' => Color::Amber,
+                'indigo' => Color::Indigo,
             ])
             ->tenant(Restaurant::class, slugAttribute: 'slug')
             ->tenantMenu(false)
@@ -98,6 +100,10 @@ class AdminPanelProvider extends PanelProvider
                     && ! $user->can('settings.manage');
 
                 if ($kitchenOnly) {
+                    if (! app(SubscriptionGate::class)->hasFeature($tenant, 'kds')) {
+                        return SubscriptionStatus::getUrl(tenant: $tenant);
+                    }
+
                     return KitchenDisplay::getUrl(tenant: $tenant);
                 }
 

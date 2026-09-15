@@ -39,9 +39,9 @@ class SubscriptionGate
             return false;
         }
 
-        // If cashier commission or billing invoice is unpaid/overdue, suspend cashier operations, kds, and roles
+        // If cashier commission or billing invoice is unpaid/overdue, suspend cashier operations, kds, roles, analytics, and crm
         if ($restaurant->hasOverdueCashierInvoice() || $restaurant->hasUnpaidOverdueInvoice()) {
-            if (in_array($feature, ['operations', 'roles', 'settings_full', 'kds'], true)) {
+            if (in_array($feature, ['operations', 'roles', 'settings_full', 'kds', 'analytics', 'crm'], true)) {
                 return false;
             }
         }
@@ -55,7 +55,7 @@ class SubscriptionGate
         }
 
         if (! $plan instanceof SubscriptionPlan) {
-            return in_array($feature, ['cms', 'menu', 'operations', 'analytics', 'settings', 'settings_full'], true);
+            return in_array($feature, ['cms', 'menu', 'operations', 'analytics', 'settings', 'settings_full', 'kds', 'crm'], true);
         }
 
         // Bonus: If restaurant is on commission plan (management_kds), cms & landing page is always granted as a free bonus
@@ -65,6 +65,14 @@ class SubscriptionGate
 
         if ($feature === 'roles') {
             return $plan->hasFeature('settings_full');
+        }
+
+        if ($feature === 'kds') {
+            return $plan->hasFeature('kds') || $plan->hasFeature('operations');
+        }
+
+        if ($feature === 'crm') {
+            return $plan->hasFeature('crm') || $plan->hasFeature('analytics') || $plan->hasFeature('operations');
         }
 
         return $plan->hasFeature($feature);

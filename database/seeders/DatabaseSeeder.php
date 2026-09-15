@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             PlatformSettingSeeder::class,
             DirectoryDemoRestaurantsSeeder::class,
             DemoCommissionInvoicesSeeder::class,
+            CustomerSatisfactionDemoSeeder::class,
+            OverdueTenantDemoSeeder::class,
         ]);
     }
 }

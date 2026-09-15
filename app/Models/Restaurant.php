@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -160,6 +161,41 @@ class Restaurant extends Model implements HasAvatar, HasName
         return $this->belongsToMany(User::class, 'restaurant_users')
             ->withPivot('is_active')
             ->withTimestamps();
+    }
+
+    public function owners(): BelongsToMany
+    {
+        return $this->users()
+            ->whereHasRestaurantRole('owner', $this->id);
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getOwners(): Collection
+    {
+        $owners = $this->owners()->get();
+
+        if ($owners->isEmpty()) {
+            $owners = $this->users()
+                ->whereExists(function ($sub): void {
+                    $sub->selectRaw('1')
+                        ->from('model_has_roles')
+                        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                        ->whereColumn('model_has_roles.model_id', 'users.id')
+                        ->where('model_has_roles.model_type', User::class)
+                        ->where('roles.name', 'owner');
+                })
+                ->get();
+        }
+
+        if ($owners->isEmpty()) {
+            $owners = $this->users()
+                ->get()
+                ->filter(fn (User $u) => ! $u->isPlatformOperator());
+        }
+
+        return $owners->values();
     }
 
     public function roles(): HasMany

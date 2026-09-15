@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Services\CustomerCrmService;
 use App\Support\CmsMedia;
+use App\Support\SubscriptionAccess;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -45,7 +46,8 @@ class CustomerResource extends Resource
             return false;
         }
 
-        return $user->isPlatformOperator() || $user->isRestaurantOwner() || $user->can('order.verify_payment');
+        return ($user->isPlatformOperator() || $user->isRestaurantOwner() || $user->can('order.verify_payment'))
+            && SubscriptionAccess::allows('crm');
     }
 
     public static function table(Table $table): Table

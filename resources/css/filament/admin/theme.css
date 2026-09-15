@@ -385,6 +385,72 @@
     color: #ffffff !important;
 }
 
+/* ==========================================================================
+   Member Tier Badges (CRM & Table Pelanggan)
+   Regular = Green (Success), Silver = Gray, Gold = Amber, VIP = Indigo
+   ========================================================================== */
+
+/* Gold Tier - Warm Glowing Amber / Gold */
+.fi-badge.fi-color-amber {
+    background-color: rgba(245, 158, 11, 0.12) !important;
+    border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    color: #d97706 !important;
+    font-weight: 600 !important;
+}
+
+.dark .fi-badge.fi-color-amber {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+    border: 1px solid rgba(251, 191, 36, 0.6) !important;
+    color: #fbbf24 !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Regular Tier - Fresh Vibrant Emerald Green */
+.fi-badge.fi-color-success {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    color: #059669 !important;
+    font-weight: 600 !important;
+}
+
+.dark .fi-badge.fi-color-success {
+    background-color: rgba(16, 185, 129, 0.22) !important;
+    border: 1px solid rgba(52, 211, 153, 0.55) !important;
+    color: #34d399 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Silver Tier - Metallic Sleek Gray */
+.fi-badge.fi-color-gray {
+    background-color: rgba(148, 163, 184, 0.15) !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.dark .fi-badge.fi-color-gray {
+    background-color: rgba(148, 163, 184, 0.22) !important;
+    border: 1px solid rgba(203, 213, 225, 0.45) !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 0 8px rgba(148, 163, 184, 0.15) !important;
+}
+
+/* VIP Tier - Royal Glowing Indigo */
+.fi-badge.fi-color-indigo {
+    background-color: rgba(99, 102, 241, 0.14) !important;
+    border: 1px solid rgba(99, 102, 241, 0.45) !important;
+    color: #4f46e5 !important;
+    font-weight: 600 !important;
+}
+
+.dark .fi-badge.fi-color-indigo {
+    background-color: rgba(99, 102, 241, 0.24) !important;
+    border: 1px solid rgba(129, 140, 248, 0.65) !important;
+    color: #a5b4fc !important;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.25) !important;
+}
+
+
 
 
 

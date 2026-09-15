@@ -28,11 +28,11 @@ class LandingPageDataService
             'cmsFaqs' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->orderBy('id'),
             'cmsGalleryImages' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->orderBy('id'),
             'cmsBanners' => fn ($query) => $query->currentlyLive()->orderBy('sort_order')->orderBy('id'),
-            'reviews' => fn ($query) => $query->latest('submitted_at')->latest('id')->limit(6),
+            'reviews' => fn ($query) => $query->published()->latest('submitted_at')->latest('id')->limit(6),
         ]);
 
-        $restaurant->loadAvg('reviews', 'rating');
-        $restaurant->loadCount('reviews');
+        $restaurant->loadAvg(['reviews' => fn ($q) => $q->published()], 'rating');
+        $restaurant->loadCount(['reviews' => fn ($q) => $q->published()]);
 
         $outlet = $restaurant->defaultOutlet;
         $profile = $restaurant->cmsProfile;

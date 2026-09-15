@@ -33,7 +33,7 @@ class KdsStationResource extends Resource
 
     protected static string $permission = 'menu.manage';
 
-    protected static string $subscriptionFeature = 'menu';
+    protected static string $subscriptionFeature = 'kds';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFire;
 

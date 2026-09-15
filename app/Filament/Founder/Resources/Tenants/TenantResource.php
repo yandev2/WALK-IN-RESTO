@@ -9,6 +9,7 @@ use App\Filament\Founder\Resources\Tenants\Pages\EditTenant;
 use App\Filament\Founder\Resources\Tenants\Pages\ListTenants;
 use App\Filament\Pages\Dashboard as TenantDashboard;
 use App\Filament\Support\TableRightClick;
+use App\Jobs\ForceDeleteTenantJob;
 use App\Models\PlatformSetting;
 use App\Models\Restaurant;
 use App\Models\SubscriptionPlan;
@@ -16,7 +17,9 @@ use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -31,6 +34,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 use UnitEnum;
 
 class TenantResource extends Resource
@@ -205,7 +209,144 @@ class TenantResource extends Resource
                 ->label('Buka panel tenant')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->url(fn (Restaurant $record): string => TenantDashboard::getUrl(panel: 'admin', tenant: $record)),
+            Action::make('resetOwnerPassword')
+                ->label('Reset Password Owner')
+                ->icon(Heroicon::OutlinedKey)
+                ->color('warning')
+                ->requiresConfirmation()
+                ->modalHeading(fn (Restaurant $record): string => "Reset Password Owner: {$record->name}")
+                ->modalDescription(function (Restaurant $record): string {
+                    $owners = $record->getOwners();
+                    if ($owners->isEmpty()) {
+                        return "Tidak ada akun owner yang terikat pada tenant '{$record->name}'.";
+                    }
+                    if ($owners->count() === 1) {
+                        $owner = $owners->first();
+                        return "Password untuk akun owner '{$owner->name}' ({$owner->email}) akan dikembalikan menjadi default 'password'.";
+                    }
+
+                    return "Tenant ini memiliki {$owners->count()} akun owner. Silakan pilih akun owner yang ingin di-reset password-nya menjadi 'password'.";
+                })
+                ->modalSubmitActionLabel('Ya, Reset Password')
+                ->form(function (Restaurant $record): array {
+                    $owners = $record->getOwners();
+                    if ($owners->isEmpty()) {
+                        return [
+                            Placeholder::make('no_owner_info')
+                                ->label('Pemberitahuan')
+                                ->content("Tidak ada akun owner yang terikat pada tenant ini."),
+                        ];
+                    }
+
+                    if ($owners->count() === 1) {
+                        $owner = $owners->first();
+                        return [
+                            Placeholder::make('owner_info')
+                                ->label('Akun Owner')
+                                ->content("{$owner->name} ({$owner->email})"),
+                            Placeholder::make('new_password_info')
+                                ->label('Password Baru')
+                                ->content('password'),
+                        ];
+                    }
+
+                    $options = ['all' => 'Semua Owner (' . $owners->count() . ' akun)'] + $owners->mapWithKeys(
+                        fn (User $u) => [$u->id => "{$u->name} ({$u->email})"]
+                    )->all();
+
+                    return [
+                        Select::make('target_user_id')
+                            ->label('Pilih Akun Owner')
+                            ->options($options)
+                            ->default('all')
+                            ->required(),
+                        Placeholder::make('new_password_info')
+                            ->label('Password Baru')
+                            ->content('password'),
+                    ];
+                })
+                ->action(function (Restaurant $record, array $data): void {
+                    $owners = $record->getOwners();
+                    if ($owners->isEmpty()) {
+                        Notification::make()
+                            ->title('Tidak Ada Akun Owner')
+                            ->body("Tidak ditemukan akun owner untuk tenant '{$record->name}'.")
+                            ->warning()
+                            ->send();
+
+                        return;
+                    }
+
+                    $targetUserId = $data['target_user_id'] ?? null;
+
+                    if ($owners->count() === 1 || $targetUserId === 'all' || $targetUserId === null) {
+                        $targets = ($targetUserId && $targetUserId !== 'all')
+                            ? $owners->where('id', (int) $targetUserId)
+                            : $owners;
+                    } else {
+                        $targets = $owners->where('id', (int) $targetUserId);
+                    }
+
+                    foreach ($targets as $user) {
+                        $user->forceFill([
+                            'password' => Hash::make('password'),
+                            'remember_token' => null,
+                        ])->save();
+                    }
+
+                    $names = $targets->map(fn (User $u) => "{$u->name} ({$u->email})")->implode(', ');
+
+                    Notification::make()
+                        ->title('Password Owner Berhasil Direset')
+                        ->body("Password untuk {$names} berhasil dikembalikan menjadi 'password'.")
+                        ->success()
+                        ->send();
+                }),
             EditAction::make(),
+            Action::make('forceDeleteTenant')
+                ->label('Force Delete')
+                ->icon(Heroicon::OutlinedTrash)
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading(fn (Restaurant $record): string => "Hapus Permanen Tenant: {$record->name}")
+                ->modalDescription('PERINGATAN KERAS: Tindakan ini bersifat PERMANEN dan TIDAK DAPAT DIBATALKAN. Seluruh data transaksi, pesanan, menu, meja, QRIS, ulasan, laporan, berkas fisik di storage, dan akun staf eksklusif akan dimusnahkan. Ketik slug tenant di bawah untuk mengonfirmasi.')
+                ->modalSubmitActionLabel('Ya, Hapus Permanen Seluruh Data')
+                ->modalIcon(Heroicon::OutlinedExclamationTriangle)
+                ->form([
+                    TextInput::make('confirm_slug')
+                        ->label('Ketik slug tenant untuk konfirmasi:')
+                        ->helperText(fn (Restaurant $record): string => "Ketik: {$record->slug}")
+                        ->required()
+                        ->rules([
+                            fn (Restaurant $record) => function (string $attribute, $value, \Closure $fail) use ($record): void {
+                                if ($value !== $record->slug) {
+                                    $fail("Slug yang Anda masukkan tidak sesuai dengan '{$record->slug}'.");
+                                }
+                            },
+                        ]),
+                ])
+                ->action(function (Restaurant $record): void {
+                    $id = $record->id;
+                    $name = $record->name;
+                    $slug = $record->slug;
+                    $user = auth()->user();
+
+                    // Instantly deactivate tenant
+                    $record->forceFill([
+                        'is_active' => false,
+                        'listed_in_directory' => false,
+                        'landing_enabled' => false,
+                    ])->save();
+
+                    // Dispatch background queue job
+                    ForceDeleteTenantJob::dispatch($id, $name, $slug, $user);
+
+                    Notification::make()
+                        ->title('Penghapusan Tenant Sedang Diproses')
+                        ->body("Proses penghapusan bersih tenant '{$name}' telah dikirim ke antrian background. Anda akan menerima notifikasi setelah selesai.")
+                        ->warning()
+                        ->send();
+                }),
         ]);
     }
 

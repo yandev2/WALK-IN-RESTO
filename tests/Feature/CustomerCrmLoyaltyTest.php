@@ -94,6 +94,21 @@ class CustomerCrmLoyaltyTest extends TestCase
         $this->assertSame($expectedPoints, $customer->points_balance);
     }
 
+    public function test_customer_tier_badge_colors(): void
+    {
+        $reguler = new Customer(['tier' => 'reguler']);
+        $regular = new Customer(['tier' => 'regular']);
+        $silver = new Customer(['tier' => 'silver']);
+        $gold = new Customer(['tier' => 'gold']);
+        $vip = new Customer(['tier' => 'vip']);
+
+        $this->assertSame('success', $reguler->badgeColor());
+        $this->assertSame('success', $regular->badgeColor());
+        $this->assertSame('gray', $silver->badgeColor());
+        $this->assertSame('amber', $gold->badgeColor());
+        $this->assertSame('indigo', $vip->badgeColor());
+    }
+
     public function test_loyalty_can_be_disabled_by_owner_without_breaking_crm_tracking(): void
     {
         Storage::fake('local');

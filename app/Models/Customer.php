@@ -66,11 +66,12 @@ class Customer extends Model
 
     public function badgeColor(): string
     {
-        return match (strtolower($this->tier)) {
-            'vip' => 'purple',
+        return match (strtolower((string) $this->tier)) {
+            'vip' => 'indigo',
             'gold' => 'amber',
-            'silver' => 'slate',
-            default => 'gray',
+            'silver' => 'gray',
+            'regular', 'reguler' => 'success',
+            default => 'success',
         };
     }
 

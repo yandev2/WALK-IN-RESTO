@@ -131,6 +131,11 @@ class Outlet extends Model
         return $this->hasMany(OutletClosedDate::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(RestaurantReview::class);
+    }
+
     public function isOpenNow(?CarbonInterface $at = null): bool
     {
         if (! $this->is_active || ! $this->is_open) {

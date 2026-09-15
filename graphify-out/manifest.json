@@ -168,10 +168,10 @@
     "semantic_hash": "5a3cbbfb4b5988b820524699e282f509"
   },
   "app/Filament/Founder/Resources/Tenants/Pages/EditTenant.php": {
-    "mtime": 1788243510.8986115,
-    "seen": 1788284156.3224661,
-    "ast_hash": "7546265b965f90d7343a5a46f953066f",
-    "semantic_hash": "7546265b965f90d7343a5a46f953066f"
+    "mtime": 1789451407.5429013,
+    "seen": 1789451557.807167,
+    "ast_hash": "b39c66f9ec89b91ecd98995d3d158517",
+    "semantic_hash": ""
   },
   "app/Filament/Founder/Resources/Tenants/Pages/ListTenants.php": {
     "mtime": 1788243510.8986115,
@@ -180,9 +180,9 @@
     "semantic_hash": "069acd778e1148d506285aaf7da6a086"
   },
   "app/Filament/Founder/Resources/Tenants/TenantResource.php": {
-    "mtime": 1788939984.1714146,
-    "seen": 1788940166.2010052,
-    "ast_hash": "a150580425a819a3c03ad8d73bd3b988",
+    "mtime": 1789451388.474585,
+    "seen": 1789451557.8071704,
+    "ast_hash": "3094ff1d02cdac4f7f40d4483fa9b62e",
     "semantic_hash": ""
   },
   "app/Filament/Founder/Widgets/FounderStatsWidget.php": {
@@ -210,9 +210,9 @@
     "semantic_hash": "fa37dfe307bab41c2fd4216ab99bcb75"
   },
   "app/Filament/Pages/KitchenDisplay.php": {
-    "mtime": 1789358034.3186917,
-    "seen": 1789358220.4467404,
-    "ast_hash": "5d6a816f48b3bc8aa2278e116bf578a3",
+    "mtime": 1789452488.2697635,
+    "seen": 1789452987.6495218,
+    "ast_hash": "4d7089cca9b140d6d7c84ed881cce007",
     "semantic_hash": ""
   },
   "app/Filament/Pages/ManageCmsProfile.php": {
@@ -378,10 +378,10 @@
     "semantic_hash": "324e9955114c9ef5099f6dca95fc46bc"
   },
   "app/Filament/Resources/KdsStations/KdsStationResource.php": {
-    "mtime": 1788243510.9111204,
-    "seen": 1788284156.3225021,
-    "ast_hash": "5a6f8d34aef8195f639e29dd2e3a631d",
-    "semantic_hash": "5a6f8d34aef8195f639e29dd2e3a631d"
+    "mtime": 1789452459.771352,
+    "seen": 1789452987.649725,
+    "ast_hash": "c1685099e49e3859e44433b280b20335",
+    "semantic_hash": ""
   },
   "app/Filament/Resources/KdsStations/Pages/ManageKdsStations.php": {
     "mtime": 1788243510.9121754,
@@ -720,10 +720,10 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/Api/V1/Public/RestaurantReviewController.php": {
-    "mtime": 1788243510.9294827,
-    "seen": 1788284156.3225586,
-    "ast_hash": "7878958f12e8ead3d968396ae39b5eb0",
-    "semantic_hash": "7878958f12e8ead3d968396ae39b5eb0"
+    "mtime": 1789447509.0526662,
+    "seen": 1789448099.5448792,
+    "ast_hash": "625a444155c6f99782071d61b1bfcba6",
+    "semantic_hash": ""
   },
   "app/Http/Controllers/Controller.php": {
     "mtime": 1788243510.9307792,
@@ -1188,9 +1188,9 @@
     "semantic_hash": "fb0bbe7b34833fd3bc8df9d7d642a308"
   },
   "app/Models/Outlet.php": {
-    "mtime": 1788939102.352497,
-    "seen": 1788939461.1639946,
-    "ast_hash": "3be2133f8c0724efe5ffe0a7dfada5b9",
+    "mtime": 1789448021.7134378,
+    "seen": 1789448099.5449965,
+    "ast_hash": "481359b7283b410d5961805c7c572e61",
     "semantic_hash": ""
   },
   "app/Models/OutletClosedDate.php": {
@@ -1218,9 +1218,9 @@
     "semantic_hash": ""
   },
   "app/Models/Restaurant.php": {
-    "mtime": 1789381098.305587,
-    "seen": 1789382215.0258307,
-    "ast_hash": "cf749c6c70538fbecce2f4b5818f4b86",
+    "mtime": 1789451356.1374247,
+    "seen": 1789451557.807415,
+    "ast_hash": "0dfe49724ea74e1d8f142bab438c7494",
     "semantic_hash": ""
   },
   "app/Models/RestaurantCategory.php": {
@@ -1230,10 +1230,10 @@
     "semantic_hash": "c65fab4626b8212762a577b69304f173"
   },
   "app/Models/RestaurantReview.php": {
-    "mtime": 1788243510.9559677,
-    "seen": 1788284156.322637,
-    "ast_hash": "780b891cce45392b871c04460e5e2ebc",
-    "semantic_hash": "780b891cce45392b871c04460e5e2ebc"
+    "mtime": 1789447457.3819354,
+    "seen": 1789448099.5450165,
+    "ast_hash": "a3639ed3fefc2f2550ee244895b031e0",
+    "semantic_hash": ""
   },
   "app/Models/Role.php": {
     "mtime": 1789367063.0310757,
@@ -1320,9 +1320,9 @@
     "semantic_hash": ""
   },
   "app/Providers/Filament/AdminPanelProvider.php": {
-    "mtime": 1789354550.5711465,
-    "seen": 1789354823.9209552,
-    "ast_hash": "0b37bfc1a97a961e8ca71581ebe213d4",
+    "mtime": 1789452497.8902855,
+    "seen": 1789452987.650382,
+    "ast_hash": "b4a21cf377d6e25671ea626708b2b844",
     "semantic_hash": ""
   },
   "app/Providers/Filament/FounderPanelProvider.php": {
@@ -1656,9 +1656,9 @@
     "semantic_hash": "ff99d9a3e93379cfed0a482ac0c4f92f"
   },
   "app/Support/SubscriptionGate.php": {
-    "mtime": 1788944741.3803015,
-    "seen": 1788945055.2978969,
-    "ast_hash": "f516f8b7c99160266f8c41d97021808f",
+    "mtime": 1789453465.8162968,
+    "seen": 1789453748.2336996,
+    "ast_hash": "9b5ed7fd8308b5cc55cf6dd213b33b13",
     "semantic_hash": ""
   },
   "app/Support/SubscriptionWriteGuard.php": {
@@ -2082,9 +2082,9 @@
     "semantic_hash": "09f497642163e84c44a7aefd424cfb52"
   },
   "database/seeders/DatabaseSeeder.php": {
-    "mtime": 1788936683.0276327,
-    "seen": 1788937087.860063,
-    "ast_hash": "f71253c6439b659a8e7c53ed3442b56b",
+    "mtime": 1789452547.3559835,
+    "seen": 1789452987.6508362,
+    "ast_hash": "493bf63a09524266c02f02fe2f6b82ca",
     "semantic_hash": ""
   },
   "database/seeders/DemoRestaurantSeeder.php": {
@@ -3444,9 +3444,9 @@
     "semantic_hash": ""
   },
   "app/Services/LandingPageDataService.php": {
-    "mtime": 1788609408.8589697,
-    "seen": 1788609665.7571783,
-    "ast_hash": "22b6d778fdb6a837a6a21a24343ff18e",
+    "mtime": 1789447502.2953603,
+    "seen": 1789448099.5450659,
+    "ast_hash": "7c99e9ccf62eab68506f30be48646b3a",
     "semantic_hash": ""
   },
   "database/migrations/2026_09_02_012446_create_landing_templates_table.php": {
@@ -4026,9 +4026,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Pages/CommissionReconciliation.php": {
-    "mtime": 1789383014.2470245,
-    "seen": 1789383344.9707873,
-    "ast_hash": "fa01858e6535b4d2d89dfdfdafe476b6",
+    "mtime": 1789453543.4852457,
+    "seen": 1789453748.233307,
+    "ast_hash": "af5d13102f1be21bcd58a62566d52ec2",
     "semantic_hash": ""
   },
   "app/Services/CommissionReconciliationService.php": {
@@ -4056,9 +4056,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/CommissionReconciliationTest.php": {
-    "mtime": 1789383112.4226565,
-    "seen": 1789383344.9715645,
-    "ast_hash": "59e4b24073fef2a4d3e60188c54257b4",
+    "mtime": 1789385164.4304204,
+    "seen": 1789448099.5455382,
+    "ast_hash": "8292829eaa59f3b156b7d4b4541560be",
     "semantic_hash": ""
   },
   "app/Filament/Resources/CashierShifts/CashierShiftResource.php": {
@@ -4122,15 +4122,15 @@
     "semantic_hash": ""
   },
   "app/Filament/Pages/CustomerAnalytics.php": {
-    "mtime": 1789381350.1950622,
-    "seen": 1789382215.0255609,
-    "ast_hash": "1e35cda4e87c773dbde99a2d8fe71593",
+    "mtime": 1789453503.061668,
+    "seen": 1789453748.233311,
+    "ast_hash": "0c3887cdea8ad73674625050575d7321",
     "semantic_hash": ""
   },
   "app/Filament/Resources/Customers/CustomerResource.php": {
-    "mtime": 1789376582.5231404,
-    "seen": 1789376955.8755429,
-    "ast_hash": "fc8e6b4e143f5e312acdb3fed93fd2de",
+    "mtime": 1789453478.9715726,
+    "seen": 1789453748.2333596,
+    "ast_hash": "64ca3dacba96d678e2ea17890c53c0ae",
     "semantic_hash": ""
   },
   "app/Filament/Resources/Customers/Pages/ListCustomers.php": {
@@ -4140,9 +4140,9 @@
     "semantic_hash": ""
   },
   "app/Models/Customer.php": {
-    "mtime": 1789377372.9908206,
-    "seen": 1789377638.8732743,
-    "ast_hash": "e85e3283da1b629b80c02b4932a259fe",
+    "mtime": 1789449263.1406326,
+    "seen": 1789449364.9157217,
+    "ast_hash": "3fa570ca272709f816b25a5b4ededea4",
     "semantic_hash": ""
   },
   "app/Models/CustomerLoyaltyPoint.php": {
@@ -4152,9 +4152,9 @@
     "semantic_hash": ""
   },
   "app/Services/CustomerCrmService.php": {
-    "mtime": 1789381156.7663052,
-    "seen": 1789382215.025863,
-    "ast_hash": "32894e731c21f2f8eded5f9b12658788",
+    "mtime": 1789447535.9646406,
+    "seen": 1789448099.5450485,
+    "ast_hash": "42628643f2407c56e64b69758d6442ad",
     "semantic_hash": ""
   },
   "database/migrations/2026_09_14_160000_create_customers_and_loyalty_tables.php": {
@@ -4170,9 +4170,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/CustomerCrmLoyaltyTest.php": {
-    "mtime": 1789383136.2053726,
-    "seen": 1789383344.9715657,
-    "ast_hash": "fbafd59342803af41e7877b2f255ee1e",
+    "mtime": 1789449272.670693,
+    "seen": 1789449364.9175396,
+    "ast_hash": "fa7298bdb7862f5c63ebea9d52ae0073",
     "semantic_hash": ""
   },
   "resources/views/filament/pages/info-loyalty.blade.php": {
@@ -4185,6 +4185,96 @@
     "mtime": 1789381079.4051733,
     "seen": 1789382215.0260603,
     "ast_hash": "d073f016116e22d81e9c9a31aa2fd328",
+    "semantic_hash": ""
+  },
+  "app/Filament/Pages/CustomerSatisfactionAnalytics.php": {
+    "mtime": 1789453515.1772017,
+    "seen": 1789453748.233313,
+    "ast_hash": "4d805795fd5bef32e0793d942c9c928a",
+    "semantic_hash": ""
+  },
+  "app/Filament/Resources/CustomerReviews/CustomerReviewResource.php": {
+    "mtime": 1789453493.3366704,
+    "seen": 1789453748.2333565,
+    "ast_hash": "1755c1d943577263d7bd90576b659ee7",
+    "semantic_hash": ""
+  },
+  "app/Filament/Resources/CustomerReviews/Pages/ListCustomerReviews.php": {
+    "mtime": 1789448030.7268054,
+    "seen": 1789448099.5447645,
+    "ast_hash": "8d04d6e7a98ec05350e6a0e07ceac055",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_09_15_120000_add_moderation_and_notes_to_restaurant_reviews_table.php": {
+    "mtime": 1789447444.9573002,
+    "seen": 1789448099.5452404,
+    "ast_hash": "26915757eec4f8cf45988e1561ad9784",
+    "semantic_hash": ""
+  },
+  "database/seeders/CustomerSatisfactionDemoSeeder.php": {
+    "mtime": 1789447749.8833318,
+    "seen": 1789448099.5452414,
+    "ast_hash": "8521eb5fffc8c3325c57a572a3a5a039",
+    "semantic_hash": ""
+  },
+  "resources/views/filament/pages/customer-satisfaction-analytics.blade.php": {
+    "mtime": 1789447639.9343603,
+    "seen": 1789448099.5453646,
+    "ast_hash": "bcb7c2211cedd54b7d7c5df2e5cab44b",
+    "semantic_hash": ""
+  },
+  "tests/Feature/CustomerSatisfactionAnalyticsTest.php": {
+    "mtime": 1789448320.7394643,
+    "seen": 1789448366.4592948,
+    "ast_hash": "221f944cd19eb9edf01bfb6f52166e68",
+    "semantic_hash": ""
+  },
+  "app/Console/Commands/TenantForceDeleteCommand.php": {
+    "mtime": 1789450461.909842,
+    "seen": 1789450919.5239959,
+    "ast_hash": "2937d3c0332c2991490724ea15088683",
+    "semantic_hash": ""
+  },
+  "app/Jobs/ForceDeleteTenantJob.php": {
+    "mtime": 1789450454.3507075,
+    "seen": 1789450919.5242307,
+    "ast_hash": "4ce5fba2e1431bd9e955199c1b1d3d8f",
+    "semantic_hash": ""
+  },
+  "app/Services/TenantPurgeService.php": {
+    "mtime": 1789450446.174761,
+    "seen": 1789450919.524346,
+    "ast_hash": "476d218a0f61dd2b9e54e0e8b47bdaa4",
+    "semantic_hash": ""
+  },
+  "tests/Feature/TenantForceDeleteTest.php": {
+    "mtime": 1789450786.9347844,
+    "seen": 1789450919.524802,
+    "ast_hash": "74e1bb8ec7abf9cb70f868e0aa46b5ef",
+    "semantic_hash": ""
+  },
+  "tests/Feature/TenantResetOwnerPasswordTest.php": {
+    "mtime": 1789451490.2910745,
+    "seen": 1789451557.808028,
+    "ast_hash": "ac0aa7c75080e8166d49fc975cb501bc",
+    "semantic_hash": ""
+  },
+  "database/seeders/OverdueTenantDemoSeeder.php": {
+    "mtime": 1789452654.9632947,
+    "seen": 1789452987.6508577,
+    "ast_hash": "98a52601564f7cfc3f1c7b08a3c0b97b",
+    "semantic_hash": ""
+  },
+  "tests/Feature/KdsSubscriptionLockTest.php": {
+    "mtime": 1789452769.726495,
+    "seen": 1789452987.6515305,
+    "ast_hash": "c230d16b4dd6d8f62df4ecab659a5326",
+    "semantic_hash": ""
+  },
+  "tests/Feature/OverdueTenantAccessRestrictionTest.php": {
+    "mtime": 1789453576.154204,
+    "seen": 1789453748.234174,
+    "ast_hash": "1b70bd3eb86904c303f873510f21cf3b",
     "semantic_hash": ""
   }
 }
