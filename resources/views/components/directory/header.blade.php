@@ -41,6 +41,11 @@
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('page.terms'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('page.terms'),
             ])>Syarat & Ketentuan</a>
+            <a href="{{ route('blog.index') }}" @class([
+                'rounded-full px-4 py-2 text-sm font-semibold transition',
+                'bg-primary/10 font-bold text-primary' => request()->routeIs('blog.*'),
+                'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('blog.*'),
+            ])>Blog</a>
             @auth
                 @php
                     $authUser = auth()->user();

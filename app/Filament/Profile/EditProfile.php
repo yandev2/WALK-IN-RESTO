@@ -33,6 +33,7 @@ class EditProfile extends BaseEditProfile
         return match (Filament::getCurrentPanel()?->getId()) {
             'founder' => $user->isPlatformOperator(),
             'admin' => $user->isRestaurantOwner(),
+            'blogger' => $user->isPlatformOperator() || $user->hasRole('blogger'),
             default => false,
         };
     }

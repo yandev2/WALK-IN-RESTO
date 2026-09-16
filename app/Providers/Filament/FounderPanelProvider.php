@@ -22,6 +22,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -49,6 +50,7 @@ class FounderPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex(RestaurantTheme::DEFAULT_PRIMARY),
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Founder/Resources'), for: 'App\\Filament\\Founder\\Resources')
             ->discoverPages(in: app_path('Filament/Founder/Pages'), for: 'App\\Filament\\Founder\\Pages')
             ->pages([
@@ -80,7 +82,14 @@ class FounderPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): HtmlString => AuthGlass::headHtml(includeVite: true),
+                fn (): HtmlString => new HtmlString(
+                    AuthGlass::headHtml(includeVite: true)->toHtml().
+                    '<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>'
+                ),
+            )
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
+                fn (): View => view('filament.components.panel-switcher'),
             )
             ->middleware([
                 EncryptCookies::class,

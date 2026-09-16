@@ -23,5 +23,6 @@ class RolePermissionSeeder extends Seeder
 
         Role::findOrCreate('founder', 'web');
         Role::findOrCreate('panel_user', 'web');
+        Role::findOrCreate('blogger', 'web');
     }
 }

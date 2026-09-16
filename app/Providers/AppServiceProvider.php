@@ -3,9 +3,15 @@
 namespace App\Providers;
 
 use App\Livewire\Hooks\BlockGraceMutations;
+use App\Models\BlogComment;
+use App\Models\BlogPost;
+use App\Models\BlogPostTranslation;
 use App\Models\ExportFile;
 use App\Models\Role;
 use App\Models\User;
+use App\Observers\BlogCommentObserver;
+use App\Observers\BlogPostObserver;
+use App\Observers\BlogPostTranslationObserver;
 use App\Observers\ExportFileObserver;
 use App\Policies\ExportFilePolicy;
 use App\Policies\RolePolicy;
@@ -61,6 +67,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ExportFile::class, ExportFilePolicy::class);
         ExportFile::observe(ExportFileObserver::class);
+        BlogPost::observe(BlogPostObserver::class);
+        BlogPostTranslation::observe(BlogPostTranslationObserver::class);
+        BlogComment::observe(BlogCommentObserver::class);
 
         Gate::before(function ($user, string $ability, mixed $arguments = []): ?bool {
             if (! $user instanceof User) {

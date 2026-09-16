@@ -2,29 +2,35 @@
 
 namespace App\Filament\Founder\Widgets;
 
-use App\Enums\InvoiceStatus;
-use App\Enums\SubscriptionStatus;
-use App\Models\Restaurant;
-use App\Models\SubscriptionInvoice;
-use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Filament\Founder\Resources\SubscriptionInvoices\SubscriptionInvoiceResource;
+use App\Filament\Founder\Resources\Tenants\TenantResource;
+use App\Services\FounderAnalyticsService;
+use Filament\Widgets\Widget;
 
-class FounderStatsWidget extends StatsOverviewWidget
+class FounderStatsWidget extends Widget
 {
     protected static bool $isLazy = false;
 
     protected static ?int $sort = 1;
 
-    protected function getStats(): array
+    protected string $view = 'filament.widgets.founder-stats';
+
+    protected int|string|array $columnSpan = 'full';
+
+    public function __lazyLoad(): void
     {
+    }
+
+    public function getViewData(): array
+    {
+        $service = app(FounderAnalyticsService::class);
+        $kpi = $service->getKpiData();
+
         return [
-            Stat::make('Trial', Restaurant::query()->where('subscription_status', SubscriptionStatus::Trial)->count()),
-            Stat::make('Grace', Restaurant::query()->where('subscription_status', SubscriptionStatus::Grace)->count()),
-            Stat::make('Expired', Restaurant::query()->where('subscription_status', SubscriptionStatus::Expired)->count()),
-            Stat::make(
-                'Menunggu verifikasi',
-                SubscriptionInvoice::query()->where('status', InvoiceStatus::AwaitingVerification)->count(),
-            ),
+            'kpi' => $kpi,
+            'tenantUrl' => TenantResource::getUrl(),
+            'invoicesUrl' => SubscriptionInvoiceResource::getUrl(),
+            'pendingInvoicesUrl' => SubscriptionInvoiceResource::getUrl().'?tableFilters[status][value]=awaiting_verification',
         ];
     }
 }

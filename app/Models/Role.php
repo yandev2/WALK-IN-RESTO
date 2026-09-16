@@ -11,13 +11,14 @@ class Role extends SpatieRole
     public const OWNER = 'owner';
     public const KASIR = 'kasir';
     public const DAPUR = 'dapur';
+    public const BLOGGER = 'blogger';
 
     /**
      * System roles that cannot be assigned to staff by restaurant owner.
      *
      * @var list<string>
      */
-    public const LOCKED_NAMES = ['owner', 'super_admin', 'founder', 'panel_user'];
+    public const LOCKED_NAMES = ['owner', 'super_admin', 'founder', 'panel_user', 'blogger'];
 
     /**
      * Mandatory restaurant roles that must exist and cannot be deleted.
@@ -38,6 +39,7 @@ class Role extends SpatieRole
         'super_admin',
         'founder',
         'panel_user',
+        'blogger',
     ];
 
     /**
@@ -52,6 +54,7 @@ class Role extends SpatieRole
         'super_admin',
         'founder',
         'panel_user',
+        'blogger',
     ];
 
     protected static function booted(): void

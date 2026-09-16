@@ -90,6 +90,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             ->withPivot('restaurant_id');
     }
 
+    public function blogPosts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BlogPost::class, 'author_id');
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($this->trashed() || ! $this->is_active) {
@@ -98,6 +103,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
         if ($panel->getId() === 'founder') {
             return $this->isPlatformOperator();
+        }
+
+        if ($panel->getId() === 'blogger') {
+            return $this->isPlatformOperator() || $this->isBlogger();
         }
 
         return DB::table('model_has_roles')
@@ -114,6 +123,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function isFounder(): bool
     {
         return $this->hasGlobalRole('founder');
+    }
+
+    public function isBlogger(): bool
+    {
+        return $this->hasGlobalRole('blogger');
     }
 
     public function isPlatformOperator(): bool
@@ -186,7 +200,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     public function getTenants(Panel $panel): Collection
     {
-        if ($panel->getId() === 'founder') {
+        if ($panel->getId() === 'founder' || $panel->getId() === 'blogger') {
             return collect();
         }
 

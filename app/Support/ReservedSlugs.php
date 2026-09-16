@@ -12,6 +12,8 @@ final class ReservedSlugs
         return [
             'admin',
             'api',
+            'blog',
+            'blogger',
             'daftar',
             'export-files',
             'filament',

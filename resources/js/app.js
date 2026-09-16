@@ -1,5 +1,6 @@
 import './bootstrap';
 import './vision-charts';
+import './blog';
 import { bindThemeToggle, initReveal, initTheme, toggleTheme } from './theme';
 
 initTheme();

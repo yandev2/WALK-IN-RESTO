@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BlogLikeController;
 use App\Http\Controllers\ExportFileDownloadController;
 use App\Http\Controllers\OrderReceiptDownloadController;
 use App\Http\Controllers\OrderReceiptPrintController;
@@ -25,10 +28,15 @@ Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->n
 Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {
     $sitemapUrl = route('sitemap');
-    $content = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /founder\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
+    $content = "User-agent: *\nAllow: /\nAllow: /blog\nDisallow: /admin\nDisallow: /founder\nDisallow: /blogger\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
 
-    return response($content, 200, ['Content-Type' => 'text/plain']);
+    return response($content, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 });
+Route::get('/ads.txt', function () {
+    $content = \App\Models\AdSetting::current()->ads_txt_content ?? '';
+
+    return response($content, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('ads.txt');
 
 Route::get('/daftar', RegisterRestaurant::class)
     ->middleware(['guest', 'throttle:10,1'])
@@ -72,7 +80,21 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
-$landingSlugPattern = '^(?!admin$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
+Route::prefix('blog')->group(function (): void {
+    Route::get('/', [BlogController::class, 'index'])->name('blog.index');
+    Route::get('/articles', [BlogController::class, 'archive'])->name('blog.archive');
+    Route::get('/category/{slug}', [BlogController::class, 'category'])->name('blog.category');
+    Route::get('/tag/{slug}', [BlogController::class, 'tag'])->name('blog.tag');
+    Route::get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+    Route::post('/{slug}/comments', [BlogCommentController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('blog.comments.store');
+    Route::post('/{slug}/like', [BlogLikeController::class, 'toggle'])
+        ->middleware('throttle:30,1')
+        ->name('blog.likes.toggle');
+});
+
+$landingSlugPattern = '^(?!admin$|blogger$|blog$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

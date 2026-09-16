@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DemoCommissionInvoicesSeeder::class,
             CustomerSatisfactionDemoSeeder::class,
             OverdueTenantDemoSeeder::class,
+            BlogDemoSeeder::class,
         ]);
     }
 }

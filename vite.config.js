@@ -29,6 +29,7 @@ export default defineConfig({
                 '**/graphify-out/**',
                 '**/storage/**',
                 '**/*.tmp',
+                '**/Cetak biru blogger/**',
             ],
         },
     },
