@@ -1,7 +1,31 @@
 @extends('layouts.directory')
 
 @section('title', $title)
-@section('description', $pageTitle)
+@section('description', $description ?? $pageTitle)
+@section('canonical', $canonical ?? url()->current())
+
+@push('head')
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => 'Beranda',
+                    'item' => route('home'),
+                ],
+                [
+                    '@type' => 'ListItem',
+                    'position' => 2,
+                    'name' => $breadcrumb,
+                    'item' => $canonical ?? url()->current(),
+                ],
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+    </script>
+@endpush
 
 @section('body')
     <div class="relative flex min-h-screen flex-col bg-surface-base">

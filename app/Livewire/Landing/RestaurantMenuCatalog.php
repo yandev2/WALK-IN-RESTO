@@ -140,7 +140,14 @@ class RestaurantMenuCatalog extends Component
         ])->layout('layouts.landing', [
             'theme' => RestaurantTheme::for($this->restaurant),
             'restaurant' => $this->restaurant,
+            'outlet' => $outlet,
+            'profile' => $profile,
+            'ratingSummary' => $ratingSummary,
+            'heroUrl' => CmsMedia::url($profile?->hero_image_path),
             'logoUrl' => CmsMedia::url($this->restaurant->logo_path),
+            'title' => 'Menu Lengkap · '.$this->restaurant->name,
+            'description' => 'Lihat daftar menu lengkap dan harga di '.$this->restaurant->name.'. Pesan langsung dari meja tanpa antre.',
+            'canonical' => route('landing.menu', $this->restaurant),
         ]);
     }
 }

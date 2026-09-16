@@ -216,7 +216,8 @@ class SitemapController extends Controller
         // Restaurant directory pages
         $restaurants = Restaurant::query()
             ->listedInDirectory()
-            ->select(['id', 'slug', 'updated_at'])
+            ->where('landing_enabled', true)
+            ->select(['id', 'name', 'slug', 'logo_path', 'updated_at'])
             ->orderBy('id')
             ->get();
 
@@ -224,12 +225,24 @@ class SitemapController extends Controller
         foreach ($restaurants as $restaurant) {
             $lastmod = ($restaurant->updated_at ?? now())->toAtomString();
 
-            $restaurantPages[] = [
+            $image = null;
+            if (filled($restaurant->logo_path)) {
+                $imageUrl = MediaUrl::public($restaurant->logo_path);
+                if ($imageUrl) {
+                    $image = [
+                        'url' => $imageUrl,
+                        'title' => $restaurant->name,
+                    ];
+                }
+            }
+
+            $restaurantPages[] = array_filter([
                 'url' => route('landing.show', $restaurant),
                 'lastmod' => $lastmod,
                 'changefreq' => 'weekly',
                 'priority' => '0.9',
-            ];
+                'image' => $image,
+            ]);
 
             $restaurantPages[] = [
                 'url' => route('landing.menu', $restaurant),

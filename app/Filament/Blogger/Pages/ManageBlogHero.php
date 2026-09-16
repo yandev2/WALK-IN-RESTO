@@ -46,4 +46,13 @@ class ManageBlogHero extends Page
     {
         return BlogHeroFormSchema::configure($schema);
     }
+
+    /**
+     * For the blog hero banner, custom text translations are optional.
+     * If left blank, the public layout falls back to default app localization strings.
+     */
+    protected function ensureAtLeastOneTranslation(): void
+    {
+        // No-op: Allow saving hero banner appearance without requiring custom text translations.
+    }
 }

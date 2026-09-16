@@ -68,6 +68,16 @@ trait HasSingletonForm
             $this->record->update($data);
 
             $this->callHook('afterSave');
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            Notification::make()
+                ->danger()
+                ->title('Gagal menyimpan pengaturan')
+                ->body(collect($exception->errors())->flatten()->first() ?: 'Silakan periksa kembali isian form Anda.')
+                ->send();
+
+            throw $exception;
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :

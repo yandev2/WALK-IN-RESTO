@@ -217,6 +217,29 @@ class BloggerPanelTest extends TestCase
         $response->assertSuccessful();
     }
 
+    public function test_manage_blog_hero_can_save_banner_without_custom_translations(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        $founder = User::factory()->create(['is_active' => true]);
+        $founder->assignRole('founder');
+
+        $this->actingAs($founder);
+
+        $file = \Illuminate\Http\UploadedFile::fake()->image('hero.jpg', 1920, 1080);
+
+        \Livewire\Livewire::test(\App\Filament\Blogger\Pages\ManageBlogHero::class)
+            ->assertSuccessful()
+            ->set('data.banner_image', [$file])
+            ->set('data.overlay_opacity', 80)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertNotified('Pengaturan berhasil disimpan.');
+
+        $hero = \App\Models\BlogHeroSetting::getSingleton();
+        $this->assertNotNull($hero->banner_image);
+        $this->assertSame(80, $hero->overlay_opacity);
+    }
+
     public function test_custom_blog_hero_setting_is_rendered_on_public_landing(): void
     {
         $hero = \App\Models\BlogHeroSetting::getSingleton();
