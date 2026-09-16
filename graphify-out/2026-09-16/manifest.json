@@ -7848,9 +7848,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Founder/Pages/ManageAdSettings.php": {
-    "mtime": 1789536981.070637,
-    "seen": 1789537076.7953913,
-    "ast_hash": "9d5ad5e912732ea568bb51f6579878d6",
+    "mtime": 1789537317.853737,
+    "seen": 1789537404.5036008,
+    "ast_hash": "27524fea3613e6a1baf0c54bebc5fef1",
     "semantic_hash": ""
   },
   "app/Models/AdSetting.php": {
@@ -7896,9 +7896,15 @@
     "semantic_hash": ""
   },
   "tests/Feature/AdIntegrationTest.php": {
-    "mtime": 1789536993.7486737,
-    "seen": 1789537076.7973046,
-    "ast_hash": "6227332eb1ca5107c2f06dad2a5ae436",
+    "mtime": 1789537331.3828022,
+    "seen": 1789537404.5053499,
+    "ast_hash": "fb41a8ce9c5b7af6be82556aac33d8ac",
+    "semantic_hash": ""
+  },
+  "resources/views/filament/founder/pages/info-ad-integration.blade.php": {
+    "mtime": 1789537303.2164807,
+    "seen": 1789537404.5050106,
+    "ast_hash": "e558115a2db8168f17f254315e61c0a4",
     "semantic_hash": ""
   }
 }

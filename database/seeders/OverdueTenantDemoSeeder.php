@@ -38,6 +38,7 @@ class OverdueTenantDemoSeeder extends Seeder
                 'subscribed_until' => null,
                 'currency' => 'IDR',
                 'is_active' => true,
+                'listed_in_directory' => false,
             ]
         );
 
