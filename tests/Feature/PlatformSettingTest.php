@@ -97,7 +97,8 @@ class PlatformSettingTest extends TestCase
             ->assertSee('max-w-xl', false)
             ->assertSee((string) config('subscription.contact_email'), false)
             ->assertSee("© {$year} RestoTerdekat. Semua hak dilindungi.", false)
-            ->assertSee('RestoTerdekat membantu tamu menemukan restoran terdekat', false);
+            ->assertSee('RestoTerdekat membantu tamu menemukan restoran terdekat', false)
+            ->assertSee(route('blog.index'), false);
     }
 
     public function test_home_footer_uses_platform_copy_and_optional_links(): void

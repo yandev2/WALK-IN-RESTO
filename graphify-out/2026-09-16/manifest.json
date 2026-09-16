@@ -750,10 +750,10 @@
     "semantic_hash": "2d5b349dd1a0b9951823a4b334a90ef1"
   },
   "app/Http/Controllers/PlatformPageController.php": {
-    "mtime": 1788252048.197998,
-    "seen": 1788284156.3225632,
-    "ast_hash": "bca18584bc5965aa4b0312431e17f50f",
-    "semantic_hash": "bca18584bc5965aa4b0312431e17f50f"
+    "mtime": 1789540661.5341158,
+    "seen": 1789541012.8739948,
+    "ast_hash": "1d545d84ad89fe4f8100f56e38d7b3ed",
+    "semantic_hash": ""
   },
   "app/Http/Controllers/RestaurantLandingController.php": {
     "mtime": 1788312629.439381,
@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/SitemapController.php": {
-    "mtime": 1789533132.4639149,
-    "seen": 1789533396.2284217,
-    "ast_hash": "2f68db662269ce5dae3ef7dd910f2507",
+    "mtime": 1789540714.9065762,
+    "seen": 1789541012.8739984,
+    "ast_hash": "6a76f1e6aff81d6bdd74bf99248b624c",
     "semantic_hash": ""
   },
   "app/Http/Middleware/ApplyPlatformBrandTheme.php": {
@@ -990,9 +990,9 @@
     "semantic_hash": "cf2eb619e1162d578841612e4a5886fb"
   },
   "app/Livewire/Auth/RegisterRestaurant.php": {
-    "mtime": 1788609379.4972453,
-    "seen": 1788609665.757084,
-    "ast_hash": "67481a5f497a0390e56083283961527f",
+    "mtime": 1789540676.9969301,
+    "seen": 1789541012.8740592,
+    "ast_hash": "de82b60d79900031b196d8c51e9481cc",
     "semantic_hash": ""
   },
   "app/Livewire/Guest/GuestCart.php": {
@@ -1050,9 +1050,9 @@
     "semantic_hash": "820866ce522829fb3f20fdeab734cd91"
   },
   "app/Livewire/Landing/RestaurantMenuCatalog.php": {
-    "mtime": 1788939215.623146,
-    "seen": 1788939461.1639621,
-    "ast_hash": "48beaae610768ef1c78a5f7ac6dba90a",
+    "mtime": 1789540705.564564,
+    "seen": 1789541012.8740745,
+    "ast_hash": "3ead6e7703bde0c319f87ee2584aeeff",
     "semantic_hash": ""
   },
   "app/Models/Activity.php": {
@@ -2712,9 +2712,9 @@
     "semantic_hash": "66cb929c096a89a6779c629ad8120bf8"
   },
   "resources/views/landing/pages/static-page.blade.php": {
-    "mtime": 1788370628.7592595,
-    "seen": 1788370694.0604472,
-    "ast_hash": "0a921da306c09b504f21adf2300c15cc",
+    "mtime": 1789540927.8831253,
+    "seen": 1789541012.8746169,
+    "ast_hash": "ce5f1e85395b2a4b4931f3e8bf14daec",
     "semantic_hash": ""
   },
   "resources/views/landing/sections/about.blade.php": {
@@ -2790,9 +2790,9 @@
     "semantic_hash": "b14828aceb38630838014e8f0357a62e"
   },
   "resources/views/layouts/directory.blade.php": {
-    "mtime": 1788576676.2995963,
-    "seen": 1788576754.086328,
-    "ast_hash": "e233f931583f514f634f7de57785c43e",
+    "mtime": 1789540654.576857,
+    "seen": 1789541012.874679,
+    "ast_hash": "88a0acf195fd4fd47936a246351b60b6",
     "semantic_hash": ""
   },
   "resources/views/layouts/guest-order.blade.php": {
@@ -2802,9 +2802,9 @@
     "semantic_hash": ""
   },
   "resources/views/layouts/landing.blade.php": {
-    "mtime": 1788578205.0583315,
-    "seen": 1788578539.085991,
-    "ast_hash": "cbd9c59d7d8851c15c8da44b36f1fd24",
+    "mtime": 1789540692.8369267,
+    "seen": 1789541012.8746817,
+    "ast_hash": "67ca1964d714b6f7b67ff821f1eba987",
     "semantic_hash": ""
   },
   "resources/views/livewire/auth/register-restaurant.blade.php": {
@@ -5163,6 +5163,12 @@
     "mtime": 1789537303.2164807,
     "seen": 1789537404.5050106,
     "ast_hash": "e558115a2db8168f17f254315e61c0a4",
+    "semantic_hash": ""
+  },
+  "tests/Feature/PlatformSeoPagesTest.php": {
+    "mtime": 1789540732.1309192,
+    "seen": 1789541012.8748178,
+    "ast_hash": "7d928f8df11452ac5a453a66d3b13b65",
     "semantic_hash": ""
   }
 }

@@ -19320,7 +19320,7 @@
       "file_type": "code",
       "norm_label": ".test_billing_falls_back_to_config_and_placeholder_qr()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L192"
+      "source_location": "L193"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_billing_view_data_uses_rekening_and_qr_path",
@@ -19332,7 +19332,7 @@
       "file_type": "code",
       "norm_label": ".test_billing_view_data_uses_rekening_and_qr_path()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L169"
+      "source_location": "L170"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_default_platform_setting_colors_directory_theme",
@@ -19356,7 +19356,7 @@
       "file_type": "code",
       "norm_label": ".test_directory_renders_custom_seo_and_favicon_configured_by_founder()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L274"
+      "source_location": "L275"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_directory_renders_default_seo_tags_favicon_and_schema",
@@ -19368,7 +19368,7 @@
       "file_type": "code",
       "norm_label": ".test_directory_renders_default_seo_tags_favicon_and_schema()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L257"
+      "source_location": "L258"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_home_footer_uses_defaults_with_site_and_year_tokens",
@@ -19392,7 +19392,7 @@
       "file_type": "code",
       "norm_label": ".test_home_footer_uses_platform_copy_and_optional_links()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L103"
+      "source_location": "L104"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_home_header_falls_back_to_icon_and_site_name_without_logo",
@@ -19404,7 +19404,7 @@
       "file_type": "code",
       "norm_label": ".test_home_header_falls_back_to_icon_and_site_name_without_logo()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L132"
+      "source_location": "L133"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_home_header_uses_platform_logo_when_set",
@@ -19416,7 +19416,7 @@
       "file_type": "code",
       "norm_label": ".test_home_header_uses_platform_logo_when_set()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L141"
+      "source_location": "L142"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_home_hero_uses_full_bleed_banner_style",
@@ -19428,7 +19428,7 @@
       "file_type": "code",
       "norm_label": ".test_home_hero_uses_full_bleed_banner_style()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L155"
+      "source_location": "L156"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_home_uses_platform_copy_and_cta",
@@ -19464,7 +19464,7 @@
       "file_type": "code",
       "norm_label": ".test_sitemap_xml_and_robots_txt_are_accessible_and_valid()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L297"
+      "source_location": "L298"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_subscription_status_card_shows_saved_billing_details",
@@ -19476,7 +19476,7 @@
       "file_type": "code",
       "norm_label": ".test_subscription_status_card_shows_saved_billing_details()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L201"
+      "source_location": "L202"
     },
     {
       "id": "tests_feature_platformsettingtest_platformsettingtest_test_tenant_theme_does_not_use_platform_primary",
@@ -19500,7 +19500,7 @@
       "file_type": "code",
       "norm_label": ".test_trial_days_defaults_to_config_and_can_be_updated()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L248"
+      "source_location": "L249"
     },
     {
       "id": "app_http_controllers_blogcontroller_blogcontroller_archive",
@@ -24036,7 +24036,7 @@
       "file_type": "code",
       "norm_label": ".test_directory_facility_filters_follow_active_rows()",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L230"
+      "source_location": "L231"
     },
     {
       "id": "public_js_filament_forms_components_select_createoptionelement",
@@ -51744,7 +51744,7 @@
       "file_type": "code",
       "norm_label": ".test_updating_rich_text_purges_orphaned_image_attachments()",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L107"
+      "source_location": "L109"
     },
     {
       "id": "database_migrations_0001_01_01_000001_create_cache_table_down",
@@ -58260,7 +58260,7 @@
       "file_type": "code",
       "norm_label": ".test_founder_can_manage_static_pages_in_founder_panel()",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L59"
+      "source_location": "L61"
     },
     {
       "id": "public_js_filament_forms_components_code_editor_accept",
@@ -264796,7 +264796,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L67",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -264808,7 +264808,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L90",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -264820,7 +264820,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L119",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -264856,7 +264856,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L194",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
@@ -264868,7 +264868,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L171",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -264892,7 +264892,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L232",
+      "source_location": "L233",
       "weight": 1.0
     },
     {
@@ -264904,7 +264904,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L276",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -264916,7 +264916,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L105",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -264928,7 +264928,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L143",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -264940,7 +264940,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L157",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -264988,7 +264988,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L299",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -265000,7 +265000,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L208",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -265048,7 +265048,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L250",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -430358,7 +430358,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L107",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -430413,7 +430413,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -430446,7 +430446,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L103",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -430457,7 +430457,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -430468,7 +430468,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -430479,7 +430479,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -430490,7 +430490,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L169",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -430501,7 +430501,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -430512,7 +430512,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L201",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -430534,7 +430534,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L230",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
@@ -430545,7 +430545,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L248",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -430556,7 +430556,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L257",
+      "source_location": "L258",
       "weight": 1.0
     },
     {
@@ -430567,7 +430567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L274",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -430578,7 +430578,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/PlatformSettingTest.php",
-      "source_location": "L297",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
@@ -461057,7 +461057,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -461069,7 +461069,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "tests/Feature/PlatformPagesTest.php",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -467206,5 +467206,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "32a33f549157d65f970c9d31310c8e0bd7e00a10"
+  "built_at_commit": "6f22ce360ed0b898b34919e8fd4a484dde556db2"
 }

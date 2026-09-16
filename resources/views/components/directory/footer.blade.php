@@ -51,6 +51,9 @@
                     <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Beranda</a>
                 </li>
                 <li>
+                    <a href="{{ route('blog.index') }}" class="hover:text-primary transition-colors">Blog</a>
+                </li>
+                <li>
                     <a href="{{ route('page.about') }}" class="hover:text-primary transition-colors">Tentang kami</a>
                 </li>
                 @auth
@@ -58,7 +61,7 @@
                         $authUser = auth()->user();
                         $panelUrl = $authUser instanceof \App\Models\User && $authUser->isSuperAdmin()
                             ? url('/founder')
-                            : ($authUser?->restaurants()->first() ? url('/admin/'.$authUser->restaurants()->first()->slug) : url('/admin'));
+                            : ($authUser?->hasRole('blogger') ? url('/blogger') : ($authUser?->restaurants()->first() ? url('/admin/'.$authUser->restaurants()->first()->slug) : url('/admin')));
                     @endphp
                     <li>
                         <a href="{{ $panelUrl }}" class="hover:text-primary transition-colors font-medium">Panel Admin</a>

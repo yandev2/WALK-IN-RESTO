@@ -54,6 +54,8 @@ class PlatformPagesTest extends TestCase
         $response->assertSee('Tentang kami');
         $response->assertSee(route('page.terms'));
         $response->assertSee('Syarat & ketentuan', false);
+        $response->assertSee(route('blog.index'));
+        $response->assertSee('Blog');
     }
 
     public function test_founder_can_manage_static_pages_in_founder_panel(): void
