@@ -268,8 +268,7 @@ class PlatformSettingTest extends TestCase
             ->assertSee('property="og:type" content="website"', false)
             ->assertSee('name="twitter:card" content="summary_large_image"', false)
             ->assertSee('"@type": "WebSite"', false)
-            ->assertSee('"@type": "Organization"', false)
-            ->assertSee('"@type": "SearchAction"', false);
+            ->assertSee('"@type": "Organization"', false);
     }
 
     public function test_directory_renders_custom_seo_and_favicon_configured_by_founder(): void

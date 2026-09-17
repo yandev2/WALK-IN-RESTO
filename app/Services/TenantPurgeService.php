@@ -181,6 +181,7 @@ class TenantPurgeService
             'qris_image_path_snapshot',
         ]);
         foreach ($payments as $pay) {
+            $add($pay->proof_image_path, 'local');
             $add($pay->proof_image_path, 'public');
             $add($pay->qris_image_path_snapshot, 'public');
         }

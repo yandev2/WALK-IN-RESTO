@@ -49,7 +49,10 @@
                     <p class="mt-3 text-sm text-primary-dark">{{ $message }}</p>
                 @enderror
 
-                @if ($proofUrl = \App\Support\CmsMedia::url($payment?->proof_image_path))
+                @if (filled($payment?->proof_image_path))
+                    @php
+                        $proofUrl = route('payments.proof.show', ['order' => $order->public_id, 'payment' => $payment->public_id]);
+                    @endphp
                     <img src="{{ $proofUrl }}" alt="Bukti transfer" class="mt-4 w-full rounded-2xl object-cover">
                     <button type="button" wire:click="removeProof" class="mt-3 text-sm font-semibold text-primary">Hapus foto</button>
                 @endif

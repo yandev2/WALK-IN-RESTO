@@ -46,6 +46,10 @@ Route::get('/receipts/{order:public_id}/download', OrderReceiptDownloadControlle
     ->middleware(['signed', 'throttle:30,1'])
     ->name('receipts.download');
 
+Route::get('/orders/{order:public_id}/payments/{payment:public_id}/proof', \App\Http\Controllers\PaymentProofViewController::class)
+    ->middleware(['identify.guest', 'throttle:60,1'])
+    ->name('payments.proof.show');
+
 Route::middleware('auth')->group(function (): void {
     Route::get('/export-files/{exportFile}/download', ExportFileDownloadController::class)
         ->name('export-files.download');
@@ -66,7 +70,7 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     Route::view('/need-scan', 'guest.need-scan')->name('guest.need-scan');
     Route::get('/t/{token}', ScanTable::class)
-        ->middleware(EnsureRestaurantOperations::class)
+        ->middleware(['throttle:30,1', EnsureRestaurantOperations::class])
         ->where('token', '[A-Za-z0-9_-]+')
         ->name('guest.scan');
 

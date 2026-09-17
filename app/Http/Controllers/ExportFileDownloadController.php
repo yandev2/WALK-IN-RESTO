@@ -29,7 +29,7 @@ class ExportFileDownloadController extends Controller
         $expectedPrefix = 'restaurants/'.$record->restaurant_id.'/export/';
         abort_unless(str_starts_with($record->file_path, $expectedPrefix), 404);
 
-        $disk = Storage::disk($record->disk ?: 'public');
+        $disk = Storage::disk($record->disk ?: 'local');
 
         abort_unless($disk->exists($record->file_path), 404);
 

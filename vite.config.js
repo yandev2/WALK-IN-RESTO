@@ -24,6 +24,8 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: 'localhost',
+        cors: true,
         watch: {
             ignored: [
                 '**/graphify-out/**',

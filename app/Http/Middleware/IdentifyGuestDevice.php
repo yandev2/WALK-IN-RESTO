@@ -13,7 +13,7 @@ class IdentifyGuestDevice
     {
         $token = $request->cookie('guest_device');
 
-        if (blank($token)) {
+        if (blank($token) || ! is_string($token) || strlen($token) > 64 || preg_match('/[^a-zA-Z0-9_\-]/', $token)) {
             $token = Str::random(64);
             cookie()->queue(cookie(
                 name: 'guest_device',
@@ -21,6 +21,7 @@ class IdentifyGuestDevice
                 minutes: 60 * 24 * 30,
                 httpOnly: true,
                 sameSite: 'lax',
+                secure: (bool) config('session.secure', app()->isProduction()),
             ));
         }
 

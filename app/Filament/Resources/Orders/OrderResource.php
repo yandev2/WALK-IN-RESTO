@@ -7,6 +7,7 @@ use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Filament\Resources\Orders\Widgets\OrderTodayStatsWidget;
 use App\Filament\Support\TableRightClick;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\User;
 use App\Support\SubscriptionAccess;
 use BackedEnum;
@@ -181,7 +182,18 @@ class OrderResource extends Resource
                                     ]),
                                 ImageEntry::make('proof_image_path')
                                     ->label('Bukti transfer')
-                                    ->disk('public')
+                                    ->state(function (Payment $record): ?string {
+                                        if (blank($record->proof_image_path)) {
+                                            return null;
+                                        }
+
+                                        $order = $record->order;
+                                        if (! $order) {
+                                            return null;
+                                        }
+
+                                        return route('payments.proof.show', ['order' => $order->public_id, 'payment' => $record->public_id]);
+                                    })
                                     ->imageHeight(220)
                                     ->columnSpanFull()
                                     ->placeholder('Belum diunggah'),

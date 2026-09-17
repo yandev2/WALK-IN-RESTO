@@ -21,6 +21,28 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(), microphone=()');
 
+        if (app()->environment('production') || $request->isSecure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
+
+        // Apply Content-Security-Policy baseline in production and testing environments
+        if (app()->environment('production', 'testing')) {
+            $csp = [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.bunny.net https://unpkg.com https://cdn.jsdelivr.net",
+                "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com https://unpkg.com",
+                "font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com data:",
+                "img-src 'self' data: blob: https:",
+                "media-src 'self' data: blob: https:",
+                "connect-src 'self' ws: wss: https:",
+                "frame-src 'self' https://www.google.com https://maps.google.com",
+                "object-src 'none'",
+                "base-uri 'self'",
+                "form-action 'self'",
+            ];
+            $response->headers->set('Content-Security-Policy', implode('; ', $csp));
+        }
+
         return $response;
     }
 }

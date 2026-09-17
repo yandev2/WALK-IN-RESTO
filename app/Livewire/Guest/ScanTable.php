@@ -8,6 +8,7 @@ use App\Services\StaleOperationsService;
 use App\Services\VisitClaimService;
 use App\Support\GuestContext;
 use App\Support\TableQrToken;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -47,8 +48,19 @@ class ScanTable extends Component
             return null;
         }
 
+        $throttleKey = 'claim-table:'.$device.':'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->mode = 'claim';
+            $this->message = 'Terlalu banyak permintaan klaim meja. Coba lagi dalam '.$seconds.' detik.';
+
+            return null;
+        }
+        RateLimiter::hit($throttleKey, 60);
+
         try {
             $claims->claim($table, $device, $this->customer_wa, $this->customer_name ?: null, (string) request()->userAgent());
+            RateLimiter::clear($throttleKey);
         } catch (ValidationException $e) {
             $this->mode = filled($table->open_visit_id) ? 'join' : 'claim';
             $this->message = collect($e->errors())->flatten()->first() ?: 'Tidak bisa klaim meja.';
@@ -72,8 +84,18 @@ class ScanTable extends Component
             return null;
         }
 
+        $throttleKey = 'join-table:'.$device.':'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->message = 'Terlalu banyak percobaan memasukkan PIN. Coba lagi dalam '.$seconds.' detik.';
+
+            return null;
+        }
+        RateLimiter::hit($throttleKey, 60);
+
         try {
             $claims->join($table, $device, $this->join_pin, (string) request()->userAgent());
+            RateLimiter::clear($throttleKey);
         } catch (ValidationException $e) {
             $this->message = collect($e->errors())->flatten()->first() ?: 'PIN salah.';
 

@@ -56,7 +56,7 @@ class ExportReportJob implements ShouldQueue
                 $exportFile->filters ?? [],
             );
 
-            $disk = $exportFile->disk ?: 'public';
+            $disk = $exportFile->disk ?: 'local';
 
             if ($exportFile->format === ExportFile::FORMAT_PDF) {
                 (new PdfExporter($payload['data'], $payload['view'], $exportFile->file_path, $disk))->export();
@@ -81,7 +81,7 @@ class ExportReportJob implements ShouldQueue
             ]);
 
             if (filled($exportFile->file_path)) {
-                Storage::disk($exportFile->disk ?: 'public')->delete($exportFile->file_path);
+                Storage::disk($exportFile->disk ?: 'local')->delete($exportFile->file_path);
             }
 
             $exportService->markFailed($exportFile->fresh(), $exception->getMessage());

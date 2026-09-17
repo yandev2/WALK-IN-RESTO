@@ -5,7 +5,7 @@
     $metaDescription = trim($__env->yieldContent('description', $description ?? ($home['meta_description'] ?? 'Temukan restoran terdekat, lihat menu, dan datang langsung.')));
     $metaKeywords = $home['meta_keywords'] ?? 'restoran terdekat, kuliner terdekat, menu restoran, cafe terdekat, walk-in resto';
     $defaultCanonical = request()->routeIs('home') ? ($home['canonical_url'] ?? url()->current()) : url()->current();
-    $canonicalUrl = trim($__env->yieldContent('canonical', $canonical ?? $defaultCanonical));
+    $canonicalUrl = \App\Models\PlatformSetting::canonicalizeUrl(trim($__env->yieldContent('canonical', $canonical ?? $defaultCanonical)));
     $faviconUrl = $home['favicon_url'] ?? ($home['logo_url'] ?? asset('favicon.ico'));
     if (filled($faviconUrl) && ! str_starts_with($faviconUrl, 'http://') && ! str_starts_with($faviconUrl, 'https://')) {
         $faviconUrl = url($faviconUrl);
@@ -22,14 +22,6 @@
                 'name' => $home['site_name'] ?? 'RestoTerdekat',
                 'description' => $home['meta_description'] ?? 'Direktori kuliner dan restoran terdekat.',
                 'inLanguage' => 'id-ID',
-                'potentialAction' => [
-                    '@type' => 'SearchAction',
-                    'target' => [
-                        '@type' => 'EntryPoint',
-                        'urlTemplate' => url('/').'?search={search_term_string}',
-                    ],
-                    'query-input' => 'required name=search_term_string',
-                ],
             ],
             array_filter([
                 '@type' => 'Organization',

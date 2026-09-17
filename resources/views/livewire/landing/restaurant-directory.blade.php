@@ -244,42 +244,61 @@
         } catch (error) {}
     };
 
+    const getDirectoryComponent = () => {
+        try {
+            return (typeof Livewire !== 'undefined' && typeof Livewire.find === 'function') ? @this : null;
+        } catch (e) {
+            return null;
+        }
+    };
+
     window.requestDirectoryLocation = window.requestDirectoryLocation || function () {
-        const component = @this;
+        const component = getDirectoryComponent();
         window.clearDirectoryLocationSkip();
 
+        if (! component) {
+            return;
+        }
+
         if (! window.isSecureContext) {
-            component.reportLocationInsecure();
+            if (typeof component.reportLocationInsecure === 'function') {
+                component.reportLocationInsecure();
+            }
             return;
         }
 
         if (! navigator.geolocation) {
-            component.reportLocationUnsupported();
+            if (typeof component.reportLocationUnsupported === 'function') {
+                component.reportLocationUnsupported();
+            }
             return;
         }
 
-        component.beginLocationRequest();
+        if (typeof component.beginLocationRequest === 'function') {
+            component.beginLocationRequest();
+        }
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                component.setUserLocation(
-                    position.coords.latitude,
-                    position.coords.longitude,
-                    position.coords.accuracy,
-                );
+                if (typeof component.setUserLocation === 'function') {
+                    component.setUserLocation(
+                        position.coords.latitude,
+                        position.coords.longitude,
+                        position.coords.accuracy,
+                    );
+                }
             },
             (error) => {
                 if (error.code === error.PERMISSION_DENIED) {
-                    component.clearUserLocation('denied');
+                    if (typeof component.clearUserLocation === 'function') {
+                        component.clearUserLocation('denied');
+                    }
                     return;
                 }
 
-                if (error.code === error.TIMEOUT) {
+                if (typeof component.reportLocationError === 'function') {
                     component.reportLocationError();
-                    return;
                 }
-
-                component.reportLocationError();
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
         );
@@ -292,8 +311,15 @@
             }
         } catch (error) {}
 
+        const component = getDirectoryComponent();
+        if (! component) {
+            return;
+        }
+
         if (! window.isSecureContext) {
-            @this.reportLocationInsecure();
+            if (typeof component.reportLocationInsecure === 'function') {
+                component.reportLocationInsecure();
+            }
             return;
         }
 
@@ -310,7 +336,9 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         window.refreshDirectoryMap('directory-map-desktop');
-        window.bootstrapDirectoryLocation();
+        if (typeof Livewire !== 'undefined' && Livewire.find) {
+            window.bootstrapDirectoryLocation();
+        }
     });
 
     document.addEventListener('livewire:init', () => {
@@ -321,6 +349,10 @@
 
             window.refreshDirectoryMap('directory-map-desktop', true);
         });
+
+        setTimeout(() => {
+            window.bootstrapDirectoryLocation();
+        }, 100);
     });
 </script>
 @endpush

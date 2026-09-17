@@ -18,7 +18,13 @@ class PaymentResource extends JsonResource
             'amount' => (int) $this->amount,
             'unique_add' => (int) $this->unique_add,
             'qris_image_url' => CmsMedia::url($this->qris_image_path_snapshot),
-            'proof_image_url' => CmsMedia::url($this->proof_image_path),
+            'proof_image_url' => filled($this->proof_image_path) && $this->order
+                ? \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    'payments.proof.show',
+                    now()->addMinutes(60),
+                    ['order' => $this->order->public_id, 'payment' => $this->public_id],
+                )
+                : null,
             'gps_status' => $this->gps_status,
             'reject_reason' => $this->reject_reason,
             'awaiting_expires_at' => $this->awaiting_expires_at?->toIso8601String(),

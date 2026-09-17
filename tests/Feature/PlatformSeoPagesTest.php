@@ -75,4 +75,16 @@ class PlatformSeoPagesTest extends TestCase
             ->assertSee('Menu Lengkap · Kopi Nusantara', false)
             ->assertSee('"@type": "Restaurant"', false);
     }
+
+    public function test_home_canonical_normalizes_and_removes_sitelinks_searchbox_template(): void
+    {
+        config(['app.url' => 'https://citarasakita.com']);
+
+        $response = $this->get('https://www.citarasakita.com');
+        $response->assertOk()
+            ->assertSee('rel="canonical" href="https://citarasakita.com"', false)
+            ->assertDontSee('rel="canonical" href="https://www.citarasakita.com"', false)
+            ->assertDontSee('{search_term_string}', false);
+    }
 }
+

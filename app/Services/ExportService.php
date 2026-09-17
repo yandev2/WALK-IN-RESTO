@@ -18,7 +18,7 @@ class ExportService
         array $filters,
         string $filename,
         string $filePath,
-        string $disk = 'public',
+        string $disk = 'local',
     ): ExportFile {
         return ExportFile::query()->create([
             'restaurant_id' => $restaurantId,
@@ -43,7 +43,7 @@ class ExportService
 
     public function markCompleted(ExportFile $exportFile): ExportFile
     {
-        $disk = Storage::disk($exportFile->disk ?: 'public');
+        $disk = Storage::disk($exportFile->disk ?: 'local');
         $fullPath = $disk->path($exportFile->file_path);
 
         $exportFile->update([

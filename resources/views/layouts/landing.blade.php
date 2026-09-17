@@ -12,7 +12,7 @@
     $siteName = $restaurant->name ?? config('app.name', 'Restoran');
     $metaTitle = trim($__env->yieldContent('title', $title ?? ($siteName . ' · Walk-in')));
     $metaDescription = trim($__env->yieldContent('description', $description ?? ('Kunjungi ' . $siteName . '. Lihat menu lezat, promo terbaru, dan pesan langsung di meja dengan scan QR.')));
-    $canonicalUrl = trim($__env->yieldContent('canonical', $canonical ?? url()->current()));
+    $canonicalUrl = \App\Models\PlatformSetting::canonicalizeUrl(trim($__env->yieldContent('canonical', $canonical ?? url()->current())));
     $ogImageUrl = $heroUrl ?? ($logoUrl ?? null);
     if (filled($ogImageUrl) && ! str_starts_with($ogImageUrl, 'http://') && ! str_starts_with($ogImageUrl, 'https://')) {
         $ogImageUrl = url($ogImageUrl);

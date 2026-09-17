@@ -260,11 +260,23 @@ class PlatformSetting extends Model
             $data[$tokenField] = self::applyFooterTokens((string) ($data[$tokenField] ?? ''), $siteName);
         }
 
-        $data['canonical_url'] = filled($row?->canonical_url) ? (string) $row->canonical_url : (url()->current());
+        $configuredAppUrl = rtrim((string) config('app.url', url('/')), '/');
+        $canonicalBase = filled($row?->canonical_url) ? (string) $row->canonical_url : $configuredAppUrl;
+        $data['canonical_url'] = self::canonicalizeUrl($canonicalBase);
         $data['footer_whatsapp_url'] = CmsMedia::whatsappUrl($data['footer_phone'] ?? null);
         $data['footer_instagram_url'] = CmsMedia::instagramUrl($data['footer_instagram'] ?? null);
 
         return $data;
+    }
+
+    public static function canonicalizeUrl(string $url): string
+    {
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        if ($appHost && ! str_starts_with($appHost, 'www.')) {
+            return (string) preg_replace('#^(https?://)www\.'.preg_quote($appHost, '#').'#i', '$1'.$appHost, $url);
+        }
+
+        return $url;
     }
 
     public static function applyFooterTokens(string $text, string $siteName): string

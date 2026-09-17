@@ -37,7 +37,7 @@ class CleanupOldExportFilesJob implements ShouldQueue
                         ]);
 
                         if (filled($file->file_path)) {
-                            Storage::disk($file->disk ?: 'public')->delete($file->file_path);
+                            Storage::disk($file->disk ?: 'local')->delete($file->file_path);
                         }
                     }
                 }

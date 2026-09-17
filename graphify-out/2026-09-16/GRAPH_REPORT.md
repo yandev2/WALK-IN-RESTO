@@ -1,7 +1,7 @@
 # Graph Report - WALK-IN-RESTO  (2026-09-16)
 
 ## Corpus Check
-- 851 files · ~395,488 words
+- 851 files · ~395,504 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `32a33f54`
+- Built from commit: `6f22ce36`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

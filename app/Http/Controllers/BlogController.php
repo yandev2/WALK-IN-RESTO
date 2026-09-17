@@ -124,8 +124,14 @@ class BlogController extends Controller
             ->with('translations')
             ->first();
 
-        if (! $category || ! $category->translate($locale)) {
+        if (! $category) {
             abort(404);
+        }
+
+        $matchedTranslation = $category->translations->firstWhere('slug', $slug);
+        if (! $category->translate($locale) && $matchedTranslation) {
+            $locale = $matchedTranslation->locale;
+            app()->setLocale($locale);
         }
 
         $visits->record($request, 'blog_category', $category, $locale);
@@ -161,8 +167,14 @@ class BlogController extends Controller
             ->with('translations')
             ->first();
 
-        if (! $tag || ! $tag->translate($locale)) {
+        if (! $tag) {
             abort(404);
+        }
+
+        $matchedTranslation = $tag->translations->firstWhere('slug', $slug);
+        if (! $tag->translate($locale) && $matchedTranslation) {
+            $locale = $matchedTranslation->locale;
+            app()->setLocale($locale);
         }
 
         $visits->record($request, 'blog_tag', $tag, $locale);
@@ -221,6 +233,12 @@ class BlogController extends Controller
             if (! $post) {
                 abort(404);
             }
+        }
+
+        $matchedTranslation = $post->translations->firstWhere('slug', $slug);
+        if (! $post->translate($locale) && $matchedTranslation) {
+            $locale = $matchedTranslation->locale;
+            app()->setLocale($locale);
         }
 
         // Record visit (automatically debounced and increments views_count)

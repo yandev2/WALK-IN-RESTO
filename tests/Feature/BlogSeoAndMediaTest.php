@@ -348,4 +348,36 @@ class BlogSeoAndMediaTest extends TestCase
         $this->assertFalse(Storage::disk('public')->exists($oldBanner));
         $this->assertTrue(Storage::disk('public')->exists($newBanner));
     }
+
+    public function test_category_and_tag_slug_resolve_across_locales_without_404(): void
+    {
+        // Category only has 'id' translation
+        $category = BlogCategory::create(['is_active' => true]);
+        $category->translations()->create([
+            'locale' => 'id',
+            'name' => 'Kuliner Nusantara',
+            'slug' => 'kuliner-nusantara',
+        ]);
+
+        // Tag only has 'id' translation
+        $tag = BlogTag::create(['is_active' => true]);
+        $tag->translations()->create([
+            'locale' => 'id',
+            'name' => 'Kopi Enak',
+            'slug' => 'kopi-enak',
+        ]);
+
+        // Set application locale to English ('en')
+        app()->setLocale('en');
+
+        // Request without locale query param
+        $catResponse = $this->get('/blog/category/kuliner-nusantara');
+        $catResponse->assertOk()
+            ->assertSee('Kuliner Nusantara', false);
+
+        $tagResponse = $this->get('/blog/tag/kopi-enak');
+        $tagResponse->assertOk()
+            ->assertSee('Kopi Enak', false);
+    }
 }
+

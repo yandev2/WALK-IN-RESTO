@@ -110,6 +110,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/>
                 </svg>
                 <input
+                    id="directory-search-input"
+                    name="search"
                     type="search"
                     wire:model.live.debounce.350ms="search"
                     placeholder="{{ $home['search_placeholder'] }}"

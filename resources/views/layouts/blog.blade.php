@@ -6,7 +6,7 @@
     $metaKeywords = trim($__env->yieldContent('keywords', ''));
     $metaRobots = trim($__env->yieldContent('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'));
     $ogImage = trim($__env->yieldContent('og_image', $home['og_image_url'] ?? asset('favicon.ico')));
-    $canonical = trim($__env->yieldContent('canonical', url()->current()));
+    $canonical = \App\Models\PlatformSetting::canonicalizeUrl(trim($__env->yieldContent('canonical', url()->current())));
     $ogType = trim($__env->yieldContent('og_type', 'website'));
 @endphp
 <!DOCTYPE html>

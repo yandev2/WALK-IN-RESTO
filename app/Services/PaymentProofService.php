@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Visit;
 use App\Support\CmsMedia;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class PaymentProofService
@@ -15,9 +16,10 @@ class PaymentProofService
     {
         $payment = $this->assertCanMutate($visit, $order);
 
-        $path = $file->store('payment-proofs/'.$order->restaurant_id, 'public');
+        $path = $file->store('payment-proofs/'.$order->restaurant_id, 'local');
 
         if (filled($payment->proof_image_path)) {
+            Storage::disk('local')->delete($payment->proof_image_path);
             CmsMedia::delete($payment->proof_image_path);
         }
 
@@ -31,6 +33,7 @@ class PaymentProofService
         $payment = $this->assertCanMutate($visit, $order);
 
         if (filled($payment->proof_image_path)) {
+            Storage::disk('local')->delete($payment->proof_image_path);
             CmsMedia::delete($payment->proof_image_path);
         }
 
