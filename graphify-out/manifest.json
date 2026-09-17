@@ -822,9 +822,9 @@
     "semantic_hash": "d8baaf360e20d9c908bad2334e198193"
   },
   "app/Http/Middleware/SecurityHeaders.php": {
-    "mtime": 1789581056.4165845,
-    "seen": 1789582131.0520973,
-    "ast_hash": "5ae8929e73404dbd0360ef525137c4fb",
+    "mtime": 1789622812.8561468,
+    "seen": 1789622953.967834,
+    "ast_hash": "234787f8613afb4c58ba1613da7d21bd",
     "semantic_hash": ""
   },
   "app/Http/Middleware/SetPermissionsTeamId.php": {
@@ -3294,9 +3294,9 @@
     "semantic_hash": "e66286b29dcdf52aa91f339a30dea466"
   },
   "tests/Feature/SecurityHardeningTest.php": {
-    "mtime": 1789578910.289009,
-    "seen": 1789579065.7126174,
-    "ast_hash": "7cc257ea1d323bdd86d57e585d471be4",
+    "mtime": 1789622817.9760213,
+    "seen": 1789622953.969638,
+    "ast_hash": "0c0aeffc34ffc715f0216df9ac292327",
     "semantic_hash": ""
   },
   "tests/Feature/SoftDeleteTrashTest.php": {

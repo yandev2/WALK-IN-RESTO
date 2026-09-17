@@ -90349,7 +90349,7 @@
       "file_type": "code",
       "norm_label": ".test_dining_table_hides_qr_secret_in_serialization()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L50"
+      "source_location": "L52"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_export_service_uses_local_private_disk_by_default",
@@ -90361,7 +90361,7 @@
       "file_type": "code",
       "norm_label": ".test_export_service_uses_local_private_disk_by_default()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L81"
+      "source_location": "L83"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_guest_device_middleware_sanitizes_malicious_or_oversized_cookie",
@@ -90373,7 +90373,7 @@
       "file_type": "code",
       "norm_label": ".test_guest_device_middleware_sanitizes_malicious_or_oversized_cookie()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L303"
+      "source_location": "L305"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_guest_scan_route_has_throttle_middleware",
@@ -90385,7 +90385,7 @@
       "file_type": "code",
       "norm_label": ".test_guest_scan_route_has_throttle_middleware()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L198"
+      "source_location": "L200"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_hsts_header_is_sent_when_connection_is_secure",
@@ -90397,7 +90397,7 @@
       "file_type": "code",
       "norm_label": ".test_hsts_header_is_sent_when_connection_is_secure()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L42"
+      "source_location": "L44"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_http_responses_include_security_headers",
@@ -90421,7 +90421,7 @@
       "file_type": "code",
       "norm_label": ".test_payment_proof_rejects_cross_tenant_or_traversal_path()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L214"
+      "source_location": "L216"
     },
     {
       "id": "tests_feature_securityhardeningtest_securityhardeningtest_test_payment_proof_view_requires_authorization",
@@ -90433,7 +90433,7 @@
       "file_type": "code",
       "norm_label": ".test_payment_proof_view_requires_authorization()",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L105"
+      "source_location": "L107"
     },
     {
       "id": "tests_feature_tablefloorplantest_tablefloorplantest_otherrestaurant",
@@ -266019,7 +266019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -266031,7 +266031,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L58",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -266043,7 +266043,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -266055,7 +266055,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L83",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -266067,7 +266067,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L89",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -266079,7 +266079,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L218",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -266091,7 +266091,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L231",
+      "source_location": "L233",
       "weight": 1.0
     },
     {
@@ -266103,7 +266103,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L238",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -266115,7 +266115,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L247",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -266127,7 +266127,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L258",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -266139,7 +266139,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L282",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -266151,7 +266151,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L109",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -266163,7 +266163,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L115",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -266175,7 +266175,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L122",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -266187,7 +266187,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L131",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -266199,7 +266199,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L142",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -266211,7 +266211,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L168",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -432081,7 +432081,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L105",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -432092,7 +432092,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L198",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
@@ -432103,7 +432103,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L214",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -432125,7 +432125,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L303",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -432136,7 +432136,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -432147,7 +432147,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L50",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -432158,7 +432158,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SecurityHardeningTest.php",
-      "source_location": "L81",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -468104,5 +468104,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5ab6d5daf8825423b4d0383958617767a9c042b7"
+  "built_at_commit": "853cc7658fedcfd460d9eeb4767a7ea98872e972"
 }

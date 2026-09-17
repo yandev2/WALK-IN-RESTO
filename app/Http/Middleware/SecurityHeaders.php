@@ -29,12 +29,14 @@ class SecurityHeaders
         if (app()->environment('production', 'testing')) {
             $csp = [
                 "default-src 'self'",
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.bunny.net https://unpkg.com https://cdn.jsdelivr.net",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.bunny.net https://unpkg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com blob:",
                 "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com https://unpkg.com",
                 "font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com data:",
                 "img-src 'self' data: blob: https:",
                 "media-src 'self' data: blob: https:",
-                "connect-src 'self' ws: wss: https:",
+                "connect-src 'self' ws: wss: https: https://cloudflareinsights.com https://static.cloudflareinsights.com",
+                "worker-src 'self' blob:",
+                "child-src 'self' blob: https://www.google.com https://maps.google.com",
                 "frame-src 'self' https://www.google.com https://maps.google.com",
                 "object-src 'none'",
                 "base-uri 'self'",

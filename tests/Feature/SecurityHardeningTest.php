@@ -36,6 +36,8 @@ class SecurityHardeningTest extends TestCase
         $csp = (string) $response->headers->get('Content-Security-Policy');
         $this->assertStringContainsString("default-src 'self'", $csp);
         $this->assertStringContainsString("script-src 'self' 'unsafe-inline' 'unsafe-eval'", $csp);
+        $this->assertStringContainsString("worker-src 'self' blob:", $csp);
+        $this->assertStringContainsString("child-src 'self' blob:", $csp);
         $this->assertStringContainsString("frame-src 'self' https://www.google.com https://maps.google.com", $csp);
     }
 
