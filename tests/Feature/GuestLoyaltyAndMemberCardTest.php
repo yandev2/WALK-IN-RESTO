@@ -210,7 +210,7 @@ class GuestLoyaltyAndMemberCardTest extends TestCase
             'restaurant_id' => $world['restaurant']->id,
             'outlet_id' => $world['outlet']->id,
             'visit_id' => $visit->id,
-            'number' => 'ORD-101',
+            'number' => 101,
             'idempotency_key' => (string) Str::uuid(),
             'status' => 'paid',
             'source' => 'guest',
@@ -235,7 +235,7 @@ class GuestLoyaltyAndMemberCardTest extends TestCase
             'type' => 'earn',
             'points' => 10,
             'balance_after' => 20,
-            'description' => 'Poin belanja pesanan #ORD-101',
+            'description' => 'Poin belanja pesanan #101',
         ]);
 
         Livewire::withCookies(['guest_device' => $token])
@@ -243,7 +243,7 @@ class GuestLoyaltyAndMemberCardTest extends TestCase
             ->assertSee('Selamat! Kamu Mendapatkan Poin!')
             ->assertSee('+10 Poin')
             ->assertSee('Rp 100.000')
-            ->assertSee('#ORD-101')
+            ->assertSee('#101')
             ->assertSee('20')
             ->call('dismissLoyaltyAlert', $order->id)
             ->assertDontSee('Selamat! Kamu Mendapatkan Poin!');
@@ -267,7 +267,7 @@ class GuestLoyaltyAndMemberCardTest extends TestCase
             'restaurant_id' => $world['restaurant']->id,
             'outlet_id' => $world['outlet']->id,
             'visit_id' => $visit->id,
-            'number' => 'ORD-102',
+            'number' => 102,
             'idempotency_key' => (string) Str::uuid(),
             'status' => 'paid',
             'source' => 'guest',
@@ -291,14 +291,14 @@ class GuestLoyaltyAndMemberCardTest extends TestCase
             'type' => 'earn',
             'points' => 15,
             'balance_after' => 25,
-            'description' => 'Poin belanja pesanan #ORD-102',
+            'description' => 'Poin belanja pesanan #102',
         ]);
 
         Livewire::withCookies(['guest_device' => $token])
             ->test(\App\Livewire\Guest\GuestPay::class, ['order' => $order])
             ->assertSee('Selamat! Kamu Mendapatkan Poin!')
             ->assertSee('+15 Poin')
-            ->assertSee('#ORD-102')
+            ->assertSee('#102')
             ->call('dismissLoyaltyAlert', $order->id)
             ->assertDontSee('Selamat! Kamu Mendapatkan Poin!');
     }
