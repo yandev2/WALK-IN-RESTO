@@ -34,12 +34,14 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -62,6 +64,11 @@ class AppServiceProvider extends ServiceProvider
         }
 
         static::registerStyle();
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::HEAD_START,
+            fn (): \Illuminate\Contracts\View\View => view('filament.hooks.form-field-a11y'),
+        );
 
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
@@ -330,7 +337,17 @@ class AppServiceProvider extends ServiceProvider
                 ->loadingIndicatorPosition('center')
                 ->removeUploadedFileButtonPosition('right')
                 ->uploadButtonPosition('center')
-                ->uploadProgressIndicatorPosition('center');
+                ->uploadProgressIndicatorPosition('center')
+                ->extraInputAttributes(fn (FileUpload $component): array => [
+                    'name' => $component->getName() ?: 'file_upload',
+                    'id' => $component->getId() . '-input',
+                ]);
+        });
+
+        Select::configureUsing(function (Select $select) {
+            $select->extraAlpineAttributes(fn (Select $component): array => [
+                'id' => $component->getId(),
+            ]);
         });
 
         SelectFilter::configureUsing(function (SelectFilter $select) {

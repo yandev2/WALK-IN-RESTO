@@ -352,7 +352,7 @@
                         </p>
 
                         <label class="cashier-pos-label font-semibold" for="shift-starting-cash">Modal Awal Kasir (Rp)</label>
-                        <input type="text" id="shift-starting-cash" class="cashier-pos-search w-full mb-2 font-bold text-base"
+                        <input type="text" id="shift-starting-cash" name="starting_cash" class="cashier-pos-search w-full mb-2 font-bold text-base"
                             x-model="startingCashRaw" placeholder="Contoh: 100000" autocomplete="off">
 
                         <div class="flex flex-wrap gap-1.5 mb-3">
@@ -364,7 +364,7 @@
                         </div>
 
                         <label class="cashier-pos-label font-semibold" for="shift-notes">Catatan Shift (Opsional)</label>
-                        <input type="text" id="shift-notes" class="cashier-pos-search w-full mb-4 text-xs"
+                        <input type="text" id="shift-notes" name="shift_notes" class="cashier-pos-search w-full mb-4 text-xs"
                             x-model="startingCashNotes" placeholder="Misal: Uang receh 2 ribuan 20 lembar">
 
                         <div class="cashier-pos-editor-actions flex justify-end gap-2">
@@ -405,8 +405,8 @@
                             </button>
                         </div>
 
-                        <label class="cashier-pos-label font-semibold">Nominal (Rp)</label>
-                        <input type="text" class="cashier-pos-search w-full mb-2 font-bold text-base"
+                        <label class="cashier-pos-label font-semibold" for="move-amount-raw">Nominal (Rp)</label>
+                        <input type="text" id="move-amount-raw" name="move_amount" class="cashier-pos-search w-full mb-2 font-bold text-base"
                             x-model="moveAmountRaw" placeholder="Contoh: 25000" autocomplete="off">
 
                         <div class="flex flex-wrap gap-1.5 mb-3">
@@ -416,8 +416,8 @@
                             <button type="button" class="cashier-pos-chip text-xs py-1" @click="setMovementAmount(100000)">100 Rb</button>
                         </div>
 
-                        <label class="cashier-pos-label font-semibold">Kategori</label>
-                        <select class="cashier-pos-search w-full mb-3 text-xs" x-model="moveCategory">
+                        <label class="cashier-pos-label font-semibold" for="move-category-select">Kategori</label>
+                        <select id="move-category-select" name="move_category" class="cashier-pos-search w-full mb-3 text-xs" x-model="moveCategory">
                             <template x-if="moveType === 'cash_out'">
                                 <optgroup label="Pengeluaran">
                                     <option value="operasional">Operasional (Belanja darurat/bahan)</option>
@@ -436,8 +436,8 @@
                             </template>
                         </select>
 
-                        <label class="cashier-pos-label font-semibold">Keterangan / Catatan</label>
-                        <input type="text" class="cashier-pos-search w-full mb-4 text-xs"
+                        <label class="cashier-pos-label font-semibold" for="move-notes-input">Keterangan / Catatan</label>
+                        <input type="text" id="move-notes-input" name="move_notes" class="cashier-pos-search w-full mb-4 text-xs"
                             x-model="moveNotes" placeholder="Misal: Beli 2 bungkus es batu kristal">
 
                         <div class="cashier-pos-editor-actions flex justify-end gap-2">
@@ -467,7 +467,7 @@
                         </div>
 
                         <label class="cashier-pos-label font-semibold" for="close-shift-actual-cash">Total Uang Fisik di Laci Kas (Rp)</label>
-                        <input type="text" id="close-shift-actual-cash" class="cashier-pos-search w-full font-bold text-lg text-emerald-600 dark:text-emerald-400"
+                        <input type="text" id="close-shift-actual-cash" name="actual_cash" class="cashier-pos-search w-full font-bold text-lg text-emerald-600 dark:text-emerald-400"
                             x-model="actualCashRaw" placeholder="Contoh: 750000" autocomplete="off">
                         <template x-if="actualCashRaw">
                             <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 mb-2">
@@ -479,7 +479,7 @@
                         </template>
 
                         <label class="cashier-pos-label font-semibold" for="close-shift-diff-reason">Catatan / Alasan Selisih (Opsional)</label>
-                        <input type="text" id="close-shift-diff-reason" class="cashier-pos-search w-full mb-4 text-xs"
+                        <input type="text" id="close-shift-diff-reason" name="diff_reason" class="cashier-pos-search w-full mb-4 text-xs"
                             x-model="diffReason" placeholder="Isi jika ada selisih kas fisik vs sistem">
 
                         <div class="cashier-pos-editor-actions flex justify-end gap-2">
@@ -555,7 +555,8 @@
             </div>
 
             <div class="cashier-pos-search-row">
-                <input type="search" class="cashier-pos-search" placeholder="Cari menu" x-model="query"
+                <label for="cashier-pos-search-input" class="sr-only">Cari menu</label>
+                <input id="cashier-pos-search-input" name="pos_search" type="search" class="cashier-pos-search" placeholder="Cari menu" x-model="query"
                     autocomplete="off">
                 <button type="button" class="cashier-pos-search-reset" x-show="query.length" x-cloak
                     @click="query = ''" aria-label="Hapus pencarian">Reset</button>
@@ -710,13 +711,13 @@
                 </div>
                 <div class="cashier-pos-field">
                     <label class="cashier-pos-label" for="cashier-pos-name">Nama tamu</label>
-                    <input id="cashier-pos-name" type="text" class="cashier-pos-input"
+                    <input id="cashier-pos-name" name="customer_name" type="text" class="cashier-pos-input"
                         x-model="$store.cashierPos.customerName" maxlength="120"
                         x-on:input="onName($event.target.value)">
                 </div>
                 <div class="cashier-pos-field">
                     <label class="cashier-pos-label" for="cashier-pos-wa">WhatsApp tamu</label>
-                    <input id="cashier-pos-wa" type="text" class="cashier-pos-input"
+                    <input id="cashier-pos-wa" name="customer_wa" type="text" class="cashier-pos-input"
                         x-model="$store.cashierPos.customerWa"
                         maxlength="20" placeholder="08xxxxxxxxxx" x-on:input="onWa($event.target.value)">
                 </div>
@@ -739,7 +740,7 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <input type="number" min="0"
+                        <input id="cashier-pos-redeem-points" name="points_to_redeem" aria-label="Tukar Poin" type="number" min="0"
                             :max="$store.cashierPos.customerInfo ? $store.cashierPos.customerInfo.points : 0"
                             class="cashier-pos-input text-xs py-1 px-2.5 w-24 tabular-nums text-center"
                             placeholder="0"
@@ -774,9 +775,9 @@
                     </div>
                 </div>
 
-                <label class="cashier-pos-check" style="margin-top: 0.7rem" x-show="$store.cashierPos.hasFonnte"
+                <label class="cashier-pos-check" for="cashier-pos-send-receipt" style="margin-top: 0.7rem" x-show="$store.cashierPos.hasFonnte"
                     x-cloak>
-                    <input type="checkbox" x-model="$store.cashierPos.sendReceipt"
+                    <input id="cashier-pos-send-receipt" name="send_receipt" type="checkbox" x-model="$store.cashierPos.sendReceipt"
                         :disabled="!$store.cashierPos.customerWa"
                         @change="$wire.setPosField('send_receipt', $store.cashierPos.sendReceipt)">
                     Kirim struk WhatsApp
@@ -935,7 +936,7 @@
                             <div
                                 class="flex overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 focus-within:ring-2 focus-within:ring-primary-500">
                                 <span class="flex items-center px-3 text-sm text-gray-500 dark:text-gray-400">Rp</span>
-                                <input id="cashier-pos-cash-received" type="text" inputmode="numeric"
+                                <input id="cashier-pos-cash-received" name="cash_received" type="text" inputmode="numeric"
                                     autocomplete="off" placeholder="0"
                                     class="min-w-0 flex-1 border-none bg-transparent py-2 pe-3 text-sm text-gray-950 outline-none ring-0 placeholder:text-gray-400 dark:text-white"
                                     x-model="$store.cashierPos.cashRaw"
@@ -1018,8 +1019,12 @@
                         <div class="cashier-pos-modal__options" style="margin-bottom: 0">
                             <template x-for="mod in $store.cashierPos.editor.modifiers" :key="mod.id">
                                 <label class="cashier-pos-modal__option"
+                                    :for="'pos-mod-' + mod.id"
                                     :class="$store.cashierPos.isModOn(mod.id) && 'is-checked'">
-                                    <input type="checkbox" :checked="$store.cashierPos.isModOn(mod.id)"
+                                    <input type="checkbox"
+                                        :id="'pos-mod-' + mod.id"
+                                        name="pos_modifiers[]"
+                                        :checked="$store.cashierPos.isModOn(mod.id)"
                                         @change="$store.cashierPos.toggleMod(mod.id)">
                                     <span x-text="mod.label"></span>
                                 </label>
@@ -1033,7 +1038,7 @@
                 </template>
 
                 <label class="cashier-pos-label" for="cashier-pos-notes">Catatan</label>
-                <textarea id="cashier-pos-notes" class="cashier-pos-textarea" rows="2"
+                <textarea id="cashier-pos-notes" name="pos_notes" class="cashier-pos-textarea" rows="2"
                     x-model="$store.cashierPos.editor.notes" placeholder="Opsional"></textarea>
                 <div class="cashier-pos-editor-actions">
                     <button type="button" class="cashier-pos-muted"

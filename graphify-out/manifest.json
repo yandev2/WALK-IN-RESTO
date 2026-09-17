@@ -414,9 +414,9 @@
     "semantic_hash": "e15f6723fe6a73fdf5b4d42442056d29"
   },
   "app/Filament/Resources/MenuItems/MenuItemResource.php": {
-    "mtime": 1789620901.5740802,
-    "seen": 1789621187.1244109,
-    "ast_hash": "1fa3472c64427f667dcd4b975d53e124",
+    "mtime": 1789627788.1730359,
+    "seen": 1789628870.65837,
+    "ast_hash": "f5017253917c2846c39e8bbe614ea42e",
     "semantic_hash": ""
   },
   "app/Filament/Resources/MenuItems/Pages/CreateMenuItem.php": {
@@ -1314,9 +1314,9 @@
     "semantic_hash": "a66ff8623c1647b055ba5a00f06d5d64"
   },
   "app/Providers/AppServiceProvider.php": {
-    "mtime": 1789620882.3997416,
-    "seen": 1789621187.1249561,
-    "ast_hash": "8627fec4151defefe9685cf2cd866cdc",
+    "mtime": 1789628284.416705,
+    "seen": 1789628870.658595,
+    "ast_hash": "cc2c87df4b0935579908fabb94ea8edc",
     "semantic_hash": ""
   },
   "app/Providers/Filament/AdminPanelProvider.php": {
@@ -2562,9 +2562,9 @@
     "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/cashier-pos-shell.blade.php": {
-    "mtime": 1789381995.0777824,
-    "seen": 1789382215.02619,
-    "ast_hash": "1dd6bab581944fbb8ea693f13ee96439",
+    "mtime": 1789625508.938105,
+    "seen": 1789625712.6993518,
+    "ast_hash": "35b277dfe6bb8e34166ab9aac9110d5a",
     "semantic_hash": ""
   },
   "resources/views/filament/pages/partials/kds-beep.blade.php": {
@@ -2604,9 +2604,9 @@
     "semantic_hash": "a00399bd3306a5f41c31252c0662a36b"
   },
   "resources/views/filament/resources/dining-tables/floor-plan.blade.php": {
-    "mtime": 1788429720.1234958,
-    "seen": 1788429788.2789872,
-    "ast_hash": "03c9f80fefb7f3a093cf509217e956be",
+    "mtime": 1789625385.497067,
+    "seen": 1789625712.6993723,
+    "ast_hash": "8dea7077e31ec3cc9a89fa69e034c3b5",
     "semantic_hash": ""
   },
   "resources/views/filament/widgets/analytics/_card.blade.php": {
@@ -3468,9 +3468,9 @@
     "semantic_hash": ""
   },
   "resources/views/filament/forms/components/template-radio-picker.blade.php": {
-    "mtime": 1788312485.6923811,
-    "seen": 1788312964.1886108,
-    "ast_hash": "45470872391b282abb7989b00da9f3ef",
+    "mtime": 1789625406.442732,
+    "seen": 1789625712.6993353,
+    "ast_hash": "2cec98639657a345146c4c0abe35ffeb",
     "semantic_hash": ""
   },
   "resources/views/landing/templates/classic/show.blade.php": {
@@ -5175,6 +5175,12 @@
     "mtime": 1789578558.336365,
     "seen": 1789579065.711891,
     "ast_hash": "359769520d0c1823c848df7e24bcd7da",
+    "semantic_hash": ""
+  },
+  "resources/views/filament/hooks/form-field-a11y.blade.php": {
+    "mtime": 1789628264.5670762,
+    "seen": 1789628870.6589358,
+    "ast_hash": "188020691b830b0b1b4443b010e75213",
     "semantic_hash": ""
   }
 }

@@ -16,7 +16,7 @@
         }"
         class="w-full"
     >
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div id="{{ $getId() }}" role="radiogroup" aria-label="Pilihan Template Desain" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($getTemplates() as $template)
                 @php
                     $thumbUrl = $template->thumbnail_url;
@@ -75,9 +75,11 @@
                         </span>
                         <input
                             type="radio"
+                            id="{{ $getId() }}-{{ $template->slug }}"
                             name="{{ $getStatePath() }}"
                             value="{{ $template->slug }}"
                             :checked="state === '{{ $template->slug }}'"
+                            aria-label="{{ $template->name }}"
                             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-zinc-300 dark:border-zinc-700 pointer-events-none"
                         >
                     </div>
