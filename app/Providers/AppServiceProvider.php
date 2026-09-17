@@ -326,6 +326,7 @@ class AppServiceProvider extends ServiceProvider
                 ->openable()
                 ->downloadable()
                 ->alignCenter()
+                ->panelLayout('integrated')
                 ->loadingIndicatorPosition('center')
                 ->removeUploadedFileButtonPosition('right')
                 ->uploadButtonPosition('center')
