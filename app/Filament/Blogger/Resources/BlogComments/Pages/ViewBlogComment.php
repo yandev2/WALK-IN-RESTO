@@ -13,7 +13,8 @@ class ViewBlogComment extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            EditAction::make()
+                ->visible(fn (): bool => auth()->user()?->isPlatformOperator() || (int) $this->record->blogPost?->author_id === (int) auth()->id()),
         ];
     }
 }

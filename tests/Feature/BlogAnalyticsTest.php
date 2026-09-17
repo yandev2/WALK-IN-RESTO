@@ -100,7 +100,7 @@ class BlogAnalyticsTest extends TestCase
             'content' => 'Konten rendang mantap...',
         ]);
 
-        $this->get('/blog/resep-rahasia-rendang')->assertOk();
+        $this->get('/id/blog/resep-rahasia-rendang')->assertOk();
 
         $this->assertDatabaseHas('visit_logs', [
             'page_key' => 'blog_post',
@@ -131,7 +131,7 @@ class BlogAnalyticsTest extends TestCase
         ]);
 
         // First visit
-        $response = $this->get('/blog/resep-rahasia-rendang-2');
+        $response = $this->get('/id/blog/resep-rahasia-rendang-2');
         $response->assertOk();
         $this->assertEquals(1, VisitLog::where('visitable_id', $post->id)->count());
 
@@ -140,8 +140,8 @@ class BlogAnalyticsTest extends TestCase
         $cookie = collect($response->headers->getCookies())->first(fn ($c) => $c->getName() === $sessionCookieName);
 
         $reload = $cookie
-            ? $this->withUnencryptedCookie($sessionCookieName, $cookie->getValue())->get('/blog/resep-rahasia-rendang-2')
-            : $this->get('/blog/resep-rahasia-rendang-2');
+            ? $this->withUnencryptedCookie($sessionCookieName, $cookie->getValue())->get('/id/blog/resep-rahasia-rendang-2')
+            : $this->get('/id/blog/resep-rahasia-rendang-2');
 
         $reload->assertOk();
         $this->assertEquals(1, VisitLog::where('visitable_id', $post->id)->count());

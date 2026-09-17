@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Guest;
 
+use App\Models\Customer;
 use App\Models\DiningTable;
 use App\Models\VisitDevice;
 use App\Services\StaleOperationsService;
 use App\Services\VisitClaimService;
 use App\Support\GuestContext;
 use App\Support\TableQrToken;
+use App\Support\WhatsAppNumber;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
@@ -26,6 +28,12 @@ class ScanTable extends Component
 
     public string $customer_wa = '';
 
+    public bool $waChecked = false;
+
+    public bool $isExistingCustomer = false;
+
+    public bool $isNameReadOnly = false;
+
     public string $join_pin = '';
 
     public string $tableCode = '';
@@ -34,6 +42,57 @@ class ScanTable extends Component
     {
         $this->token = $token;
         $this->resolveState();
+    }
+
+    public function updatedCustomerWa(): void
+    {
+        $this->message = '';
+        $this->resetErrorBag('customer_wa');
+        $this->resetErrorBag('customer_name');
+
+        $this->customer_wa = trim($this->customer_wa);
+        $raw = preg_replace('/\D+/', '', $this->customer_wa);
+
+        if (strlen((string) $raw) < 9) {
+            $this->waChecked = false;
+            $this->isExistingCustomer = false;
+            $this->isNameReadOnly = false;
+            $this->customer_name = '';
+
+            return;
+        }
+
+        $phone = WhatsAppNumber::normalize($this->customer_wa);
+        if (! is_string($phone) || ! WhatsAppNumber::isValid($phone)) {
+            $this->waChecked = false;
+            $this->isExistingCustomer = false;
+            $this->isNameReadOnly = false;
+            $this->customer_name = '';
+
+            return;
+        }
+
+        $table = $this->table();
+        if (! $table) {
+            return;
+        }
+
+        $customer = Customer::withoutRestaurantScope()
+            ->where('restaurant_id', $table->restaurant_id)
+            ->where('phone', $phone)
+            ->first();
+
+        $this->waChecked = true;
+
+        if ($customer && filled($customer->name)) {
+            $this->isExistingCustomer = true;
+            $this->customer_name = (string) $customer->name;
+            $this->isNameReadOnly = true;
+        } else {
+            $this->isExistingCustomer = false;
+            $this->isNameReadOnly = false;
+            $this->customer_name = '';
+        }
     }
 
     public function claim(VisitClaimService $claims): mixed
@@ -48,6 +107,39 @@ class ScanTable extends Component
             return null;
         }
 
+        $this->message = '';
+
+        $phone = WhatsAppNumber::normalize($this->customer_wa);
+        if (! is_string($phone) || ! WhatsAppNumber::isValid($phone)) {
+            $this->addError('customer_wa', 'Nomor WhatsApp wajib diisi dengan benar (contoh: 08123456789).');
+
+            return null;
+        }
+
+        $customer = Customer::withoutRestaurantScope()
+            ->where('restaurant_id', $table->restaurant_id)
+            ->where('phone', $phone)
+            ->first();
+
+        if ($customer && filled($customer->name)) {
+            $nameToSave = (string) $customer->name;
+            $this->customer_name = $nameToSave;
+            $this->isExistingCustomer = true;
+            $this->isNameReadOnly = true;
+            $this->waChecked = true;
+        } else {
+            $trimmedName = trim($this->customer_name);
+            if (mb_strlen($trimmedName) < 2) {
+                $this->waChecked = true;
+                $this->isExistingCustomer = false;
+                $this->isNameReadOnly = false;
+                $this->addError('customer_name', 'Nama wajib diisi. Masukkan nama Anda yang valid.');
+
+                return null;
+            }
+            $nameToSave = $trimmedName;
+        }
+
         $throttleKey = 'claim-table:'.$device.':'.request()->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -59,7 +151,7 @@ class ScanTable extends Component
         RateLimiter::hit($throttleKey, 60);
 
         try {
-            $claims->claim($table, $device, $this->customer_wa, $this->customer_name ?: null, (string) request()->userAgent());
+            $claims->claim($table, $device, $this->customer_wa, $nameToSave, (string) request()->userAgent());
             RateLimiter::clear($throttleKey);
         } catch (ValidationException $e) {
             $this->mode = filled($table->open_visit_id) ? 'join' : 'claim';

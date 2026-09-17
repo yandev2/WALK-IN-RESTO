@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
 use App\Models\DiningTable;
 use App\Models\User;
 use App\Models\Visit;
@@ -55,13 +56,41 @@ class VisitClaimService
             $ttl = (int) ($table->outlet?->claim_ttl_minutes ?: 10);
             $pin = str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 
+            $existingCustomer = Customer::withoutRestaurantScope()
+                ->where('restaurant_id', $table->restaurant_id)
+                ->where('phone', $wa)
+                ->first();
+
+            $resolvedName = ($existingCustomer && filled($existingCustomer->name))
+                ? (string) $existingCustomer->name
+                : (filled($customerName) ? trim((string) $customerName) : null);
+
+            if (! $existingCustomer && filled($wa)) {
+                $existingCustomer = Customer::withoutRestaurantScope()->create([
+                    'restaurant_id' => $table->restaurant_id,
+                    'phone' => $wa,
+                    'name' => $resolvedName,
+                    'tier' => 'reguler',
+                    'points_balance' => 0,
+                    'total_spent' => 0,
+                    'total_orders' => 0,
+                    'last_visit_at' => now(),
+                ]);
+            } elseif ($existingCustomer) {
+                if (blank($existingCustomer->name) && filled($resolvedName)) {
+                    $existingCustomer->name = $resolvedName;
+                }
+                $existingCustomer->last_visit_at = now();
+                $existingCustomer->save();
+            }
+
             $visit = Visit::query()->create([
                 'restaurant_id' => $table->restaurant_id,
                 'outlet_id' => $table->outlet_id,
                 'table_id' => $table->id,
                 'status' => 'open',
                 'join_pin' => $pin,
-                'customer_name' => $customerName ?: null,
+                'customer_name' => $resolvedName,
                 'customer_wa' => $wa,
                 'claimed_at' => now(),
                 'claim_expires_at' => now()->addMinutes($ttl),

@@ -36,11 +36,18 @@ class EditBlogPost extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $user = auth()->user();
+        $isOperator = $user?->isPlatformOperator() ?? false;
+        $isAuthor = $user && (int) $this->record->author_id === (int) $user->id;
+
         return [
             ViewAction::make(),
-            DeleteAction::make(),
-            ForceDeleteAction::make(),
-            RestoreAction::make(),
+            DeleteAction::make()
+                ->visible(fn (): bool => $isOperator || $isAuthor),
+            ForceDeleteAction::make()
+                ->visible(fn (): bool => $isOperator),
+            RestoreAction::make()
+                ->visible(fn (): bool => $isOperator || $isAuthor),
         ];
     }
 
@@ -50,6 +57,10 @@ class EditBlogPost extends EditRecord
      */
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        if (! (auth()->user()?->isPlatformOperator() ?? false)) {
+            unset($data['author_id']);
+        }
+
         $data = $this->normalizePublishingData($data);
 
         return $this->extractTranslatableSaveData($data);

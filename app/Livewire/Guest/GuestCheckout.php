@@ -44,6 +44,33 @@ class GuestCheckout extends Component
 
     public function updatedPointsToRedeem(): void
     {
+        if ($this->pointsToRedeem > 0) {
+            $this->usePoints = true;
+        }
+        $this->syncPoints();
+    }
+
+    public function applyMaxPoints(): void
+    {
+        $this->usePoints = true;
+        $customer = $this->getCustomer();
+        if (! $customer) {
+            return;
+        }
+
+        $visit = GuestContext::visit();
+        $items = $visit ? $visit->cartItems()->get() : collect();
+        $subtotal = $items->sum(fn (VisitCartItem $item) => $item->lineTotal());
+        $restaurant = $visit?->outlet?->restaurant;
+        $settings = $restaurant?->loyaltySettings() ?? [];
+
+        $rate = (int) ($settings['point_redemption_rate'] ?? 1000);
+        $maxPct = (int) ($settings['max_redeem_percentage'] ?? 50);
+        $maxDiscount = (int) floor($subtotal * ($maxPct / 100));
+        $maxPointsForDiscount = (int) floor($maxDiscount / $rate);
+        $maxRedeemable = min((int) $customer->points_balance, $maxPointsForDiscount);
+
+        $this->pointsToRedeem = max(0, $maxRedeemable);
         $this->syncPoints();
     }
 

@@ -43,6 +43,20 @@ class BlogPostResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function canView(Model $record): bool
+    {
+        $user = auth()->user();
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        if ($user->isPlatformOperator()) {
+            return true;
+        }
+
+        return (int) $record->author_id === (int) $user->id;
+    }
+
     public static function canEdit(Model $record): bool
     {
         $user = auth()->user();
@@ -58,6 +72,20 @@ class BlogPostResource extends Resource
     }
 
     public static function canDelete(Model $record): bool
+    {
+        $user = auth()->user();
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        if ($user->isPlatformOperator()) {
+            return true;
+        }
+
+        return (int) $record->author_id === (int) $user->id;
+    }
+
+    public static function canRestore(Model $record): bool
     {
         $user = auth()->user();
         if (! $user instanceof User) {
@@ -117,16 +145,31 @@ class BlogPostResource extends Resource
     {
         BlogPost::publishDueScheduled();
 
-        return parent::getEloquentQuery();
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user && ! $user->isPlatformOperator()) {
+            $query->where('author_id', $user->id);
+        }
+
+        return $query;
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         BlogPost::publishDueScheduled();
 
-        return parent::getRecordRouteBindingEloquentQuery()
+        $query = parent::getRecordRouteBindingEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        $user = auth()->user();
+
+        if ($user && ! $user->isPlatformOperator()) {
+            $query->where('author_id', $user->id);
+        }
+
+        return $query;
     }
 }

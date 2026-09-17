@@ -311,17 +311,6 @@ class GuestCheckoutService
             'paid_by_user_id' => $isSimpleCashier ? $createdByUserId : null,
         ]);
 
-        if ($isSimpleCashier && $canSendReceipt && $createdByUserId) {
-            try {
-                $cashier = \App\Models\User::query()->find($createdByUserId);
-                if ($cashier) {
-                    app(\App\Services\OrderReceiptService::class)->afterPaid($order, $cashier);
-                }
-            } catch (\Throwable $e) {
-                report($e);
-            }
-        }
-
         if ($isSimpleCashier) {
             try {
                 app(\App\Services\CashierCommissionBillingService::class)->recordOrderPaidHook($order);

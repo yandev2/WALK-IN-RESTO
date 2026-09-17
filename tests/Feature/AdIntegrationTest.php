@@ -197,4 +197,113 @@ class AdIntegrationTest extends TestCase
         $this->assertStringContainsString('slot_blog_article_middle', $guideView);
         $this->assertStringContainsString('Popunder', $guideView);
     }
+
+    public function test_security_headers_allow_ads_in_production_environment(): void
+    {
+        $middleware = new \App\Http\Middleware\SecurityHeaders();
+        $request = Request::create('/', 'GET');
+
+        $this->app->detectEnvironment(fn () => 'production');
+
+        $response = $middleware->handle($request, function () {
+            return response('OK');
+        });
+
+        $csp = $response->headers->get('Content-Security-Policy');
+        $this->assertNotNull($csp);
+        $this->assertStringContainsString('https://pagead2.googlesyndication.com', $csp);
+        $this->assertStringContainsString('https://*.googlesyndication.com', $csp);
+        $this->assertStringContainsString('https://googleads.g.doubleclick.net', $csp);
+        $this->assertStringContainsString('https://*.adsterra.com', $csp);
+    }
+
+    public function test_adsterra_native_code_fallback_in_slots(): void
+    {
+        $setting = AdSetting::current();
+        $setting->update([
+            'is_enabled' => true,
+            'adsterra_enabled' => true,
+            'adsterra_native_enabled' => true,
+            'adsterra_native_code' => '<div id="adsterra-native-widget"></div>',
+            'slot_directory_native' => [
+                'provider' => 'adsterra',
+                'code' => '',
+                'is_active' => true,
+            ],
+        ]);
+        AdSetting::forgetCache();
+
+        $this->app->instance('request', Request::create('/'));
+
+        $this->assertTrue(AdSetting::current()->isSlotActive('directory_native'));
+
+        $service = app(AdPlacementService::class);
+        $rendered = $service->renderSlot('directory_native');
+
+        $this->assertStringContainsString('adsterra-native-widget', $rendered);
+        $this->assertStringContainsString('ad-slot--directory_native', $rendered);
+        $this->assertSame('<div id="adsterra-native-widget"></div>', $service->getAdsterraNativeScript());
+    }
+
+    public function test_directory_native_slot_renders_on_homepage(): void
+    {
+        $setting = AdSetting::current();
+        $setting->update([
+            'is_enabled' => true,
+            'slot_directory_native' => [
+                'provider' => 'custom',
+                'code' => '<div id="test-directory-ad">Promo Resto</div>',
+                'is_active' => true,
+            ],
+        ]);
+        AdSetting::forgetCache();
+
+        // Create at least one restaurant so the loop executes
+        $user = User::factory()->create();
+        $restaurant = \App\Models\Restaurant::create([
+            'user_id' => $user->id,
+            'name' => 'Resto Uji Rasa',
+            'slug' => 'resto-uji-rasa',
+            'is_active' => true,
+        ]);
+
+        $response = $this->get('/');
+        $response->assertOk();
+        $response->assertSee('test-directory-ad');
+        $response->assertSee('ad-slot--directory_native');
+
+        // When master disabled
+        $setting->update(['is_enabled' => false]);
+        AdSetting::forgetCache();
+
+        $responseDisabled = $this->get('/');
+        $responseDisabled->assertOk();
+        $responseDisabled->assertDontSee('test-directory-ad');
+        $responseDisabled->assertDontSee('ad-slot--directory_native');
+    }
+
+    public function test_livewire_request_respects_referer_for_ad_permissions(): void
+    {
+        $setting = AdSetting::current();
+        $setting->update([
+            'is_enabled' => true,
+        ]);
+        AdSetting::forgetCache();
+
+        $service = app(AdPlacementService::class);
+
+        // 1. Livewire update on homepage -> allowed
+        $requestHome = Request::create('/livewire/update', 'POST');
+        $requestHome->headers->set('X-Livewire', 'true');
+        $requestHome->headers->set('Referer', 'http://localhost/');
+        $this->app->instance('request', $requestHome);
+        $this->assertTrue($service->isAdAllowedForCurrentRequest());
+
+        // 2. Livewire update on /pos/cashier -> blocked
+        $requestPos = Request::create('/livewire/update', 'POST');
+        $requestPos->headers->set('X-Livewire', 'true');
+        $requestPos->headers->set('Referer', 'http://localhost/pos/cashier');
+        $this->app->instance('request', $requestPos);
+        $this->assertFalse($service->isAdAllowedForCurrentRequest());
+    }
 }

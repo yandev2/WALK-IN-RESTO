@@ -63,6 +63,8 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        URL::defaults(['locale' => app()->getLocale() ?: 'id']);
+
         static::registerStyle();
 
         FilamentView::registerRenderHook(

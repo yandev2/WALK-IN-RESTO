@@ -10,6 +10,7 @@
             --ag-success: #10b981;
             --ag-amber: #f59e0b;
             --ag-danger: #ef4444;
+            --ag-purple: #8b5cf6;
             color: var(--ag-text);
             font-size: 0.8125rem;
             line-height: 1.6;
@@ -25,9 +26,10 @@
             --ag-success: #34d399;
             --ag-amber: #fbbf24;
             --ag-danger: #f87171;
+            --ag-purple: #a78bfa;
         }
 
-        .ad-guide p, .ad-guide h3, .ad-guide h4, .ad-guide ul, .ad-guide ol {
+        .ad-guide p, .ad-guide h3, .ad-guide h4, .ad-guide h5, .ad-guide ul, .ad-guide ol {
             margin: 0;
         }
 
@@ -80,6 +82,16 @@
         .dark .ad-guide__badge--amber {
             color: #fbbf24;
             border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .ad-guide__badge--purple {
+            background: rgba(139, 92, 246, 0.12);
+            color: #7c3aed;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+        .dark .ad-guide__badge--purple {
+            color: #c084fc;
+            border-color: rgba(192, 132, 252, 0.3);
         }
 
         .ad-guide__badge--red {
@@ -141,20 +153,94 @@
             margin-top: 0.5rem;
             line-height: 1.5;
         }
+
+        /* Mockup Diagram Wireframe */
+        .ad-wireframe {
+            display: grid;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px dashed var(--ag-border);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            font-size: 0.725rem;
+        }
+        .dark .ad-wireframe {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .ad-wireframe__box {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        .ad-wireframe__box--content {
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--ag-border);
+            color: var(--ag-muted);
+        }
+        .dark .ad-wireframe__box--content {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .ad-wireframe__box--ad {
+            background: rgba(0, 117, 255, 0.1);
+            border: 1px solid rgba(0, 117, 255, 0.3);
+            color: #0284c7;
+        }
+        .dark .ad-wireframe__box--ad {
+            background: rgba(44, 217, 255, 0.1);
+            border-color: rgba(44, 217, 255, 0.3);
+            color: #38bdf8;
+        }
+        .ad-wireframe__box--ad-accent {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #059669;
+        }
+        .dark .ad-wireframe__box--ad-accent {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.3);
+            color: #34d399;
+        }
+
+        .ad-guide__faq-item {
+            border-bottom: 1px solid var(--ag-border);
+            padding: 0.75rem 0;
+        }
+        .ad-guide__faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .ad-guide__faq-q {
+            font-weight: 700;
+            color: var(--ag-text);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .ad-guide__faq-a {
+            color: var(--ag-muted);
+            padding-left: 1.25rem;
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
     </style>
 
-    {{-- Intro Banner --}}
-    <div class="ad-guide__card" style="background: linear-gradient(135deg, rgba(0,117,255,0.08) 0%, rgba(44,217,255,0.04) 100%); border-color: rgba(0,117,255,0.25);">
+    {{-- Header Banner --}}
+    <div class="ad-guide__card" style="background: linear-gradient(135deg, rgba(0,117,255,0.09) 0%, rgba(44,217,255,0.05) 100%); border-color: rgba(0,117,255,0.25);">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
-                <span class="ad-guide__badge ad-guide__badge--blue">Buku Panduan Monetisasi</span>
-                <h3 class="mt-2 text-base font-bold text-slate-900 dark:text-white">Dokumentasi & Panduan Integrasi Iklan</h3>
+                <span class="ad-guide__badge ad-guide__badge--blue">Buku Panduan Monetisasi Platform</span>
+                <h3 class="mt-2 text-base font-bold text-slate-900 dark:text-white">Dokumentasi Lengkap Integrasi & Manajemen Iklan</h3>
                 <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                    Modul ini mengelola integrasi jaringan periklanan <strong>Google AdSense</strong> dan <strong>Adsterra</strong> pada platform Walk-In-Resto. Halaman ini dirancang aman, compliant terhadap kebijakan publisher, dan dilengkapi sistem <em>Zero-Ads Protection</em>.
+                    Panduan terpadu pengelolaan monetisasi via <strong>Google AdSense</strong> dan <strong>Adsterra</strong>. Dibangun dengan perlindungan ketat <em>Zero-Ads Protection</em>, pencegah pergeseran tata letak (<em>Zero CLS</em>), dan kepatuhan penuh terhadap kebijakan resmi Google Publisher & IAB Tech Lab.
                 </p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <span class="ad-guide__badge ad-guide__badge--green">✓ Zero-Ads Active</span>
+                <span class="ad-guide__badge ad-guide__badge--blue">✓ CSP Whitelisted</span>
+                <span class="ad-guide__badge ad-guide__badge--purple">✓ Smart Fallback</span>
             </div>
         </div>
     </div>
@@ -166,25 +252,25 @@
             <h4 class="font-bold text-slate-900 dark:text-white text-sm">Prinsip Zero-Ads (Perlindungan Operasional Restoran)</h4>
         </div>
         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Platform Walk-In-Resto menerapkan arsitektur isolasi ketat: <strong>iklan HANYA tampil pada halaman publik editorial</strong> (Blog Kuliner & Katalog Direktori Publik). Sistem memblokir iklan 100% pada semua halaman operasional dan transaksional.
+            Platform Walk-In-Resto menerapkan arsitektur isolasi ketat: <strong>iklan HANYA tampil pada halaman publik editorial</strong> (Blog Kuliner & Katalog Direktori Publik). Sistem memblokir iklan 100% pada semua halaman operasional dan transaksional, sehingga aktivitas pesanan maupun kasir tidak pernah terganggu.
         </p>
 
         <table class="ad-guide__table">
             <thead>
                 <tr>
-                    <th style="width: 45%;">Halaman / Zona</th>
+                    <th style="width: 40%;">Halaman / Zona</th>
                     <th style="width: 25%;">Status Iklan</th>
-                    <th style="width: 30%;">Alasan Kebijakan</th>
+                    <th style="width: 35%;">Alasan Kebijakan & Pengalaman Pengguna</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <strong>Menu & Pemesanan Pelanggan</strong><br>
+                        <strong>Menu Digital & Pemesanan Pelanggan</strong><br>
                         <span class="ad-guide__code">/menu/*</span>, <span class="ad-guide__code">/order/*</span>, <span class="ad-guide__code">/cart</span>, <span class="ad-guide__code">/checkout</span>
                     </td>
                     <td><span class="ad-guide__badge ad-guide__badge--red">✕ Dilarang Mutlak</span></td>
-                    <td class="text-xs text-slate-500">Menjaga fokus pelanggan saat memesan makanan dan menghindari salah klik.</td>
+                    <td class="text-xs text-slate-500">Menjaga fokus pelanggan saat memesan makanan dan mencegah salah klik banner saat checkout.</td>
                 </tr>
                 <tr>
                     <td>
@@ -192,7 +278,7 @@
                         <span class="ad-guide__code">/pos/*</span>, <span class="ad-guide__code">/cashier/*</span>, <span class="ad-guide__code">/kds/*</span>
                     </td>
                     <td><span class="ad-guide__badge ad-guide__badge--red">✕ Dilarang Mutlak</span></td>
-                    <td class="text-xs text-slate-500">Mencegah distraksi staf restoran dan menjaga kecepatan pelayanan kasir.</td>
+                    <td class="text-xs text-slate-500">Menjaga kecepatan pelayanan kasir, kestabilan printer struk, dan workflow juru masak dapur.</td>
                 </tr>
                 <tr>
                     <td>
@@ -200,7 +286,15 @@
                         <span class="ad-guide__code">/founder/*</span>, <span class="ad-guide__code">/admin/*</span>, <span class="ad-guide__code">/blogger/*</span>
                     </td>
                     <td><span class="ad-guide__badge ad-guide__badge--red">✕ Dilarang Mutlak</span></td>
-                    <td class="text-xs text-slate-500">Kebijakan Google melarang penempatan iklan di area dashboard / auth.</td>
+                    <td class="text-xs text-slate-500">Kebijakan resmi Google AdSense melarang penempatan unit iklan di area login/dashboard.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Autentikasi & Invoice</strong><br>
+                        <span class="ad-guide__code">/login</span>, <span class="ad-guide__code">/daftar</span>, <span class="ad-guide__code">/invoice/*</span>, <span class="ad-guide__code">/receipts/*</span>
+                    </td>
+                    <td><span class="ad-guide__badge ad-guide__badge--red">✕ Dilarang Mutlak</span></td>
+                    <td class="text-xs text-slate-500">Dokumen transaksi resmi pelanggan harus bersih dari segala konten pihak ketiga.</td>
                 </tr>
                 <tr>
                     <td>
@@ -208,17 +302,79 @@
                         <span class="ad-guide__code">/blog</span>, <span class="ad-guide__code">/blog/{slug}</span>, <span class="ad-guide__code">/blog/category/*</span>
                     </td>
                     <td><span class="ad-guide__badge ad-guide__badge--green">✓ Diizinkan Penuh</span></td>
-                    <td class="text-xs text-slate-500">Zona monetisasi utama bernilai tinggi (editorial & SEO search traffic).</td>
+                    <td class="text-xs text-slate-500">Zona monetisasi utama berkinerja tinggi (artikel SEO dan pembaca organik).</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Katalog Direktori Restoran (Publik)</strong><br>
+                        <span class="ad-guide__code">/</span> (Halaman Beranda Utama)
+                    </td>
+                    <td><span class="ad-guide__badge ad-guide__badge--green">✓ Diizinkan Penuh</span></td>
+                    <td class="text-xs text-slate-500">Zona penempatan iklan bersponsor (native listing) di sela daftar kartu restoran.</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    {{-- Section 2: Penjelasan Setiap Field (Tab demi Tab) --}}
+    {{-- Section 2: Visual Wireframe / Peta Letak Penempatan Iklan --}}
+    <div class="ad-guide__card">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="ad-guide__badge ad-guide__badge--blue">Tata Letak (Layout)</span>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Peta Visual Penempatan Slot Iklan (Wireframe)</h4>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+            Berikut ilustrasi posisi penempatan slot iklan pada halaman publik platform:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+            {{-- Wireframe 1: Artikel Blog --}}
+            <div>
+                <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-1.5 flex items-center gap-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span> 1. Halaman Artikel Blog (/blog/{slug})
+                </h5>
+                <div class="ad-wireframe">
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Header / Navbar & Breadcrumb</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Judul Artikel & Gambar Utama (Featured Image)</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad">📢 [Slot 1] Blog: Atas Artikel (slot_blog_article_top)</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Paragraf Konten 1, 2, dan 3...</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad-accent">⚡ [Slot 2] Blog: Tengah Artikel (slot_blog_article_middle) — Auto Injected!</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Paragraf Konten 4 dst...</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad">📢 [Slot 3] Blog: Bawah Artikel (slot_blog_article_bottom)</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Navigasi Artikel Terkait & Kolom Komentar</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad text-xs opacity-90">📌 [Slot 4] Blog: Sidebar Desktop (slot_blog_sidebar) — Sticky di Layar Lebar</div>
+                </div>
+            </div>
+
+            {{-- Wireframe 2: Katalog Direktori & Feed --}}
+            <div>
+                <h5 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-1.5 flex items-center gap-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> 2. Katalog Restoran (/) & Arsip Blog (/blog)
+                </h5>
+                <div class="ad-wireframe">
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Hero Pencarian & Filter Lokasi / Kategori</div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #1</div>
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #2</div>
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #3</div>
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #4</div>
+                    </div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad-accent">🌟 [Slot 5] Direktori: Native Listing (slot_directory_native) — Span Full!</div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #5</div>
+                        <div class="ad-wireframe__box ad-wireframe__box--content">Restoran #6</div>
+                    </div>
+                    <div class="ad-wireframe__box ad-wireframe__box--content">Paginasi Halaman (Next / Prev)</div>
+                    <div class="ad-wireframe__box ad-wireframe__box--ad text-xs opacity-90">📰 [Slot 6] Blog: In-Feed Grid (slot_blog_feed) — Disisipkan setelah kartu artikel ke-3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Section 3: Penjelasan Setiap Field (Tab demi Tab) --}}
     <div class="ad-guide__card">
         <div class="flex items-center gap-2 mb-3">
-            <span class="ad-guide__badge ad-guide__badge--blue">Detail Field</span>
-            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Panduan Konfigurasi Lengkap per Field</h4>
+            <span class="ad-guide__badge ad-guide__badge--blue">Detail Konfigurasi</span>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Panduan Konfigurasi Formulir (Tab demi Tab)</h4>
         </div>
 
         {{-- Tab 1 --}}
@@ -229,30 +385,30 @@
             <table class="ad-guide__table">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Field / Input</th>
-                        <th style="width: 40%;">Kegunaan & Dampak</th>
+                        <th style="width: 28%;">Field / Input</th>
+                        <th style="width: 42%;">Kegunaan & Dampak Teknis</th>
                         <th style="width: 30%;">Contoh Format</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>Aktifkan Monetisasi Iklan</strong><br><span class="ad-guide__code">is_enabled</span></td>
-                        <td>Master switch darurat. Jika dimatikan (OFF), seluruh script iklan AdSense dan Adsterra di seluruh situs langsung dinonaktifkan seketika.</td>
+                        <td><strong>Master Switch Darurat</strong>. Jika dimatikan (OFF), seluruh tag script iklan AdSense dan Adsterra di seluruh situs publik dinonaktifkan seketika tanpa menghapus pengaturan yang tersimpan.</td>
                         <td>Toggle: <span class="text-emerald-600 font-bold">Aktif / Nonaktif</span></td>
                     </tr>
                     <tr>
                         <td><strong>Aktifkan Google AdSense</strong><br><span class="ad-guide__code">adsense_enabled</span></td>
-                        <td>Mengontrol pemuatan library script resmi AdSense (<span class="ad-guide__code">adsbygoogle.js</span>) di bagian <span class="ad-guide__code">&lt;head&gt;</span> halaman blog.</td>
+                        <td>Mengontrol pemuatan library script resmi AdSense (<span class="ad-guide__code">adsbygoogle.js</span>) di bagian <span class="ad-guide__code">&lt;head&gt;</span> halaman blog & direktori.</td>
                         <td>Toggle: <span class="text-emerald-600 font-bold">Aktif / Nonaktif</span></td>
                     </tr>
                     <tr>
                         <td><strong>Client ID (Publisher ID)</strong><br><span class="ad-guide__code">adsense_client_id</span></td>
-                        <td>ID unik akun Google AdSense Anda. Diperoleh dari dashboard AdSense di menu <em>Akun > Info Akun > ID Penayang</em>.</td>
+                        <td>ID unik penayang Google AdSense Anda. Diperoleh dari dashboard AdSense di menu <em>Akun > Info Akun > ID Penayang</em>.</td>
                         <td><span class="ad-guide__code">ca-pub-1234567890123456</span></td>
                     </tr>
                     <tr>
                         <td><strong>Aktifkan Auto Ads</strong><br><span class="ad-guide__code">adsense_auto_ads</span></td>
-                        <td>Mengizinkan AI Google secara otomatis menempatkan iklan pintar di posisi yang dirasa optimal bagi pengguna tanpa perlu membuat unit slot manual.</td>
+                        <td>Mengizinkan AI Google secara otomatis menempatkan iklan pintar di posisi yang dirasa optimal bagi pengunjung.</td>
                         <td>Toggle: <span class="text-emerald-600 font-bold">Aktif / Nonaktif</span></td>
                     </tr>
                     <tr>
@@ -267,7 +423,7 @@
                     </tr>
                     <tr>
                         <td><strong>Native Banners (Adsterra)</strong><br><span class="ad-guide__code">adsterra_native_enabled</span> & kode</td>
-                        <td>Format iklan banner bawaan yang berbaur secara alami dengan tampilan artikel dan kartu blog.</td>
+                        <td>Format iklan banner bawaan yang berbaur secara alami dengan tampilan artikel dan kartu blog. <br><strong class="text-blue-600 dark:text-cyan-400">💡 Fitur Cerdas:</strong> Kode ini berfungsi sebagai master fallback untuk seluruh slot ber-provider <span class="ad-guide__code">adsterra</span> jika kode unit slot dikosongkan.</td>
                         <td><span class="ad-guide__code">&lt;script async="async" data-cfasync="false" src="..."&gt;&lt;/script&gt;</span></td>
                     </tr>
                 </tbody>
@@ -280,7 +436,7 @@
                 <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> Tab 2: Penempatan Slot (Placements)
             </h5>
             <p class="text-xs text-slate-500 mb-2">
-                Setiap slot iklan memiliki pengaturan mandiri: <strong>Aktifkan Slot</strong>, <strong>Provider</strong> (<span class="ad-guide__code">adsense</span> / <span class="ad-guide__code">adsterra</span> / <span class="ad-guide__code">custom</span>), dan <strong>Kode Unit Iklan</strong> (potongan HTML/JS yang digenerate oleh AdSense/Adsterra).
+                Setiap slot iklan memiliki pengaturan mandiri: <strong>Aktifkan Slot</strong>, <strong>Provider</strong> (<span class="ad-guide__code">adsense</span> / <span class="ad-guide__code">adsterra</span> / <span class="ad-guide__code">custom</span>), dan <strong>Kode Unit Iklan</strong> (potongan HTML/JS).
             </p>
             <table class="ad-guide__table">
                 <thead>
@@ -318,8 +474,8 @@
                     </tr>
                     <tr>
                         <td><strong>Direktori: Native Listing</strong><br><span class="ad-guide__code">slot_directory_native</span></td>
-                        <td>Kartu promosi bersponsor di katalog direktori resto utama.</td>
-                        <td>Adsterra Native Banner / Custom Sponsored Link.</td>
+                        <td>Kartu promosi bersponsor di katalog direktori resto utama (<span class="ad-guide__code">/</span>). Otomatis tampil responsif setelah kartu restoran ke-4 pada mode grid maupun list.</td>
+                        <td>Adsterra Native Banner / Google AdSense / Custom Sponsored Link.</td>
                     </tr>
                 </tbody>
             </table>
@@ -344,7 +500,42 @@ adsterra.com, XXXXXX, DIRECT
         </div>
     </div>
 
-    {{-- Section 3: Langkah Demi Langkah Integrasi (Quickstart Checklist) --}}
+    {{-- Section 4: Panduan Cara Mengambil Kode Iklan --}}
+    <div class="ad-guide__card">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="ad-guide__badge ad-guide__badge--purple">Tutorial Dashboard</span>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Cara Mengambil Kode Iklan dari Dashboard Penyedia</h4>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 mb-1.5">
+                    <span class="text-blue-500 font-black">A.</span> Mengambil Kode Unit dari Google AdSense
+                </h5>
+                <ol class="list-decimal pl-4 space-y-1">
+                    <li>Buka dashboard <strong>Google AdSense</strong> &rarr; pilih menu <strong>Iklan</strong> &rarr; tab <strong>Berdasarkan unit iklan</strong>.</li>
+                    <li>Pilih <strong>Iklan dalam artikel</strong> untuk slot tengah artikel, atau <strong>Iklan Display</strong> untuk atas artikel/sidebar.</li>
+                    <li>Beri nama unit iklan (misal: <em>Blog Middle In-Article</em>), biarkan ukuran <em>Responsif</em>, lalu klik <strong>Simpan dan Dapatkan Kode</strong>.</li>
+                    <li>Salin seluruh kode HTML yang diawali tag <span class="ad-guide__code">&lt;ins class="adsbygoogle" ...&gt;</span>.</li>
+                    <li>Tempelkan ke kolom <strong>Kode Unit Iklan (HTML/JS)</strong> pada slot yang sesuai di Tab 2 panel ini.</li>
+                </ol>
+            </div>
+
+            <div class="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 mb-1.5">
+                    <span class="text-emerald-500 font-black">B.</span> Mengambil Kode Banner dari Adsterra
+                </h5>
+                <ol class="list-decimal pl-4 space-y-1">
+                    <li>Buka dashboard <strong>Adsterra</strong> &rarr; menu <strong>Websites</strong> &rarr; klik domain Anda &rarr; klik <strong>Add code</strong>.</li>
+                    <li>Pilih format <strong>Social Bar</strong> atau <strong>Native Banners (4:1 / 1:1)</strong> &rarr; klik <strong>Add</strong> dan tunggu status <em>Active</em>.</li>
+                    <li>Klik <strong>Get code</strong>, lalu salin script yang diberikan.</li>
+                    <li>Tempelkan kode tersebut di Tab 1 (Jaringan Iklan). Anda <em>tidak perlu</em> menempel ulang di tiap slot—cukup pilih provider <span class="ad-guide__code">adsterra</span> di Tab 2 dan kosongkan kodenya!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    {{-- Section 5: Checklist Integrasi & Kepatuhan Keamanan --}}
     <div class="ad-guide__card">
         <div class="flex items-center gap-2 mb-3">
             <span class="ad-guide__badge ad-guide__badge--amber">Langkah Praktis</span>
@@ -365,16 +556,60 @@ adsterra.com, XXXXXX, DIRECT
             </li>
             <li>
                 <strong>Buat Unit Iklan & Pasang di Slot (Tab 2):</strong><br>
-                Di AdSense, buka menu <em>Iklan > Berdasarkan unit iklan</em>. Buat unit <strong>In-Article</strong> dan <strong>Display</strong>. Salin kode HTML-nya dan tempelkan ke slot yang diinginkan (misal: <em>Blog: Atas Artikel</em> dan <em>Blog: Tengah Artikel</em>).
+                Di AdSense, buat unit <strong>In-Article</strong> dan <strong>Display</strong>. Salin kode HTML-nya dan tempelkan ke slot yang diinginkan (misal: <em>Blog: Atas Artikel</em> dan <em>Blog: Tengah Artikel</em>).
             </li>
             <li>
                 <strong>Aktifkan Master Switch & Uji Tampilan:</strong><br>
-                Nyalakan toggle <strong>Aktifkan Monetisasi Iklan</strong>. Buka salah satu artikel di <a href="{{ route('blog.index') }}" target="_blank" class="text-primary font-bold underline">/blog</a> untuk memastikan iklan muncul rapi dengan label <em>IKLAN</em> tanpa mengganggu pengalaman membaca.
+                Nyalakan toggle <strong>Aktifkan Monetisasi Iklan</strong>. Buka salah satu artikel di <a href="{{ route('blog.index') }}" target="_blank" class="text-primary font-bold underline">/blog</a> atau katalog restoran di <a href="{{ url('/') }}" target="_blank" class="text-primary font-bold underline">/</a> untuk memastikan iklan muncul rapi dengan label <em>IKLAN</em> tanpa mengganggu pengalaman pengguna.
+            </li>
+            <li>
+                <strong>Keamanan Header CSP Terintegrasi:</strong><br>
+                Domain resmi Google AdSense (<span class="ad-guide__code">*.googlesyndication.com</span>, <span class="ad-guide__code">googleads.g.doubleclick.net</span>) dan Adsterra (<span class="ad-guide__code">*.adsterra.com</span>) telah ter-whitelist secara otomatis pada header keamanan Content Security Policy (<span class="ad-guide__code">SecurityHeaders</span>) di lingkungan produksi, menjamin iklan tayang tanpa diblokir oleh browser.
             </li>
         </ol>
     </div>
 
-    {{-- Section 4: Mengapa Popunder Dinonaktifkan --}}
+    {{-- Section 6: Troubleshooting & FAQ --}}
+    <div class="ad-guide__card">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="ad-guide__badge ad-guide__badge--green">Bantuan Teknis</span>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm">Pertanyaan Populer & Pemecahan Masalah (FAQ)</h4>
+        </div>
+
+        <div class="space-y-2">
+            <div class="ad-guide__faq-item">
+                <div class="ad-guide__faq-q">❓ Mengapa iklan belum muncul setelah saya mengaktifkan tombol simpan?</div>
+                <div class="ad-guide__faq-a">
+                    1. Pastikan <strong>Aktifkan Monetisasi Iklan</strong> (Master Switch) dalam posisi ON (Hijau).<br>
+                    2. Unit iklan AdSense baru membutuhkan waktu perayapan (*crawling*) antara 15 menit hingga beberapa jam sebelum Google menyajikan materi iklan.<br>
+                    3. Pastikan ekstensi <em>AdBlock</em> atau <em>Brave Shields</em> pada browser Anda dinonaktifkan saat menguji tampilan.
+                </div>
+            </div>
+
+            <div class="ad-guide__faq-item">
+                <div class="ad-guide__faq-q">❓ Apakah iklan bisa menggeser tata letak halaman saat sedang dimuat (CLS)?</div>
+                <div class="ad-guide__faq-a">
+                    <strong>Tidak.</strong> Setiap slot iklan dibungkus oleh container CSS khusus dengan batas tinggi minimum (<span class="ad-guide__code">min-height: 90px</span>) dan label resmi <em>IKLAN</em> di atasnya. Hal ini menjaga skor <em>Cumulative Layout Shift (CLS)</em> tetap hijau sesuai standar Google Core Web Vitals.
+                </div>
+            </div>
+
+            <div class="ad-guide__faq-item">
+                <div class="ad-guide__faq-q">❓ Bolehkah saya mengombinasikan Google AdSense dan Adsterra secara bersamaan?</div>
+                <div class="ad-guide__faq-a">
+                    <strong>Sangat boleh dan aman.</strong> Format Adsterra yang disediakan di platform ini (Social Bar dan Native Banners) 100% ramah kebijakan Google AdSense. Anda dapat memasang AdSense di dalam artikel blog dan menggunakan Adsterra pada Social Bar atau Native Listing Direktori.
+                </div>
+            </div>
+
+            <div class="ad-guide__faq-item">
+                <div class="ad-guide__faq-q">❓ Apakah slot iklan yang tidak diaktifkan akan meninggalkan kotak kosong di halaman?</div>
+                <div class="ad-guide__faq-a">
+                    <strong>Tidak sama sekali.</strong> Komponen Blade (<span class="ad-guide__code">&lt;x-ads.slot&gt;</span>) memiliki logika internal <span class="ad-guide__code">shouldRender()</span>. Bila slot dinonaktifkan atau kodenya kosong, elemen HTML slot tidak akan dicetak sama sekali ke DOM.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Section 7: Mengapa Popunder Dinonaktifkan --}}
     <div class="ad-guide__card" style="border-left: 4px solid #ef4444;">
         <div class="flex items-center gap-2 mb-1">
             <span class="ad-guide__badge ad-guide__badge--red">Kebijakan Mutu</span>

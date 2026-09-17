@@ -150,5 +150,7 @@
         </section>
     @endif
 
+    @include('guest.partials.loyalty-earned-modal', ['loyaltyPoint' => $unclaimedLoyaltyPoint ?? null])
+
     @include('guest.partials.nav', ['cartCount' => $cartCount, 'activeTab' => 'status'])
 </div>

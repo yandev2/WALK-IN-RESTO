@@ -58,31 +58,37 @@ class CommentsRelationManager extends RelationManager
             ->recordTitleAttribute('author_name')
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('parent_id')
-                    ->label('Balasan Dari')
-                    ->formatStateUsing(fn (?int $state): string => $state ? '#'.$state : 'Utama')
-                    ->toggleable(),
                 TextColumn::make('author_name')
                     ->label('Pengirim')
-                    ->searchable(),
-                TextColumn::make('author_email')
-                    ->label('Email')
-                    ->searchable()
-                    ->toggleable(),
+                    ->weight('medium')
+                    ->description(fn (BlogComment $record): ?string => $record->author_email)
+                    ->icon(fn (BlogComment $record): ?string => $record->is_author_reply ? 'heroicon-m-check-badge' : null)
+                    ->iconColor('primary')
+                    ->searchable(['author_name', 'author_email']),
                 TextColumn::make('content')
                     ->label('Isi Komentar')
-                    ->limit(50),
-                IconColumn::make('is_author_reply')
-                    ->label('Penulis')
-                    ->boolean()
-                    ->toggleable(),
+                    ->wrap()
+                    ->limit(70),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge(),
                 TextColumn::make('created_at')
                     ->label('Tanggal')
-                    ->dateTime()
+                    ->date('d M Y')
+                    ->description(fn (BlogComment $record): ?string => $record->created_at?->format('H:i'))
                     ->sortable(),
+                TextColumn::make('parent_id')
+                    ->label('Balasan Dari')
+                    ->formatStateUsing(fn (?int $state): string => $state ? '#'.$state : 'Utama')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('author_email')
+                    ->label('Email')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('is_author_reply')
+                    ->label('Penulis')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -93,6 +99,8 @@ class CommentsRelationManager extends RelationManager
                 Action::make('reply')
                     ->label('Balas Komentar')
                     ->icon('heroicon-o-arrow-uturn-left')
+                    ->iconButton()
+                    ->tooltip('Balas Komentar')
                     ->color('primary')
                     ->visible(fn (BlogComment $record): bool => $record->parent_id === null)
                     ->schema([
@@ -124,8 +132,14 @@ class CommentsRelationManager extends RelationManager
                             'approved_by' => auth()->id(),
                         ]);
                     }),
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Ubah')
+                    ->visible(fn (): bool => auth()->user()?->isPlatformOperator() || (int) $this->getOwnerRecord()?->author_id === (int) auth()->id()),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Hapus')
+                    ->visible(fn (): bool => auth()->user()?->isPlatformOperator() || (int) $this->getOwnerRecord()?->author_id === (int) auth()->id()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

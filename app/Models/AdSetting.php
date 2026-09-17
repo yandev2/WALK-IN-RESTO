@@ -117,7 +117,24 @@ class AdSetting extends Model
 
         $slot = $this->getSlot($slotName);
 
-        return $slot['is_active'] && filled($slot['code']);
+        if (! $slot['is_active']) {
+            return false;
+        }
+
+        if (filled($slot['code'])) {
+            return true;
+        }
+
+        // Fallback: if provider is adsterra and global native banner is active with code
+        if (($slot['provider'] ?? '') === 'adsterra'
+            && (bool) $this->adsterra_enabled
+            && (bool) $this->adsterra_native_enabled
+            && filled($this->adsterra_native_code)
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     protected static function booted(): void

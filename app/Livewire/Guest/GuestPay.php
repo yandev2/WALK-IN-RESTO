@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Guest;
 
+use App\Livewire\Guest\Concerns\HasLoyaltyEarnedAlert;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\PaymentProofService;
@@ -14,6 +15,7 @@ use Livewire\WithFileUploads;
 #[Layout('layouts.guest-order', ['title' => 'Menunggu kasir'])]
 class GuestPay extends Component
 {
+    use HasLoyaltyEarnedAlert;
     use WithFileUploads;
 
     public Order $order;
@@ -79,11 +81,13 @@ class GuestPay extends Component
         $this->order->refresh()->load(['payments', 'items']);
         $payment = $this->currentPayment();
         $visit = GuestContext::visit();
+        $unclaimedLoyaltyPoint = $this->getUnclaimedLoyaltyPoint($visit);
 
         return view('livewire.guest.pay', [
             'payment' => $payment,
             'visit' => $visit,
             'cartCount' => $visit?->cartItems()->sum('qty') ?? 0,
+            'unclaimedLoyaltyPoint' => $unclaimedLoyaltyPoint,
         ]);
     }
 

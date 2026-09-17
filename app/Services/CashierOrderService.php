@@ -43,8 +43,8 @@ class CashierOrderService
             ]);
         }
 
-        return DB::transaction(function () use ($user, $table, $customerWa, $customerName, $method, $sendReceipt, $lines, $cashReceived, $pointsToRedeem) {
-            $table->loadMissing('outlet');
+        $order = DB::transaction(function () use ($user, $table, $customerWa, $customerName, $method, $sendReceipt, $lines, $cashReceived, $pointsToRedeem) {
+            $table->load('outlet');
             $visit = $this->claims->openByCashier($table, $user, $customerWa, $customerName);
 
             $order = $this->checkout->placeOrder(
@@ -110,5 +110,16 @@ class CashierOrderService
 
             return $order;
         });
+
+        $order->loadMissing(['outlet', 'restaurant']);
+        if ($order->outlet?->simple_mode && $order->send_receipt) {
+            try {
+                app(OrderReceiptService::class)->afterPaid($order->refresh(), $user);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return $order;
     }
 }

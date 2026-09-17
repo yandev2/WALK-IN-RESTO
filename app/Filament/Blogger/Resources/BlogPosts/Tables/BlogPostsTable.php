@@ -24,7 +24,7 @@ class BlogPostsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with(['translations', 'author']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['translations', 'author', 'blogCategory.translations']))
             ->defaultSort('published_at', 'desc')
             ->columns([
                 TextColumn::make('index')
@@ -33,12 +33,22 @@ class BlogPostsTable
                     ->badge()
                     ->color('primary')
                     ->rowIndex(),
+                ImageColumn::make('featured_image')
+                    ->label('Cover')
+                    ->disk('public')
+                    ->size(36)
+                    ->square()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('title')
                     ->label('Judul Artikel')
                     ->getStateUsing(fn (BlogPost $record): string => FilamentTranslatable::label($record, 'title'))
+                    ->description(function (BlogPost $record): ?string {
+                        $cat = $record->blogCategory ? FilamentTranslatable::label($record->blogCategory, 'name') : null;
+                        return $cat ? "Kategori: {$cat}" : null;
+                    })
                     ->searchable(query: FilamentTranslatable::searchableQuery('title'))
-                    ->wrap()
-                    ->limit(45),
+                    ->weight('medium')
+                    ->wrap(),
                 TextColumn::make('locales')
                     ->label('Bahasa')
                     ->badge()
@@ -60,40 +70,49 @@ class BlogPostsTable
                     ->badge(),
                 TextColumn::make('author.name')
                     ->label('Penulis')
-                    ->searchable(),
-                ImageColumn::make('featured_image')
-                    ->label('Gambar')
-                    ->disk('public'),
+                    ->searchable()
+                    ->badge()
+                    ->color('gray')
+                    ->visible(fn (): bool => auth()->user()?->isPlatformOperator() ?? false),
                 TextColumn::make('published_at')
-                    ->label('Tanggal Terbit')
-                    ->dateTime()
+                    ->label('Terbit')
+                    ->date('d M Y')
+                    ->description(fn (BlogPost $record): ?string => $record->published_at?->format('H:i'))
                     ->sortable(),
                 IconColumn::make('is_featured')
                     ->label('Pilihan')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_active')
                     ->label('Aktif')
                     ->boolean(),
                 TextColumn::make('views_count')
                     ->label('Views')
                     ->numeric()
-                    ->sortable(),
+                    ->badge()
+                    ->color('gray')
+                    ->sortable()
+                    ->alignEnd(),
                 TextColumn::make('likes_count')
                     ->label('Likes')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->alignEnd()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('comments_count')
                     ->label('Komentar')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->alignEnd()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
-                    ->dateTime()
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -121,14 +140,20 @@ class BlogPostsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->iconButton()
+                    ->tooltip('Lihat Artikel'),
+                EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Ubah Artikel')
+                    ->visible(fn (BlogPost $record): bool => auth()->user()?->isPlatformOperator() || (int) $record->author_id === (int) auth()->id()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make()
+                        ->visible(fn (): bool => auth()->user()?->isPlatformOperator() ?? false),
                 ]),
             ]);
     }

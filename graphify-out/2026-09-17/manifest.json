@@ -240,9 +240,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Profile/EditProfile.php": {
-    "mtime": 1789477147.9289777,
-    "seen": 1789478042.4436564,
-    "ast_hash": "cb973ca8c4209a00355f23d389a63947",
+    "mtime": 1789651711.4063084,
+    "seen": 1789651862.3899453,
+    "ast_hash": "b7fd3a63b4d2e1bd40640764db8fd3bf",
     "semantic_hash": ""
   },
   "app/Filament/Profile/FilamentProfilePlugin.php": {
@@ -414,9 +414,9 @@
     "semantic_hash": "e15f6723fe6a73fdf5b4d42442056d29"
   },
   "app/Filament/Resources/MenuItems/MenuItemResource.php": {
-    "mtime": 1789620901.5740802,
-    "seen": 1789621187.1244109,
-    "ast_hash": "1fa3472c64427f667dcd4b975d53e124",
+    "mtime": 1789627788.1730359,
+    "seen": 1789628870.65837,
+    "ast_hash": "f5017253917c2846c39e8bbe614ea42e",
     "semantic_hash": ""
   },
   "app/Filament/Resources/MenuItems/Pages/CreateMenuItem.php": {
@@ -822,9 +822,9 @@
     "semantic_hash": "d8baaf360e20d9c908bad2334e198193"
   },
   "app/Http/Middleware/SecurityHeaders.php": {
-    "mtime": 1789622812.8561468,
-    "seen": 1789622953.967834,
-    "ast_hash": "234787f8613afb4c58ba1613da7d21bd",
+    "mtime": 1789661521.4415529,
+    "seen": 1789661665.7684245,
+    "ast_hash": "1aa5a2a727a559bcc3231fac6a1e3087",
     "semantic_hash": ""
   },
   "app/Http/Middleware/SetPermissionsTeamId.php": {
@@ -1260,9 +1260,9 @@
     "semantic_hash": ""
   },
   "app/Models/User.php": {
-    "mtime": 1789470940.1844003,
-    "seen": 1789472847.5304525,
-    "ast_hash": "1f23631b7ca150589c9d115099e4a47c",
+    "mtime": 1789651669.2780523,
+    "seen": 1789651862.3903506,
+    "ast_hash": "59c7e660bf6a4c4addd4a65f9307a029",
     "semantic_hash": ""
   },
   "app/Models/Visit.php": {
@@ -1314,9 +1314,9 @@
     "semantic_hash": "a66ff8623c1647b055ba5a00f06d5d64"
   },
   "app/Providers/AppServiceProvider.php": {
-    "mtime": 1789620882.3997416,
-    "seen": 1789621187.1249561,
-    "ast_hash": "8627fec4151defefe9685cf2cd866cdc",
+    "mtime": 1789628284.416705,
+    "seen": 1789628870.658595,
+    "ast_hash": "cc2c87df4b0935579908fabb94ea8edc",
     "semantic_hash": ""
   },
   "app/Providers/Filament/AdminPanelProvider.php": {
@@ -1326,9 +1326,9 @@
     "semantic_hash": ""
   },
   "app/Providers/Filament/FounderPanelProvider.php": {
-    "mtime": 1789535327.6217606,
-    "seen": 1789535829.970156,
-    "ast_hash": "62822a89c8beff504413d689549b6b40",
+    "mtime": 1789654012.9528234,
+    "seen": 1789654072.9873226,
+    "ast_hash": "37fe4783489b5a7a8e4cd6ebac81dd09",
     "semantic_hash": ""
   },
   "app/Services/CashierOrderService.php": {
@@ -2790,9 +2790,9 @@
     "semantic_hash": "b14828aceb38630838014e8f0357a62e"
   },
   "resources/views/layouts/directory.blade.php": {
-    "mtime": 1789615091.5321743,
-    "seen": 1789615276.1869688,
-    "ast_hash": "427d558b35d3cdf9ae483d9dc5aaf9e1",
+    "mtime": 1789661561.5417514,
+    "seen": 1789661665.7690868,
+    "ast_hash": "ecedff88d0bff6d3456327f98e7a82e0",
     "semantic_hash": ""
   },
   "resources/views/layouts/guest-order.blade.php": {
@@ -2856,9 +2856,9 @@
     "semantic_hash": ""
   },
   "resources/views/livewire/landing/restaurant-directory.blade.php": {
-    "mtime": 1789581975.0357664,
-    "seen": 1789582131.053417,
-    "ast_hash": "0408567b7cecc2338845ed641c04ab08",
+    "mtime": 1789661571.4409664,
+    "seen": 1789661665.7691033,
+    "ast_hash": "fd5af7de947ccb09ca1cc4324691036b",
     "semantic_hash": ""
   },
   "resources/views/livewire/landing/restaurant-menu-catalog.blade.php": {
@@ -4326,9 +4326,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/BlogCategoryResource.php": {
-    "mtime": 1789471445.2281346,
-    "seen": 1789472847.529631,
-    "ast_hash": "00c3df0677905b03b2eea904bb84b9eb",
+    "mtime": 1789653100.9669347,
+    "seen": 1789653374.3453481,
+    "ast_hash": "8b4edb73d45ac80124224578b06374ec",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Pages/CreateBlogCategory.php": {
@@ -4338,9 +4338,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Pages/EditBlogCategory.php": {
-    "mtime": 1789471581.5115378,
-    "seen": 1789472847.5296361,
-    "ast_hash": "4a79c5e73b7aa4fcba70604754ad2c4f",
+    "mtime": 1789653109.73737,
+    "seen": 1789653374.3453517,
+    "ast_hash": "47580f101ef2abf6830b91e96e329f68",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Pages/ListBlogCategories.php": {
@@ -4350,9 +4350,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Pages/ViewBlogCategory.php": {
-    "mtime": 1789471597.3037865,
-    "seen": 1789472847.5296412,
-    "ast_hash": "5e743cca456c39d2cd2a14c5c97fa937",
+    "mtime": 1789653115.3570786,
+    "seen": 1789653374.345355,
+    "ast_hash": "668d8f5e1f095a9e07c552a29e3552e1",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Schemas/BlogCategoryForm.php": {
@@ -4368,27 +4368,27 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Tables/BlogCategoriesTable.php": {
-    "mtime": 1789471513.6120417,
-    "seen": 1789472847.5296483,
-    "ast_hash": "c7d95298b310a13a54c0e0a381bd7f01",
+    "mtime": 1789653105.40974,
+    "seen": 1789653374.3453596,
+    "ast_hash": "c027734829f98bb8bc3c493dedcb2860",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/BlogCommentResource.php": {
-    "mtime": 1789471859.243045,
-    "seen": 1789472847.5296504,
-    "ast_hash": "613c079fa6f538ff2fecfb13bd37d54c",
+    "mtime": 1789652945.4677384,
+    "seen": 1789653374.345361,
+    "ast_hash": "9184a18749cf9b5f27c2962288cd66bd",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Pages/CreateBlogComment.php": {
-    "mtime": 1789472000.062771,
-    "seen": 1789472847.5296528,
-    "ast_hash": "3f11f680cef89a4c2883c33abc07c9af",
+    "mtime": 1789653072.2966397,
+    "seen": 1789653374.3453622,
+    "ast_hash": "64835a94e6b19edbcfd6217cf8a4e219",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Pages/EditBlogComment.php": {
-    "mtime": 1789472030.7039096,
-    "seen": 1789472847.529655,
-    "ast_hash": "a9c264aa8431caf92ece586627f076f5",
+    "mtime": 1789653063.7554567,
+    "seen": 1789653374.3453636,
+    "ast_hash": "3252c9daa09906035c00ef0901ecbb2a",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Pages/ListBlogComments.php": {
@@ -4398,15 +4398,15 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Pages/ViewBlogComment.php": {
-    "mtime": 1789472046.6252744,
-    "seen": 1789472847.52966,
-    "ast_hash": "4d20f84d8e0b78724608cdd5363fbb6e",
+    "mtime": 1789653067.731616,
+    "seen": 1789653374.345367,
+    "ast_hash": "9ec69fc39be1e6610e3e003fdb364cb4",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Schemas/BlogCommentForm.php": {
-    "mtime": 1789471881.8691132,
-    "seen": 1789472847.5296624,
-    "ast_hash": "49533a018ff1ccb2a650e9b24d9863fd",
+    "mtime": 1789653077.8263924,
+    "seen": 1789653374.345369,
+    "ast_hash": "e3d8c98b6be01f0b955041913c6e45c5",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Schemas/BlogCommentInfolist.php": {
@@ -4416,27 +4416,27 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogComments/Tables/BlogCommentsTable.php": {
-    "mtime": 1789471951.8201535,
-    "seen": 1789472847.5296671,
-    "ast_hash": "902fce5af73bf8011aa59a077f452caf",
+    "mtime": 1789653701.2423303,
+    "seen": 1789653796.6652396,
+    "ast_hash": "7b75c7cb264564c8c2c05dc57b261d91",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/BlogPostResource.php": {
-    "mtime": 1789472071.556833,
-    "seen": 1789472847.5296693,
-    "ast_hash": "cc2c9150643c2d77c9410a2e5494ffae",
+    "mtime": 1789652872.4132404,
+    "seen": 1789653374.3453736,
+    "ast_hash": "4f1f499c0fe395d76870ff253334c968",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Pages/CreateBlogPost.php": {
-    "mtime": 1789472236.154152,
-    "seen": 1789472847.5296717,
-    "ast_hash": "a253973e858101745c86d9dc0fe497b8",
+    "mtime": 1789652897.9602695,
+    "seen": 1789653374.345375,
+    "ast_hash": "8ad708ac7d8cdbe77867acd632d27a3c",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Pages/EditBlogPost.php": {
-    "mtime": 1789472271.198262,
-    "seen": 1789472847.5296743,
-    "ast_hash": "4c06a158cf643dc75b17041dde38d9c1",
+    "mtime": 1789652913.63766,
+    "seen": 1789653374.3453763,
+    "ast_hash": "06c084ecd9f844e6d0b047d961c2f9c9",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Pages/ListBlogPosts.php": {
@@ -4446,15 +4446,15 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Pages/ViewBlogPost.php": {
-    "mtime": 1789472288.032014,
-    "seen": 1789472847.529679,
-    "ast_hash": "6e9689a82231d62e9e76318df2050e51",
+    "mtime": 1789652927.0030928,
+    "seen": 1789653374.3453794,
+    "ast_hash": "becb7aa8b06c689a3958912146e5b49e",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/RelationManagers/CommentsRelationManager.php": {
-    "mtime": 1789472187.0000803,
-    "seen": 1789472847.5296814,
-    "ast_hash": "df6ff158737ec81c2accb93ab9a1df23",
+    "mtime": 1789653718.981601,
+    "seen": 1789653796.6652584,
+    "ast_hash": "ea1bfc6768e6c7c27e592f2e6bf413fc",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Schemas/BlogPostForm.php": {
@@ -4470,15 +4470,15 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Tables/BlogPostsTable.php": {
-    "mtime": 1789472161.8142855,
-    "seen": 1789472847.529689,
-    "ast_hash": "ab83642cdf19a39b227beda2065f9d84",
+    "mtime": 1789653685.9552684,
+    "seen": 1789653796.6652675,
+    "ast_hash": "44c320228580da6c2359aa5583e7258e",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/BlogTagResource.php": {
-    "mtime": 1789471636.215301,
-    "seen": 1789472847.5296917,
-    "ast_hash": "b698903499adb9d017c56ee25debe3ba",
+    "mtime": 1789653123.741171,
+    "seen": 1789653374.3453865,
+    "ast_hash": "2b53cda33f7b75410eda57b0d0646610",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Pages/CreateBlogTag.php": {
@@ -4488,9 +4488,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Pages/EditBlogTag.php": {
-    "mtime": 1789471770.1097343,
-    "seen": 1789472847.5296962,
-    "ast_hash": "d2d70d972f53a3771217f2e642aadd5f",
+    "mtime": 1789653133.4121487,
+    "seen": 1789653374.3453898,
+    "ast_hash": "3946b6bdb19142897e689cf544bcbfd7",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Pages/ListBlogTags.php": {
@@ -4500,9 +4500,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Pages/ViewBlogTag.php": {
-    "mtime": 1789471791.7616072,
-    "seen": 1789472847.5297012,
-    "ast_hash": "8671fc5f59ba9dcb7628a4feb495f4c6",
+    "mtime": 1789653139.1502485,
+    "seen": 1789653374.3453932,
+    "ast_hash": "7198d35acf98bf2586a71bd23b7a8757",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Schemas/BlogTagForm.php": {
@@ -4518,9 +4518,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Tables/BlogTagsTable.php": {
-    "mtime": 1789471700.199072,
-    "seen": 1789472847.5297093,
-    "ast_hash": "026d565c80b9784655e6622fd7cc9cba",
+    "mtime": 1789653129.184501,
+    "seen": 1789653374.3453977,
+    "ast_hash": "9bd48115745026ac1d9c5cc2f35a02cb",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/Bloggers/BloggerResource.php": {
@@ -4530,9 +4530,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/Bloggers/Pages/CreateBlogger.php": {
-    "mtime": 1789472368.4763696,
-    "seen": 1789472847.529714,
-    "ast_hash": "aa8a8198998941b044098008cf37d10f",
+    "mtime": 1789651676.2678037,
+    "seen": 1789651862.3889258,
+    "ast_hash": "9f352f2ffee8c081ac6e1c4f2489ca79",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/Bloggers/Pages/EditBlogger.php": {
@@ -4608,9 +4608,9 @@
     "semantic_hash": ""
   },
   "app/Providers/Filament/BloggerPanelProvider.php": {
-    "mtime": 1789534045.2122533,
-    "seen": 1789534553.3992026,
-    "ast_hash": "8fec2c043d1403dc9ae8d5bbbb08f9b1",
+    "mtime": 1789651691.529195,
+    "seen": 1789651862.3903754,
+    "ast_hash": "a02e8e43006f96d323d49dc6cb549107",
     "semantic_hash": ""
   },
   "app/Support/FilamentTranslatable.php": {
@@ -4644,9 +4644,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/BloggerResourceLivewireTest.php": {
-    "mtime": 1789532496.2620945,
-    "seen": 1789532613.8195167,
-    "ast_hash": "3540ea645525112bf304ae689ff44548",
+    "mtime": 1789653246.910899,
+    "seen": 1789653374.346497,
+    "ast_hash": "d9074e2cdcaa1f61bdf0c5ff24478272",
     "semantic_hash": ""
   },
   "app/Http/Controllers/BlogCommentController.php": {
@@ -4836,9 +4836,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/ManageBlogHero.php": {
-    "mtime": 1789539956.079751,
-    "seen": 1789540188.6048558,
-    "ast_hash": "d648fcad0eaeea7a323fc47f51dc9563",
+    "mtime": 1789653145.327806,
+    "seen": 1789653374.345344,
+    "ast_hash": "77f5bf529f837a2525c71192ebf2fd91",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/Schemas/BlogHeroFormSchema.php": {
@@ -4878,9 +4878,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/BlogAnalytics.php": {
-    "mtime": 1789500412.818873,
-    "seen": 1789501097.453227,
-    "ast_hash": "9d934bfe4ba3402e5583e2a5c607b032",
+    "mtime": 1789651725.1662064,
+    "seen": 1789651862.3887787,
+    "ast_hash": "f6c0f3a3e2faf9a73e9cadc56d64889e",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Widgets/BlogAudienceWidget.php": {
@@ -5112,15 +5112,15 @@
     "semantic_hash": ""
   },
   "app/Models/AdSetting.php": {
-    "mtime": 1789536647.859406,
-    "seen": 1789537076.7959387,
-    "ast_hash": "a44fd03b90e51c0afea36897be2de5c8",
+    "mtime": 1789661531.604211,
+    "seen": 1789661665.7684855,
+    "ast_hash": "fa7942a2a9029d0b019956b6ca09726d",
     "semantic_hash": ""
   },
   "app/Services/AdPlacementService.php": {
-    "mtime": 1789536672.9519024,
-    "seen": 1789537076.7961226,
-    "ast_hash": "92edafdc53fbc84afdbe1e07b8a33147",
+    "mtime": 1789661544.3275008,
+    "seen": 1789661665.7685802,
+    "ast_hash": "f44e6af2bc5e334d3689c9cbf95f124e",
     "semantic_hash": ""
   },
   "app/View/Components/Ads/Head.php": {
@@ -5154,9 +5154,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/AdIntegrationTest.php": {
-    "mtime": 1789537331.3828022,
-    "seen": 1789537404.5053499,
-    "ast_hash": "fb41a8ce9c5b7af6be82556aac33d8ac",
+    "mtime": 1789661585.3712513,
+    "seen": 1789661665.7691367,
+    "ast_hash": "bd3159ba89ee6a35d7ba58555fa75a3e",
     "semantic_hash": ""
   },
   "resources/views/filament/founder/pages/info-ad-integration.blade.php": {
@@ -5175,6 +5175,12 @@
     "mtime": 1789578558.336365,
     "seen": 1789579065.711891,
     "ast_hash": "359769520d0c1823c848df7e24bcd7da",
+    "semantic_hash": ""
+  },
+  "resources/views/filament/hooks/form-field-a11y.blade.php": {
+    "mtime": 1789628264.5670762,
+    "seen": 1789628870.6589358,
+    "ast_hash": "188020691b830b0b1b4443b010e75213",
     "semantic_hash": ""
   }
 }

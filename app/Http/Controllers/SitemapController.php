@@ -46,21 +46,26 @@ class SitemapController extends Controller
 
         $blogStaticPages = [
             [
-                'url' => route('blog.index'),
+                'url' => route('blog.index', ['locale' => 'id']),
                 'lastmod' => $blogLastMod,
                 'changefreq' => 'daily',
                 'priority' => '0.9',
                 'alternates' => [
-                    ['hreflang' => 'id', 'href' => url('/blog?lang=id')],
-                    ['hreflang' => 'en', 'href' => url('/blog?lang=en')],
-                    ['hreflang' => 'x-default', 'href' => route('blog.index')],
+                    ['hreflang' => 'id', 'href' => route('blog.index', ['locale' => 'id'])],
+                    ['hreflang' => 'en', 'href' => route('blog.index', ['locale' => 'en'])],
+                    ['hreflang' => 'x-default', 'href' => route('blog.index', ['locale' => 'id'])],
                 ],
             ],
             [
-                'url' => route('blog.archive'),
+                'url' => route('blog.archive', ['locale' => 'id']),
                 'lastmod' => $blogLastMod,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
+                'alternates' => [
+                    ['hreflang' => 'id', 'href' => route('blog.archive', ['locale' => 'id'])],
+                    ['hreflang' => 'en', 'href' => route('blog.archive', ['locale' => 'en'])],
+                    ['hreflang' => 'x-default', 'href' => route('blog.archive', ['locale' => 'id'])],
+                ],
             ],
         ];
 
@@ -81,7 +86,7 @@ class SitemapController extends Controller
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
                         'hreflang' => $loc,
-                        'href' => route('blog.category', ['slug' => $t->slug]),
+                        'href' => route('blog.category', ['locale' => $loc, 'slug' => $t->slug]),
                     ];
                 }
             }
@@ -96,7 +101,7 @@ class SitemapController extends Controller
             foreach ($category->translations as $t) {
                 if (filled($t->slug)) {
                     $blogCategoryPages[] = [
-                        'url' => route('blog.category', ['slug' => $t->slug]),
+                        'url' => route('blog.category', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $catLastMod,
                         'changefreq' => 'weekly',
                         'priority' => '0.8',
@@ -123,7 +128,7 @@ class SitemapController extends Controller
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
                         'hreflang' => $loc,
-                        'href' => route('blog.tag', ['slug' => $t->slug]),
+                        'href' => route('blog.tag', ['locale' => $loc, 'slug' => $t->slug]),
                     ];
                 }
             }
@@ -138,7 +143,7 @@ class SitemapController extends Controller
             foreach ($tag->translations as $t) {
                 if (filled($t->slug)) {
                     $blogTagPages[] = [
-                        'url' => route('blog.tag', ['slug' => $t->slug]),
+                        'url' => route('blog.tag', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $tagLastMod,
                         'changefreq' => 'weekly',
                         'priority' => '0.6',
@@ -165,7 +170,7 @@ class SitemapController extends Controller
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
                         'hreflang' => $loc,
-                        'href' => route('blog.show', ['slug' => $t->slug]),
+                        'href' => route('blog.show', ['locale' => $loc, 'slug' => $t->slug]),
                     ];
                 }
             }
@@ -202,7 +207,7 @@ class SitemapController extends Controller
                     }
 
                     $blogPostPages[] = [
-                        'url' => route('blog.show', ['slug' => $t->slug]),
+                        'url' => route('blog.show', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $postLastMod,
                         'changefreq' => 'weekly',
                         'priority' => '0.9',

@@ -12,8 +12,12 @@ class ViewBlogPost extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $user = auth()->user();
+        $canEdit = $user && ($user->isPlatformOperator() || (int) $this->record->author_id === (int) $user->id);
+
         return [
-            EditAction::make(),
+            EditAction::make()
+                ->visible(fn (): bool => $canEdit),
         ];
     }
 }

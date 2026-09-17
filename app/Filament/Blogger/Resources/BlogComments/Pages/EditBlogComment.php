@@ -15,7 +15,8 @@ class EditBlogComment extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->visible(fn (): bool => auth()->user()?->isPlatformOperator() || (int) $this->record->blogPost?->author_id === (int) auth()->id()),
         ];
     }
 }

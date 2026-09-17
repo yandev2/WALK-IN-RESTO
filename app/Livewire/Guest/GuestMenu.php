@@ -219,6 +219,17 @@ class GuestMenu extends Component
             ? $this->pickerLineTotal($pickingItem)
             : 0;
 
+        $customer = null;
+        if ($visit && filled($visit->customer_wa)) {
+            $phone = \App\Support\WhatsAppNumber::normalize($visit->customer_wa);
+            if (is_string($phone) && \App\Support\WhatsAppNumber::isValid($phone)) {
+                $customer = \App\Models\Customer::withoutRestaurantScope()
+                    ->where('restaurant_id', $visit->restaurant_id)
+                    ->where('phone', $phone)
+                    ->first();
+            }
+        }
+
         return view('livewire.guest.menu', [
             'visit' => $visit,
             'restaurant' => $restaurant,
@@ -230,6 +241,8 @@ class GuestMenu extends Component
             'cartCount' => $cartCount,
             'pickingItem' => $pickingItem,
             'pickerTotal' => $pickerTotal,
+            'customer' => $customer,
+            'loyaltyEnabled' => (bool) ($restaurant?->loyaltySettings()['enabled'] ?? true),
         ]);
     }
 

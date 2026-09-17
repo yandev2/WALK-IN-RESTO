@@ -113,8 +113,9 @@ class BlogController extends Controller
         ]);
     }
 
-    public function category(Request $request, string $slug, RecordVisitService $visits): View
+    public function category(Request $request, RecordVisitService $visits): View
     {
+        $slug = (string) $request->route('slug');
         $locale = $this->resolveLocale($request);
         app()->setLocale($locale);
 
@@ -156,8 +157,9 @@ class BlogController extends Controller
         ]);
     }
 
-    public function tag(Request $request, string $slug, RecordVisitService $visits): View
+    public function tag(Request $request, RecordVisitService $visits): View
     {
+        $slug = (string) $request->route('slug');
         $locale = $this->resolveLocale($request);
         app()->setLocale($locale);
 
@@ -198,8 +200,9 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(Request $request, string $slug, BlogLikeService $likes, RecordVisitService $visits): View
+    public function show(Request $request, BlogLikeService $likes, RecordVisitService $visits): View
     {
+        $slug = (string) $request->route('slug');
         $locale = $this->resolveLocale($request);
         app()->setLocale($locale);
 
@@ -301,6 +304,13 @@ class BlogController extends Controller
 
     private function resolveLocale(Request $request): string
     {
+        $routeLocale = $request->route('locale');
+        if (is_string($routeLocale) && in_array($routeLocale, Locales::all(), true)) {
+            session(['blog_locale' => $routeLocale]);
+
+            return $routeLocale;
+        }
+
         $reqLocale = $request->query('lang') ?? $request->query('locale');
         if (is_string($reqLocale) && in_array($reqLocale, Locales::all(), true)) {
             session(['blog_locale' => $reqLocale]);

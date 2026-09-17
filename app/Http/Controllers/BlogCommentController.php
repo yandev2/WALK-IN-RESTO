@@ -10,8 +10,9 @@ use Illuminate\Http\RedirectResponse;
 
 class BlogCommentController extends Controller
 {
-    public function store(StoreBlogCommentRequest $request, string $slug): RedirectResponse
+    public function store(StoreBlogCommentRequest $request): RedirectResponse
     {
+        $slug = (string) $request->route('slug');
         $post = BlogPost::query()
             ->whereHas('translations', fn ($q) => $q->where('slug', $slug))
             ->first();

@@ -11,6 +11,8 @@ class CreateBlogger extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $this->record->assignRole('blogger');
+        /** @var \App\Models\User $record */
+        $record = $this->record;
+        $record->assignGlobalRole('blogger');
     }
 }

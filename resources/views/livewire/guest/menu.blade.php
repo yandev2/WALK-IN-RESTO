@@ -47,6 +47,12 @@
         <p class="mb-4 rounded-2xl bg-moss/10 px-4 py-2 text-sm text-moss">{{ $flash }}</p>
     @endif
 
+    @if ($customer && ($loyaltyEnabled ?? true))
+        <div class="mb-4">
+            <x-customer-member-card :customer="$customer" />
+        </div>
+    @endif
+
     @if ($banners->isNotEmpty())
         <div class="mb-4">
             <x-guest.promo-hero :banners="$banners" />

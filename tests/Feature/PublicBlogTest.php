@@ -61,7 +61,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Rendang is widely recognized as one of the best foods in the world.</p>',
         ]);
 
-        $response = $this->get('/blog');
+        $response = $this->get('/id/blog');
         $response->assertSuccessful();
         $response->assertSee('Rahasia Rendang Daging Empuk Padang');
         $response->assertSee('Chef Budi');
@@ -89,7 +89,7 @@ class PublicBlogTest extends TestCase
             ['locale' => 'en', 'title' => 'English Article Title', 'slug' => 'english-title', 'content' => '<p>English Content</p>'],
         ]);
 
-        $response = $this->get('/blog?lang=en');
+        $response = $this->get('/en/blog');
         $response->assertSuccessful();
         $response->assertSee('English Article Title');
         $response->assertSee('Category EN');
@@ -130,7 +130,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Sambal matah memberikan kesegaran yang pas untuk hidangan laut bakar.</p>',
         ]);
 
-        $response = $this->get('/blog/sensasi-sambal-matah-khas-bali');
+        $response = $this->get('/id/blog/sensasi-sambal-matah-khas-bali');
         $response->assertSuccessful();
         $response->assertSee('Sensasi Sambal Matah Khas Bali');
         $response->assertSee('Chef Ragil');
@@ -154,7 +154,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Masih draft</p>',
         ]);
 
-        $response = $this->get('/blog/draft-artikel-belum-siap');
+        $response = $this->get('/id/blog/draft-artikel-belum-siap');
         $response->assertNotFound();
     }
 
@@ -174,7 +174,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Masa depan</p>',
         ]);
 
-        $response = $this->get('/blog/artikel-masa-depan');
+        $response = $this->get('/id/blog/artikel-masa-depan');
         $response->assertNotFound();
     }
 
@@ -207,7 +207,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Perhatikan insang dan mata ikan saat berbelanja.</p>',
         ]);
 
-        $response = $this->get('/blog/articles?q=Soto');
+        $response = $this->get('/id/blog/articles?q=Soto');
         $response->assertSuccessful();
         $response->assertSee('Resep Soto Ayam Lamongan');
         $response->assertDontSee('Tips Memilih Ikan Segar');
@@ -237,7 +237,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Rempah kayu secang, jahe, dan cengkeh khas Imogiri.</p>',
         ]);
 
-        $response = $this->get('/blog/category/minuman-tradisional');
+        $response = $this->get('/id/blog/category/minuman-tradisional');
         $response->assertSuccessful();
         $response->assertSee('Minuman Tradisional');
         $response->assertSee('Khasiat Wedang Uwuh');
@@ -267,7 +267,7 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Pilihan kuliner malam legendaris Jakarta Pusat.</p>',
         ]);
 
-        $response = $this->get('/blog/tag/kuliner-malam');
+        $response = $this->get('/id/blog/tag/kuliner-malam');
         $response->assertSuccessful();
         $response->assertSee('#Kuliner Malam');
         $response->assertSee('Rekomendasi Nasi Goreng Kambing Kebon Sirih');
@@ -289,13 +289,13 @@ class PublicBlogTest extends TestCase
             'content' => '<p>Kopi arabika dengan aroma khas dan acidity seimbang.</p>',
         ]);
 
-        $response = $this->post('/blog/mengenal-kopi-gayo-aceh/comments', [
+        $response = $this->post('/id/blog/mengenal-kopi-gayo-aceh/comments', [
             'author_name' => 'Siti Aminah',
             'author_email' => 'siti@example.com',
             'content' => 'Artikel yang sangat informatif! Saya suka sekali rasa fruity kopi Gayo.',
         ]);
 
-        $response->assertRedirect('/blog/mengenal-kopi-gayo-aceh');
+        $response->assertRedirect('/id/blog/mengenal-kopi-gayo-aceh');
         $response->assertSessionHas('comment_success');
 
         $this->assertDatabaseHas('blog_comments', [
@@ -326,7 +326,7 @@ class PublicBlogTest extends TestCase
 
         // First like
         $session = ['blog_visitor_id' => 'test-visitor-token-123'];
-        $response1 = $this->withSession($session)->postJson('/blog/gudeg-yu-djum-legenda-yogyakarta/like');
+        $response1 = $this->withSession($session)->postJson('/id/blog/gudeg-yu-djum-legenda-yogyakarta/like');
         $response1->assertSuccessful();
         $response1->assertJson([
             'liked' => true,
@@ -335,7 +335,7 @@ class PublicBlogTest extends TestCase
         $this->assertEquals(1, $post->fresh()->likes_count);
 
         // Second click toggles off
-        $response2 = $this->withSession($session)->postJson('/blog/gudeg-yu-djum-legenda-yogyakarta/like');
+        $response2 = $this->withSession($session)->postJson('/id/blog/gudeg-yu-djum-legenda-yogyakarta/like');
         $response2->assertSuccessful();
         $response2->assertJson([
             'liked' => false,

@@ -12,6 +12,7 @@ use App\Services\CashierShiftService;
 use Database\Seeders\RolePermissionSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -497,6 +498,54 @@ class CashierFilamentActionsTest extends TestCase
             'variant_name_snapshot' => 'Large Form',
             'qty' => 2,
         ]);
+    }
+
+    public function test_cashier_pos_send_receipt_auto_checks_when_auto_print_receipt_is_active(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['auto_print_receipt' => true]);
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        Livewire::test(CreateCashierOrder::class)
+            ->call('setPosField', 'customer_wa', '081234567890')
+            ->assertSet('data.send_receipt', true);
+    }
+
+    public function test_cashier_pos_send_receipt_does_not_auto_check_when_auto_print_receipt_is_inactive(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['auto_print_receipt' => false]);
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $user = $this->staffUser($world['restaurant'], ['order.create']);
+        app(CashierShiftService::class)->openShift($user, $world['outlet'], 50000);
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($world['restaurant']);
+
+        $test = Livewire::test(CreateCashierOrder::class)
+            ->call('setPosField', 'customer_wa', '081234567890')
+            ->assertSet('data.send_receipt', false);
+
+        // Cashier can still check it manually if requested
+        $test->call('setPosField', 'send_receipt', true)
+            ->assertSet('data.send_receipt', true);
     }
 
     /**

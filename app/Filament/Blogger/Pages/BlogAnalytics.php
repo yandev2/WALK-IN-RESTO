@@ -44,7 +44,7 @@ class BlogAnalytics extends Page
             return false;
         }
 
-        return $user->isPlatformOperator() || $user->hasRole('blogger');
+        return $user->isPlatformOperator() || $user->isBlogger();
     }
 
     public function mount(): void

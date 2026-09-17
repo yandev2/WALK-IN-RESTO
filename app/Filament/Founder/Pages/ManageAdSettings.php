@@ -182,10 +182,11 @@ class ManageAdSettings extends Page
                             ->rows(4),
                         Toggle::make('adsterra_native_enabled')
                             ->label('Aktifkan Native Banners')
-                            ->helperText('Format iklan bawaan yang menyatu dengan konten editorial.'),
+                            ->helperText('Format iklan bawaan yang menyatu dengan konten editorial dan katalog resto.'),
                         Textarea::make('adsterra_native_code')
                             ->label('Kode Script Native Banner')
                             ->placeholder('<script ...></script>')
+                            ->helperText('Kode ini berfungsi sebagai master script yang otomatis menjadi fallback untuk seluruh slot ber-provider "adsterra" (misal slot_directory_native atau slot_blog_feed) jika kode unit di slot tersebut dikosongkan.')
                             ->rows(4),
                     ]),
             ]);
@@ -201,7 +202,7 @@ class ManageAdSettings extends Page
                 $this->slotSection('slot_blog_article_bottom', 'Blog: Bawah Artikel', 'Ditampilkan sebelum komentar dan navigasi prev/next.'),
                 $this->slotSection('slot_blog_sidebar', 'Blog: Sidebar Desktop', 'Ditampilkan di sidebar kanan artikel (hanya desktop/layar lebar).'),
                 $this->slotSection('slot_blog_feed', 'Blog: In-Feed (Arsip/Kategori/Tag)', 'Disisipkan di antara kartu artikel di halaman arsip blog.'),
-                $this->slotSection('slot_directory_native', 'Direktori: Native Listing', 'Ditampilkan sebagai kartu bersponsor di grid direktori restoran.'),
+                $this->slotSection('slot_directory_native', 'Direktori: Native Listing', 'Ditampilkan sebagai kartu iklan bersponsor di katalog direktori restoran utama (/) setelah restoran ke-4.'),
             ]);
     }
 
@@ -218,10 +219,11 @@ class ManageAdSettings extends Page
                 TextInput::make("{$slotKey}.provider")
                     ->label('Provider')
                     ->placeholder('adsense / adsterra / custom')
-                    ->helperText('Tuliskan "adsense", "adsterra", atau "custom" sesuai sumber kode iklan.'),
+                    ->helperText('Pilih "adsense", "adsterra", atau "custom". Khusus "adsterra": jika kode unit di bawah dikosongkan, sistem otomatis memakai kode Native Banner dari Tab 1.'),
                 Textarea::make("{$slotKey}.code")
                     ->label('Kode Unit Iklan (HTML/JS)')
                     ->placeholder('<ins class="adsbygoogle" ... ></ins><script>(adsbygoogle = ...).push({});</script>')
+                    ->helperText('Tempelkan kode HTML/JS unit iklan. Bila provider adalah "adsterra" dan kolom ini dikosongkan, sistem otomatis mengambil kode dari Tab 1 (Native Banners).')
                     ->rows(5),
             ]);
     }

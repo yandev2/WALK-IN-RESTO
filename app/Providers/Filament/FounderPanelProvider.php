@@ -7,6 +7,7 @@ use App\Filament\Founder\Pages\Dashboard;
 use App\Filament\Profile\EditProfile;
 use App\Filament\Resources\RestaurantCategories\RestaurantCategoryResource;
 use App\Http\Middleware\ApplyPlatformBrandTheme;
+use App\Http\Middleware\SetPermissionsTeamId;
 use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Support\AuthGlass;
@@ -40,7 +41,7 @@ class FounderPanelProvider extends PanelProvider
             ->id('founder')
             ->path('founder')
             ->login(Login::class)
-            ->brandName('RestoTerdekat Founder')
+            ->brandName('Citarasa Founder')
             ->favicon(function (): ?string {
                 $platformFavicon = PlatformSetting::homeViewData()['favicon_url'] ?? asset('favicon.ico');
                 return filled($platformFavicon) && ! str_starts_with($platformFavicon, 'http://') && ! str_starts_with($platformFavicon, 'https://')
@@ -102,6 +103,7 @@ class FounderPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 ApplyPlatformBrandTheme::class,
+                SetPermissionsTeamId::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

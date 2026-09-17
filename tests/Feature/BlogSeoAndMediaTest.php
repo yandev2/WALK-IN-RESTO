@@ -107,16 +107,16 @@ class BlogSeoAndMediaTest extends TestCase
             ->assertSee(route('blog.index'), false)
             ->assertSee(route('blog.archive'), false)
             // Category routes & alternates
-            ->assertSee(route('blog.category', ['slug' => 'kuliner-nusantara']), false)
-            ->assertSee(route('blog.category', ['slug' => 'indonesian-culinary']), false)
+            ->assertSee(route('blog.category', ['locale' => 'id', 'slug' => 'kuliner-nusantara']), false)
+            ->assertSee(route('blog.category', ['locale' => 'en', 'slug' => 'indonesian-culinary']), false)
             ->assertSee('hreflang="id"', false)
             ->assertSee('hreflang="en"', false)
             // Tag routes
-            ->assertSee(route('blog.tag', ['slug' => 'resep']), false)
-            ->assertSee(route('blog.tag', ['slug' => 'recipe']), false)
+            ->assertSee(route('blog.tag', ['locale' => 'id', 'slug' => 'resep']), false)
+            ->assertSee(route('blog.tag', ['locale' => 'en', 'slug' => 'recipe']), false)
             // Post routes & Google Images
-            ->assertSee(route('blog.show', ['slug' => 'resep-sate-ayam-madura-asli']), false)
-            ->assertSee(route('blog.show', ['slug' => 'authentic-madura-chicken-satay-recipe']), false)
+            ->assertSee(route('blog.show', ['locale' => 'id', 'slug' => 'resep-sate-ayam-madura-asli']), false)
+            ->assertSee(route('blog.show', ['locale' => 'en', 'slug' => 'authentic-madura-chicken-satay-recipe']), false)
             ->assertSee('<image:loc>', false)
             ->assertSee('blog/featured/sate-ayam.jpg', false)
             ->assertSee('Foto Sate Ayam Madura', false)
@@ -182,7 +182,7 @@ class BlogSeoAndMediaTest extends TestCase
             'content' => '<p>Step by step beef rendang recipe.</p>',
         ]);
 
-        $response = $this->get('/blog/cara-memasak-rendang-daging-empuk');
+        $response = $this->get('/id/blog/cara-memasak-rendang-daging-empuk');
 
         $response->assertOk()
             // Custom Meta Title & Description
@@ -370,12 +370,12 @@ class BlogSeoAndMediaTest extends TestCase
         // Set application locale to English ('en')
         app()->setLocale('en');
 
-        // Request without locale query param
-        $catResponse = $this->get('/blog/category/kuliner-nusantara');
+        // Request cross-locale category slug (slug is id, requested in en blog)
+        $catResponse = $this->get('/en/blog/category/kuliner-nusantara');
         $catResponse->assertOk()
             ->assertSee('Kuliner Nusantara', false);
 
-        $tagResponse = $this->get('/blog/tag/kopi-enak');
+        $tagResponse = $this->get('/en/blog/tag/kopi-enak');
         $tagResponse->assertOk()
             ->assertSee('Kopi Enak', false);
     }

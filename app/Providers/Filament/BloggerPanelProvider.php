@@ -6,6 +6,7 @@ use App\Filament\Auth\Login;
 use App\Filament\Blogger\Pages\Dashboard;
 use App\Filament\Profile\EditProfile;
 use App\Http\Middleware\ApplyPlatformBrandTheme;
+use App\Http\Middleware\SetPermissionsTeamId;
 use App\Models\PlatformSetting;
 use App\Support\AuthGlass;
 use App\Support\RestaurantTheme;
@@ -92,6 +93,7 @@ class BloggerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 ApplyPlatformBrandTheme::class,
+                SetPermissionsTeamId::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

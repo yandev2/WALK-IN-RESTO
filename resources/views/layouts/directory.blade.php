@@ -90,6 +90,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
         <style>[x-cloak]{display:none!important}</style>
         @stack('head')
+        <x-ads.head />
     </head>
     <body class="min-h-screen bg-surface-base text-body antialiased transition-colors duration-300">
         @isset($slot)

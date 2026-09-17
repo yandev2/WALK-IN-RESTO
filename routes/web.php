@@ -28,7 +28,7 @@ Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->n
 Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {
     $sitemapUrl = route('sitemap');
-    $content = "User-agent: *\nAllow: /\nAllow: /blog\nDisallow: /admin\nDisallow: /founder\nDisallow: /blogger\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
+    $content = "User-agent: *\nAllow: /\nAllow: /id/blog\nAllow: /en/blog\nAllow: /blog\nDisallow: /admin\nDisallow: /founder\nDisallow: /blogger\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
 
     return response($content, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 });
@@ -84,21 +84,51 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
+// Localized blog routes: /{locale}/blog/... (e.g. /id/blog, /en/blog)
+Route::prefix('{locale}/blog')
+    ->where(['locale' => 'id|en'])
+    ->middleware([\App\Http\Middleware\SetBlogLocale::class])
+    ->group(function (): void {
+        Route::get('/', [BlogController::class, 'index'])->name('blog.index');
+        Route::get('/articles', [BlogController::class, 'archive'])->name('blog.archive');
+        Route::get('/category/{slug}', [BlogController::class, 'category'])->name('blog.category');
+        Route::get('/tag/{slug}', [BlogController::class, 'tag'])->name('blog.tag');
+        Route::get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+        Route::post('/{slug}/comments', [BlogCommentController::class, 'store'])
+            ->middleware('throttle:5,1')
+            ->name('blog.comments.store');
+        Route::post('/{slug}/like', [BlogLikeController::class, 'toggle'])
+            ->middleware('throttle:30,1')
+            ->name('blog.likes.toggle');
+    });
+
+// Fallback & SEO 301 Permanent Redirects for legacy /blog paths
 Route::prefix('blog')->group(function (): void {
-    Route::get('/', [BlogController::class, 'index'])->name('blog.index');
-    Route::get('/articles', [BlogController::class, 'archive'])->name('blog.archive');
-    Route::get('/category/{slug}', [BlogController::class, 'category'])->name('blog.category');
-    Route::get('/tag/{slug}', [BlogController::class, 'tag'])->name('blog.tag');
-    Route::get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-    Route::post('/{slug}/comments', [BlogCommentController::class, 'store'])
-        ->middleware('throttle:5,1')
-        ->name('blog.comments.store');
-    Route::post('/{slug}/like', [BlogLikeController::class, 'toggle'])
-        ->middleware('throttle:30,1')
-        ->name('blog.likes.toggle');
+    $redirectWithQuery = function (\Illuminate\Http\Request $request, string $pathTemplate, ?string $slug = null) {
+        $locale = $request->query('lang') ?? $request->query('locale') ?? session('blog_locale') ?? app()->getLocale() ?: 'id';
+        if (! in_array($locale, ['id', 'en'], true)) {
+            $locale = 'id';
+        }
+
+        $targetPath = str_replace(['{locale}', '{slug}'], [$locale, $slug ?? ''], $pathTemplate);
+        $extraParams = collect($request->query())->except(['lang', 'locale'])->all();
+        $queryString = ! empty($extraParams) ? '?' . http_build_query($extraParams) : '';
+
+        return redirect()->to($targetPath . $queryString, 301);
+    };
+
+    Route::get('/', fn (\Illuminate\Http\Request $request) => $redirectWithQuery($request, '/{locale}/blog'));
+    Route::get('/articles', fn (\Illuminate\Http\Request $request) => $redirectWithQuery($request, '/{locale}/blog/articles'));
+    Route::get('/category/{slug}', fn (\Illuminate\Http\Request $request, string $slug) => $redirectWithQuery($request, '/{locale}/blog/category/{slug}', $slug));
+    Route::get('/tag/{slug}', fn (\Illuminate\Http\Request $request, string $slug) => $redirectWithQuery($request, '/{locale}/blog/tag/{slug}', $slug));
+    Route::get('/{slug}', fn (\Illuminate\Http\Request $request, string $slug) => $redirectWithQuery($request, '/{locale}/blog/{slug}', $slug));
+    Route::post('/{slug}/comments', [\App\Http\Controllers\BlogCommentController::class, 'store'])
+        ->middleware('throttle:5,1');
+    Route::post('/{slug}/like', [\App\Http\Controllers\BlogLikeController::class, 'toggle'])
+        ->middleware('throttle:30,1');
 });
 
-$landingSlugPattern = '^(?!admin$|blogger$|blog$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
+$landingSlugPattern = '^(?!admin$|blogger$|blog$|id$|en$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

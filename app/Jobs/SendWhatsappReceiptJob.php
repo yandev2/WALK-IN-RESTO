@@ -23,7 +23,10 @@ class SendWhatsappReceiptJob implements ShouldQueue
         return [15, 60, 180];
     }
 
-    public function __construct(public int $whatsappMessageId) {}
+    public function __construct(public int $whatsappMessageId)
+    {
+        $this->afterCommit = true;
+    }
 
     public function handle(FonnteClient $fonnte): void
     {

@@ -79,8 +79,11 @@
                             'grid-cols-1 sm:grid-cols-2' => $viewMode === 'grid',
                         ])
                     >
-                        @foreach ($cards as $card)
+                        @foreach ($cards as $index => $card)
                             <x-directory.restaurant-card :card="$card" :variant="$viewMode" wire:key="directory-card-{{ $card['slug'] }}" />
+                            @if ($index === 3 || ($loop->last && $loop->count < 4))
+                                <x-ads.slot name="directory_native" class="col-span-1 sm:col-span-2 my-2 w-full" />
+                            @endif
                         @endforeach
                     </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Guest;
 
+use App\Livewire\Guest\Concerns\HasLoyaltyEarnedAlert;
 use App\Services\RestaurantReviewService;
 use App\Support\GuestContext;
 use Livewire\Attributes\Layout;
@@ -10,6 +11,8 @@ use Livewire\Component;
 #[Layout('layouts.guest-order', ['title' => 'Status meja'])]
 class GuestStatus extends Component
 {
+    use HasLoyaltyEarnedAlert;
+
     public function render(RestaurantReviewService $reviews)
     {
         $visit = GuestContext::visit();
@@ -21,6 +24,7 @@ class GuestStatus extends Component
 
         $portalOpen = $visit ? $reviews->portalOpen($visit) : false;
         $canSubmitReview = $visit ? $reviews->canSubmit($visit) : false;
+        $unclaimedLoyaltyPoint = $this->getUnclaimedLoyaltyPoint($visit);
 
         return view('livewire.guest.status', [
             'visit' => $visit,
@@ -29,6 +33,7 @@ class GuestStatus extends Component
             'portalOpen' => $portalOpen,
             'canSubmitReview' => $canSubmitReview,
             'hasReview' => $visit?->review !== null,
+            'unclaimedLoyaltyPoint' => $unclaimedLoyaltyPoint,
         ]);
     }
 }

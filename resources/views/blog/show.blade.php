@@ -36,12 +36,12 @@
     @foreach (['id', 'en'] as $langLoc)
         @php $altT = $post->translate($langLoc); @endphp
         @if ($altT && filled($altT->slug))
-            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.show', ['slug' => $altT->slug]) }}" />
+            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.show', ['locale' => $langLoc, 'slug' => $altT->slug]) }}" />
         @endif
     @endforeach
     @php $idSlug = $post->translate('id')?->slug ?? $post->translations->first()?->slug; @endphp
     @if ($idSlug)
-        <link rel="alternate" hreflang="x-default" href="{{ route('blog.show', ['slug' => $idSlug]) }}" />
+        <link rel="alternate" hreflang="x-default" href="{{ route('blog.show', ['locale' => 'id', 'slug' => $idSlug]) }}" />
     @endif
 @endsection
 

@@ -5,9 +5,13 @@ namespace Tests\Feature;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
+use App\Models\WhatsappMessage;
 use App\Services\CashierOrderService;
 use App\Services\OrderPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Tests\Concerns\CreatesGuestRestaurant;
 use Tests\TestCase;
@@ -318,6 +322,79 @@ class CashierOrderServiceTest extends TestCase
         $this->assertNull($table->open_visit_id);
         $this->assertFalse($table->needs_cleaning);
         $this->assertSame('available', $table->floorStatus());
+    }
+
+    public function test_cashier_order_in_simple_mode_auto_sends_whatsapp_receipt_post_commit_when_send_receipt_true(): void
+    {
+        Storage::fake('local');
+        Http::fake([
+            'https://api.fonnte.com/send' => Http::response(['status' => true, 'id' => 'wa-simple-1'], 200),
+        ]);
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $user = User::factory()->create();
+
+        $order = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            '081234567890',
+            'Tamu Simple WA',
+            'cash',
+            true,
+            [['menu_item_id' => $world['item']->id, 'qty' => 1]],
+            50000,
+        );
+
+        $this->assertSame(Order::STATUS_COMPLETED, $order->status);
+        $this->assertTrue((bool) $order->send_receipt);
+
+        $this->assertSame(1, WhatsappMessage::query()->count());
+        $message = WhatsappMessage::query()->first();
+        $this->assertSame('sent', $message->status);
+        $this->assertSame('6281234567890', $message->to_wa);
+        $this->assertStringContainsString('Pesanan:', $message->body);
+        $this->assertStringContainsString('Total: Rp', $message->body);
+
+        Http::assertSent(function ($request): bool {
+            return $request->url() === 'https://api.fonnte.com/send'
+                && $request->hasHeader('Authorization', 'test-fonnte-token')
+                && str_contains($request->body(), 'Unduh PDF');
+        });
+    }
+
+    public function test_cashier_order_in_simple_mode_skips_whatsapp_receipt_when_send_receipt_false(): void
+    {
+        Storage::fake('local');
+        Http::fake();
+
+        $world = $this->createGuestRestaurant();
+        $world['outlet']->update(['simple_mode' => true]);
+        $world['restaurant']->update([
+            'fonnte_api_key_encrypted' => Crypt::encryptString('test-fonnte-token'),
+        ]);
+
+        $user = User::factory()->create();
+
+        $order = app(CashierOrderService::class)->create(
+            $user,
+            $world['table'],
+            '081234567890',
+            'Tamu Tanpa WA',
+            'cash',
+            false,
+            [['menu_item_id' => $world['item']->id, 'qty' => 1]],
+            50000,
+        );
+
+        $this->assertSame(Order::STATUS_COMPLETED, $order->status);
+        $this->assertFalse((bool) $order->send_receipt);
+        $this->assertSame(0, WhatsappMessage::query()->count());
+        Http::assertNothingSent();
     }
 }
 

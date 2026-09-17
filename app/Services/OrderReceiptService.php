@@ -224,7 +224,7 @@ class OrderReceiptService
             'queued_at' => now(),
         ]);
 
-        SendWhatsappReceiptJob::dispatch($message->id);
+        SendWhatsappReceiptJob::dispatch($message->id)->afterCommit();
 
         return $message;
     }

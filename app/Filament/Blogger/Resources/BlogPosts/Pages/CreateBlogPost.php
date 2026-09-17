@@ -22,7 +22,9 @@ class CreateBlogPost extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (blank($data['author_id'] ?? null)) {
+        if (! (auth()->user()?->isPlatformOperator() ?? false)) {
+            $data['author_id'] = auth()->id();
+        } elseif (blank($data['author_id'] ?? null)) {
             $data['author_id'] = auth()->id();
         }
 

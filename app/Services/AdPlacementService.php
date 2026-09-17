@@ -52,6 +52,15 @@ class AdPlacementService
 
         $currentPath = trim(request()->path(), '/');
 
+        // If this is a Livewire AJAX request, inspect the referer path instead of livewire/*
+        if (request()->hasHeader('X-Livewire')) {
+            $referer = request()->header('Referer');
+            if ($referer) {
+                $refererPath = trim((string) parse_url($referer, PHP_URL_PATH), '/');
+                $currentPath = $refererPath;
+            }
+        }
+
         foreach (self::BLOCKED_PREFIXES as $prefix) {
             if ($currentPath === $prefix || str_starts_with($currentPath, $prefix.'/')) {
                 return false;
@@ -102,6 +111,22 @@ class AdPlacementService
     }
 
     /**
+     * Get the Adsterra Native Banner script.
+     */
+    public function getAdsterraNativeScript(): string
+    {
+        if (! $this->isAdAllowedForCurrentRequest()) {
+            return '';
+        }
+
+        if (! $this->settings->adsterra_enabled || ! $this->settings->adsterra_native_enabled) {
+            return '';
+        }
+
+        return $this->settings->adsterra_native_code ?? '';
+    }
+
+    /**
      * Get the rendered HTML for a named ad slot.
      */
     public function renderSlot(string $slotName): string
@@ -116,6 +141,15 @@ class AdPlacementService
 
         $slot = $this->settings->getSlot($slotName);
         $code = $slot['code'];
+
+        // Fallback: if slot code is empty and provider is adsterra, use global native banner code
+        if (blank($code) && ($slot['provider'] ?? '') === 'adsterra' && $this->settings->adsterra_enabled && $this->settings->adsterra_native_enabled) {
+            $code = $this->settings->adsterra_native_code;
+        }
+
+        if (blank($code)) {
+            return '';
+        }
 
         // Wrap in CLS-safe container with sponsor label
         return '<div class="ad-slot ad-slot--'

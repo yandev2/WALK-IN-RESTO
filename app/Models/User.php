@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
@@ -133,6 +134,24 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function isPlatformOperator(): bool
     {
         return $this->isSuperAdmin() || $this->isFounder();
+    }
+
+    public function assignGlobalRole(string|Role $role): static
+    {
+        $registrar = app(PermissionRegistrar::class);
+        $previousTeamId = $registrar->getPermissionsTeamId();
+        $registrar->setPermissionsTeamId(0);
+
+        try {
+            $roleName = $role instanceof Role ? $role->name : $role;
+            Role::findOrCreate($roleName, 'web');
+            $this->assignRole($roleName);
+            $this->unsetRelation('roles');
+        } finally {
+            $registrar->setPermissionsTeamId($previousTeamId);
+        }
+
+        return $this;
     }
 
     public function isRestaurantOwner(?Restaurant $restaurant = null): bool

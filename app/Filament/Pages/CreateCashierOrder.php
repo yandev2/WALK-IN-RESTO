@@ -410,7 +410,7 @@ class CreateCashierOrder extends Page
             if (blank($this->data['customer_wa'] ?? null)) {
                 $this->data['send_receipt'] = false;
                 $this->data['points_to_redeem'] = 0;
-            } elseif (TenantContext::restaurant()?->hasFonnteKey()) {
+            } elseif (TenantContext::restaurant()?->hasFonnteKey() && (bool) TenantContext::outlet()?->auto_print_receipt) {
                 $this->data['send_receipt'] = true;
             }
         }
@@ -524,6 +524,7 @@ class CreateCashierOrder extends Page
             'hasUncategorized' => collect($catalog)->contains(fn (array $item): bool => blank($item['category_id'] ?? null)),
             'tables' => $this->posTableOptions(),
             'hasFonnte' => TenantContext::restaurant()?->hasFonnteKey() ?? false,
+            'autoPrintReceipt' => (bool) (TenantContext::outlet()?->auto_print_receipt ?? false),
             'qrisImageUrl' => CmsMedia::url(TenantContext::outlet()?->qris_image_path),
             'tableId' => $this->data['table_id'] ?? '',
             'customerName' => $this->data['customer_name'] ?? '',

@@ -9,8 +9,9 @@ use Illuminate\Http\Request;
 
 class BlogLikeController extends Controller
 {
-    public function toggle(Request $request, string $slug, BlogLikeService $likes): JsonResponse
+    public function toggle(Request $request, BlogLikeService $likes): JsonResponse
     {
+        $slug = (string) $request->route('slug');
         $post = BlogPost::query()
             ->whereHas('translations', fn ($q) => $q->where('slug', $slug))
             ->first();

@@ -34,7 +34,7 @@ class ManageBlogHero extends Page
     {
         $user = auth()->user();
 
-        return $user && ($user->isPlatformOperator() || $user->hasRole('blogger'));
+        return $user instanceof \App\Models\User && $user->isPlatformOperator();
     }
 
     protected function resolveRecord(): Model

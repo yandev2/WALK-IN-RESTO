@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class BlogCategoryResource extends Resource
@@ -56,6 +57,21 @@ class BlogCategoryResource extends Resource
     public static function getRelations(): array
     {
         return [];
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()?->isPlatformOperator() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isPlatformOperator() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isPlatformOperator() ?? false;
     }
 
     public static function getPages(): array

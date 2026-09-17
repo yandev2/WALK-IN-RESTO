@@ -21,6 +21,7 @@
         'catalog' => $catalog,
         'qrisImageUrl' => $qrisImageUrl ?? null,
         'hasFonnte' => (bool) ($hasFonnte ?? false),
+        'autoPrintReceipt' => (bool) ($autoPrintReceipt ?? false),
         'sendReceipt' => (bool) ($sendReceipt ?? false),
         'customerWa' => (string) ($customerWa ?? ''),
         'customerName' => (string) ($customerName ?? ''),
@@ -46,7 +47,9 @@
             preview: { subtotal: 0 },
             qrisImageUrl: null,
             hasFonnte: false,
+            autoPrintReceipt: false,
             sendReceipt: false,
+            sendReceiptTouched: false,
             customerWa: '',
             customerName: '',
             tableId: '',
@@ -75,6 +78,7 @@
                 this.preview = next.preview || { subtotal: 0 };
                 this.qrisImageUrl = next.qrisImageUrl || null;
                 this.hasFonnte = !!next.hasFonnte;
+                this.autoPrintReceipt = !!next.autoPrintReceipt;
                 this.sendReceipt = !!next.sendReceipt;
                 this.customerWa = next.customerWa || '';
                 this.customerName = next.customerName || '';
@@ -94,6 +98,7 @@
                 this.customerName = '';
                 this.customerWa = '';
                 this.sendReceipt = false;
+                this.sendReceiptTouched = false;
                 this.paymentMethod = 'cash';
                 this.cashRaw = '';
                 this.pointsToRedeem = 0;
@@ -661,12 +666,18 @@
                     pos.customerWa = value;
                     if (!value) {
                         pos.sendReceipt = false;
+                        pos.sendReceiptTouched = false;
+                        this.$wire.setPosField('send_receipt', false);
                         pos.customerInfo = null;
                         if (pos.pointsToRedeem > 0) {
                             pos.pointsToRedeem = 0;
                             pos.apply(await this.$wire.setPosPoints(0));
                         }
                     } else if (value.replace(/\D/g, '').length >= 9) {
+                        if (!pos.sendReceiptTouched && pos.hasFonnte && pos.autoPrintReceipt) {
+                            pos.sendReceipt = true;
+                            this.$wire.setPosField('send_receipt', true);
+                        }
                         const info = await this.$wire.checkCustomerPoints(value);
                         if (info && info.found) {
                             pos.customerInfo = info;
@@ -779,7 +790,7 @@
                     x-cloak>
                     <input id="cashier-pos-send-receipt" name="send_receipt" type="checkbox" x-model="$store.cashierPos.sendReceipt"
                         :disabled="!$store.cashierPos.customerWa"
-                        @change="$wire.setPosField('send_receipt', $store.cashierPos.sendReceipt)">
+                        @change="$store.cashierPos.sendReceiptTouched = true; $wire.setPosField('send_receipt', $store.cashierPos.sendReceipt)">
                     Kirim struk WhatsApp
                 </label>
             </div>

@@ -31,7 +31,21 @@ class BlogCommentForm
                     ->schema([
                         Select::make('blog_post_id')
                             ->label('Artikel Blog')
-                            ->relationship('blogPost', 'id', FilamentTranslatable::relationshipSearch('title'))
+                            ->relationship(
+                                name: 'blogPost',
+                                titleAttribute: 'id',
+                                modifyQueryUsing: function ($query, ?string $search = null) {
+                                    if (! auth()->user()?->isPlatformOperator()) {
+                                        $query->where('author_id', auth()->id());
+                                    }
+
+                                    if (filled($search)) {
+                                        FilamentTranslatable::search($query, 'title', $search);
+                                    }
+
+                                    return $query;
+                                },
+                            )
                             ->getOptionLabelFromRecordUsing(fn (BlogPost $record): string => static::postLabel($record))
                             ->searchable([])
                             ->preload()

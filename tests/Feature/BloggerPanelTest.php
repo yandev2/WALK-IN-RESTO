@@ -255,7 +255,7 @@ class BloggerPanelTest extends TestCase
             'search_placeholder' => 'Cari resep atau resto favorit...',
         ]);
 
-        $response = $this->get('/blog');
+        $response = $this->get('/id/blog');
         $response->assertSuccessful();
         $response->assertSee('✨ Eksplorasi Kuliner Nusantara Terlengkap');
         $response->assertSee('Dunia Kuliner Spesial Cita Rasa Kita');
