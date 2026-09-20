@@ -153,6 +153,7 @@ class AppServiceProvider extends ServiceProvider
                 'mimes' => 'Format berkas tidak didukung. Harap gunakan format: :values.',
                 'image' => 'Berkas harus berupa gambar yang valid (JPG, PNG, WEBP).',
                 'dimensions' => 'Dimensi gambar tidak sesuai dengan ketentuan.',
+                'uploaded' => 'Gagal mengunggah berkas. Kemungkinan ukuran berkas melebihi batas yang diizinkan (maks. 15 MB) atau format tidak sesuai.',
             ]);
 
             $component->saveUploadedFileUsing(static function (FileUpload $component, TemporaryUploadedFile $file): ?string {

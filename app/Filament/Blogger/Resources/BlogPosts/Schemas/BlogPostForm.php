@@ -315,40 +315,46 @@ class BlogPostForm
                             ->label('Gambar Utama (Featured Image)')
                             ->image()
                             ->imageAspectRatio('16:9')
+                            ->imageCropAspectRatio('16:9')
                             ->panelAspectRatio('16:9')
                             ->imagePreviewHeight('200')
                             ->panelLayout('integrated')
-                            ->automaticallyResizeImagesMode('cover')
-                            ->automaticallyResizeImagesToWidth('1200')
-                            ->automaticallyResizeImagesToHeight('675')
-                            ->automaticallyUpscaleImagesWhenResizing(false)
                             ->imageEditor()
                             ->imageEditorMode(2)
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->directory('blog/featured')
                             ->disk('public')
-                            ->maxSize(8192)
+                            ->maxSize(15360)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->helperText('Format: JPG, PNG, WEBP. Rasio 16:9 lanskap (maks. 8 MB). Pratinjau gambar akan tampil setelah diunggah.'),
+                            ->validationMessages([
+                                'max' => 'Ukuran gambar utama terlalu besar (maksimal 15 MB).',
+                                'mimes' => 'Format berkas harus berupa JPG, PNG, atau WEBP.',
+                                'image' => 'Berkas yang diunggah harus berupa gambar yang valid.',
+                                'uploaded' => 'Gagal mengunggah gambar utama. Pastikan ukuran berkas tidak melebihi 15 MB.',
+                            ])
+                            ->helperText('Format: JPG, PNG, WEBP (maks. 15 MB). Rasio 16:9 lanskap disarankan. Gambar akan otomatis dioptimasi oleh sistem.'),
                         FileUpload::make('og_image')
                             ->label('Gambar Open Graph (Medsos)')
                             ->image()
-                            ->imageAspectRatio('1200:630')
-                            ->panelAspectRatio('1200:630')
+                            ->imageAspectRatio('1.91:1')
+                            ->imageCropAspectRatio('1.91:1')
+                            ->panelAspectRatio('1.91:1')
                             ->imagePreviewHeight('160')
                             ->panelLayout('integrated')
-                            ->automaticallyResizeImagesMode('cover')
-                            ->automaticallyResizeImagesToWidth('1200')
-                            ->automaticallyResizeImagesToHeight('630')
-                            ->automaticallyUpscaleImagesWhenResizing(false)
                             ->imageEditor()
                             ->imageEditorMode(2)
-                            ->imageEditorAspectRatios(['1200:630', '16:9', '1:1'])
+                            ->imageEditorAspectRatios(['1.91:1', '16:9', '1:1'])
                             ->directory('blog/og')
                             ->disk('public')
-                            ->maxSize(8192)
+                            ->maxSize(15360)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->helperText('Format: JPG, PNG, WEBP. Rasio 1200×630 medsos (maks. 8 MB). Opsional: bila kosong otomatis menggunakan gambar utama.'),
+                            ->validationMessages([
+                                'max' => 'Ukuran gambar open graph terlalu besar (maksimal 15 MB).',
+                                'mimes' => 'Format berkas harus berupa JPG, PNG, atau WEBP.',
+                                'image' => 'Berkas yang diunggah harus berupa gambar yang valid.',
+                                'uploaded' => 'Gagal mengunggah gambar open graph. Pastikan ukuran berkas tidak melebihi 15 MB.',
+                            ])
+                            ->helperText('Format: JPG, PNG, WEBP (maks. 15 MB). Rasio 1.91:1 (1200×630 medsos). Opsional: bila kosong otomatis menggunakan gambar utama.'),
                     ]),
 
                 Section::make('Pengaturan SEO')

@@ -153,4 +153,40 @@ trait HandlesTranslatableForm
 
         return false;
     }
+
+    /**
+     * Intercept and humanize Livewire temporary file upload errors for blogger forms.
+     */
+    public function _uploadErrored($name, $errorsInJson, $isMultiple): void
+    {
+        $this->dispatch('upload:errored', name: $name)->self();
+
+        $friendlyAttribute = 'berkas';
+        if (str_contains($name, 'featured_image')) {
+            $friendlyAttribute = 'gambar utama artikel';
+        } elseif (str_contains($name, 'og_image')) {
+            $friendlyAttribute = 'gambar open graph (medsos)';
+        } elseif (str_contains($name, 'content')) {
+            $friendlyAttribute = 'lampiran konten artikel';
+        }
+
+        $friendlyMessage = "Gagal mengunggah {$friendlyAttribute}. Pastikan berkas berformat JPG, PNG, atau WEBP dan ukuran maksimal 15 MB.";
+
+        if (! is_null($errorsInJson)) {
+            $decoded = json_decode($errorsInJson, true);
+            $errors = $decoded['errors'] ?? null;
+
+            if (is_array($errors) && ! empty($errors)) {
+                $rawMsg = (string) (reset($errors)[0] ?? '');
+                if (stripos($rawMsg, 'kilobita') !== false || stripos($rawMsg, 'terlalu besar') !== false || stripos($rawMsg, 'max') !== false || stripos($rawMsg, 'greater than') !== false) {
+                    $friendlyMessage = "Ukuran {$friendlyAttribute} terlalu besar. Maksimal ukuran berkas adalah 15 MB.";
+                } elseif (stripos($rawMsg, 'mimes') !== false || stripos($rawMsg, 'format') !== false) {
+                    $friendlyMessage = "Format berkas {$friendlyAttribute} tidak didukung. Harap gunakan format JPG, PNG, atau WEBP.";
+                }
+            }
+        }
+
+        throw ValidationException::withMessages([$name => $friendlyMessage]);
+    }
 }
+

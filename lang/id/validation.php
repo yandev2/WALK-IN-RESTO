@@ -171,6 +171,11 @@ return [
         'auth_background_path' => 'latar belakang login',
         'og_image_path' => 'gambar share media sosial',
         'thumbnail_path' => 'gambar thumbnail template',
+        'featured_image' => 'gambar utama artikel',
+        'og_image' => 'gambar medsos (open graph)',
+        'data.featured_image' => 'gambar utama artikel',
+        'data.og_image' => 'gambar medsos (open graph)',
+        'files' => 'berkas',
+        'files.0' => 'berkas gambar',
     ],
-
 ];
