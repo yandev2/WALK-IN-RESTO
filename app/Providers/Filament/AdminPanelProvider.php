@@ -230,11 +230,7 @@ HTML
                     $tenant = Filament::getTenant();
                     $user = auth()->user();
 
-                    if (! $tenant instanceof Restaurant || ! $user instanceof User || $user->isPlatformOperator()) {
-                        return new HtmlString('');
-                    }
-
-                    if (! ($user->isSuperAdmin() || $user->can('order.verify_payment') || $user->can('order.view'))) {
+                    if (! $tenant instanceof Restaurant || ! $user instanceof User) {
                         return new HtmlString('');
                     }
 

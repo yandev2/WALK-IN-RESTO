@@ -63,7 +63,15 @@ class KitchenDisplay extends Page implements HasTable
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
-        $this->announcedOrderIds = $this->alertOrderIds();
+        // Only mark orders queued older than 2 minutes as already announced,
+        // allowing freshly queued orders (< 2 minutes) to ring even if kitchen staff reloads KDS.
+        $this->announcedOrderIds = $this->kdsBaseQuery()
+            ->where('kds_status', 'queued')
+            ->where('queued_at', '<', now()->subMinutes(2))
+            ->pluck('order_id')
+            ->unique()
+            ->values()
+            ->all();
     }
 
     public function rendering(): void

@@ -62,7 +62,7 @@
     }
 </style>
 
-<div class="kds-legend">
+<div class="kds-legend" wire:poll.5s="pollAlerts">
     <div class="kds-legend__row">
         <span class="kds-legend__label">Timer</span>
         <span class="kds-legend__chip">
@@ -79,19 +79,34 @@
         </span>
 
         <div
+            wire:ignore.self
             x-data="{
                 muted: localStorage.getItem('resto_kitchen_sound_muted') === '1',
                 customAudioUrl: '{{ \App\Models\PlatformSetting::kitchenSoundUrl() ?? '' }}',
                 audioCtx: null,
-                lastRungTime: 0,
+                audioBuffer: null,
+                audioUnlocked: false,
+                needsUnlockPrompt: false,
+                isPlaying: false,
+                pendingAlert: false,
+                safetyTimer: null,
 
                 init() {
-                    // Auto-unlock AudioContext on first user interaction on the KDS screen
-                    const unlock = () => {
-                        this.getAudioContext();
-                        ['click', 'touchstart', 'keydown'].forEach(evt => window.removeEventListener(evt, unlock));
+                    this.getAudioContext();
+                    this.loadAudioBuffer();
+
+                    if (this.audioCtx && this.audioCtx.state === 'running') {
+                        this.audioUnlocked = true;
+                    } else {
+                        this.needsUnlockPrompt = true;
+                    }
+
+                    // Auto-unlock Audio on first user interaction on the KDS screen
+                    const unlockHandler = () => {
+                        this.unlockAudio();
+                        ['click', 'touchstart', 'keydown'].forEach(evt => window.removeEventListener(evt, unlockHandler));
                     };
-                    ['click', 'touchstart', 'keydown'].forEach(evt => window.addEventListener(evt, unlock, { passive: true }));
+                    ['click', 'touchstart', 'keydown'].forEach(evt => window.addEventListener(evt, unlockHandler, { passive: true, once: true }));
                 },
 
                 getAudioContext() {
@@ -101,10 +116,58 @@
                             this.audioCtx = new AudioContextClass();
                         }
                     }
-                    if (this.audioCtx && this.audioCtx.state === 'suspended') {
-                        this.audioCtx.resume();
-                    }
                     return this.audioCtx;
+                },
+
+                unlockAudio() {
+                    const ctx = this.getAudioContext();
+                    if (ctx && ctx.state === 'suspended') {
+                        ctx.resume().then(() => {
+                            this.audioUnlocked = true;
+                            this.needsUnlockPrompt = false;
+                        }).catch(() => {});
+                    }
+
+                    try {
+                        // Prime HTMLMediaElement with silent 1-sample audio so browsers authorize subsequent background plays
+                        const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+                        silentAudio.volume = 0.01;
+                        const p = silentAudio.play();
+                        if (p !== undefined) {
+                            p.then(() => {
+                                this.audioUnlocked = true;
+                                this.needsUnlockPrompt = false;
+                            }).catch(() => {});
+                        }
+                    } catch (e) {}
+
+                    this.audioUnlocked = true;
+                    this.needsUnlockPrompt = false;
+
+                    if (!this.audioBuffer) {
+                        this.loadAudioBuffer();
+                    }
+                },
+
+                loadAudioBuffer(url = null) {
+                    const targetUrl = url || this.customAudioUrl;
+                    if (!targetUrl) return;
+
+                    const ctx = this.getAudioContext();
+                    if (!ctx) return;
+
+                    fetch(targetUrl)
+                        .then(res => {
+                            if (!res.ok) throw new Error('Network response not ok: ' + res.status);
+                            return res.arrayBuffer();
+                        })
+                        .then(buf => ctx.decodeAudioData(buf))
+                        .then(decoded => {
+                            this.audioBuffer = decoded;
+                        })
+                        .catch(err => {
+                            console.warn('Failed to load/decode custom kitchen audio buffer:', err);
+                        });
                 },
 
                 toggle() {
@@ -118,42 +181,99 @@
                 ringBell(soundUrl = null) {
                     if (this.muted) return;
 
-                    // Debounce rapid/burst triggers within 1.5s
-                    const now = Date.now();
-                    if (now - this.lastRungTime < 1500) {
+                    // Anti-Collision & Rush-Hour Queue Management
+                    if (this.isPlaying) {
+                        this.pendingAlert = true;
                         return;
                     }
-                    this.lastRungTime = now;
+                    this.isPlaying = true;
 
-                    const activeUrl = soundUrl || this.customAudioUrl;
+                    // Safety timeout: Ensure isPlaying never permanently locks queue even if tab is throttled
+                    clearTimeout(this.safetyTimer);
+                    this.safetyTimer = setTimeout(() => {
+                        this.handlePlaybackFinished();
+                    }, 4000);
 
-                    // 1. If custom MP3/WAV file exists, prioritize it
-                    if (activeUrl) {
+                    const ctx = this.getAudioContext();
+                    if (ctx && ctx.state === 'suspended') {
+                        ctx.resume().catch(() => {});
+                    }
+
+                    // 1. Prioritize decoded RAM Web Audio Buffer ONLY if AudioContext is actively running
+                    if (ctx && ctx.state === 'running' && this.audioBuffer) {
                         try {
-                            const audio = new Audio(activeUrl);
+                            const source = ctx.createBufferSource();
+                            source.buffer = this.audioBuffer;
+                            source.connect(ctx.destination);
+                            source.onended = () => {
+                                this.handlePlaybackFinished();
+                            };
+                            source.start(0);
+                            return;
+                        } catch (e) {
+                            console.warn('Web Audio buffer source error in KDS:', e);
+                        }
+                    }
+
+                    // 2. Primary fallback: HTMLMediaElement new Audio (works in background tabs where AudioContext is suspended)
+                    const targetUrl = (typeof soundUrl === 'string' && soundUrl.length > 0)
+                        ? soundUrl
+                        : (this.customAudioUrl || '');
+
+                    if (targetUrl) {
+                        try {
+                            const audio = new Audio(targetUrl);
+                            audio.volume = 1.0;
+                            audio.onended = () => { this.handlePlaybackFinished(); };
+                            audio.onerror = () => { this.synthesizeServiceBell(); };
                             const promise = audio.play();
                             if (promise !== undefined) {
-                                promise.catch((err) => {
-                                    console.warn('Custom kitchen audio playback failed, falling back to synthesizer:', err);
+                                promise.then(() => {
+                                    this.audioUnlocked = true;
+                                    this.needsUnlockPrompt = false;
+                                }).catch((err) => {
+                                    console.warn('KDS HTML Audio play blocked or failed:', err);
+                                    if (err.name === 'NotAllowedError') {
+                                        this.needsUnlockPrompt = true;
+                                        this.audioUnlocked = false;
+                                    }
                                     this.synthesizeServiceBell();
                                 });
                                 return;
                             }
                         } catch (e) {
-                            console.warn('Custom kitchen audio error:', e);
                             this.synthesizeServiceBell();
                             return;
                         }
                     }
 
-                    // 2. Synthesize distinct restaurant kitchen service bell (Web Audio API)
+                    // 3. Procedural Synthesizer Service Bell fallback
                     this.synthesizeServiceBell();
+                },
+
+                handlePlaybackFinished() {
+                    clearTimeout(this.safetyTimer);
+                    this.isPlaying = false;
+                    if (this.pendingAlert) {
+                        this.pendingAlert = false;
+                        // Graceful 400ms pause before ringing next queued alert
+                        setTimeout(() => {
+                            this.ringBell();
+                        }, 400);
+                    }
                 },
 
                 synthesizeServiceBell() {
                     try {
                         const ctx = this.getAudioContext();
-                        if (!ctx) return;
+                        if (!ctx) {
+                            this.handlePlaybackFinished();
+                            return;
+                        }
+
+                        if (ctx.state === 'suspended') {
+                            ctx.resume().catch(() => {});
+                        }
 
                         const now = ctx.currentTime;
 
@@ -181,24 +301,51 @@
                             osc.start(now);
                             osc.stop(now + h.duration);
                         });
+
+                        setTimeout(() => {
+                            this.handlePlaybackFinished();
+                        }, 950);
                     } catch (e) {
                         console.error('KDS Synthesizer error:', e);
+                        this.handlePlaybackFinished();
                     }
                 }
             }"
-            x-on:kds-beep.window="ringBell($event.detail?.soundUrl)"
+            x-on:kds-beep.window="
+                const targetUrl = $event.detail?.soundUrl || (Array.isArray($event.detail) ? $event.detail[0]?.soundUrl : null);
+                ringBell(targetUrl);
+            "
             class="ml-auto inline-flex items-center gap-2 text-xs"
         >
+            <!-- Floating Audio Unlock Prompt for KDS screen if audio is locked -->
+            <div
+                x-show="needsUnlockPrompt && !audioUnlocked && !muted"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2"
+                @click="unlockAudio()"
+                class="fixed top-16 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-xl bg-amber-500 text-white shadow-xl shadow-amber-500/30 cursor-pointer hover:bg-amber-600 transition select-none animate-pulse"
+                title="Sentuh layar sekali untuk mengizinkan bel pesanan otomatis berbunyi"
+            >
+                <span class="text-base">🔊</span>
+                <span>Sentuh layar sekali untuk mengaktifkan bel dapur</span>
+            </div>
+
             <button
                 type="button"
                 @click="toggle()"
                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border font-medium transition select-none cursor-pointer"
                 :class="muted
                     ? 'border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300'
-                    : 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'"
+                    : (audioUnlocked
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+                        : 'border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300')"
                 :title="muted ? 'Klik untuk mengaktifkan bel dapur' : 'Klik untuk mematikan bel dapur'"
             >
-                <span x-text="muted ? '🔇 Bel Dapur Mati' : '🔔 Bel Dapur Aktif'"></span>
+                <span x-text="muted ? '🔇 Bel Dapur Mati' : (audioUnlocked ? '🔔 Bel Dapur Aktif' : '⚠️ Sentuh untuk Aktifkan Bel')"></span>
             </button>
 
             <button

@@ -92,7 +92,46 @@ class CashierOrderSoundAlertTest extends TestCase
         $this->assertSame(0, DB::table('notifications')->count());
     }
 
-    private function createAwaitingOrder(array $world, string $idempotencyKey): Order
+    public function test_cashier_order_sound_alert_does_not_alert_for_orders_created_directly_by_cashier(): void
+    {
+        [$user, $restaurant, $world] = $this->cashierUser();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        $component = Livewire::test(CashierOrderSoundAlert::class)
+            ->assertOk();
+
+        // Order created directly by cashier at counter
+        $this->createAwaitingOrder($world, 'cashier-direct-1', source: 'cashier');
+
+        $component->call('checkNewOrders')
+            ->assertNotDispatched('cashier-order-sound');
+    }
+
+    public function test_cashier_order_sound_alert_alerts_for_guest_orders_regardless_of_simple_mode(): void
+    {
+        [$user, $restaurant, $world] = $this->cashierUser();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel('admin');
+        Filament::setTenant($restaurant);
+
+        // Test in simple mode
+        $world['outlet']->update(['simple_mode' => true]);
+
+        $component = Livewire::test(CashierOrderSoundAlert::class)
+            ->assertOk();
+
+        $this->createAwaitingOrder($world, 'guest-simple-1', source: 'guest');
+
+        $component->call('checkNewOrders')
+            ->assertDispatched('cashier-order-sound', count: 1)
+            ->assertNotified('Pesanan Baru Masuk!');
+    }
+
+    private function createAwaitingOrder(array $world, string $idempotencyKey, string $source = 'guest_qr'): Order
     {
         $visit = Visit::query()->create([
             'restaurant_id' => $world['restaurant']->id,
@@ -110,7 +149,7 @@ class CashierOrderSoundAlertTest extends TestCase
             'visit_id' => $visit->id,
             'number' => rand(100, 999),
             'status' => Order::STATUS_AWAITING_CASHIER,
-            'source' => 'guest_qr',
+            'source' => $source,
             'payment_method' => 'cash',
             'idempotency_key' => $idempotencyKey,
             'currency' => 'IDR',

@@ -1000,10 +1000,12 @@
             aria-label="Tutup"></button>
         <template x-if="$store.cashierPos.editor">
             <div class="cashier-pos-modal__panel" @click.stop>
-                <h3 id="cashier-pos-modal-title">
-                    <span x-text="$store.cashierPos.editor.type === 'edit' ? 'Ubah opsi' : 'Pilih opsi'"></span>:
-                    <span x-text="$store.cashierPos.editor.name"></span>
-                </h3>
+                <div style="margin-bottom: 0.9rem">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400 block"
+                        x-text="$store.cashierPos.editor.type === 'edit' ? 'Ubah Pilihan' : 'Pilih Opsi'"></span>
+                    <h3 id="cashier-pos-modal-title" class="text-slate-900 dark:text-white"
+                        x-text="$store.cashierPos.editor.name"></h3>
+                </div>
 
                 {{-- Pilihan Varian (Wajib jika ada) --}}
                 <template x-if="$store.cashierPos.editor.variants && $store.cashierPos.editor.variants.length > 0">
@@ -1013,10 +1015,13 @@
                             <template x-for="v in $store.cashierPos.editor.variants" :key="v.id">
                                 <label class="cashier-pos-modal__option"
                                     :class="Number($store.cashierPos.editor.variant_id) === Number(v.id) && 'is-checked'">
-                                    <input type="radio" name="pos_variant_choice" :value="v.id"
+                                    <input type="radio" class="sr-only" name="pos_variant_choice" :value="v.id"
                                         :checked="Number($store.cashierPos.editor.variant_id) === Number(v.id)"
                                         @change="$store.cashierPos.editor.variant_id = Number(v.id)">
-                                    <span x-text="v.label"></span>
+                                    <span class="cashier-pos-indicator cashier-pos-indicator--radio" aria-hidden="true">
+                                        <span class="cashier-pos-indicator__dot"></span>
+                                    </span>
+                                    <span class="cashier-pos-modal__option-label" x-text="v.label"></span>
                                 </label>
                             </template>
                         </div>
@@ -1032,12 +1037,17 @@
                                 <label class="cashier-pos-modal__option"
                                     :for="'pos-mod-' + mod.id"
                                     :class="$store.cashierPos.isModOn(mod.id) && 'is-checked'">
-                                    <input type="checkbox"
+                                    <input type="checkbox" class="sr-only"
                                         :id="'pos-mod-' + mod.id"
                                         name="pos_modifiers[]"
                                         :checked="$store.cashierPos.isModOn(mod.id)"
                                         @change="$store.cashierPos.toggleMod(mod.id)">
-                                    <span x-text="mod.label"></span>
+                                    <span class="cashier-pos-indicator cashier-pos-indicator--checkbox" aria-hidden="true">
+                                        <svg class="cashier-pos-indicator__check" viewBox="0 0 16 16" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </span>
+                                    <span class="cashier-pos-modal__option-label" x-text="mod.label"></span>
                                 </label>
                             </template>
                         </div>

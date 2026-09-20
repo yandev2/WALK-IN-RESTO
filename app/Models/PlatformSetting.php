@@ -338,11 +338,11 @@ class PlatformSetting extends Model
         $path = static::optional()?->cashier_sound_path;
 
         if (filled($path)) {
-            return CmsMedia::url($path);
+            return CmsMedia::safeUrl($path);
         }
 
         if (file_exists(public_path('sounds/cashier-order.mp3'))) {
-            return asset('sounds/cashier-order.mp3');
+            return '/sounds/cashier-order.mp3';
         }
 
         return null;
@@ -353,11 +353,11 @@ class PlatformSetting extends Model
         $path = static::optional()?->kitchen_sound_path;
 
         if (filled($path)) {
-            return CmsMedia::url($path);
+            return CmsMedia::safeUrl($path);
         }
 
         if (file_exists(public_path('sounds/kitchen-order.mp3'))) {
-            return asset('sounds/kitchen-order.mp3');
+            return '/sounds/kitchen-order.mp3';
         }
 
         return null;

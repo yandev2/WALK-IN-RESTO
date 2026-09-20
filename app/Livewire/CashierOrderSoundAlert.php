@@ -21,6 +21,8 @@ class CashierOrderSoundAlert extends Component
 
     public int $lastKnownOrderId = 0;
 
+    public ?int $restaurantId = null;
+
     public bool $isInitialized = false;
 
     public function mount(): void
@@ -36,9 +38,12 @@ class CashierOrderSoundAlert extends Component
             return;
         }
 
+        $this->restaurantId = $restaurant->id;
+
         $pendingIds = Order::query()
             ->where('restaurant_id', $restaurant->id)
             ->where('status', Order::STATUS_AWAITING_CASHIER)
+            ->where('source', '!=', 'cashier')
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -52,9 +57,9 @@ class CashierOrderSoundAlert extends Component
 
     public function checkNewOrders(): void
     {
-        $restaurant = Filament::getTenant();
+        $restaurantId = $this->restaurantId ?? Filament::getTenant()?->id;
 
-        if (! $restaurant instanceof Restaurant) {
+        if (! $restaurantId) {
             return;
         }
 
@@ -66,8 +71,9 @@ class CashierOrderSoundAlert extends Component
 
         $newOrders = Order::query()
             ->with(['visit.diningTable'])
-            ->where('restaurant_id', $restaurant->id)
+            ->where('restaurant_id', $restaurantId)
             ->where('status', Order::STATUS_AWAITING_CASHIER)
+            ->where('source', '!=', 'cashier')
             ->where(function ($query) {
                 $query->where('id', '>', $this->lastKnownOrderId)
                     ->orWhereNotIn('id', $this->knownOrderIds);

@@ -5224,11 +5224,5 @@
     "seen": 1789683513.7844222,
     "ast_hash": "678a47861b979d48547d3064db610ad0",
     "semantic_hash": ""
-  },
-  "doc/feature.md": {
-    "mtime": 1789889432.8606615,
-    "seen": 1789889483.2348983,
-    "ast_hash": "1199b479aecaa6e6470bc44301f5ca21",
-    "semantic_hash": ""
   }
 }

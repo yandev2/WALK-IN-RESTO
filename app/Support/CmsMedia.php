@@ -19,6 +19,22 @@ final class CmsMedia
         return Storage::disk('public')->url($path);
     }
 
+    public static function safeUrl(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $url = Storage::disk('public')->url($path);
+        $pathOnly = parse_url($url, PHP_URL_PATH);
+
+        return filled($pathOnly) ? $pathOnly : $url;
+    }
+
     public static function mapsEmbedUrl(?string $embedUrl, mixed $latitude, mixed $longitude): ?string
     {
         if (filled($embedUrl) && self::isAllowedMapEmbed($embedUrl)) {
