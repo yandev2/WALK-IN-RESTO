@@ -1,18 +1,18 @@
-Halo semuanya! Selamat datang di Walk-In Resto.
+Halo semuanya! Selamat datang di Citarasakita.
 
 Pernah nggak sih, kalian lagi lapar-laparnya datang ke restoran, tapi harus nunggu lama cuma buat manggil pelayan minta buku menu? Atau malah harus berdiri antre panjang di depan kasir hanya untuk pesan makanan dan minuman?
 
 Pasti rasanya kurang nyaman, kan?
 
-Nah, di video kali ini, kita bakal melihat betapa mudah dan asyiknya pengalaman memesan makanan lewat fitur Self-Order dari Walk-In Resto. Mulai dari duduk santai di meja, scan kode QR pakai HP, pilih menu favorit, konfirmasi pembayaran di kasir, sampai memberikan ulasan restoran. Semuanya serba cepat, praktis, dan tanpa ribet! Yuk, kita coba bareng-bareng.
+Nah, di video kali ini, kita bakal melihat betapa mudah dan asyiknya pengalaman memesan makanan lewat fitur Self-Order dari Citarasakita. Mulai dari duduk santai di meja, scan kode QR pakai HP, pilih menu favorit, konfirmasi pembayaran di kasir, sampai memberikan ulasan restoran. Semuanya serba cepat, praktis, dan tanpa ribet! Yuk, kita coba bareng-bareng.
 
-Langkah pertama, begitu pelanggan datang dan duduk di meja restoran, mereka akan melihat stiker atau standee kode QR Walk-In Resto dengan nomor meja yang jelas, misalnya meja A-satu.
+Langkah pertama, begitu pelanggan datang dan duduk di meja restoran, mereka akan melihat stiker atau standee kode QR Citarasakita dengan nomor meja yang jelas, misalnya meja A-satu.
 
 Pelanggan nggak perlu repot-repot mengunduh atau menginstal aplikasi apapun di HP mereka. Cukup buka kamera HP atau aplikasi scanner biasa, lalu arahkan ke kode QR yang ada di meja.
 
-Seketika itu juga, browser di ponsel pelanggan akan langsung membuka halaman pemesanan digital Walk-In Resto. Praktis banget dan hemat memori ponsel!
+Seketika itu juga, browser di ponsel pelanggan akan langsung membuka halaman pemesanan digital Citarasakita. Praktis banget dan hemat memori ponsel!
 
-Di halaman awal, pelanggan cukup memasukkan nomor WhatsApp aktif mereka. Nah, serunya sistem Walk-In Resto ini, kalau pelanggan sudah pernah berkunjung sebelumnya, namanya akan otomatis terdeteksi tanpa perlu diketik ulang. 
+Di halaman awal, pelanggan cukup memasukkan nomor WhatsApp aktif mereka. Nah, serunya sistem Citarasakita ini, kalau pelanggan sudah pernah berkunjung sebelumnya, namanya akan otomatis terdeteksi tanpa perlu diketik ulang. 
 
 Dan kalau datangnya rame-rame bareng teman atau keluarga di satu meja, mereka juga bisa langsung bergabung ke pesanan meja yang sama menggunakan kode PIN meja. Jadi, semua orang di meja tersebut bisa pesan makanan bareng-bareng dalam satu sesi pesanan.
 
@@ -26,7 +26,7 @@ Untuk memesan menu simpel, pelanggan cukup mengetuk tombol Tambah. Porsinya juga
 
 Nah, bagaimana kalau pelanggan punya selera khusus? Misalnya mau minumannya dingin, gulanya sedikit, atau mau tambah ekstra topping keju?
 
-Tenang saja, Walk-In Resto punya fitur kustomisasi menu yang sangat fleksibel. Pelanggan tinggal klik tombol Pilih Opsi pada menu yang diinginkan.
+Tenang saja, Citarasakita punya fitur kustomisasi menu yang sangat fleksibel. Pelanggan tinggal klik tombol Pilih Opsi pada menu yang diinginkan.
 
 Di jendela pilihan ini, pelanggan bisa memilih varian, misalnya ukuran porsi Reguler atau Large, mencentang tambahan ekstra topping sesuai selera, dan bahkan menuliskan catatan khusus untuk koki di dapur. Misalnya: "jangan pakai seledri ya", "pedasnya sedang saja", atau "es batunya dipisah".
 
@@ -72,16 +72,16 @@ Setelah semua hidangan dinikmati dengan puas, ada satu langkah terakhir yang san
 
 Pada halaman status meja di HP pelanggan, tombol Beri Ulasan Restoran kini sudah terbuka.
 
-Walk-In Resto membuat proses memberikan ulasan jadi sangat menyenangkan dan mudah. Pelanggan cukup mengetuk ikon bintang, dari satu sampai lima bintang, sesuai tingkat kepuasan mereka terhadap makanan, suasana resto, dan pelayanan staf.
+Citarasakita membuat proses memberikan ulasan jadi sangat menyenangkan dan mudah. Pelanggan cukup mengetuk ikon bintang, dari satu sampai lima bintang, sesuai tingkat kepuasan mereka terhadap makanan, suasana resto, dan pelayanan staf.
 
 Di bawahnya, pelanggan bisa menuliskan komentar atau pesan hangat mereka, misalnya: "Makanannya enak banget, pelayanannya super cepat dan ramah, pasti bakal balik lagi ke sini!"
 
 Lalu, klik tombol Kirim Ulasan.
 
-Ulasan dan rating bintang ini akan langsung masuk ke laporan dashboard pemilik restoran dan secara otomatis membantu meningkatkan reputasi serta rating restoran di direktori publik Walk-In Resto. Restoran bisa terus memantau kepuasan pelanggan, dan pelanggan pun merasa suara mereka benar-benar dihargai.
+Ulasan dan rating bintang ini akan langsung masuk ke laporan dashboard pemilik restoran dan secara otomatis membantu meningkatkan reputasi serta rating restoran di direktori publik Citarasakita. Restoran bisa terus memantau kepuasan pelanggan, dan pelanggan pun merasa suara mereka benar-benar dihargai.
 
 Gimana, seru dan gampang banget, kan?
 
-Dengan alur pemesanan digital dari Walk-In Resto, pelanggan menikmati pengalaman bersantap yang modern, cepat, dan nyaman tanpa antre, sementara pemilik restoran bisa melayani lebih banyak meja dengan operasional yang jauh lebih rapi dan efisien.
+Dengan alur pemesanan digital dari Citarasakita, pelanggan menikmati pengalaman bersantap yang modern, cepat, dan nyaman tanpa antre, sementara pemilik restoran bisa melayani lebih banyak meja dengan operasional yang jauh lebih rapi dan efisien.
 
 Terima kasih sudah menonton panduan ini. Jangan lupa untuk mencoba kemudahan fitur Walk-In Resto di restoran favorit Anda, dan sampai jumpa di video tutorial selanjutnya!

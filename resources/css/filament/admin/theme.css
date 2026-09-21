@@ -90,7 +90,7 @@
 .vision-pill-card {
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
-    border-radius: 1rem;
+    border-radius: 10px;
     color: #0f172a;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: all 0.2s ease;
@@ -163,7 +163,7 @@
 }
 
 /* 6. Form Section Reset for Vision Card */
-.fi-sc-section.vision-card > .fi-section {
+.fi-sc-section.vision-card>.fi-section {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -267,16 +267,16 @@
     transition: all 0.2s ease !important;
 }
 
-.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover {
+.fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover {
     background-color: #f8fafc !important;
 }
 
-.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover {
+.dark .fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover {
     background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 /* Active Item Container: Solid Gradient from primary to accent color */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn {
     position: relative !important;
     background: linear-gradient(135deg, var(--resto-primary, var(--primary-600, #ea580c)) 0%, var(--resto-accent, var(--primary-400, #f97316)) 100%) !important;
     border: none !important;
@@ -285,21 +285,21 @@
     -webkit-backdrop-filter: none !important;
 }
 
-.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+.dark .fi-sidebar-item.fi-active>.fi-sidebar-item-btn {
     background: linear-gradient(135deg, var(--resto-primary, var(--primary-600, #ea580c)) 0%, var(--resto-accent, var(--primary-400, #f97316)) 100%) !important;
     border: none !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* Remove any glowing vertical indicator bar */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn::before {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn::before {
     display: none !important;
     content: none !important;
 }
 
 /* Active Icon: Clean Crisp White inside the solid gradient, no extra inner box */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-icon {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn>.fi-icon,
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn>.fi-sidebar-item-icon {
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 0 !important;
@@ -315,8 +315,8 @@
 }
 
 /* Non-active Icons Alignment & Soft Colors */
-.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn > .fi-icon,
-.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn > .fi-sidebar-item-icon {
+.fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn>.fi-icon,
+.fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn>.fi-sidebar-item-icon {
     width: 1.4rem !important;
     height: 1.4rem !important;
     margin-inline: 0.25rem !important;
@@ -324,36 +324,36 @@
     transition: all 0.2s ease !important;
 }
 
-.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn > .fi-icon,
-.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn > .fi-sidebar-item-icon {
+.dark .fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn>.fi-icon,
+.dark .fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn>.fi-sidebar-item-icon {
     color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover > .fi-icon,
-.fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover > .fi-sidebar-item-icon {
+.fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover>.fi-icon,
+.fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover>.fi-sidebar-item-icon {
     color: var(--resto-primary, var(--primary-600, #ea580c)) !important;
     transform: scale(1.05);
 }
 
-.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover > .fi-icon,
-.dark .fi-sidebar-item:not(.fi-active) > .fi-sidebar-item-btn:hover > .fi-sidebar-item-icon {
+.dark .fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover>.fi-icon,
+.dark .fi-sidebar-item:not(.fi-active)>.fi-sidebar-item-btn:hover>.fi-sidebar-item-icon {
     color: #ffffff !important;
 }
 
 /* Active Label Typography: Crisp Bold White */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn>.fi-sidebar-item-label {
     font-weight: 700 !important;
     color: #ffffff !important;
     text-shadow: none !important;
 }
 
-.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+.dark .fi-sidebar-item.fi-active>.fi-sidebar-item-btn>.fi-sidebar-item-label {
     color: #ffffff !important;
     text-shadow: none !important;
 }
 
 /* Grouped Child Items Active Dot: Crisp White */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-grouped-border > .fi-sidebar-item-grouped-border-part {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-btn>.fi-sidebar-item-grouped-border>.fi-sidebar-item-grouped-border-part {
     background: #ffffff !important;
     box-shadow: none !important;
 }
@@ -385,7 +385,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
-.fi-topbar-item.fi-active .fi-topbar-item-btn > .fi-icon {
+.fi-topbar-item.fi-active .fi-topbar-item-btn>.fi-icon {
     color: #ffffff !important;
     filter: none !important;
 }
@@ -463,8 +463,3 @@
     color: #a5b4fc !important;
     box-shadow: 0 0 12px rgba(99, 102, 241, 0.25) !important;
 }
-
-
-
-
-

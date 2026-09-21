@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Services\CommissionReconciliationService;
 use App\Services\DailyOmzetService;
 use App\Services\Export\CommissionReconciliationExport;
-use App\Support\SubscriptionAccess;
 use App\Support\SubscriptionGate;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -260,6 +259,7 @@ class CommissionReconciliation extends Page implements HasTable
                     ->label('Pesanan')
                     ->prefix('#')
                     ->searchable()
+                    ->color('success')
                     ->sortable()
                     ->weight('bold'),
 
@@ -387,6 +387,8 @@ class CommissionReconciliation extends Page implements HasTable
                         default => 'gray',
                     }),
             ])
+            ->filtersFormWidth('lg')
+            ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('payment_method')
                     ->label('Metode Bayar')

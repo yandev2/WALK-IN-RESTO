@@ -51,7 +51,7 @@
             class="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-white/5">
             <div class="flex items-center gap-2">
                 <span
-                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-sky-500/10 dark:bg-sky-400/10 text-sky-600 dark:text-cyan-400 border border-sky-500/20">
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wide bg-sky-500/10 dark:bg-sky-400/10 text-sky-600 dark:text-cyan-400 border border-sky-500/20">
                     <span class="w-2 h-2 rounded-full bg-sky-500 dark:bg-cyan-400 animate-pulse"></span>
                     OVERVIEW RESTORAN & AKTIVITAS
                 </span>
@@ -60,13 +60,13 @@
             <div class="flex items-center gap-3">
                 @if ($banner['is_kds_active'])
                     <span
-                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wide bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
                         Layanan Kasir & KDS Aktif
                     </span>
                 @else
                     <a href="{{ $banner['billing_url'] ?? '#' }}"
-                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25 hover:bg-rose-500/25 transition-colors">
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wide bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25 hover:bg-rose-500/25 transition-colors">
                         <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                         Layanan Kasir & KDS Non-Aktif (Ada Tunggakan)
                     </a>
@@ -74,7 +74,7 @@
 
                 {{-- Live Clock Capsule --}}
                 <div
-                    class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+                    class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
                     <x-filament::icon icon="heroicon-o-clock" class="h-3.5 w-3.5 text-sky-500 dark:text-cyan-400" />
                     <span class="sr-only">Waktu sekarang</span>
                     <span x-text="time" class="font-mono font-bold"></span>
@@ -144,7 +144,7 @@
                 @endif
 
                 {{-- Tombol bayar jika ada tagihan overdue / KDS non-aktif --}}
-                @if (! $banner['is_kds_active'] && filled($banner['billing_url']))
+                @if (!$banner['is_kds_active'] && filled($banner['billing_url']))
                     <a href="{{ $banner['billing_url'] }}"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 shadow-md shadow-rose-500/25 transition-all duration-200 hover:-translate-y-0.5">
                         <x-filament::icon icon="heroicon-o-credit-card" class="h-4 w-4" />

@@ -122,9 +122,7 @@ class Restaurant extends Model implements HasAvatar, HasName
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return filled($this->logo_path)
-            ? Storage::disk('public')->url($this->logo_path)
-            : null;
+        return \App\Support\CmsMedia::url($this->logo_path);
     }
 
     public function subscriptionPlan(): BelongsTo

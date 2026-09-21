@@ -1,10 +1,10 @@
 # 🎙️ Naskah Video & Voice Over — Perspektif Owner Restoran
-### Walk-In Resto: Kemudahan Pengelolaan dari Dashboard, CRM, hingga Keuangan
+### Citarasakita: Kemudahan Pengelolaan dari Dashboard, CRM, hingga Keuangan
 
 > **Target Durasi**: ±4 – 5 menit  
 > **Struktur Adegan**: 16 Shot Dinamis (Pergantian visual setiap 15–20 detik)  
 > **Tone Suara**: Hangat, inspiratif, profesional, percaya diri, dan solutif.  
-> **Fitur Khusus**: Seluruh prompt gambar di bawah dirancang berbasis **Image Reference / Image-to-Image (img2img)**, sehingga layar laptop, tablet, atau smartphone pada gambar akan menampilkan persis screenshot aplikasi Walk-In Resto yang Anda unggah!
+> **Fitur Khusus**: Seluruh prompt gambar di bawah dirancang berbasis **Image Reference / Image-to-Image (img2img)**, sehingga layar laptop, tablet, atau smartphone pada gambar akan menampilkan persis screenshot aplikasi Citarasakita yang Anda unggah!
 
 ---
 
@@ -29,7 +29,7 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 1: Opening & Sambutan Hangat (0:00 – 0:15)
 * **Porsi Voice Over (VO):**  
-  > "Halo para pemilik restoran dan pebisnis kuliner hebat! Selamat datang di Walk-In Resto."
+  > "Halo para pemilik restoran dan pebisnis kuliner hebat! Selamat datang di Citarasakita."
 * **📸 Screenshot yang Disiapkan:**  
   * **Halaman Web:** Halaman Publik / Landing Page Profil Restoran Anda.
   * **Area:** Area atas (*Hero Banner*) yang memuat nama resto, rating bintang, dan tombol *"Pesan Sekarang"*.
@@ -55,7 +55,7 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 3: Masalah Kertas Manual vs Solusi Modern (0:30 – 0:45)
 * **Porsi Voice Over (VO):**  
-  > "Di industri kuliner yang kompetitif, mengandalkan pencatatan manual atau laporan berbasis kertas sering kali membuat pemilik restoran kewalahan, lambat mengambil keputusan, dan kehilangan potensi omzet yang besar. Kini, semua kekhawatiran itu bisa Anda tinggalkan. Walk-In Resto hadir sebagai solusi manajemen restoran terlengkap yang memberikan kendali penuh atas bisnis Anda hanya dari satu genggaman tangan, kapan pun dan di mana pun."
+  > "Di industri kuliner yang kompetitif, mengandalkan pencatatan manual atau laporan berbasis kertas sering kali membuat pemilik restoran kewalahan, lambat mengambil keputusan, dan kehilangan potensi omzet yang besar. Kini, semua kekhawatiran itu bisa Anda tinggalkan. Citarasakita hadir sebagai solusi manajemen restoran terlengkap yang memberikan kendali penuh atas bisnis Anda hanya dari satu genggaman tangan, kapan pun dan di mana pun."
 * **📸 Screenshot yang Disiapkan:**  
   * **Halaman Web:** Tampilan Admin Filament (`/admin`) dengan sidebar navigasi terbuka lengkap.
   * **Area:** Perlihatkan kelengkapan sidebar menu (*Operasional*, *CRM & Pelanggan*, *Laporan*).
@@ -68,7 +68,7 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 4: Pengantar Video & Akses Dashboard (0:45 – 1:00)
 * **Porsi Voice Over (VO):**  
-  > "Di video ini, kita akan melihat bagaimana kemudahan Walk-In Resto membantu para pemilik restoran mengelola operasional, membaca analitik C-R-M pelanggan, hingga memantau laporan keuangan secara otomatis dan presisi. Mari kita mulai! Pertama, mari kita buka Executive Dashboard Walk-In Resto."
+  > "Di video ini, kita akan melihat bagaimana kemudahan Citarasakita membantu para pemilik restoran mengelola operasional, membaca analitik C-R-M pelanggan, hingga memantau laporan keuangan secara otomatis dan presisi. Mari kita mulai! Pertama, mari kita buka Executive Dashboard Citarasakita."
 * **📸 Screenshot yang Disiapkan:**  
   * **Halaman Web:** Dashboard Utama Admin (`/admin`).
   * **Area:** Tampilan utuh awal: *Welcome Banner Widget*, nama outlet aktif, dan ringkasan metrik.
@@ -133,7 +133,7 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 9: Scan QR Meja & Auto CRM Database (2:05 – 2:25)
 * **Porsi Voice Over (VO):**  
-  > "Selanjutnya, mari kita masuk ke fitur yang menjadi senjata rahasia restoran modern: Analitik C-R-M dan Program Loyalitas Pelanggan. Banyak restoran ramai pengunjung, tapi tidak pernah tahu siapa sebenarnya pelanggan mereka. Di Walk-In Resto, database pelanggan otomatis terbentuk rapi setiap kali tamu memesan makanan melalui scan kode QR di meja atau bertransaksi di kasir."
+  > "Selanjutnya, mari kita masuk ke fitur yang menjadi senjata rahasia restoran modern: Analitik C-R-M dan Program Loyalitas Pelanggan. Banyak restoran ramai pengunjung, tapi tidak pernah tahu siapa sebenarnya pelanggan mereka. Di Citarasakita, database pelanggan otomatis terbentuk rapi setiap kali tamu memesan makanan melalui scan kode QR di meja atau bertransaksi di kasir."
 * **📸 Screenshot yang Disiapkan:**  
   * **Halaman Web:** Modal Cetak QR Meja (`/admin/dining-tables`) bersanding dengan layar ponsel tamu scan meja (`/meja/...`).
   * **Area:** Tampilan QR Meja atau formulir nama & WhatsApp tamu.
@@ -198,7 +198,7 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 14: Laporan Keuangan Otomatis & Ekspor Excel/PDF (3:55 – 4:20)
 * **Porsi Voice Over (VO):**  
-  > "Terakhir, mari kita lihat pilar paling krusial bagi kelangsungan bisnis Anda: Manajemen Keuangan dan Laporan Akuntansi. Walk-In Resto menyediakan pusat pelaporan otomatis di menu Buat Laporan. Anda tidak perlu lagi membuang waktu berjam-jam mengumpulkan nota kertas di akhir bulan. Cukup pilih modul laporan yang Anda butuhkan: Mulai dari Ringkasan Omzet Harian, Daftar Penjualan per Kategori Menu, Rincian Penjualan per Order, Laporan Pembatalan atau Void Transaksi, hingga Rekapitulasi Katalog Menu. Tentukan rentang tanggalnya, pilih format berkas yang Anda inginkan, apakah lembar kerja Excel untuk pembukuan akuntansi mendalam, atau dokumen pe-de-ef siap cetak yang rapi untuk arsip manajemen. Semua laporan diproses cepat di latar belakang dan siap Anda unduh kapan saja dari riwayat ekspor."
+  > "Terakhir, mari kita lihat pilar paling krusial bagi kelangsungan bisnis Anda: Manajemen Keuangan dan Laporan Akuntansi. Citarasakita menyediakan pusat pelaporan otomatis di menu Buat Laporan. Anda tidak perlu lagi membuang waktu berjam-jam mengumpulkan nota kertas di akhir bulan. Cukup pilih modul laporan yang Anda butuhkan: Mulai dari Ringkasan Omzet Harian, Daftar Penjualan per Kategori Menu, Rincian Penjualan per Order, Laporan Pembatalan atau Void Transaksi, hingga Rekapitulasi Katalog Menu. Tentukan rentang tanggalnya, pilih format berkas yang Anda inginkan, apakah lembar kerja Excel untuk pembukuan akuntansi mendalam, atau dokumen pe-de-ef siap cetak yang rapi untuk arsip manajemen. Semua laporan diproses cepat di latar belakang dan siap Anda unduh kapan saja dari riwayat ekspor."
 * **📸 Screenshot yang Disiapkan:**  
   * **Halaman Web:** Menu `Laporan > Buat laporan` (`/admin/laporan`) dan `Riwayat ekspor` (`/admin/export-files`).
   * **Area:** Form pemilihan modul, tombol Excel/PDF, dan tabel file siap unduh (*Completed*).
@@ -224,13 +224,13 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 
 ### 🎬 SCENE 16: Ketenangan Pikiran & Penutup Sukses (4:40 – 5:05)
 * **Porsi Voice Over (VO):**  
-  > "Kini, mengelola bisnis restoran tidak lagi melelahkan dan penuh teka-teki. Bersama Walk-In Resto, Anda tidak hanya memiliki mesin kasir digital, tetapi sebuah sistem manajemen restoran pintar yang bekerja tanpa henti untuk mengamankan keuangan Anda, membangun loyalitas pelanggan, dan memberikan ketenangan pikiran bagi Anda sebagai pemilik bisnis. Saatnya beralih ke manajemen restoran yang profesional, modern, dan terukur. Kelola restoran Anda dengan lebih cerdas bersama Walk-In Resto. Terima kasih, dan salam sukses untuk bisnis kuliner Anda!"
+  > "Kini, mengelola bisnis restoran tidak lagi melelahkan dan penuh teka-teki. Bersama Citarasakita, Anda tidak hanya memiliki mesin kasir digital, tetapi sebuah sistem manajemen restoran pintar yang bekerja tanpa henti untuk mengamankan keuangan Anda, membangun loyalitas pelanggan, dan memberikan ketenangan pikiran bagi Anda sebagai pemilik bisnis. Saatnya beralih ke manajemen restoran yang profesional, modern, dan terukur. Kelola restoran Anda dengan lebih cerdas bersama Citarasakita. Terima kasih, dan salam sukses untuk bisnis kuliner Anda!"
 * **📸 Screenshot yang Disiapkan:**  
-  * **Halaman Web:** Dashboard Utama Admin atau Halaman Landing Page Utama Walk-In Resto dengan logo resto.
+  * **Halaman Web:** Dashboard Utama Admin atau Halaman Landing Page Utama Citarasakita dengan logo resto.
   * **Area:** Tampilan utuh branding dan profil restoran.
 * **🎨 Prompt AI Berbasis Screenshot Referensi:**  
   ```text
-  [ATTACHED_SCREENSHOT] A triumphant and smiling restaurant owner standing proudly outside their bustling, aesthetic restaurant during sunset golden hour. The owner holds a sleek tablet displaying the exact Walk-In Resto homepage dashboard from the attached reference screenshot. Cinematic lighting, proud successful business portrait, 8k resolution --ar 16:9 --iw 2.0
+  [ATTACHED_SCREENSHOT] A triumphant and smiling restaurant owner standing proudly outside their bustling, aesthetic restaurant during sunset golden hour. The owner holds a sleek tablet displaying the exact Citarasakita homepage dashboard from the attached reference screenshot. Cinematic lighting, proud successful business portrait, 8k resolution --ar 16:9 --iw 2.0
   ```
 
 ---
@@ -238,17 +238,17 @@ Saat membuat gambar menggunakan AI Generator, ikuti langkah mudah berikut:
 ## 📋 FORMAT TEKS BERSIH (Untuk AI Voice Generator)
 
 ```text
-Halo para pemilik restoran dan pebisnis kuliner hebat! Selamat datang di Walk-In Resto.
+Halo para pemilik restoran dan pebisnis kuliner hebat! Selamat datang di Citarasakita.
 
 Sebagai pemilik restoran, pernahkah Anda merasa cemas saat sedang berada di luar outlet? Apakah omzet hari ini sudah mencapai target? Berapa banyak pesanan yang sedang berjalan? Apakah ada uang kas yang bocor atau tidak seimbang? Dan apakah pelanggan yang datang hari ini merasa puas dengan hidangan dan pelayanan staf Anda?
 
 Di industri kuliner yang kompetitif, mengandalkan pencatatan manual atau laporan berbasis kertas sering kali membuat pemilik restoran kewalahan, lambat mengambil keputusan, dan kehilangan potensi omzet yang besar.
 
-Kini, semua kekhawatiran itu bisa Anda tinggalkan. Walk-In Resto hadir sebagai solusi manajemen restoran terlengkap yang memberikan kendali penuh atas bisnis Anda hanya dari satu genggaman tangan, kapan pun dan di mana pun.
+Kini, semua kekhawatiran itu bisa Anda tinggalkan. Citarasakita hadir sebagai solusi manajemen restoran terlengkap yang memberikan kendali penuh atas bisnis Anda hanya dari satu genggaman tangan, kapan pun dan di mana pun.
 
-Di video ini, kita akan melihat bagaimana kemudahan Walk-In Resto membantu para pemilik restoran mengelola operasional, membaca analitik C-R-M pelanggan, hingga memantau laporan keuangan secara otomatis dan presisi. Mari kita mulai!
+Di video ini, kita akan melihat bagaimana kemudahan Citarasakita membantu para pemilik restoran mengelola operasional, membaca analitik C-R-M pelanggan, hingga memantau laporan keuangan secara otomatis dan presisi. Mari kita mulai!
 
-Pertama, mari kita buka Executive Dashboard Walk-In Resto. Begitu Anda masuk ke halaman admin, Anda langsung disambut dengan tampilan dasbor modern yang sangat informatif dan bersih.
+Pertama, mari kita buka Executive Dashboard Citarasakita. Begitu Anda masuk ke halaman admin, Anda langsung disambut dengan tampilan dasbor modern yang sangat informatif dan bersih.
 
 Semua indikator kinerja utama atau K-P-I restoran Anda tersaji secara real-time dan otomatis diperbarui setiap tiga puluh detik. Anda bisa melihat total omzet hari ini, total transaksi pesanan yang sukses, hingga persentase perbandingan performa penjualan dibanding hari kemarin atau minggu lalu. Apakah omzet sedang naik atau turun, grafiknya terlihat sangat jelas!
 
@@ -256,7 +256,7 @@ Dasbor ini juga merinci metode pembayaran yang masuk, berapa rupiah yang diterim
 
 Bahkan, jika ada transaksi yang dibatalkan atau void, sistem akan langsung menampilkannya di dasbor. Tidak ada lagi celah kecurangan atau kebocoran uang yang luput dari pantauan Anda!
 
-Selanjutnya, mari kita masuk ke fitur yang menjadi senjata rahasia restoran modern: Analitik C-R-M dan Program Loyalitas Pelanggan. Banyak restoran ramai pengunjung, tapi tidak pernah tahu siapa sebenarnya pelanggan mereka. Di Walk-In Resto, database pelanggan otomatis terbentuk rapi setiap kali tamu memesan makanan melalui scan kode QR di meja atau bertransaksi di kasir.
+Selanjutnya, mari kita masuk ke fitur yang menjadi senjata rahasia restoran modern: Analitik C-R-M dan Program Loyalitas Pelanggan. Banyak restoran ramai pengunjung, tapi tidak pernah tahu siapa sebenarnya pelanggan mereka. Di Citarasakita, database pelanggan otomatis terbentuk rapi setiap kali tamu memesan makanan melalui scan kode QR di meja atau bertransaksi di kasir.
 
 Di halaman Analitik C-R-M, Anda bisa melihat data yang sangat berharga: Mulai dari total database pelanggan, persentase repeat customer atau pelanggan setia yang sering kembali, rata-rata nilai transaksi setiap meja, hingga Customer Lifetime Value atau total nilai belanja pelanggan selama menjadi langganan di restoran Anda.
 
@@ -266,13 +266,13 @@ Tidak hanya itu, Anda juga bisa mengaktifkan Program Tier Member dan Poin Loyali
 
 Bagaimana dengan ulasan dan kepuasan pelanggan? Di menu Analitik Kepuasan Pelanggan, Anda bisa membaca rangkuman rating bintang dan pesan ulasan jujur yang dikirimkan tamu langsung dari meja mereka setelah selesai makan. Jika ada masukan tentang rasa makanan yang kurang pas atau pelayanan yang lambat, Anda bisa mengetahuinya seketika sebelum komplain tersebut tersebar di media sosial. Anda bisa segera melakukan evaluasi dapur dan staf dengan cepat dan tepat sasaran.
 
-Terakhir, mari kita lihat pilar paling krusial bagi kelangsungan bisnis Anda: Manajemen Keuangan dan Laporan Akuntansi. Walk-In Resto menyediakan pusat pelaporan otomatis di menu Buat Laporan. Anda tidak perlu lagi membuang waktu berjam-jam mengumpulkan nota kertas di akhir bulan. Cukup pilih modul laporan yang Anda butuhkan: Mulai dari Ringkasan Omzet Harian, Daftar Penjualan per Kategori Menu, Rincian Penjualan per Order, Laporan Pembatalan atau Void Transaksi, hingga Rekapitulasi Katalog Menu.
+Terakhir, mari kita lihat pilar paling krusial bagi kelangsungan bisnis Anda: Manajemen Keuangan dan Laporan Akuntansi. Citarasakita menyediakan pusat pelaporan otomatis di menu Buat Laporan. Anda tidak perlu lagi membuang waktu berjam-jam mengumpulkan nota kertas di akhir bulan. Cukup pilih modul laporan yang Anda butuhkan: Mulai dari Ringkasan Omzet Harian, Daftar Penjualan per Kategori Menu, Rincian Penjualan per Order, Laporan Pembatalan atau Void Transaksi, hingga Rekapitulasi Katalog Menu.
 
 Tentukan rentang tanggalnya, pilih format berkas yang Anda inginkan, apakah lembar kerja Excel untuk pembukuan akuntansi mendalam, atau dokumen pe-de-ef siap cetak yang rapi untuk arsip manajemen. Semua laporan diproses cepat di latar belakang dan siap Anda unduh kapan saja dari riwayat ekspor.
 
 Selain itu, sistem rekonsiliasi kasir kami yang menggunakan metode Blind Cash Count menjamin seluruh uang fisik di laci kasir cocok dengan pencatatan sistem. Setiap catatan uang kas kecil untuk belanja darurat, uang masuk, dan selisih kas fisik tercatat transparan di setiap penutupan shift kasir.
 
-Kini, mengelola bisnis restoran tidak lagi melelahkan dan penuh teka-teki. Bersama Walk-In Resto, Anda tidak hanya memiliki mesin kasir digital, tetapi sebuah sistem manajemen restoran pintar yang bekerja tanpa henti untuk mengamankan keuangan Anda, membangun loyalitas pelanggan, dan memberikan ketenangan pikiran bagi Anda sebagai pemilik bisnis.
+Kini, mengelola bisnis restoran tidak lagi melelahkan dan penuh teka-teki. Bersama Citarasakita, Anda tidak hanya memiliki mesin kasir digital, tetapi sebuah sistem manajemen restoran pintar yang bekerja tanpa henti untuk mengamankan keuangan Anda, membangun loyalitas pelanggan, dan memberikan ketenangan pikiran bagi Anda sebagai pemilik bisnis.
 
-Saatnya beralih ke manajemen restoran yang profesional, modern, dan terukur. Kelola restoran Anda dengan lebih cerdas bersama Walk-In Resto. Terima kasih, dan salam sukses untuk bisnis kuliner Anda!
+Saatnya beralih ke manajemen restoran yang profesional, modern, dan terukur. Kelola restoran Anda dengan lebih cerdas bersama Citarasakita. Terima kasih, dan salam sukses untuk bisnis kuliner Anda!
 ```

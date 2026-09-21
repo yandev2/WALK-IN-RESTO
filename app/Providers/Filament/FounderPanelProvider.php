@@ -42,8 +42,11 @@ class FounderPanelProvider extends PanelProvider
             ->path('founder')
             ->login(Login::class)
             ->brandName('Citarasa Founder')
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('18rem')
             ->favicon(function (): ?string {
                 $platformFavicon = PlatformSetting::homeViewData()['favicon_url'] ?? asset('favicon.ico');
+
                 return filled($platformFavicon) && ! str_starts_with($platformFavicon, 'http://') && ! str_starts_with($platformFavicon, 'https://')
                     ? url($platformFavicon)
                     : $platformFavicon;

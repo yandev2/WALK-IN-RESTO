@@ -57,7 +57,7 @@
                                 @endphp
                                 <div class="mt-2.5">
                                     <span
-                                        class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-full border {{ $badgeClasses }}">
+                                        class="inline-flex items-center text-[11px] font-bold px-2.5 py-0.5 rounded-md border {{ $badgeClasses }}">
                                         {{ $card['badge'] }}
                                     </span>
                                 </div>

@@ -1,8 +1,8 @@
-Halo, selamat datang di video panduan resmi Walk-In Resto.
+Halo, selamat datang di video panduan resmi Citarasakita.
 
 Dalam operasional bisnis kuliner, area kasir adalah titik paling krusial. Kasir yang lambat atau sistem yang rumit sering kali membuat antrean menumpuk, kasir kewalahan, hingga risiko salah hitung uang kembalian.
 
-Oleh karena itu, Walk-In Resto menghadirkan sistem kasir atau Point of Sales yang dirancang khusus, sangat cepat, intuitif, dan bebas ribet.
+Oleh karena itu, Citarasakita menghadirkan sistem kasir atau Point of Sales yang dirancang khusus, sangat cepat, intuitif, dan bebas ribet.
 
 Di video ini, kita akan membahas panduan lengkap fitur kasir secara mendalam, mulai dari membuka shift kerja kasir, memilih meja dan menginput pesanan tamu, menangani menu dengan varian dan catatan khusus, memproses pembayaran tunai maupun Kris, mencatat kas masuk dan kas keluar operasional, hingga melakukan rekonsiliasi tutup shift di akhir hari dengan metode Blind Cash Count. Mari kita simak langkah-langkahnya bersama-sama.
 
@@ -20,7 +20,7 @@ Perhatikan layar Anda sekarang. Lencana kuning tadi otomatis berubah menjadi len
 
 Sekarang, mari kita simulasikan pembuatan pesanan baru pelanggan. Pertama-tama, arahkan pandangan Anda ke panel formulir di sisi kanan layar. Pilih nomor meja tempat pelanggan duduk, misalnya meja A-satu. Sistem ini terintegrasi penuh dengan data meja restoran Anda, memudahkan pelayan maupun kasir mengidentifikasi pesanan makan di tempat.
 
-Selanjutnya, masukkan nama pelanggan dan nomor WhatsApp aktif. Mengapa nomor WhatsApp ini sangat disarankan? Karena selain untuk pengiriman struk digital secara otomatis, sistem Walk-In Resto memiliki integrasi program loyalitas pelanggan yang cerdas.
+Selanjutnya, masukkan nama pelanggan dan nomor WhatsApp aktif. Mengapa nomor WhatsApp ini sangat disarankan? Karena selain untuk pengiriman struk digital secara otomatis, sistem Citarasakita memiliki integrasi program loyalitas pelanggan yang cerdas.
 
 Jika nomor pelanggan sudah terdaftar sebelumnya, kartu hijau Member Loyalty akan langsung muncul di layar lengkap dengan jumlah poin yang mereka kumpulkan dari kunjungan-kunjungan sebelumnya. Poin ini nantinya bisa langsung ditukarkan menjadi potongan harga!
 
@@ -34,9 +34,9 @@ Lalu, bagaimana jika pelanggan memesan menu yang memiliki varian atau permintaan
 
 Di sini, kasir bisa memilih varian yang diinginkan, misalnya ukuran Regular atau Large, mencentang ekstra topping atau tambahan lauk, serta mengetikkan catatan khusus di kolom keterangan seperti, kurangi pedas, es batunya sedikit saja, atau kuah dipisahkan. Catatan ini akan otomatis tercetak di struk pesanan dapur. Setelah selesai, klik Simpan.
 
-Menu berpilihan tadi langsung tampil di keranjang dengan rincian yang sangat rapi. Lihat ke bagian bawah keranjang belanja. Sistem Walk-In Resto secara otomatis menghitung subtotal belanja, service charge, serta pajak restoran atau pe-be-satu sesuai ketentuan outlet Anda. Kasir tidak perlu lagi menghitung kalkulator manual sehingga risiko kesalahan hitung bisa dihindari sepenuhnya.
+Menu berpilihan tadi langsung tampil di keranjang dengan rincian yang sangat rapi. Lihat ke bagian bawah keranjang belanja. Sistem Citarasakita secara otomatis menghitung subtotal belanja, service charge, serta pajak restoran atau pe-be-satu sesuai ketentuan outlet Anda. Kasir tidak perlu lagi menghitung kalkulator manual sehingga risiko kesalahan hitung bisa dihindari sepenuhnya.
 
-Setelah semua pesanan pelanggan selesai diinput ke keranjang, saatnya kita menyelesaikan transaksi pembayaran. Walk-In Resto mendukung fleksibilitas metode pembayaran yang sering digunakan di restoran.
+Setelah semua pesanan pelanggan selesai diinput ke keranjang, saatnya kita menyelesaikan transaksi pembayaran. Citarasakita mendukung fleksibilitas metode pembayaran yang sering digunakan di restoran.
 
 Opsi pertama adalah Pembayaran Tunai. Secara default, metode Tunai sudah aktif. Kasir tinggal memasukkan nominal uang yang diserahkan pelanggan pada kolom uang diterima. Jika pelanggan membayar dengan uang pas, cukup klik tombol bantuan Uang Pas. Sistem seketika menghitung nominal kembalian dengan angka yang besar dan jelas. Jika uang yang dimasukkan kurang, sistem akan memberikan tanda peringatan berwarna merah sehingga kasir tidak akan salah memberikan kembalian.
 
@@ -52,7 +52,7 @@ Kasir dapat menekan tombol Cetak Struk untuk mencetak nota ke printer thermal, a
 
 Dalam operasional harian sebuah restoran, kasir kerap kali harus mencatat pengeluaran uang tunai mendadak. Misalnya untuk membeli es batu darurat, membeli air galon, membayar biaya parkir kurir logistik, atau bahkan menerima setoran uang tambahan dari brankas.
 
-Walk-In Resto menyediakan fitur Kas Masuk dan Kas Keluar yang sangat praktis. Kasir cukup menekan tombol Plus Minus Kas yang ada di bar shift bagian atas.
+Citarasakita menyediakan fitur Kas Masuk dan Kas Keluar yang sangat praktis. Kasir cukup menekan tombol Plus Minus Kas yang ada di bar shift bagian atas.
 
 Pilih jenis transaksinya, klik Kas Keluar untuk mencatat belanja operasional, atau Kas Masuk untuk penambahan kas. Tentukan kategori keperluannya, masukkan nominal uangnya, serta berikan catatan keterangan yang jelas.
 
@@ -60,7 +60,7 @@ Setelah itu, klik tombol Simpan Mutasi. Saldo estimasi di laci kasir otomatis te
 
 Ketika jam operasional restoran selesai atau tiba saatnya pergantian shift kasir, kasir yang bertugas wajib melakukan proses penutupan shift. Klik tombol Tutup Shift di pojok kanan atas layar.
 
-Perhatikan keunggulan sistem kami. Walk-In Resto menggunakan metode Blind Cash Count atau hitung kas buta. Artinya, sistem sengaja tidak menampilkan berapa total uang yang seharusnya ada di dalam laci. Kasir diwajibkan menghitung uang kertas dan koin fisik yang ada di laci secara mandiri terlebih dahulu, lalu menginput jumlah fisiknya ke sistem.
+Perhatikan keunggulan sistem kami. Citarasakita menggunakan metode Blind Cash Count atau hitung kas buta. Artinya, sistem sengaja tidak menampilkan berapa total uang yang seharusnya ada di dalam laci. Kasir diwajibkan menghitung uang kertas dan koin fisik yang ada di laci secara mandiri terlebih dahulu, lalu menginput jumlah fisiknya ke sistem.
 
 Metode ini merupakan standar audit terbaik di industri ritel dan resto modern untuk mencegah kecurangan, menjaga kejujuran staf kasir, dan memastikan akurasi data keuangan pemilik restoran.
 
@@ -70,8 +70,8 @@ Seketika itu juga, sistem akan membuka Laporan Rekonsiliasi Kas Lengkap. Mulai d
 
 Jika perhitungan seimbang, status akan berwarna hijau bertuliskan PAS. Jika terdapat kekurangan, status akan berwarna merah MINUS, dan jika berlebih akan ditandai berwarna biru. Kasir atau manajer dapat langsung menekan tombol Cetak Struk Shift untuk mengunduh rekapitulasi laporan lengkap dalam format pe-de-ef sebagai bukti pertanggungjawaban fisik.
 
-Luar biasa! Anda telah melihat betapa lengkap dan mudahnya sistem kasir di Walk-In Resto. Mulai dari pembukaan shift yang tertib, input pesanan yang cepat dan fleksibel, kemudahan pembayaran tunai dan non-tunai, pencatatan kas operasional, hingga rekonsiliasi tutup shift yang transparan dan akurat.
+Luar biasa! Anda telah melihat betapa lengkap dan mudahnya sistem kasir di Citarasakita. Mulai dari pembukaan shift yang tertib, input pesanan yang cepat dan fleksibel, kemudahan pembayaran tunai dan non-tunai, pencatatan kas operasional, hingga rekonsiliasi tutup shift yang transparan dan akurat.
 
 Semua dirancang agar staf kasir Anda dapat bekerja lebih cepat, meminimalkan risiko kesalahan manusia, dan memberikan pengalaman transaksi terbaik bagi para pelanggan restoran Anda.
 
-Tingkatkan standar operasional restoran Anda sekarang juga bersama Walk-In Resto! Jika Anda memiliki pertanyaan lebih lanjut, tim support kami selalu siap membantu Anda. Terima kasih sudah menonton, dan sukses selalu untuk bisnis restoran Anda!
+Tingkatkan standar operasional restoran Anda sekarang juga bersama Citarasakita! Jika Anda memiliki pertanyaan lebih lanjut, tim support kami selalu siap membantu Anda. Terima kasih sudah menonton, dan sukses selalu untuk bisnis restoran Anda!

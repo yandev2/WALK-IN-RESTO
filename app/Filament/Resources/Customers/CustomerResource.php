@@ -70,6 +70,7 @@ class CustomerResource extends Resource
                 TextColumn::make('tier')
                     ->label('Member Tier')
                     ->badge()
+                    ->alignCenter()
                     ->color(fn (Customer $record): string => $record->badgeColor())
                     ->formatStateUsing(fn (Customer $record): string => $record->tierLabel())
                     ->visible(fn (): bool => static::isLoyaltyEnabled()),
@@ -77,19 +78,19 @@ class CustomerResource extends Resource
                 TextColumn::make('total_orders')
                     ->label('Kunjungan')
                     ->sortable()
-                    ->alignEnd(),
+                    ->alignCenter(),
 
                 TextColumn::make('total_spent')
                     ->label('Total Belanja (LTV)')
                     ->formatStateUsing(fn ($state): string => CmsMedia::formatIdr((int) $state))
                     ->sortable()
-                    ->alignEnd(),
+                    ->alignCenter(),
 
                 TextColumn::make('points_balance')
                     ->label('Saldo Poin')
                     ->numeric()
                     ->sortable()
-                    ->alignEnd()
+                    ->alignCenter()
                     ->visible(fn (): bool => static::isLoyaltyEnabled()),
 
                 TextColumn::make('last_visit_at')
@@ -97,6 +98,8 @@ class CustomerResource extends Resource
                     ->formatStateUsing(fn ($state): string => $state ? $state->diffForHumans() : '-')
                     ->sortable(),
             ])
+            ->filtersFormWidth('lg')
+            ->filtersFormColumns(1)
             ->filters([
                 SelectFilter::make('tier')
                     ->label('Tier Member')

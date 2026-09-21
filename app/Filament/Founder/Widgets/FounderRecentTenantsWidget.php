@@ -30,8 +30,9 @@ class FounderRecentTenantsWidget extends BaseTableWidget
             ->columns([
                 ImageColumn::make('logo_path')
                     ->label('Logo')
+                    ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(asset('images/default-avatar.png')),
+                    ->defaultImageUrl(fn (Restaurant $record): string => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=F97316&background=FFEDD5'),
 
                 TextColumn::make('name')
                     ->label('Nama Resto')

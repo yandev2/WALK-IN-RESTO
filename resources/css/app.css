@@ -768,7 +768,21 @@ html.dark {
 .directory-range-slider:disabled {
     cursor: not-allowed;
     opacity: 0.45;
-    background: var(--slider-track-bg);
+    background: var(--slider-track-bg) !important;
+}
+
+.directory-range-slider:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+    background: #a1a1aa;
+    box-shadow: none;
+    transform: none;
+}
+
+.directory-range-slider:disabled::-moz-range-thumb {
+    cursor: not-allowed;
+    background: #a1a1aa;
+    box-shadow: none;
+    transform: none;
 }
 
 .directory-range-slider::-webkit-slider-thumb {
