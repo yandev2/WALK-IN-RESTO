@@ -77,6 +77,18 @@ class ScanTable extends Component
             return;
         }
 
+        $throttleKey = $this->lookupThrottleKey();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->waChecked = true;
+            $this->isExistingCustomer = false;
+            $this->isNameReadOnly = false;
+            $this->message = 'Terlalu banyak percobaan pencarian nomor. Silakan ketik nama Anda secara manual.';
+
+            return;
+        }
+
+        RateLimiter::hit($throttleKey, 60);
+
         $customer = Customer::withoutRestaurantScope()
             ->where('restaurant_id', $table->restaurant_id)
             ->where('phone', $phone)
@@ -115,6 +127,8 @@ class ScanTable extends Component
 
             return null;
         }
+
+        RateLimiter::clear($this->lookupThrottleKey());
 
         $customer = Customer::withoutRestaurantScope()
             ->where('restaurant_id', $table->restaurant_id)
@@ -275,5 +289,12 @@ class ScanTable extends Component
     private function table(): ?DiningTable
     {
         return TableQrToken::resolve($this->token);
+    }
+
+    public function lookupThrottleKey(): string
+    {
+        $device = GuestContext::deviceToken() ?? request()->ip() ?? 'unknown';
+
+        return 'scan-lookup:'.sha1($device.'|'.request()->ip());
     }
 }

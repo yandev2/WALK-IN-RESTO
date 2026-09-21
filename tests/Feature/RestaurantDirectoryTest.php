@@ -212,4 +212,56 @@ class RestaurantDirectoryTest extends TestCase
             ->assertOk()
             ->assertDontSee('recommended-slider-container', false);
     }
+
+    public function test_location_defaults_to_all_distances_sorted_by_nearest(): void
+    {
+        $totalActive = Restaurant::query()->listedInDirectory()->count();
+
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->call('setUserLocation', -6.2615, 106.8108, 20)
+            ->assertSet('sort', 'distance')
+            ->assertSet('locationStatus', 'granted')
+            ->assertSet('maxDistanceKm', null);
+
+        $this->assertSame($totalActive, $component->viewData('totalCount'));
+
+        $cards = $component->viewData('cards');
+        $this->assertNotEmpty($cards);
+
+        // Check that cards with distance are ordered ascending (nearest first)
+        $distances = collect($cards)
+            ->pluck('distance_km')
+            ->filter(fn ($d) => $d !== null)
+            ->values();
+
+        $sortedDistances = $distances->sort()->values();
+        $this->assertEquals($sortedDistances->all(), $distances->all());
+    }
+
+    public function test_custom_max_distance_filters_restaurants_and_can_be_reset_to_all(): void
+    {
+        $totalActive = Restaurant::query()->listedInDirectory()->count();
+
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->call('setUserLocation', -6.2615, 106.8108, 20)
+            ->assertSet('maxDistanceKm', null)
+            ->set('maxDistanceKm', 1);
+
+        $countWith1Km = $component->viewData('totalCount');
+        $this->assertLessThan($totalActive, $countWith1Km);
+
+        // Reset to all distances by setting null
+        $component->set('maxDistanceKm', null);
+        $this->assertSame($totalActive, $component->viewData('totalCount'));
+    }
+
+    public function test_reset_filters_preserves_null_max_distance_and_distance_sort_when_granted(): void
+    {
+        Livewire::test(RestaurantDirectory::class)
+            ->call('setUserLocation', -6.2615, 106.8108, 20)
+            ->set('maxDistanceKm', 5)
+            ->call('resetFilters')
+            ->assertSet('maxDistanceKm', null)
+            ->assertSet('sort', 'distance');
+    }
 }

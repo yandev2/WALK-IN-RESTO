@@ -72,7 +72,7 @@
                     </div>
                 @else
                     <div
-                        wire:key="directory-results-{{ $viewMode }}-{{ $sort }}-{{ $maxDistanceKm }}"
+                        wire:key="directory-results-{{ $viewMode }}-{{ $sort }}-{{ $maxDistanceKm ?? 'all' }}"
                         @class([
                             'grid items-start gap-4',
                             'grid-cols-1' => $viewMode === 'list',
@@ -237,13 +237,13 @@
 
     window.markDirectoryLocationSkipped = window.markDirectoryLocationSkipped || function () {
         try {
-            localStorage.setItem(window.directoryLocationSkipKey, '1');
+            sessionStorage.setItem(window.directoryLocationSkipKey, '1');
         } catch (error) {}
     };
 
     window.clearDirectoryLocationSkip = window.clearDirectoryLocationSkip || function () {
         try {
-            localStorage.removeItem(window.directoryLocationSkipKey);
+            sessionStorage.removeItem(window.directoryLocationSkipKey);
         } catch (error) {}
     };
 
@@ -309,7 +309,7 @@
 
     window.bootstrapDirectoryLocation = window.bootstrapDirectoryLocation || function () {
         try {
-            if (localStorage.getItem(window.directoryLocationSkipKey) === '1') {
+            if (sessionStorage.getItem(window.directoryLocationSkipKey) === '1') {
                 return;
             }
         } catch (error) {}
@@ -326,15 +326,31 @@
             return;
         }
 
-        if (! navigator.geolocation || ! navigator.permissions?.query) {
+        if (! navigator.geolocation) {
+            if (typeof component.reportLocationUnsupported === 'function') {
+                component.reportLocationUnsupported();
+            }
             return;
         }
 
-        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-            if (result.state === 'granted') {
+        // Langsung minta izin lokasi ke pengguna di lingkungan HTTPS / Secure Context
+        if (navigator.permissions?.query) {
+            navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+                if (result.state === 'denied') {
+                    if (typeof component.clearUserLocation === 'function') {
+                        component.clearUserLocation('denied');
+                    }
+                    return;
+                }
+
+                // Status 'granted' atau 'prompt': langsung picu dialog izin lokasi browser
                 window.requestDirectoryLocation();
-            }
-        }).catch(() => {});
+            }).catch(() => {
+                window.requestDirectoryLocation();
+            });
+        } else {
+            window.requestDirectoryLocation();
+        }
     };
 
     document.addEventListener('DOMContentLoaded', () => {

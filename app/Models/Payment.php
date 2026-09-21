@@ -55,6 +55,17 @@ class Payment extends Model
         'expired_at',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'gps_latitude',
+        'gps_longitude',
+        'gps_accuracy_m',
+        'gps_distance_m',
+        'gps_override_reason',
+    ];
+
     protected function casts(): array
     {
         return [

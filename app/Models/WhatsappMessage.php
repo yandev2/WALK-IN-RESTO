@@ -32,6 +32,14 @@ class WhatsappMessage extends Model
         'failed_at',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'provider_ref',
+        'provider_payload',
+    ];
+
     protected function casts(): array
     {
         return [

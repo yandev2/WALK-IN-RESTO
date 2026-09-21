@@ -22,6 +22,13 @@ class RestaurantReview extends Model
         'submitted_at',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'internal_notes',
+    ];
+
     protected function casts(): array
     {
         return [

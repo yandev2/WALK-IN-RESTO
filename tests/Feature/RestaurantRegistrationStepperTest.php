@@ -249,4 +249,19 @@ class RestaurantRegistrationStepperTest extends TestCase
             ->assertSee('Pilih Mode Operasional Kasir', false)
             ->assertSee('QRIS Pembayaran Outlet', false);
     }
+
+    public function test_slug_is_auto_filled_from_restaurant_name_using_laravel_slug(): void
+    {
+        Livewire::test(RegisterRestaurant::class)
+            ->set('name', 'Budi')
+            ->set('email', 'budi@test.test')
+            ->set('password', 'secret1234')
+            ->set('password_confirmation', 'secret1234')
+            ->call('nextFromAccount')
+            ->assertSet('step', 2)
+            ->set('restaurant_name', 'Resto Kita')
+            ->assertSet('slug', 'resto-kita')
+            ->set('restaurant_name', 'Resto Kita & Cafe 24 Jam')
+            ->assertSet('slug', 'resto-kita-cafe-24-jam');
+    }
 }

@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CashierOrderSoundAlert extends Component
@@ -17,12 +18,16 @@ class CashierOrderSoundAlert extends Component
     /**
      * @var list<int>
      */
+    #[Locked]
     public array $knownOrderIds = [];
 
+    #[Locked]
     public int $lastKnownOrderId = 0;
 
+    #[Locked]
     public ?int $restaurantId = null;
 
+    #[Locked]
     public bool $isInitialized = false;
 
     public function mount(): void
@@ -33,12 +38,13 @@ class CashierOrderSoundAlert extends Component
     public function syncInitialOrders(): void
     {
         $restaurant = Filament::getTenant();
+        $user = auth()->user();
 
-        if (! $restaurant instanceof Restaurant) {
+        if (! $restaurant instanceof Restaurant || ! $user || ! method_exists($user, 'canAccessTenant') || ! ($user->isPlatformOperator() || $user->canAccessTenant($restaurant))) {
             return;
         }
 
-        $this->restaurantId = $restaurant->id;
+        $this->restaurantId = (int) $restaurant->id;
 
         $pendingIds = Order::query()
             ->where('restaurant_id', $restaurant->id)
@@ -57,11 +63,14 @@ class CashierOrderSoundAlert extends Component
 
     public function checkNewOrders(): void
     {
-        $restaurantId = $this->restaurantId ?? Filament::getTenant()?->id;
+        $tenant = Filament::getTenant();
+        $user = auth()->user();
 
-        if (! $restaurantId) {
+        if (! $tenant instanceof Restaurant || ! $user || ! method_exists($user, 'canAccessTenant') || ! ($user->isPlatformOperator() || $user->canAccessTenant($tenant))) {
             return;
         }
+
+        $restaurantId = (int) $tenant->id;
 
         if (! $this->isInitialized) {
             $this->syncInitialOrders();

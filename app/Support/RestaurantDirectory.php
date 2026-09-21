@@ -156,7 +156,8 @@ final class RestaurantDirectory
         $sort = (string) ($filters['sort'] ?? 'newest');
         $userLat = $this->nullableFloat($filters['userLat'] ?? null);
         $userLng = $this->nullableFloat($filters['userLng'] ?? null);
-        $maxDistanceKm = max(1.0, (float) ($filters['maxDistanceKm'] ?? 10));
+        $rawMaxDistance = $filters['maxDistanceKm'] ?? null;
+        $maxDistanceKm = filled($rawMaxDistance) && (float) $rawMaxDistance > 0 ? (float) $rawMaxDistance : null;
         $hasUserLocation = $userLat !== null && $userLng !== null;
 
         $restaurants = $this->baseQuery($filters)->get();
@@ -187,19 +188,13 @@ final class RestaurantDirectory
             return $restaurant;
         });
 
-        $restaurants = $restaurants->filter(function (Restaurant $restaurant) use ($maxDistanceKm, $sort): bool {
-            $distanceKm = $restaurant->getAttribute('_distance_km');
+        if ($maxDistanceKm !== null) {
+            $restaurants = $restaurants->filter(function (Restaurant $restaurant) use ($maxDistanceKm): bool {
+                $distanceKm = $restaurant->getAttribute('_distance_km');
 
-            if ($sort === 'distance') {
                 return $distanceKm !== null && $distanceKm <= $maxDistanceKm;
-            }
-
-            if ($distanceKm === null) {
-                return true;
-            }
-
-            return $distanceKm <= $maxDistanceKm;
-        });
+            });
+        }
 
         return $this->sortRestaurants($restaurants, $sort);
     }

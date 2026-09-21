@@ -18,7 +18,10 @@ use App\Support\ImageOptimizer;
 use App\Support\ReservedSlugs;
 use App\Support\RestaurantTheme;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Layout;
@@ -49,6 +52,8 @@ class RegisterRestaurant extends Component
     public string $restaurant_name = '';
 
     public string $slug = '';
+
+    public bool $slugManuallyChanged = false;
 
     // Step 3: Paket
     public string $plan_code = '';
@@ -93,11 +98,22 @@ class RegisterRestaurant extends Component
 
     public function updatedRestaurantName(): void
     {
-        if (filled($this->slug)) {
+        if (! $this->slugManuallyChanged) {
+            $this->slug = Str::slug($this->restaurant_name);
+        }
+    }
+
+    public function updatedSlug(): void
+    {
+        if (blank($this->slug)) {
+            $this->slugManuallyChanged = false;
+            $this->slug = Str::slug($this->restaurant_name);
+
             return;
         }
 
-        $this->slug = str($this->restaurant_name)->slug()->toString();
+        $this->slugManuallyChanged = true;
+        $this->slug = Str::slug($this->slug);
     }
 
     public function updatedLatitude($value): void
@@ -117,11 +133,22 @@ class RegisterRestaurant extends Component
     public function nextFromAccount(): void
     {
         $this->validate($this->accountRules());
+
+        if (filled($this->password)) {
+            Session::put('reg_password_encrypted', Crypt::encryptString($this->password));
+            $this->password = '';
+            $this->password_confirmation = '';
+        }
+
         $this->step = 2;
     }
 
     public function nextFromRestaurant(): void
     {
+        if (blank($this->slug) && filled($this->restaurant_name)) {
+            $this->slug = Str::slug($this->restaurant_name);
+        }
+
         $this->validate($this->restaurantRules());
 
         if (blank($this->plan_code)) {
@@ -189,6 +216,16 @@ class RegisterRestaurant extends Component
     public function back(): void
     {
         $this->step = max(1, $this->step - 1);
+
+        if ($this->step === 1 && Session::has('reg_password_encrypted')) {
+            try {
+                $decrypted = Crypt::decryptString(Session::get('reg_password_encrypted'));
+                $this->password = $decrypted;
+                $this->password_confirmation = $decrypted;
+            } catch (\Throwable) {
+                // Ignore if decryption fails
+            }
+        }
     }
 
     public function register(RestaurantProvisioner $provisioner, SubscriptionPlanSync $planSync)
@@ -208,12 +245,21 @@ class RegisterRestaurant extends Component
             ...$this->infoRules(),
         ]);
 
-        $restaurant = DB::transaction(function () use ($provisioner, $planSync): Restaurant {
+        $resolvedPassword = $this->password;
+        if (blank($resolvedPassword) && Session::has('reg_password_encrypted')) {
+            try {
+                $resolvedPassword = Crypt::decryptString(Session::get('reg_password_encrypted'));
+            } catch (\Throwable) {
+                $resolvedPassword = '';
+            }
+        }
+
+        $restaurant = DB::transaction(function () use ($provisioner, $planSync, $resolvedPassword): Restaurant {
             $user = User::query()->create([
                 'name' => $this->name,
                 'email' => $this->email,
                 'username' => $this->uniqueUsername(),
-                'password' => $this->password,
+                'password' => $resolvedPassword,
                 'is_active' => true,
             ]);
 
@@ -357,6 +403,8 @@ class RegisterRestaurant extends Component
 
             Auth::login($user);
 
+            Session::forget('reg_password_encrypted');
+
             return $restaurant;
         });
 
@@ -389,10 +437,16 @@ class RegisterRestaurant extends Component
      */
     private function accountRules(): array
     {
+        $passwordRule = ['required', 'confirmed', Password::min(8)];
+
+        if ($this->step > 1 && Session::has('reg_password_encrypted')) {
+            $passwordRule = ['nullable'];
+        }
+
         return [
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:191', 'unique:users,email'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => $passwordRule,
         ];
     }
 

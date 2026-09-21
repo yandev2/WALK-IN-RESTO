@@ -3,7 +3,7 @@
     'facilityOptions',
     'sort' => 'newest',
     'locationStatus' => 'idle',
-    'maxDistanceKm' => 10,
+    'maxDistanceKm' => null,
     'mobile' => false,
 ])
 
@@ -73,16 +73,33 @@
         <div class="border-t border-border-subtle/70 pt-4">
             <div class="mb-2.5 flex items-center justify-between gap-2">
                 <p class="text-xs font-bold uppercase tracking-wider text-muted">Jarak Maksimal</p>
-                @if ($locationStatus === 'granted')
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary shadow-xs">
-                        <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
-                        {{ number_format($maxDistanceKm, 0, ',', '.') }} km
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                        Nonaktif
-                    </span>
-                @endif
+                <div class="flex items-center gap-1.5">
+                    @if ($locationStatus === 'granted')
+                        @if ($maxDistanceKm)
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary shadow-xs">
+                                <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+                                {{ number_format($maxDistanceKm, 0, ',', '.') }} km
+                            </span>
+                            <button
+                                type="button"
+                                wire:click="$set('maxDistanceKm', null)"
+                                class="text-[11px] font-semibold text-primary hover:underline"
+                                title="Kembali ke semua jarak"
+                            >
+                                Semua
+                            </button>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Semua Jarak
+                            </span>
+                        @endif
+                    @else
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                            Nonaktif
+                        </span>
+                    @endif
+                </div>
             </div>
 
             @if ($locationStatus !== 'granted')
@@ -97,28 +114,60 @@
                 </div>
             @endif
 
+            {{-- Quick Presets --}}
+            <div class="mb-3 flex flex-wrap gap-1.5">
+                @php
+                    $presetOptions = [
+                        ['value' => null, 'label' => 'Semua'],
+                        ['value' => 5, 'label' => '5 km'],
+                        ['value' => 10, 'label' => '10 km'],
+                        ['value' => 25, 'label' => '25 km'],
+                        ['value' => 50, 'label' => '50 km'],
+                    ];
+                @endphp
+                @foreach ($presetOptions as $preset)
+                    @php
+                        $isSelected = ($preset['value'] === null && $maxDistanceKm === null)
+                            || ($preset['value'] !== null && (float) $maxDistanceKm === (float) $preset['value']);
+                    @endphp
+                    <button
+                        type="button"
+                        wire:click="$set('maxDistanceKm', {{ $preset['value'] ?? 'null' }})"
+                        @disabled($locationStatus !== 'granted')
+                        @class([
+                            'rounded-lg px-2.5 py-1 text-xs font-semibold transition shadow-xs',
+                            'bg-primary text-white ring-1 ring-primary' => $isSelected && $locationStatus === 'granted',
+                            'bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle' => ! $isSelected || $locationStatus !== 'granted',
+                            'opacity-50 cursor-not-allowed' => $locationStatus !== 'granted',
+                        ])
+                    >
+                        {{ $preset['label'] }}
+                    </button>
+                @endforeach
+            </div>
+
             @php
-                $fillPercent = max(0, min(100, (($maxDistanceKm - 1) / 9) * 100));
+                $sliderFill = $maxDistanceKm ? max(0, min(100, (($maxDistanceKm - 1) / 49) * 100)) : 100;
             @endphp
-            <div class="px-1 py-2" x-data="{ fillPercent: {{ $fillPercent }} }">
+            <div class="px-1 py-1" x-data="{ fillPercent: {{ $sliderFill }} }">
                 <input
                     type="range"
                     min="1"
-                    max="10"
+                    max="50"
                     step="1"
                     wire:model.live="maxDistanceKm"
                     @disabled($locationStatus !== 'granted')
                     class="directory-range-slider"
                     aria-label="Filter radius jarak"
-                    x-on:input="fillPercent = Math.max(0, Math.min(100, (($event.target.value - 1) / 9) * 100))"
+                    x-on:input="fillPercent = Math.max(0, Math.min(100, (($event.target.value - 1) / 49) * 100))"
                     :style="`--slider-fill: ${fillPercent}%`"
-                    style="--slider-fill: {{ $fillPercent }}%"
+                    style="--slider-fill: {{ $sliderFill }}%"
                 >
             </div>
             <div class="mt-1 flex items-center justify-between px-1 text-[11px] font-semibold text-muted">
                 <span>1 km</span>
-                <span>5 km</span>
-                <span>10 km</span>
+                <span>25 km</span>
+                <span>50 km</span>
             </div>
         </div>
 

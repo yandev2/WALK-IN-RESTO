@@ -3,7 +3,7 @@
     'facilityOptions',
     'sort' => 'newest',
     'locationStatus' => 'pending',
-    'maxDistanceKm' => 10,
+    'maxDistanceKm' => null,
 ])
 
 <div

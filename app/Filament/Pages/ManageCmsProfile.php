@@ -8,11 +8,14 @@ use App\Models\Restaurant;
 use App\Models\RestaurantCategory;
 use App\Models\User;
 use App\Support\ActivityLogger;
+use App\Support\CmsMedia;
 use App\Support\SubscriptionAccess;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -270,16 +273,168 @@ class ManageCmsProfile extends Page
                                     ->schema([
                                         TextInput::make('cta_label')
                                             ->label('Teks tombol CTA')
+                                            ->placeholder('Lihat lokasi')
                                             ->maxLength(80),
                                         TextInput::make('cta_url')
                                             ->label('URL tombol CTA')
+                                            ->placeholder('https://www.google.com/maps/search/...')
                                             ->url()
-                                            ->maxLength(500),
+                                            ->maxLength(500)
+                                            ->suffixAction(
+                                                Action::make('quickCtaPreset')
+                                                    ->icon(Heroicon::OutlinedSparkles)
+                                                    ->color('primary')
+                                                    ->tooltip('Pilih tautan cepat (Google Maps, WhatsApp, atau Instagram)')
+                                                    ->modalHeading('Pilih Tautan Cepat Tombol CTA')
+                                                    ->modalDescription('Pilih tujuan tombol aksi utama (Call to Action) di halaman landing:')
+                                                    ->form([
+                                                        Radio::make('preset_type')
+                                                            ->label('Tipe Tautan')
+                                                            ->options([
+                                                                'maps' => 'Buka Google Maps Outlet (Teks: "Lihat lokasi")',
+                                                                'wa' => 'Hubungi via WhatsApp (Teks: "Hubungi via WhatsApp")',
+                                                                'ig' => 'Kunjungi Instagram (Teks: "Kunjungi Instagram")',
+                                                            ])
+                                                            ->default('maps')
+                                                            ->required(),
+                                                    ])
+                                                    ->modalSubmitActionLabel('Terapkan')
+                                                    ->action(function (array $data, Set $set) {
+                                                        $outlet = $this->restaurant()?->defaultOutlet;
+                                                        if (! $outlet) {
+                                                            Notification::make()
+                                                                ->warning()
+                                                                ->title('Outlet tidak ditemukan')
+                                                                ->send();
+
+                                                            return;
+                                                        }
+
+                                                        if ($data['preset_type'] === 'maps') {
+                                                            $mapsUrl = CmsMedia::mapsSearchUrl($outlet->address, $outlet->latitude, $outlet->longitude);
+                                                            if (blank($mapsUrl)) {
+                                                                Notification::make()
+                                                                    ->warning()
+                                                                    ->title('Alamat atau GPS outlet belum diisi')
+                                                                    ->body('Lengkapi alamat atau latitude/longitude pada menu Pengaturan > Outlet.')
+                                                                    ->send();
+
+                                                                return;
+                                                            }
+                                                            $set('cta_label', 'Lihat lokasi');
+                                                            $set('cta_url', $mapsUrl);
+                                                        } elseif ($data['preset_type'] === 'wa') {
+                                                            $waUrl = CmsMedia::whatsappUrl($outlet->phone);
+                                                            if (blank($waUrl)) {
+                                                                Notification::make()
+                                                                    ->warning()
+                                                                    ->title('Nomor telepon outlet belum diisi')
+                                                                    ->body('Lengkapi nomor telepon pada menu Pengaturan > Outlet.')
+                                                                    ->send();
+
+                                                                return;
+                                                            }
+                                                            $set('cta_label', 'Hubungi via WhatsApp');
+                                                            $set('cta_url', $waUrl);
+                                                        } elseif ($data['preset_type'] === 'ig') {
+                                                            $igUrl = CmsMedia::instagramUrl($outlet->instagram);
+                                                            if (blank($igUrl)) {
+                                                                Notification::make()
+                                                                    ->warning()
+                                                                    ->title('Instagram outlet belum diisi')
+                                                                    ->body('Lengkapi akun Instagram pada menu Pengaturan > Outlet.')
+                                                                    ->send();
+
+                                                                return;
+                                                            }
+                                                            $set('cta_label', 'Kunjungi Instagram');
+                                                            $set('cta_url', $igUrl);
+                                                        }
+
+                                                        Notification::make()
+                                                            ->success()
+                                                            ->title('Tautan CTA Berhasil Diterapkan')
+                                                            ->send();
+                                                    })
+                                            )
+                                            ->helperText('Klik ikon bintang di ujung kolom untuk memilih cepat link Google Maps, WhatsApp, atau Instagram.'),
                                     ]),
                                 TextInput::make('map_embed_url')
                                     ->label('URL embed peta')
+                                    ->placeholder('https://maps.google.com/maps?q=...&output=embed')
                                     ->url()
-                                    ->maxLength(500),
+                                    ->maxLength(500)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (?string $state, Set $set) {
+                                        if (blank($state)) {
+                                            return;
+                                        }
+
+                                        $cleaned = CmsMedia::extractMapEmbedUrl($state);
+                                        if ($cleaned !== $state) {
+                                            $set('map_embed_url', $cleaned);
+                                            Notification::make()
+                                                ->info()
+                                                ->title('Kode iframe terdeteksi')
+                                                ->body('URL embed berhasil diekstrak otomatis dari kode iframe HTML.')
+                                                ->send();
+                                        }
+                                    })
+                                    ->suffixAction(
+                                        Action::make('generateFromOutlet')
+                                            ->icon(Heroicon::OutlinedMapPin)
+                                            ->color('primary')
+                                            ->tooltip('Isi otomatis embed peta dari lokasi/GPS outlet default')
+                                            ->action(function (Set $set) {
+                                                $outlet = $this->restaurant()?->defaultOutlet;
+                                                if (! $outlet) {
+                                                    Notification::make()
+                                                        ->warning()
+                                                        ->title('Outlet tidak ditemukan')
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                $embedUrl = CmsMedia::mapsEmbedUrl(null, $outlet->latitude, $outlet->longitude);
+
+                                                if (blank($embedUrl) && filled($outlet->address)) {
+                                                    $embedUrl = 'https://maps.google.com/maps?q='.urlencode($outlet->address).'&z=16&output=embed';
+                                                }
+
+                                                if (blank($embedUrl)) {
+                                                    Notification::make()
+                                                        ->warning()
+                                                        ->title('Lokasi outlet belum lengkap')
+                                                        ->body('Lengkapi latitude & longitude atau alamat pada menu Pengaturan > Outlet.')
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                $set('map_embed_url', $embedUrl);
+
+                                                Notification::make()
+                                                    ->success()
+                                                    ->title('URL Embed Dibuat')
+                                                    ->body('URL peta berhasil digenerate dari lokasi outlet.')
+                                                    ->send();
+                                            })
+                                    )
+                                    ->hintAction(
+                                        Action::make('mapGuide')
+                                            ->label('Panduan Salin Peta')
+                                            ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                                            ->color('gray')
+                                            ->modalHeading('Cara Mengambil Embed Peta dari Google Maps')
+                                            ->modalContent(view('filament.forms.components.cms-map-guide-modal'))
+                                            ->modalSubmitAction(false)
+                                            ->modalCancelActionLabel('Tutup')
+                                    )
+                                    ->helperText('Bisa paste link Google Maps atau kode <iframe> langsung. Kosongkan untuk menggunakan peta otomatis dari titik GPS outlet.'),
+                                Placeholder::make('map_embed_preview')
+                                    ->hiddenLabel()
+                                    ->view('filament.forms.components.cms-map-preview'),
                             ]),
                         Group::make([
                             Section::make('Warna brand')

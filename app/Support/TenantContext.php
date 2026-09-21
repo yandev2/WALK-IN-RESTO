@@ -10,6 +10,8 @@ final class TenantContext
 {
     private static ?Restaurant $overrideRestaurant = null;
 
+    private static bool $resolving = false;
+
     public static function set(?Restaurant $restaurant): void
     {
         self::$overrideRestaurant = $restaurant;
@@ -18,6 +20,7 @@ final class TenantContext
     public static function clear(): void
     {
         self::$overrideRestaurant = null;
+        self::$resolving = false;
     }
 
     public static function restaurant(): ?Restaurant
@@ -28,7 +31,21 @@ final class TenantContext
 
         $tenant = Filament::getTenant();
 
-        return $tenant instanceof Restaurant ? $tenant : null;
+        if ($tenant instanceof Restaurant) {
+            return $tenant;
+        }
+
+        if (self::$resolving) {
+            return null;
+        }
+
+        self::$resolving = true;
+
+        try {
+            return GuestContext::visit()?->outlet?->restaurant;
+        } finally {
+            self::$resolving = false;
+        }
     }
 
     public static function restaurantId(): ?int

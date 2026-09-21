@@ -33,4 +33,24 @@ final class WhatsAppNumber
 
         return is_string($normalized) && preg_match('/^62[0-9]{8,13}$/', $normalized) === 1;
     }
+
+    public static function mask(?string $input): ?string
+    {
+        if (blank($input)) {
+            return null;
+        }
+
+        $digits = preg_replace('/\D+/', '', $input) ?? '';
+        $len = strlen($digits);
+
+        if ($len <= 7) {
+            return $input;
+        }
+
+        $prefix = substr($digits, 0, 4);
+        $suffix = substr($digits, -4);
+        $starCount = max(3, $len - 8);
+
+        return $prefix . str_repeat('*', $starCount) . $suffix;
+    }
 }

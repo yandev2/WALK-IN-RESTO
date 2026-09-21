@@ -42,6 +42,14 @@ class Order extends Model
         'voided_at',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'receipt_wa_snapshot',
+        'idempotency_key',
+    ];
+
     public const STATUS_PENDING_PAYMENT = 'pending_payment';
     public const STATUS_AWAITING_CASHIER = 'awaiting_cashier';
     public const STATUS_PAID = 'paid';

@@ -61,6 +61,16 @@ class Restaurant extends Model implements HasAvatar, HasName
         'settings',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'fonnte_api_key_encrypted',
+        'npwp',
+        'commission_percentage',
+        'settings',
+    ];
+
     protected function casts(): array
     {
         return [

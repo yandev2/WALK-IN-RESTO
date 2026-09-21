@@ -35,10 +35,28 @@ final class CmsMedia
         return filled($pathOnly) ? $pathOnly : $url;
     }
 
+    public static function extractMapEmbedUrl(?string $input): ?string
+    {
+        if (blank($input)) {
+            return null;
+        }
+
+        $trimmed = trim($input);
+
+        // If user pasted an entire <iframe> HTML snippet from Google Maps
+        if (preg_match('/<iframe[^>]+src=["\']([^"\']+)["\']/i', $trimmed, $matches)) {
+            return $matches[1];
+        }
+
+        return $trimmed;
+    }
+
     public static function mapsEmbedUrl(?string $embedUrl, mixed $latitude, mixed $longitude): ?string
     {
-        if (filled($embedUrl) && self::isAllowedMapEmbed($embedUrl)) {
-            return $embedUrl;
+        $cleaned = self::extractMapEmbedUrl($embedUrl);
+
+        if (filled($cleaned) && self::isAllowedMapEmbed($cleaned)) {
+            return $cleaned;
         }
 
         if (filled($latitude) && filled($longitude)) {
@@ -169,7 +187,7 @@ final class CmsMedia
             && (str_starts_with($path, 'http://') || str_starts_with($path, 'https://'));
     }
 
-    private static function isAllowedMapEmbed(string $url): bool
+    public static function isAllowedMapEmbed(string $url): bool
     {
         $host = parse_url($url, PHP_URL_HOST);
 
@@ -178,6 +196,7 @@ final class CmsMedia
             'google.com',
             'maps.google.com',
             'www.google.co.id',
+            'google.co.id',
         ], true);
     }
 }

@@ -34,7 +34,7 @@ class RestaurantDirectory extends Component
 
     public string $locationStatus = 'idle';
 
-    public float $maxDistanceKm = 10;
+    public ?float $maxDistanceKm = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -42,6 +42,7 @@ class RestaurantDirectory extends Component
         'facilityFilters' => ['as' => 'fasilitas', 'except' => []],
         'sort' => ['except' => 'newest'],
         'viewMode' => ['as' => 'tampilan', 'except' => 'grid'],
+        'maxDistanceKm' => ['as' => 'jarak', 'except' => null],
     ];
 
     public function mount(): void
@@ -73,7 +74,12 @@ class RestaurantDirectory extends Component
 
     public function updatedMaxDistanceKm(): void
     {
-        $this->maxDistanceKm = max(1, min(10, $this->maxDistanceKm));
+        if (blank($this->maxDistanceKm) || (string) $this->maxDistanceKm === 'all') {
+            $this->maxDistanceKm = null;
+        } else {
+            $this->maxDistanceKm = max(1, min(100, (float) $this->maxDistanceKm));
+        }
+
         $this->resetPage();
     }
 
@@ -157,7 +163,7 @@ class RestaurantDirectory extends Component
         $this->search = '';
         $this->categoryIds = [];
         $this->facilityFilters = [];
-        $this->maxDistanceKm = 10;
+        $this->maxDistanceKm = null;
         $this->sort = $this->hasUserLocation() ? 'distance' : 'newest';
         $this->resetPage();
     }

@@ -1,5 +1,5 @@
 Title:
-Walk-In Resto: Satu Sistem untuk Menjalankan Seluruh Operasional Restoran Anda — Dari Meja Tamu Sampai Laporan Laba
+Citarasakita: Satu Sistem untuk Menjalankan Seluruh Operasional Restoran Anda — Dari Meja Tamu Sampai Laporan Laba
 
 Slug:
 perkenalan-walk-in-resto-sistem-operasional-restoran-lengkap
@@ -8,7 +8,7 @@ Featured image alt:
 Interior restoran modern yang hangat dengan tablet KDS dapur di sisi kiri dan stiker QR Code menu di meja tamu, suasana penuh tawa pelanggan yang sedang menikmati hidangan
 
 Excerpt:
-Anda tidak butuh 5 software berbeda untuk mengelola restoran. Walk-In Resto menyatukan self-order QR meja, kasir POS, layar dapur digital, CRM pelanggan, website profil, dan laporan keuangan dalam satu platform cloud yang bisa diakses dari mana saja.
+Anda tidak butuh 5 software berbeda untuk mengelola restoran. Citarasakita menyatukan self-order QR meja, kasir POS, layar dapur digital, CRM pelanggan, website profil, dan laporan keuangan dalam satu platform cloud yang bisa diakses dari mana saja.
 
 Body:
 Halo, terima kasih sudah meluangkan waktu membaca ini.
@@ -19,15 +19,15 @@ Pernahkah Anda merasa bahwa mengelola restoran itu seperti menyulap terlalu bany
 
 Belum lagi urusan pelanggan: mereka menunggu terlalu lama untuk dipanggil pelayan, buku menu sudah lecek dan ketinggalan update harga, kertas bon dapur basah kena minyak dan tidak terbaca koki, lalu di akhir bulan Anda pusing menyusun nota satu per satu ke dalam spreadsheet Excel.
 
-Walk-In Resto hadir untuk menyelesaikan semua itu dalam satu tempat.
+Citarasakita hadir untuk menyelesaikan semua itu dalam satu tempat.
 
-### Apa Itu Walk-In Resto?
+### Apa Itu Citarasakita?
 
-Walk-In Resto adalah platform operasional restoran berbasis cloud yang menyatukan seluruh kebutuhan bisnis kuliner Anda — mulai dari cara tamu memesan makanan di meja, cara kasir memproses pembayaran, cara koki menerima dan mengelola tiket masakan, sampai cara Anda sebagai pemilik memantau omzet dan laba dari layar HP di mana pun Anda berada.
+Citarasakita adalah platform operasional restoran berbasis cloud yang menyatukan seluruh kebutuhan bisnis kuliner Anda — mulai dari cara tamu memesan makanan di meja, cara kasir memproses pembayaran, cara koki menerima dan mengelola tiket masakan, sampai cara Anda sebagai pemilik memantau omzet dan laba dari layar HP di mana pun Anda berada.
 
-Bukan sekadar aplikasi kasir. Bukan sekadar menu digital. Walk-In Resto adalah ekosistem lengkap yang menghubungkan setiap titik operasional restoran Anda ke dalam satu alur kerja yang mulus dan transparan.
+Bukan sekadar aplikasi kasir. Bukan sekadar menu digital. Citarasakita adalah ekosistem lengkap yang menghubungkan setiap titik operasional restoran Anda ke dalam satu alur kerja yang mulus dan transparan.
 
-Dan yang paling penting: Anda tidak perlu menjadi ahli teknologi untuk menggunakannya. Jika Anda bisa menggunakan WhatsApp dan Instagram di HP, Anda sudah cukup mahir untuk menjalankan Walk-In Resto.
+Dan yang paling penting: Anda tidak perlu menjadi ahli teknologi untuk menggunakannya. Jika Anda bisa menggunakan WhatsApp dan Instagram di HP, Anda sudah cukup mahir untuk menjalankan Citarasakita.
 
 ### Tamu Pesan Langsung dari HP, Tanpa Download Aplikasi
 
@@ -43,7 +43,7 @@ Setelah selesai memilih, tamu tinggal checkout dan memilih bayar tunai atau QRIS
 
 Kami tahu jam makan siang itu brutal. Pesanan datang dari segala arah. Antrian mengular. Printer kadang macet.
 
-Panel kasir Walk-In Resto dirancang khusus untuk tekanan jam sibuk. Pencarian menu instan, tombol uang pas untuk pembayaran tunai, dan yang paling membantu: bunyi bel notifikasi otomatis setiap ada pesanan baru masuk dari tamu.
+Panel kasir Citarasakita dirancang khusus untuk tekanan jam sibuk. Pencarian menu instan, tombol uang pas untuk pembayaran tunai, dan yang paling membantu: bunyi bel notifikasi otomatis setiap ada pesanan baru masuk dari tamu.
 
 Kasir tidak perlu terus-menerus memelototi layar monitor. Sedang meracik minuman? Sedang menyapa tamu di depan? Tidak masalah. Begitu ada pesanan baru, bel langsung berbunyi nyaring di perangkat kasir. Kasir tinggal menekan satu tombol untuk menerima pembayaran, dan pesanan langsung terkirim ke dapur.
 
@@ -53,7 +53,7 @@ Dan soal keamanan transaksi, Anda bisa tenang. Sistem kami dilengkapi proteksi a
 
 Ucapkan selamat tinggal pada tumpukan kertas bon yang basah, robek, atau hilang terselip di bawah wajan.
 
-Kitchen Display System (KDS) Walk-In Resto menampilkan semua pesanan yang perlu dimasak di layar tablet atau monitor digital di dapur. Setiap pesanan muncul sebagai kartu visual dengan indikator warna waktu tunggu: hijau kalau masih aman, kuning kalau mulai lama, merah kalau sudah lewat batas — jadi koki langsung tahu mana yang harus diprioritaskan.
+Kitchen Display System (KDS) Citarasakita menampilkan semua pesanan yang perlu dimasak di layar tablet atau monitor digital di dapur. Setiap pesanan muncul sebagai kartu visual dengan indikator warna waktu tunggu: hijau kalau masih aman, kuning kalau mulai lama, merah kalau sudah lewat batas — jadi koki langsung tahu mana yang harus diprioritaskan.
 
 Kalau restoran Anda punya beberapa stasiun kerja — misalnya Stasiun Bar Minuman terpisah dari Stasiun Kitchen Makanan — layar KDS bisa dibagi per stasiun. Barista hanya melihat pesanan minuman, koki hanya melihat pesanan makanan. Dapur jadi fokus, tertib, dan tidak berisik.
 
@@ -63,7 +63,7 @@ Setiap kali pesanan mulai dimasak, statusnya otomatis berubah di HP tamu. Tamu b
 
 Kami paham bahwa kedai kopi kecil dengan 1 barista yang merangkap kasir punya kebutuhan yang berbeda dengan restoran keluarga besar yang punya 3 koki dan 5 pelayan.
 
-Makanya Walk-In Resto menyediakan dua mode:
+Makanya Citarasakita menyediakan dua mode:
 
 **Simple Mode** — Cocok untuk coffee shop, booth boba, fast food, atau food court. Pesanan langsung selesai begitu kasir menerima pembayaran. Tidak perlu layar dapur, tidak perlu alur masak bertahap. Cepat, ringkas, langsung tutup meja.
 
@@ -91,7 +91,7 @@ Dan semua itu terhubung ke nomor WhatsApp yang sudah ada di HP pelanggan. Tidak 
 
 Ini bagian yang paling banyak diminta oleh pemilik resto: transparansi keuangan tanpa harus menunggu akuntan.
 
-Dasbor Walk-In Resto menampilkan omzet hari ini secara real-time, perbandingan dengan capaian kemarin, jumlah total transaksi, rata-rata nilai belanja per meja, bauran pembayaran tunai vs QRIS, sampai berapa rupiah makanan yang dibatalkan atau terbuang.
+Dasbor Citarasakita menampilkan omzet hari ini secara real-time, perbandingan dengan capaian kemarin, jumlah total transaksi, rata-rata nilai belanja per meja, bauran pembayaran tunai vs QRIS, sampai berapa rupiah makanan yang dibatalkan atau terbuang.
 
 Mau laporan lengkap? Pilih rentang tanggal, klik tombol ekspor, dan file Excel atau PDF rapi langsung siap unduh. Laporan penjualan harian, rincian per item, rekap audit void, rekonsiliasi shift kasir — semuanya tersedia.
 
@@ -99,7 +99,7 @@ Setiap aksi penting di sistem — terima bayar, tolak pesanan, batal menu, buka 
 
 ### Keamanan yang Tidak Kompromi
 
-Kami merancang Walk-In Resto dengan mentalitas bahwa restoran adalah bisnis nyata yang mengelola uang sungguhan, dan setiap celah manipulasi harus ditutup rapat sejak awal.
+Kami merancang Citarasakita dengan mentalitas bahwa restoran adalah bisnis nyata yang mengelola uang sungguhan, dan setiap celah manipulasi harus ditutup rapat sejak awal.
 
 QR Code meja dilindungi token kriptografis agar tidak bisa dipalsukan. Pesanan tunai dari luar radius restoran otomatis ditolak oleh GPS Geofencing. Pembatalan menu setelah makanan dimasak tetap dihitung sebagai kerugian bahan (*waste loss*), bukan diam-diam hilang dari pembukuan. Hak akses staf dibagi ketat berdasarkan peran: kasir tidak bisa mengintip laporan keuangan owner, koki tidak bisa mengubah harga menu, staf resto A tidak bisa melihat data resto B.
 
@@ -107,7 +107,7 @@ Dan kalau ada data yang tidak sengaja terhapus? Fitur Keranjang Sampah (*Trash*)
 
 ### Cocok untuk Siapa?
 
-Walk-In Resto dirancang fleksibel untuk berbagai skala bisnis kuliner:
+Citarasakita dirancang fleksibel untuk berbagai skala bisnis kuliner:
 
 * **Kedai kopi dan booth boba** — Gunakan Simple Mode untuk transaksi kilat tanpa layar dapur.
 * **Restoran keluarga dan casual dining** — Gunakan Standar KDS dengan layar dapur multi-stasiun.
@@ -122,18 +122,18 @@ Daftarkan restoran Anda di platform kami, dan Anda akan langsung mendapatkan aks
 
 Tidak ada kontrak jangka panjang. Tidak ada biaya setup. Tidak ada komisi per transaksi.
 
-Anda menjalankan restoran. Biarkan Walk-In Resto yang mengurus sisanya.
+Anda menjalankan restoran. Biarkan Citarasakita yang mengurus sisanya.
 
 ---
 
 *Punya pertanyaan atau ingin konsultasi sebelum mencoba? Hubungi kami langsung melalui WhatsApp. Kami dengan senang hati membantu Anda menyiapkan semuanya.*
 
 Tags:
-Walk-In Resto, SaaS Restoran, Self-Order QR, POS Restoran, Kitchen Display System
+Citarasakita, SaaS Restoran, Self-Order QR, POS Restoran, Kitchen Display System
 
 SEO:
 Meta title:
-Walk-In Resto: Sistem Operasional Restoran Lengkap — Self-Order, POS, KDS, CRM & Laporan
+Citarasakita: Sistem Operasional Restoran Lengkap — Self-Order, POS, KDS, CRM & Laporan
 
 Meta description:
 Satu platform cloud untuk seluruh kebutuhan restoran Anda: self-order QR tanpa download app, kasir POS anti-error, layar dapur digital, CRM pelanggan otomatis, website profil, dan laporan keuangan real-time.
@@ -142,7 +142,7 @@ Meta keywords:
 sistem operasional restoran, software restoran lengkap, pos restoran cloud, self order qr code restoran, kitchen display system, crm restoran, laporan keuangan restoran, walk in resto
 
 OG title:
-Walk-In Resto: Satu Sistem untuk Seluruh Operasional Restoran Anda
+Citarasakita: Satu Sistem untuk Seluruh Operasional Restoran Anda
 
 OG description:
 Dari meja tamu sampai laporan laba, kelola seluruh restoran Anda dalam satu platform cloud yang mudah digunakan. Daftar gratis dalam 2 menit.
@@ -154,5 +154,5 @@ Focus keyword (internal):
 sistem operasional restoran lengkap
 
 Sources:
-doc/feature.md (Spesifikasi Fitur & Bisnis Walk-In Resto)
-Walk-In Resto Full Platform Architecture (app/Services/*, app/Filament/*, app/Models/*, app/Livewire/*)
+doc/feature.md (Spesifikasi Fitur & Bisnis Citarasakita)
+Citarasakita Full Platform Architecture (app/Services/*, app/Filament/*, app/Models/*, app/Livewire/*)

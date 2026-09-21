@@ -50,8 +50,10 @@ final class GuestContext
             return null;
         }
 
-        $device = VisitDevice::query()
-            ->with(['visit.diningTable', 'visit.outlet.restaurant'])
+        $device = VisitDevice::withoutRestaurantScope()
+            ->with([
+                'visit' => fn ($q) => $q->withoutRestaurantScope()->with(['diningTable', 'outlet.restaurant']),
+            ])
             ->where('device_token', $token)
             ->latest('id')
             ->first();

@@ -69,12 +69,12 @@
             @if ($step === 2)
                 <div>
                     <label class="auth-glass-label text-sm font-semibold">Nama Restoran / Cafe</label>
-                    <input type="text" wire:model.blur="restaurant_name" class="auth-glass-input mt-1 w-full text-sm" placeholder="Contoh: Kopi Nusantara">
+                    <input type="text" wire:model.live.debounce.300ms="restaurant_name" class="auth-glass-input mt-1 w-full text-sm" placeholder="Contoh: Kopi Nusantara">
                     @error('restaurant_name') <p class="auth-glass-error mt-1 text-xs">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="auth-glass-label text-sm font-semibold">Slug URL</label>
-                    <input type="text" wire:model="slug" class="auth-glass-input mt-1 w-full text-sm" placeholder="kopi-nusantara">
+                    <input type="text" wire:model.blur="slug" class="auth-glass-input mt-1 w-full text-sm" placeholder="kopi-nusantara">
                     <p class="mt-1 text-xs text-white/70">Landing Page: /{{ $slug ?: 'slug' }} · Panel Admin: /admin/{{ $slug ?: 'slug' }}</p>
                     @error('slug') <p class="auth-glass-error mt-1 text-xs">{{ $message }}</p> @enderror
                 </div>
