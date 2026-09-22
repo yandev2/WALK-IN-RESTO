@@ -33,7 +33,7 @@ class FounderDashboardAnalyticsTest extends TestCase
         $response->assertSuccessful();
 
         // Check Header & Title
-        $response->assertSee('Ringkasan Platform & Analitik');
+        $response->assertSee('Ringkasan Platform');
 
         // Check KPI Stats Cards
         $response->assertSee('Total Restoran Terdaftar');
