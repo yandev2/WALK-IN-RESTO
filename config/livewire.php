@@ -275,7 +275,7 @@ return [
 
     'payload' => [
         'max_size' => 1024 * 1024,   // 1MB - maximum request payload size in bytes
-        'max_nesting_depth' => 10,   // Maximum depth of dot-notation property paths
+        'max_nesting_depth' => env('LIVEWIRE_MAX_NESTING_DEPTH', 30), // Maximum depth of dot-notation property paths (increased from 10 to support nested TipTap RichEditor in translatable forms)
         'max_calls' => 50,           // Maximum method calls per request
         'max_components' => 200,     // Maximum components per batch request
     ],

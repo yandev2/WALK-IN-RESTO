@@ -8,14 +8,14 @@ Featured image alt:
 Pemilik restoran memantau dasbor analitik omzet dan laporan kas anti-fraud secara real-time melalui tablet di area meja kasir
 
 Excerpt:
-Banyak pemilik restoran kehilangan jutaan rupiah per bulan bukan karena sepi pembeli, melainkan akibat kebocoran kasir, pesanan fiktif, dan skema biaya software yang tidak transparan. Berikut bedah mendalam arsitektur Walk-In Resto: audit trail anti-edit, GPS geofencing, QRIS digit unik tanpa gateway, dasbor analitik prediktif, serta sistem rekonsiliasi komisi super transparan.
+Banyak pemilik restoran kehilangan jutaan rupiah per bulan bukan karena sepi pembeli, melainkan akibat kebocoran kasir, pesanan fiktif, dan skema biaya software yang tidak transparan. Berikut bedah mendalam arsitektur Citarasakita: audit trail anti-edit, GPS geofencing, QRIS digit unik tanpa gateway, dasbor analitik prediktif, serta sistem rekonsiliasi komisi super transparan.
 
 Body:
 Bagi pemilik restoran, momen paling mengkhawatirkan kerap datang di akhir hari ketika memeriksa laci kasir dan mendapati angka di pembukuan berbeda dengan uang fisik yang terkumpul. Selama bertahun-tahun mengamati sistem operasional F&B, saya menemukan pola yang hampir selalu berulang: restoran ramai pengunjung, pesanan mengalir tanpa henti, tetapi saat tutup buku bulanan, margin keuntungan justru tergerus oleh hal-hal yang sulit dilacak.
 
 Kebocoran pendapatan di bisnis kuliner jarang terjadi karena pencurian terang-terangan. Kebocoran hampir selalu menyelinap melalui celah perangkat lunak kasir yang longgar: pembatalan pesanan sepihak oleh kasir setelah pelanggan membayar tunai (*void fraud*), pesanan fiktif dari luar meja (*fake orders*), salah hitung uang kembalian, serta potongan komisi perantara yang mengikis omzet harian tanpa disadari.
 
-Ketika kami merancang arsitektur Walk-In Resto, filosofi intinya adalah **Owner First**: sistem kasir bukan sekadar alat pencatat pesanan pelayan, melainkan benteng pertahanan finansial yang melindungi modal, laba bersih, dan waktu berharga pemilik usaha.
+Ketika kami merancang arsitektur Citarasakita, filosofi intinya adalah **Owner First**: sistem kasir bukan sekadar alat pencatat pesanan pelayan, melainkan benteng pertahanan finansial yang melindungi modal, laba bersih, dan waktu berharga pemilik usaha.
 
 ---
 
@@ -23,19 +23,19 @@ Ketika kami merancang arsitektur Walk-In Resto, filosofi intinya adalah **Owner 
 
 Banyak pemilik restoran terjebak dalam perangkap operasional: mereka membuka restoran dengan impian menjadi pengusaha kuliner mandiri, tetapi kenyataannya berakhir menjadi "penjaga meja kasir" penuh waktu. Mereka takut meninggalkan restoran karena khawatir uang setoran tidak cocok atau pesanan dimanipulasi saat mereka tidak berada di tempat.
 
-Walk-In Resto dirancang untuk mengembalikan kebebasan tersebut kepada pemilik melalui empat pilar keuntungan strategis:
+Citarasakita dirancang untuk mengembalikan kebebasan tersebut kepada pemilik melalui empat pilar keuntungan strategis:
 
 1. **Peace of Mind & Remote Oversight (Kendali Penuh Jarak Jauh)**
    Pemilik tidak perlu lagi berdiri berjam-jam di belakang kasir hanya untuk mengawasi staf. Seluruh aktivitas operasional—mulai dari pesanan masuk, status meja terisi, nominal uang di laci, hingga void pesanan—dapat dipantau secara langsung melalui ponsel pintar dari mana saja. Anda bisa menikmati waktu bersama keluarga atau fokus merancang inovasi menu baru dengan ketenangan pikiran penuh.
 
 2. **Proteksi Margin Laba & Anti-Kebocoran Modal**
-   Margin industri makanan dan minuman (F&B) umumnya berada di kisaran 15% hingga 25%. Kebocoran kas kecil sebesar Rp 50.000 per hari terdengar sepele, namun dalam satu tahun angka tersebut terakumulasi menjadi lebih dari Rp 18.000.000 laba bersih yang hilang percuma. Dengan memangkas celah manipulasi transaksi dan pencatatan limbah bahan (*waste*), Walk-In Resto mengunci kebocoran kas hingga mendekati nol.
+   Margin industri makanan dan minuman (F&B) umumnya berada di kisaran 15% hingga 25%. Kebocoran kas kecil sebesar Rp 50.000 per hari terdengar sepele, namun dalam satu tahun angka tersebut terakumulasi menjadi lebih dari Rp 18.000.000 laba bersih yang hilang percuma. Dengan memangkas celah manipulasi transaksi dan pencatatan limbah bahan (*waste*), Citarasakita mengunci kebocoran kas hingga mendekati nol.
 
 3. **Uang Langsung Masuk ke Rekening Sendiri (Direct Cash Flow)**
-   Berbeda dengan aplikasi kasir atau agregator pihak ketiga yang menahan dana penjualan pelanggan di dalam rekening penampung (*escrow*) selama berhari-hari sebelum dicairkan, Walk-In Resto menganut prinsip kepemilikan dana langsung. Uang tunai masuk langsung ke laci kasir Anda, dan pembayaran QRIS langsung masuk ke rekening bank restoran Anda detik itu juga. Likuiditas bisnis harian tetap berada 100% di tangan Anda.
+   Berbeda dengan aplikasi kasir atau agregator pihak ketiga yang menahan dana penjualan pelanggan di dalam rekening penampung (*escrow*) selama berhari-hari sebelum dicairkan, Citarasakita menganut prinsip kepemilikan dana langsung. Uang tunai masuk langsung ke laci kasir Anda, dan pembayaran QRIS langsung masuk ke rekening bank restoran Anda detik itu juga. Likuiditas bisnis harian tetap berada 100% di tangan Anda.
 
 4. **Skalabilitas Bisnis Tanpa Hambatan Lisensi**
-   Ketika Anda ingin berekspansi membuka cabang kedua atau ketiga, kekhawatiran terbesar adalah mereplikasi kontrol keuangan yang sama ketatnya. Arsitektur multi-outlet Walk-In Resto memungkinkan pemilik mengelola beberapa gerai sekaligus dalam satu akun dasbor terpusat, dengan data analitik performa per cabang yang terisolasi rapi dan terstandarisasi.
+   Ketika Anda ingin berekspansi membuka cabang kedua atau ketiga, kekhawatiran terbesar adalah mereplikasi kontrol keuangan yang sama ketatnya. Arsitektur multi-outlet Citarasakita memungkinkan pemilik mengelola beberapa gerai sekaligus dalam satu akun dasbor terpusat, dengan data analitik performa per cabang yang terisolasi rapi dan terstandarisasi.
 
 ---
 
@@ -97,7 +97,7 @@ Sistem secara otomatis mengalkulasi total penjualan tunai, non-tunai, kas masuk,
 
 Sebagian besar aplikasi POS hanya memberikan grafik batang sederhana tentang berapa total penjualan kotor hari ini. Namun, angka penjualan kotor tanpa konteks analitik tidak dapat membantu pemilik mengambil keputusan bisnis yang cerdas.
 
-Di Walk-In Resto, modul *Restaurant Analytics Engine* mengolah transaksi mentah menjadi wawasan bisnis yang tajam dan siap dieksekusi:
+Di Citarasakita, modul *Restaurant Analytics Engine* mengolah transaksi mentah menjadi wawasan bisnis yang tajam dan siap dieksekusi:
 
 1. **Perbandingan Kinerja Harian & Tren Pertumbuhan (Omzet & Volume Delta)**
    Dasbor menyajikan komparasi omzet hari ini langsung terhadap performa kemarin pada jam yang sama, lengkap dengan delta persentase (*omzet delta %* dan *order count delta %*). Pemilik dapat langsung mendeteksi anomali: apakah penurunan omzet hari ini disebabkan oleh penurunan jumlah pengunjung atau karena nilai belanja per tamu yang mengecil.
@@ -109,7 +109,7 @@ Di Walk-In Resto, modul *Restaurant Analytics Engine* mengolah transaksi mentah 
    Mengetahui komposisi pembayaran sangat krusial bagi manajemen arus kas (*cash flow*). Modul analitik memetakan secara presisi perbandingan uang tunai fisik yang terkumpul di laci kasir versus dana non-tunai yang masuk ke rekening QRIS bank. Hal ini memudahkan pemilik merencanakan jadwal setoran tunai ke bank dan memastikan uang kas kecil di laci selalu mencukupi kebutuhan kembalian.
 
 4. **Kecerdasan Menu Terlaris (Top Menu Items Intelligence)**
-   Sistem memetakan 10 menu terpopuler berdasarkan volume pesanan dan kontribusi pendapatan bersih (*revenue share*). Yang membedakan arsitektur Walk-In Resto dengan POS biasa: algoritma analitik secara cerdas **mengecualikan item yang dibatalkan akibat salah input kasir (`void cut`)**, sehingga menu terlaris mencerminkan hidangan yang benar-benar dikonsumsi pelanggan, bukan data semu dari pesanan yang dibatalkan.
+   Sistem memetakan 10 menu terpopuler berdasarkan volume pesanan dan kontribusi pendapatan bersih (*revenue share*). Yang membedakan arsitektur Citarasakita dengan POS biasa: algoritma analitik secara cerdas **mengecualikan item yang dibatalkan akibat salah input kasir (`void cut`)**, sehingga menu terlaris mencerminkan hidangan yang benar-benar dikonsumsi pelanggan, bukan data semu dari pesanan yang dibatalkan.
 
 5. **Kalkulasi Kerugian Bahan Baku (Food Waste Costing)**
    Ketika makanan batal disajikan setelah terlanjur dimasak, biaya bahan baku yang terbuang tidak boleh disembunyikan. Dasbor analitik memisahkan metrik *waste loss* secara mandiri, memungkinkan pemilik dan koki kepala mengevaluasi efisiensi operasional dapur dan menekan pemborosan bahan baku hingga level minimum.
@@ -123,10 +123,10 @@ Di Walk-In Resto, modul *Restaurant Analytics Engine* mengolah transaksi mentah 
 
 Salah satu keluhan terbesar pemilik restoran terhadap penyedia platform digital adalah skema biaya yang rumit, tidak terduga, dan memberatkan. Banyak platform mengenakan potongan komisi per pesanan sebesar 15% hingga 25%, biaya transaksi tersembunyi (*hidden MDR*), biaya penarikan dana (*withdrawal fee*), hingga menagih komisi atas pajak dan biaya layanan yang sebenarnya bukan hak milik platform.
 
-Walk-In Resto membalik paradigma tersebut dengan menghadirkan sistem penagihan dan rekonsiliasi komisi yang 100% transparan, adil, dan dapat diaudit hingga ke level satuan nota pesanan:
+Citarasakita membalik paradigma tersebut dengan menghadirkan sistem penagihan dan rekonsiliasi komisi yang 100% transparan, adil, dan dapat diaudit hingga ke level satuan nota pesanan:
 
 #### 1. Zero Escrow: Dana 100% Mengalir Langsung ke Rekening Anda
-Walk-In Resto tidak pernah memotong uang di tengah jalan. Seluruh pembayaran pelanggan—baik selembar uang tunai di laci maupun transfer QRIS ke rekening bank restoran—sepenuhnya berada di bawah kendali Anda. Tidak ada saldo tertahan di aplikasi, tidak ada proses pencairan dana bersyarat (*payout delay*), dan tidak ada potongan per transaksi yang membingungkan.
+Citarasakita tidak pernah memotong uang di tengah jalan. Seluruh pembayaran pelanggan—baik selembar uang tunai di laci maupun transfer QRIS ke rekening bank restoran—sepenuhnya berada di bawah kendali Anda. Tidak ada saldo tertahan di aplikasi, tidak ada proses pencairan dana bersyarat (*payout delay*), dan tidak ada potongan per transaksi yang membingungkan.
 
 #### 2. Formula Komisi yang Adil (Murni dari Penjualan Bersih Menu)
 Jika restoran memilih paket komisi kasir (*Cashier Commission Plan*), komisi hanya dihitung dari omzet menu yang benar-benar terjual dan dinikmati tamu (`netMenuOmzet`). Arsitektur backend kami menerapkan aturan akuntansi yang sangat ketat:
@@ -138,7 +138,7 @@ Jika restoran memilih paket komisi kasir (*Cashier Commission Plan*), komisi han
 Selama masa uji coba gratis (*free trial*) berlangsung, tarif komisi otomatis 0%. Semua pesanan yang dicatat selama masa uji coba tidak akan pernah ditagih komisi, bahkan jika tutup buku bulan tersebut dilakukan setelah masa percobaan selesai.
 
 #### 4. Sinkronisasi Tagihan Real-Time Tanpa "Kejutan Akhir Bulan"
-Pada sistem lain, pemilik restoran sering kali terkejut melihat tagihan membengkak di akhir bulan tanpa tahu dari mana asalnya. Di Walk-In Resto, modul `CashierCommissionBillingService` melakukan sinkronisasi otomatis setiap kali ada pesanan lunas. Pemilik dapat membuka dasbor kapan saja untuk melihat estimasi tagihan komisi berjalan bulan ini secara *live*, lengkap dengan persentase komisi yang disepakati dan akumulasi omzet bersih yang mendasarinya.
+Pada sistem lain, pemilik restoran sering kali terkejut melihat tagihan membengkak di akhir bulan tanpa tahu dari mana asalnya. Di Citarasakita, modul `CashierCommissionBillingService` melakukan sinkronisasi otomatis setiap kali ada pesanan lunas. Pemilik dapat membuka dasbor kapan saja untuk melihat estimasi tagihan komisi berjalan bulan ini secara *live*, lengkap dengan persentase komisi yang disepakati dan akumulasi omzet bersih yang mendasarinya.
 
 #### 5. Buku Besar Rekonsiliasi Komisi Per Pesanan (Order-by-Order Reconciliation)
 Ingin memeriksa nota Meja 5 minggu lalu untuk memastikan perhitungan komisinya benar? Halaman *Commission Reconciliation* menyediakan rincian buku besar (*ledger*) transparan untuk setiap pesanan:
@@ -155,7 +155,7 @@ Semua angka terhubung secara matematis dan dapat dicocokkan langsung dengan lapo
 #### 6. Pengingat H-3 Otomatis & Tagihan Rp 0 Jika Resto Libur
 Sistem secara otomatis mengirimkan notifikasi pengingat transparan 3 hari sebelum akhir bulan (H-3) berisi estimasi nominal tagihan dan rincian omzet. Jika pada bulan tertentu restoran Anda sedang direnovasi atau omzet bersih tercatat Rp 0, sistem secara otomatis menandai tagihan bulan tersebut lunas (*auto-paid*) senilai Rp 0 tanpa denda atau biaya pemeliharaan tersembunyi.
 
-Bagi pemilik yang lebih menyukai kepastian biaya tetap, Walk-In Resto juga menyediakan opsi paket langganan flat bulanan atau tahunan dengan **komisi 0% mutlak**, memberi Anda kebebasan penuh memilih skema yang paling efisien bagi arus kas restoran Anda.
+Bagi pemilik yang lebih menyukai kepastian biaya tetap, Citarasakita juga menyediakan opsi paket langganan flat bulanan atau tahunan dengan **komisi 0% mutlak**, memberi Anda kebebasan penuh memilih skema yang paling efisien bagi arus kas restoran Anda.
 
 ---
 
@@ -163,7 +163,7 @@ Bagi pemilik yang lebih menyukai kepastian biaya tetap, Walk-In Resto juga menye
 
 Waktu dan energi seorang pemilik restoran terlalu berharga jika dihabiskan untuk mencurigai staf kasir, menghitung ulang struk robek di tengah malam, atau memusingkan potongan biaya aplikasi yang tidak masuk akal.
 
-Dengan memadukan audit trail yang tidak dapat dimanipulasi, verifikasi lokasi geofencing GPS, verifikasi nominal unik QRIS tanpa perantara, dasbor analitik omzet dan AOV real-time, serta sistem komisi yang transparan hingga ke tiap butir nota, Walk-In Resto memberi Anda rasa aman dan kendali mutlak yang selama ini Anda cari.
+Dengan memadukan audit trail yang tidak dapat dimanipulasi, verifikasi lokasi geofencing GPS, verifikasi nominal unik QRIS tanpa perantara, dasbor analitik omzet dan AOV real-time, serta sistem komisi yang transparan hingga ke tiap butir nota, Citarasakita memberi Anda rasa aman dan kendali mutlak yang selama ini Anda cari.
 
 Saatnya mengubah sistem kasir restoran Anda dari sekadar pengeluaran rutin menjadi benteng pengaman keuntungan dan pendorong utama pertumbuhan bisnis.
 
@@ -195,6 +195,6 @@ Focus keyword (internal):
 aplikasi kasir restoran anti bocor
 
 Sources:
-doc/feature.md (Spesifikasi Fitur & Bisnis Walk-In Resto)
-Walk-In Resto Core Architecture & Anti-Fraud Engine (app/Services/OrderPaymentService, GuestCheckoutService, CashierShiftService)
-Walk-In Resto Analytics & Billing Engine (app/Services/RestaurantAnalyticsService, DailyOmzetService, CashierCommissionBillingService, CommissionReconciliationService)
+doc/feature.md (Spesifikasi Fitur & Bisnis Citarasakita)
+Citarasakita Core Architecture & Anti-Fraud Engine (app/Services/OrderPaymentService, GuestCheckoutService, CashierShiftService)
+Citarasakita Analytics & Billing Engine (app/Services/RestaurantAnalyticsService, DailyOmzetService, CashierCommissionBillingService, CommissionReconciliationService)
