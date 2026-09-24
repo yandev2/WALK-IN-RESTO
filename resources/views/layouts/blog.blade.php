@@ -4,7 +4,10 @@
     $metaTitle = trim($__env->yieldContent('title', 'Blog Kuliner & Restoran · ' . ($home['site_name'] ?? 'Cita Rasa Kita')));
     $metaDescription = trim($__env->yieldContent('description', 'Temukan artikel, tips kuliner, resep, dan panduan restoran terbaik di Indonesia.'));
     $metaKeywords = trim($__env->yieldContent('keywords', ''));
-    $metaRobots = trim($__env->yieldContent('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'));
+    $defaultRobots = $currentLocale === 'en'
+        ? 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+    $metaRobots = trim($__env->yieldContent('robots', $defaultRobots));
     $ogImage = trim($__env->yieldContent('og_image', $home['og_image_url'] ?? asset('favicon.ico')));
     $canonical = \App\Models\PlatformSetting::canonicalizeUrl(trim($__env->yieldContent('canonical', url()->current())));
     $ogType = trim($__env->yieldContent('og_type', 'website'));
@@ -93,7 +96,7 @@
                 <a href="{{ route('home') }}" class="rounded-full px-3.5 py-1.5 text-sm font-medium text-muted hover:bg-surface-muted hover:text-body transition">
                     {{ __('portfolio.nav.home') ?? 'Beranda' }}
                 </a>
-                <a href="{{ route('blog.index') }}" class="rounded-full px-3.5 py-1.5 text-sm font-bold bg-primary/10 text-primary transition">
+                <a href="{{ route('blog.index', ['locale' => 'id']) }}" class="rounded-full px-3.5 py-1.5 text-sm font-bold bg-primary/10 text-primary transition">
                     Blog
                 </a>
                 <a href="{{ route('page.about') }}" class="rounded-full px-3.5 py-1.5 text-sm font-medium text-muted hover:bg-surface-muted hover:text-body transition">
@@ -151,6 +154,7 @@
                     </a>
                     <a
                         href="{{ $targetUrlEn }}"
+                        rel="nofollow"
                         @class([
                             'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 transition-all duration-200',
                             'bg-primary text-white shadow-xs font-bold' => $currentLocale === 'en',
@@ -180,7 +184,7 @@
                             ? url('/founder')
                             : ($authUser?->hasRole('blogger') ? url('/blogger') : url('/admin'));
                     @endphp
-                    <a href="{{ $panelUrl }}" class="hidden sm:inline-flex rounded-full bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition">
+                    <a href="{{ $panelUrl }}" rel="nofollow" class="hidden sm:inline-flex rounded-full bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition">
                         Panel
                     </a>
                 @endauth

@@ -1,10 +1,16 @@
 User-agent: *
 Allow: /
+Allow: /id/blog
 Allow: /blog
+Disallow: /en/
+Disallow: /en/blog
 Disallow: /admin
 Disallow: /founder
 Disallow: /blogger
 Disallow: /order
 Disallow: /export-files
+Disallow: /*?*search=
+Disallow: /*?*kategori=
+Disallow: /*?*sort=
 
 Sitemap: https://citarasakita.com/sitemap.xml

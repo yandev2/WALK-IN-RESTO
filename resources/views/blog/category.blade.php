@@ -4,7 +4,7 @@
     $locale = app()->getLocale();
     $catT = $category->translate($locale) ?? $category->translations->first();
     $catName = $catT?->name ?? 'Kategori';
-    $catCanonical = route('blog.category', ['slug' => $catT?->slug ?? $category->slug]);
+    $catCanonical = route('blog.category', ['locale' => $locale, 'slug' => $catT?->slug ?? $category->slug]);
 @endphp
 
 @section('title', ($catT?->meta_title ?: $catName) . ' · Blog · ' . (config('app.name', 'Cita Rasa Kita')))
@@ -18,12 +18,12 @@
     @foreach (['id', 'en'] as $langLoc)
         @php $altCat = $category->translate($langLoc); @endphp
         @if ($altCat && filled($altCat->slug))
-            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.category', ['slug' => $altCat->slug]) }}" />
+            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.category', ['locale' => $langLoc, 'slug' => $altCat->slug]) }}" />
         @endif
     @endforeach
     @php $idCatSlug = $category->translate('id')?->slug ?? $category->translations->first()?->slug; @endphp
     @if ($idCatSlug)
-        <link rel="alternate" hreflang="x-default" href="{{ route('blog.category', ['slug' => $idCatSlug]) }}" />
+        <link rel="alternate" hreflang="x-default" href="{{ route('blog.category', ['locale' => 'id', 'slug' => $idCatSlug]) }}" />
     @endif
 @endsection
 

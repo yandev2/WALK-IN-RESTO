@@ -86,5 +86,48 @@ class PlatformSeoPagesTest extends TestCase
             ->assertDontSee('rel="canonical" href="https://www.citarasakita.com"', false)
             ->assertDontSee('{search_term_string}', false);
     }
+
+    public function test_robots_txt_disallows_en_blog_search_and_admin(): void
+    {
+        $response = $this->get('/robots.txt');
+        $response->assertOk()
+            ->assertSee('Disallow: /en/', false)
+            ->assertSee('Disallow: /en/blog', false)
+            ->assertSee('Disallow: /admin', false)
+            ->assertSee('Disallow: /*?*search=', false)
+            ->assertSee('Allow: /id/blog', false);
+
+        // Also check static public/robots.txt file
+        $staticRobots = file_get_contents(public_path('robots.txt'));
+        $this->assertStringContainsString('Disallow: /en/', $staticRobots);
+        $this->assertStringContainsString('Disallow: /en/blog', $staticRobots);
+        $this->assertStringContainsString('Disallow: /admin', $staticRobots);
+        $this->assertStringContainsString('Disallow: /*?*search=', $staticRobots);
+    }
+
+    public function test_admin_login_link_in_register_page_has_rel_nofollow(): void
+    {
+        $response = $this->get(route('register.restaurant'));
+        $response->assertOk()
+            ->assertSee('href="'.url('/admin/login').'" rel="nofollow"', false);
+    }
+
+    public function test_english_blog_has_noindex_nofollow_meta(): void
+    {
+        $response = $this->get('/en/blog');
+        $response->assertOk()
+            ->assertSee('name="robots" content="noindex, nofollow"', false);
+    }
+
+    public function test_legacy_blog_redirect_defaults_strictly_to_id(): void
+    {
+        $response = $this->get('/blog');
+        $response->assertStatus(301)
+            ->assertRedirect('/id/blog');
+
+        $homeResponse = $this->get('/');
+        $homeResponse->assertOk()
+            ->assertSee(route('blog.index', ['locale' => 'id']), false);
+    }
 }
 

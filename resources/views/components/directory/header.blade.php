@@ -41,7 +41,7 @@
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('page.terms'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('page.terms'),
             ])>Syarat & Ketentuan</a>
-            <a href="{{ route('blog.index') }}" @class([
+            <a href="{{ route('blog.index', ['locale' => 'id']) }}" @class([
                 'rounded-full px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('blog.*'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('blog.*'),
@@ -53,7 +53,7 @@
                         ? url('/founder')
                         : ($authUser?->restaurants()->first() ? url('/admin/'.$authUser->restaurants()->first()->slug) : url('/admin'));
                 @endphp
-                <a href="{{ $panelUrl }}" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-primary-dark transition">Panel Admin</a>
+                <a href="{{ $panelUrl }}" rel="nofollow" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-primary-dark transition">Panel Admin</a>
             @else
                 <a href="{{ route('register.restaurant') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-muted hover:bg-surface-muted hover:text-body transition">{{ $home['cta_register_label'] }}</a>
             @endauth

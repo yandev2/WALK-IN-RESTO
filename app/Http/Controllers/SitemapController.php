@@ -41,8 +41,28 @@ class SitemapController extends Controller
         ];
 
         // Blog Main & Archive Pages
+        // Tahan rute bahasa Inggris (/en) dari sitemap sementara konten sedang disiapkan
+        $includeEnBlog = (bool) config('app.sitemap_include_en_blog', false);
         $latestPost = BlogPost::query()->public()->latest('published_at')->first();
         $blogLastMod = ($latestPost?->updated_at ?? $latestPost?->published_at ?? now())->toAtomString();
+
+        $blogLocales = $includeEnBlog ? ['id', 'en'] : ['id'];
+
+        $blogStaticAlternates = [
+            ['hreflang' => 'id', 'href' => route('blog.index', ['locale' => 'id'])],
+        ];
+        if ($includeEnBlog) {
+            $blogStaticAlternates[] = ['hreflang' => 'en', 'href' => route('blog.index', ['locale' => 'en'])];
+        }
+        $blogStaticAlternates[] = ['hreflang' => 'x-default', 'href' => route('blog.index', ['locale' => 'id'])];
+
+        $blogArchiveAlternates = [
+            ['hreflang' => 'id', 'href' => route('blog.archive', ['locale' => 'id'])],
+        ];
+        if ($includeEnBlog) {
+            $blogArchiveAlternates[] = ['hreflang' => 'en', 'href' => route('blog.archive', ['locale' => 'en'])];
+        }
+        $blogArchiveAlternates[] = ['hreflang' => 'x-default', 'href' => route('blog.archive', ['locale' => 'id'])];
 
         $blogStaticPages = [
             [
@@ -50,22 +70,14 @@ class SitemapController extends Controller
                 'lastmod' => $blogLastMod,
                 'changefreq' => 'daily',
                 'priority' => '0.9',
-                'alternates' => [
-                    ['hreflang' => 'id', 'href' => route('blog.index', ['locale' => 'id'])],
-                    ['hreflang' => 'en', 'href' => route('blog.index', ['locale' => 'en'])],
-                    ['hreflang' => 'x-default', 'href' => route('blog.index', ['locale' => 'id'])],
-                ],
+                'alternates' => $blogStaticAlternates,
             ],
             [
                 'url' => route('blog.archive', ['locale' => 'id']),
                 'lastmod' => $blogLastMod,
                 'changefreq' => 'daily',
                 'priority' => '0.8',
-                'alternates' => [
-                    ['hreflang' => 'id', 'href' => route('blog.archive', ['locale' => 'id'])],
-                    ['hreflang' => 'en', 'href' => route('blog.archive', ['locale' => 'en'])],
-                    ['hreflang' => 'x-default', 'href' => route('blog.archive', ['locale' => 'id'])],
-                ],
+                'alternates' => $blogArchiveAlternates,
             ],
         ];
 
@@ -73,6 +85,7 @@ class SitemapController extends Controller
         $blogCategoryPages = [];
         $categories = BlogCategory::query()
             ->where('is_active', true)
+            ->whereHas('blogPosts', fn ($q) => $q->public())
             ->with('translations')
             ->orderBy('sort_order')
             ->get();
@@ -81,7 +94,7 @@ class SitemapController extends Controller
             $catLastMod = ($category->updated_at ?? now())->toAtomString();
             $alternates = [];
 
-            foreach (['id', 'en'] as $loc) {
+            foreach ($blogLocales as $loc) {
                 $t = $category->translate($loc);
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
@@ -99,7 +112,7 @@ class SitemapController extends Controller
             }
 
             foreach ($category->translations as $t) {
-                if (filled($t->slug)) {
+                if (in_array($t->locale, $blogLocales, true) && filled($t->slug)) {
                     $blogCategoryPages[] = [
                         'url' => route('blog.category', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $catLastMod,
@@ -123,7 +136,7 @@ class SitemapController extends Controller
             $tagLastMod = ($tag->updated_at ?? now())->toAtomString();
             $alternates = [];
 
-            foreach (['id', 'en'] as $loc) {
+            foreach ($blogLocales as $loc) {
                 $t = $tag->translate($loc);
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
@@ -141,7 +154,7 @@ class SitemapController extends Controller
             }
 
             foreach ($tag->translations as $t) {
-                if (filled($t->slug)) {
+                if (in_array($t->locale, $blogLocales, true) && filled($t->slug)) {
                     $blogTagPages[] = [
                         'url' => route('blog.tag', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $tagLastMod,
@@ -165,7 +178,7 @@ class SitemapController extends Controller
             $postLastMod = ($post->updated_at ?? $post->published_at ?? now())->toAtomString();
             $alternates = [];
 
-            foreach (['id', 'en'] as $loc) {
+            foreach ($blogLocales as $loc) {
                 $t = $post->translate($loc);
                 if ($t && filled($t->slug)) {
                     $alternates[] = [
@@ -195,7 +208,7 @@ class SitemapController extends Controller
             }
 
             foreach ($post->translations as $t) {
-                if (filled($t->slug) && filled($t->title)) {
+                if (in_array($t->locale, $blogLocales, true) && filled($t->slug) && filled($t->title)) {
                     $itemImage = $image;
                     if ($itemImage && filled($t->title)) {
                         $itemImage['title'] = $t->title;

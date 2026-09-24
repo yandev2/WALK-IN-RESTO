@@ -613,7 +613,7 @@
         </div>
 
         <p class="auth-glass-subtitle mt-6 text-center text-sm">
-            Sudah punya akun? <a href="{{ url('/admin/login') }}">Masuk</a>
+            Sudah punya akun? <a href="{{ url('/admin/login') }}" rel="nofollow">Masuk</a>
         </p>
     </div>
 </div>

@@ -129,7 +129,12 @@ class BlogLocaleRoutingTest extends TestCase
 
         $content = $response->getContent();
         $this->assertStringContainsString('/id/blog', $content);
-        $this->assertStringContainsString('/en/blog', $content);
+        $this->assertStringNotContainsString('/en/blog', $content);
         $this->assertStringNotContainsString('?lang=', $content);
+
+        // When English is explicitly enabled in sitemap
+        config(['app.sitemap_include_en_blog' => true]);
+        $responseEn = $this->get('/sitemap.xml');
+        $this->assertStringContainsString('/en/blog', $responseEn->getContent());
     }
 }

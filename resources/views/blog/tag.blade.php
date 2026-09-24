@@ -4,7 +4,7 @@
     $locale = app()->getLocale();
     $tagT = $tag->translate($locale) ?? $tag->translations->first();
     $tagName = $tagT?->name ?? 'Tag';
-    $tagCanonical = route('blog.tag', ['slug' => $tagT?->slug ?? $tag->slug]);
+    $tagCanonical = route('blog.tag', ['locale' => $locale, 'slug' => $tagT?->slug ?? $tag->slug]);
 @endphp
 
 @section('title', '#' . $tagName . ' · Blog · ' . (config('app.name', 'Cita Rasa Kita')))
@@ -15,12 +15,12 @@
     @foreach (['id', 'en'] as $langLoc)
         @php $altTag = $tag->translate($langLoc); @endphp
         @if ($altTag && filled($altTag->slug))
-            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.tag', ['slug' => $altTag->slug]) }}" />
+            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.tag', ['locale' => $langLoc, 'slug' => $altTag->slug]) }}" />
         @endif
     @endforeach
     @php $idTagSlug = $tag->translate('id')?->slug ?? $tag->translations->first()?->slug; @endphp
     @if ($idTagSlug)
-        <link rel="alternate" hreflang="x-default" href="{{ route('blog.tag', ['slug' => $idTagSlug]) }}" />
+        <link rel="alternate" hreflang="x-default" href="{{ route('blog.tag', ['locale' => 'id', 'slug' => $idTagSlug]) }}" />
     @endif
 @endsection
 

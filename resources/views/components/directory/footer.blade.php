@@ -51,7 +51,7 @@
                     <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Beranda</a>
                 </li>
                 <li>
-                    <a href="{{ route('blog.index') }}" class="hover:text-primary transition-colors">Blog</a>
+                    <a href="{{ route('blog.index', ['locale' => 'id']) }}" class="hover:text-primary transition-colors">Blog</a>
                 </li>
                 <li>
                     <a href="{{ route('page.about') }}" class="hover:text-primary transition-colors">Tentang kami</a>
@@ -64,7 +64,7 @@
                             : ($authUser?->hasRole('blogger') ? url('/blogger') : ($authUser?->restaurants()->first() ? url('/admin/'.$authUser->restaurants()->first()->slug) : url('/admin')));
                     @endphp
                     <li>
-                        <a href="{{ $panelUrl }}" class="hover:text-primary transition-colors font-medium">Panel Admin</a>
+                        <a href="{{ $panelUrl }}" rel="nofollow" class="hover:text-primary transition-colors font-medium">Panel Admin</a>
                     </li>
                 @else
                     <li>

@@ -97,6 +97,7 @@ class BlogSeoAndMediaTest extends TestCase
             'content' => '<p>Draft konten rahasia.</p>',
         ]);
 
+        config(['app.sitemap_include_en_blog' => true]);
         $response = $this->get('/sitemap.xml');
 
         $response->assertOk()

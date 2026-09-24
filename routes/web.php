@@ -28,7 +28,7 @@ Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->n
 Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {
     $sitemapUrl = route('sitemap');
-    $content = "User-agent: *\nAllow: /\nAllow: /id/blog\nAllow: /en/blog\nAllow: /blog\nDisallow: /admin\nDisallow: /founder\nDisallow: /blogger\nDisallow: /order\nDisallow: /export-files\n\nSitemap: {$sitemapUrl}\n";
+    $content = "User-agent: *\nAllow: /\nAllow: /id/blog\nAllow: /blog\nDisallow: /en/\nDisallow: /en/blog\nDisallow: /admin\nDisallow: /founder\nDisallow: /blogger\nDisallow: /order\nDisallow: /export-files\nDisallow: /*?*search=\nDisallow: /*?*kategori=\nDisallow: /*?*sort=\n\nSitemap: {$sitemapUrl}\n";
 
     return response($content, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 });
@@ -105,8 +105,8 @@ Route::prefix('{locale}/blog')
 // Fallback & SEO 301 Permanent Redirects for legacy /blog paths
 Route::prefix('blog')->group(function (): void {
     $redirectWithQuery = function (\Illuminate\Http\Request $request, string $pathTemplate, ?string $slug = null) {
-        $locale = $request->query('lang') ?? $request->query('locale') ?? session('blog_locale') ?? app()->getLocale() ?: 'id';
-        if (! in_array($locale, ['id', 'en'], true)) {
+        $locale = $request->query('lang') ?? $request->query('locale') ?? 'id';
+        if ($locale !== 'en') {
             $locale = 'id';
         }
 
