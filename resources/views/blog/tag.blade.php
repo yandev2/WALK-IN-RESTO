@@ -12,15 +12,19 @@
 @section('canonical', $tagCanonical)
 
 @section('hreflang')
-    @foreach (['id', 'en'] as $langLoc)
-        @php $altTag = $tag->translate($langLoc); @endphp
-        @if ($altTag && filled($altTag->slug))
-            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.tag', ['locale' => $langLoc, 'slug' => $altTag->slug]) }}" />
-        @endif
-    @endforeach
-    @php $idTagSlug = $tag->translate('id')?->slug ?? $tag->translations->first()?->slug; @endphp
-    @if ($idTagSlug)
-        <link rel="alternate" hreflang="x-default" href="{{ route('blog.tag', ['locale' => 'id', 'slug' => $idTagSlug]) }}" />
+    @php
+        $idTag = $tag->translate('id');
+        $enTag = $tag->translate('en');
+        $hasMultipleTranslations = ($idTag && filled($idTag->slug)) && ($enTag && filled($enTag->slug));
+    @endphp
+    @if ($hasMultipleTranslations)
+        @foreach (['id', 'en'] as $langLoc)
+            @php $altTag = $tag->translate($langLoc); @endphp
+            @if ($altTag && filled($altTag->slug))
+                <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.tag', ['locale' => $langLoc, 'slug' => $altTag->slug]) }}" />
+            @endif
+        @endforeach
+        <link rel="alternate" hreflang="x-default" href="{{ route('blog.tag', ['locale' => 'id', 'slug' => $idTag->slug]) }}" />
     @endif
 @endsection
 
@@ -40,7 +44,7 @@
                 '@type' => 'ListItem',
                 'position' => 2,
                 'name' => 'Blog',
-                'item' => route('blog.index'),
+                'item' => route('blog.index', ['locale' => $locale]),
             ],
             [
                 '@type' => 'ListItem',
@@ -65,7 +69,7 @@
                     {{ __('portfolio.nav.home') ?? 'Beranda' }}
                 </a>
                 <span class="text-border-subtle" aria-hidden="true">/</span>
-                <a href="{{ route('blog.index') }}" class="hover:text-primary transition-colors">
+                <a href="{{ route('blog.index', ['locale' => $locale]) }}" class="hover:text-primary transition-colors">
                     Blog
                 </a>
                 <span class="text-border-subtle" aria-hidden="true">/</span>
@@ -89,7 +93,7 @@
             @if ($posts->isEmpty())
                 <div class="mt-12 text-center py-16 blog-card">
                     <p class="text-base text-muted">{{ __('blog.no_results') }}</p>
-                    <a href="{{ route('blog.index') }}" class="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
+                    <a href="{{ route('blog.index', ['locale' => $locale]) }}" class="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
                         {{ __('blog.view_all') }}
                     </a>
                 </div>

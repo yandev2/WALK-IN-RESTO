@@ -12,7 +12,7 @@
                     {{ __('portfolio.nav.home') ?? 'Beranda' }}
                 </a>
                 <span class="text-border-subtle" aria-hidden="true">/</span>
-                <a href="{{ route('blog.index') }}" class="hover:text-primary transition-colors">
+                <a href="{{ route('blog.index', ['locale' => $locale]) }}" class="hover:text-primary transition-colors">
                     Blog
                 </a>
                 <span class="text-border-subtle" aria-hidden="true">/</span>
@@ -35,7 +35,7 @@
 
             {{-- Search Bar --}}
             <form
-                action="{{ route('blog.archive') }}"
+                action="{{ route('blog.archive', ['locale' => $locale]) }}"
                 method="GET"
                 class="mt-6 flex w-full max-w-xl items-center gap-2"
                 role="search"

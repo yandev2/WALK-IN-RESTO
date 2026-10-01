@@ -129,5 +129,50 @@ class PlatformSeoPagesTest extends TestCase
         $homeResponse->assertOk()
             ->assertSee(route('blog.index', ['locale' => 'id']), false);
     }
+
+    public function test_register_page_has_noindex_follow_meta(): void
+    {
+        $response = $this->get(route('register.restaurant'));
+        $response->assertOk()
+            ->assertSee('name="robots" content="noindex, follow"', false);
+    }
+
+    public function test_empty_category_is_excluded_from_sitemap(): void
+    {
+        $emptyCategory = \App\Models\BlogCategory::query()->create([
+            'is_active' => true,
+            'sort_order' => 99,
+        ]);
+        $emptyCategory->translations()->create([
+            'locale' => 'id',
+            'name' => 'Kategori Kosong',
+            'slug' => 'kategori-kosong-tanpa-artikel',
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+        $response->assertOk()
+            ->assertDontSee('/id/blog/category/kategori-kosong-tanpa-artikel');
+    }
+
+    public function test_invalid_canonical_falls_back_to_valid_post_url(): void
+    {
+        $post = \App\Models\BlogPost::query()->create([
+            'status' => \App\Enums\BlogPostStatus::Published,
+            'is_active' => true,
+            'published_at' => now()->subDay(),
+        ]);
+        $post->translations()->create([
+            'locale' => 'id',
+            'title' => 'Artikel Tes Canonical',
+            'slug' => 'artikel-tes-canonical',
+            'content' => '<p>Konten artikel tes.</p>',
+            'canonical_url' => 'https://citarasakita/blog/artikel-tes-canonical',
+        ]);
+
+        $response = $this->get('/id/blog/artikel-tes-canonical');
+        $response->assertOk()
+            ->assertDontSee('href="https://citarasakita/blog/artikel-tes-canonical"')
+            ->assertSee('rel="canonical" href="'.route('blog.show', ['locale' => 'id', 'slug' => 'artikel-tes-canonical']).'"', false);
+    }
 }
 

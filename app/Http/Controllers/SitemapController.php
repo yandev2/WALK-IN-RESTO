@@ -48,21 +48,22 @@ class SitemapController extends Controller
 
         $blogLocales = $includeEnBlog ? ['id', 'en'] : ['id'];
 
-        $blogStaticAlternates = [
-            ['hreflang' => 'id', 'href' => route('blog.index', ['locale' => 'id'])],
-        ];
-        if ($includeEnBlog) {
-            $blogStaticAlternates[] = ['hreflang' => 'en', 'href' => route('blog.index', ['locale' => 'en'])];
-        }
-        $blogStaticAlternates[] = ['hreflang' => 'x-default', 'href' => route('blog.index', ['locale' => 'id'])];
+        $blogStaticAlternates = [];
+        $blogArchiveAlternates = [];
 
-        $blogArchiveAlternates = [
-            ['hreflang' => 'id', 'href' => route('blog.archive', ['locale' => 'id'])],
-        ];
         if ($includeEnBlog) {
-            $blogArchiveAlternates[] = ['hreflang' => 'en', 'href' => route('blog.archive', ['locale' => 'en'])];
+            $blogStaticAlternates = [
+                ['hreflang' => 'id', 'href' => route('blog.index', ['locale' => 'id'])],
+                ['hreflang' => 'en', 'href' => route('blog.index', ['locale' => 'en'])],
+                ['hreflang' => 'x-default', 'href' => route('blog.index', ['locale' => 'id'])],
+            ];
+
+            $blogArchiveAlternates = [
+                ['hreflang' => 'id', 'href' => route('blog.archive', ['locale' => 'id'])],
+                ['hreflang' => 'en', 'href' => route('blog.archive', ['locale' => 'en'])],
+                ['hreflang' => 'x-default', 'href' => route('blog.archive', ['locale' => 'id'])],
+            ];
         }
-        $blogArchiveAlternates[] = ['hreflang' => 'x-default', 'href' => route('blog.archive', ['locale' => 'id'])];
 
         $blogStaticPages = [
             [
@@ -86,33 +87,53 @@ class SitemapController extends Controller
         $categories = BlogCategory::query()
             ->where('is_active', true)
             ->whereHas('blogPosts', fn ($q) => $q->public())
-            ->with('translations')
+            ->with(['translations', 'blogPosts' => fn ($q) => $q->public()->with('translations')])
             ->orderBy('sort_order')
             ->get();
 
         foreach ($categories as $category) {
             $catLastMod = ($category->updated_at ?? now())->toAtomString();
-            $alternates = [];
 
+            // Determine which locales actually have public posts in this category
+            $validLocales = [];
             foreach ($blogLocales as $loc) {
-                $t = $category->translate($loc);
-                if ($t && filled($t->slug)) {
+                $hasPostsInLocale = $category->blogPosts->contains(function ($post) use ($loc) {
+                    return $post->translations->contains(function ($t) use ($loc) {
+                        return $t->locale === $loc && filled($t->slug);
+                    });
+                });
+
+                if ($hasPostsInLocale) {
+                    $validLocales[] = $loc;
+                }
+            }
+
+            if (empty($validLocales)) {
+                continue;
+            }
+
+            $alternates = [];
+            if ($includeEnBlog && count($validLocales) > 1) {
+                foreach ($validLocales as $loc) {
+                    $t = $category->translate($loc);
+                    if ($t && filled($t->slug)) {
+                        $alternates[] = [
+                            'hreflang' => $loc,
+                            'href' => route('blog.category', ['locale' => $loc, 'slug' => $t->slug]),
+                        ];
+                    }
+                }
+
+                if (! empty($alternates)) {
                     $alternates[] = [
-                        'hreflang' => $loc,
-                        'href' => route('blog.category', ['locale' => $loc, 'slug' => $t->slug]),
+                        'hreflang' => 'x-default',
+                        'href' => $alternates[0]['href'],
                     ];
                 }
             }
 
-            if (! empty($alternates)) {
-                $alternates[] = [
-                    'hreflang' => 'x-default',
-                    'href' => $alternates[0]['href'],
-                ];
-            }
-
             foreach ($category->translations as $t) {
-                if (in_array($t->locale, $blogLocales, true) && filled($t->slug)) {
+                if (in_array($t->locale, $validLocales, true) && filled($t->slug)) {
                     $blogCategoryPages[] = [
                         'url' => route('blog.category', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $catLastMod,
@@ -129,32 +150,52 @@ class SitemapController extends Controller
         $tags = BlogTag::query()
             ->where('is_active', true)
             ->whereHas('blogPosts', fn ($q) => $q->public())
-            ->with('translations')
+            ->with(['translations', 'blogPosts' => fn ($q) => $q->public()->with('translations')])
             ->get();
 
         foreach ($tags as $tag) {
             $tagLastMod = ($tag->updated_at ?? now())->toAtomString();
-            $alternates = [];
 
+            // Determine which locales actually have public posts in this tag
+            $validLocales = [];
             foreach ($blogLocales as $loc) {
-                $t = $tag->translate($loc);
-                if ($t && filled($t->slug)) {
+                $hasPostsInLocale = $tag->blogPosts->contains(function ($post) use ($loc) {
+                    return $post->translations->contains(function ($t) use ($loc) {
+                        return $t->locale === $loc && filled($t->slug);
+                    });
+                });
+
+                if ($hasPostsInLocale) {
+                    $validLocales[] = $loc;
+                }
+            }
+
+            if (empty($validLocales)) {
+                continue;
+            }
+
+            $alternates = [];
+            if ($includeEnBlog && count($validLocales) > 1) {
+                foreach ($validLocales as $loc) {
+                    $t = $tag->translate($loc);
+                    if ($t && filled($t->slug)) {
+                        $alternates[] = [
+                            'hreflang' => $loc,
+                            'href' => route('blog.tag', ['locale' => $loc, 'slug' => $t->slug]),
+                        ];
+                    }
+                }
+
+                if (! empty($alternates)) {
                     $alternates[] = [
-                        'hreflang' => $loc,
-                        'href' => route('blog.tag', ['locale' => $loc, 'slug' => $t->slug]),
+                        'hreflang' => 'x-default',
+                        'href' => $alternates[0]['href'],
                     ];
                 }
             }
 
-            if (! empty($alternates)) {
-                $alternates[] = [
-                    'hreflang' => 'x-default',
-                    'href' => $alternates[0]['href'],
-                ];
-            }
-
             foreach ($tag->translations as $t) {
-                if (in_array($t->locale, $blogLocales, true) && filled($t->slug)) {
+                if (in_array($t->locale, $validLocales, true) && filled($t->slug)) {
                     $blogTagPages[] = [
                         'url' => route('blog.tag', ['locale' => $t->locale, 'slug' => $t->slug]),
                         'lastmod' => $tagLastMod,
@@ -178,21 +219,25 @@ class SitemapController extends Controller
             $postLastMod = ($post->updated_at ?? $post->published_at ?? now())->toAtomString();
             $alternates = [];
 
-            foreach ($blogLocales as $loc) {
-                $t = $post->translate($loc);
-                if ($t && filled($t->slug)) {
-                    $alternates[] = [
-                        'hreflang' => $loc,
-                        'href' => route('blog.show', ['locale' => $loc, 'slug' => $t->slug]),
-                    ];
+            if ($includeEnBlog) {
+                foreach ($blogLocales as $loc) {
+                    $t = $post->translate($loc);
+                    if ($t && filled($t->slug)) {
+                        $alternates[] = [
+                            'hreflang' => $loc,
+                            'href' => route('blog.show', ['locale' => $loc, 'slug' => $t->slug]),
+                        ];
+                    }
                 }
-            }
 
-            if (! empty($alternates)) {
-                $alternates[] = [
-                    'hreflang' => 'x-default',
-                    'href' => $alternates[0]['href'],
-                ];
+                if (count($alternates) > 1) {
+                    $alternates[] = [
+                        'hreflang' => 'x-default',
+                        'href' => $alternates[0]['href'],
+                    ];
+                } else {
+                    $alternates = [];
+                }
             }
 
             $image = null;

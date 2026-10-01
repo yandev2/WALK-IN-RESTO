@@ -1,8 +1,8 @@
 @php
     $home = \App\Models\PlatformSetting::homeViewData();
     $currentLocale = app()->getLocale();
-    $metaTitle = trim($__env->yieldContent('title', 'Blog Kuliner & Restoran · ' . ($home['site_name'] ?? 'Cita Rasa Kita')));
-    $metaDescription = trim($__env->yieldContent('description', 'Temukan artikel, tips kuliner, resep, dan panduan restoran terbaik di Indonesia.'));
+    $metaTitle = html_entity_decode(trim($__env->yieldContent('title', 'Blog Kuliner & Restoran · ' . ($home['site_name'] ?? 'Cita Rasa Kita'))), ENT_QUOTES, 'UTF-8');
+    $metaDescription = html_entity_decode(trim($__env->yieldContent('description', 'Temukan artikel, tips kuliner, resep, dan panduan restoran terbaik di Indonesia.')), ENT_QUOTES, 'UTF-8');
     $metaKeywords = trim($__env->yieldContent('keywords', ''));
     $defaultRobots = $currentLocale === 'en'
         ? 'noindex, nofollow'

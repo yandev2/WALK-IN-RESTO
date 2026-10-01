@@ -32,6 +32,7 @@ use Spatie\Permission\PermissionRegistrar;
 #[Layout('layouts.directory', [
     'title' => 'Daftarkan Restoran Anda - Coba Gratis',
     'description' => 'Daftarkan restoran Anda dan nikmati masa uji coba gratis. Kelola menu digital QR, pesanan meja walk-in, dan pantau omset dengan mudah.',
+    'robots' => 'noindex, follow',
 ])]
 class RegisterRestaurant extends Component
 {

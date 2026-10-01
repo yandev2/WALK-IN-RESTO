@@ -50,7 +50,17 @@ class SeoFields
         $fields[] = TextInput::make("{$locale}.canonical_url")
             ->label('Canonical URL')
             ->url()
-            ->helperText('URL rujukan utama jika artikel diambil dari sumber lain.');
+            ->rule(function () {
+                return function (string $attribute, $value, \Closure $fail) {
+                    if (filled($value)) {
+                        $host = parse_url($value, PHP_URL_HOST);
+                        if (! $host || ! str_contains($host, '.')) {
+                            $fail('Canonical URL harus menyertakan domain lengkap dan valid (contoh: https://citarasakita.com/...).');
+                        }
+                    }
+                };
+            })
+            ->helperText('Kosongkan jika artikel orisinal. Isi hanya jika artikel rujukan dari sumber eksternal berdomain lengkap.');
 
         $fields[] = TextInput::make("{$locale}.robots")
             ->label('Robots Indexing')

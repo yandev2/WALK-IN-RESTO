@@ -39,7 +39,7 @@ Route::get('/ads.txt', function () {
 })->name('ads.txt');
 
 Route::get('/daftar', RegisterRestaurant::class)
-    ->middleware(['guest', 'throttle:10,1'])
+    ->middleware(['guest', 'throttle:60,1'])
     ->name('register.restaurant');
 
 Route::get('/receipts/{order:public_id}/download', OrderReceiptDownloadController::class)

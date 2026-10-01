@@ -279,6 +279,50 @@ class PlatformSetting extends Model
         return $url;
     }
 
+    public static function isValidExternalCanonical(?string $url): bool
+    {
+        if (blank($url)) {
+            return false;
+        }
+
+        $trimmed = trim($url);
+
+        if (! filter_var($trimmed, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $scheme = parse_url($trimmed, PHP_URL_SCHEME);
+        if (! in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        $host = parse_url($trimmed, PHP_URL_HOST);
+        if (! $host || ! str_contains($host, '.')) {
+            return false;
+        }
+
+        $currentAppHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $requestHost = request()?->getHost();
+
+        // If the URL points to our own platform domain, we do not treat it as an external canonical override
+        $internalHosts = array_filter([
+            strtolower((string) $currentAppHost),
+            strtolower((string) $requestHost),
+            'citarasakita.com',
+            'www.citarasakita.com',
+            'citarasakita',
+            'walk-in-resto.test',
+            'localhost',
+            '127.0.0.1',
+        ]);
+
+        if (in_array(strtolower($host), $internalHosts, true)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function applyFooterTokens(string $text, string $siteName): string
     {
         return str_replace(

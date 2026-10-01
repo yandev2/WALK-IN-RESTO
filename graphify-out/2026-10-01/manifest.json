@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/SitemapController.php": {
-    "mtime": 1790834076.0636492,
-    "seen": 1790834795.8907292,
-    "ast_hash": "e66f3f813d8b1492b80e274fbde8501b",
+    "mtime": 1790232509.1514523,
+    "seen": 1790232801.6421893,
+    "ast_hash": "af2f24a19bb73ab9a4e72a47c586c330",
     "semantic_hash": ""
   },
   "app/Http/Middleware/ApplyPlatformBrandTheme.php": {
@@ -990,9 +990,9 @@
     "semantic_hash": ""
   },
   "app/Livewire/Auth/RegisterRestaurant.php": {
-    "mtime": 1790834394.659102,
-    "seen": 1790834795.8907952,
-    "ast_hash": "015113f55670db1a901ec5ebe0f9bc1c",
+    "mtime": 1789960275.9432106,
+    "seen": 1789960394.1088963,
+    "ast_hash": "83ee2d9462a6cce24ed75f026264a7b1",
     "semantic_hash": ""
   },
   "app/Livewire/Guest/GuestCart.php": {
@@ -1212,9 +1212,9 @@
     "semantic_hash": ""
   },
   "app/Models/PlatformSetting.php": {
-    "mtime": 1790834723.6166277,
-    "seen": 1790834795.8908823,
-    "ast_hash": "5ac66511a19a20a7577aef610063d536",
+    "mtime": 1789884986.447359,
+    "seen": 1789885175.8817801,
+    "ast_hash": "5d39c6edbc7ada483b373d15ed593a1a",
     "semantic_hash": ""
   },
   "app/Models/Restaurant.php": {
@@ -2790,9 +2790,9 @@
     "semantic_hash": "b14828aceb38630838014e8f0357a62e"
   },
   "resources/views/layouts/directory.blade.php": {
-    "mtime": 1790834378.226281,
-    "seen": 1790834795.8915024,
-    "ast_hash": "9f7a7b0ff2a31f8a5811ce5ccdc93013",
+    "mtime": 1789661561.5417514,
+    "seen": 1789661665.7690868,
+    "ast_hash": "ecedff88d0bff6d3456327f98e7a82e0",
     "semantic_hash": ""
   },
   "resources/views/layouts/guest-order.blade.php": {
@@ -2964,9 +2964,9 @@
     "semantic_hash": ""
   },
   "routes/web.php": {
-    "mtime": 1790834315.5208488,
-    "seen": 1790834795.891549,
-    "ast_hash": "6b70d8fa6d6470ae320b5bbc346e3097",
+    "mtime": 1790232297.067528,
+    "seen": 1790232801.6430213,
+    "ast_hash": "aa7102840f12cc61f4203e26f9e0a94d",
     "semantic_hash": ""
   },
   "tests/Concerns/CreatesGuestRestaurant.php": {
@@ -4308,9 +4308,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Forms/SeoFields.php": {
-    "mtime": 1790834328.6928644,
-    "seen": 1790834795.8903887,
-    "ast_hash": "a13b7cbb77348a3f96758f6681ddbaf4",
+    "mtime": 1789471243.0734124,
+    "seen": 1789472847.5296233,
+    "ast_hash": "847cf083ef4eaca17e0d94ce6f3aee1e",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Forms/TranslationTabs.php": {
@@ -4728,15 +4728,15 @@
     "semantic_hash": ""
   },
   "resources/views/blog/archive.blade.php": {
-    "mtime": 1790834251.4390836,
-    "seen": 1790834795.8912644,
-    "ast_hash": "64b7532be1936c204b993172aef88e70",
+    "mtime": 1789536885.9820218,
+    "seen": 1789537076.79675,
+    "ast_hash": "71e8af1f1040a67d1db08eaaa311ff38",
     "semantic_hash": ""
   },
   "resources/views/blog/category.blade.php": {
-    "mtime": 1790834482.4939892,
-    "seen": 1790834795.891266,
-    "ast_hash": "8d85d4989d5c1b1ba84c00eb972974ae",
+    "mtime": 1790233163.2205763,
+    "seen": 1790233305.3029556,
+    "ast_hash": "bbece858633e3236b1f1be4dd0071db0",
     "semantic_hash": ""
   },
   "resources/views/blog/index.blade.php": {
@@ -4746,21 +4746,21 @@
     "semantic_hash": ""
   },
   "resources/views/blog/show.blade.php": {
-    "mtime": 1790834467.0172246,
-    "seen": 1790834795.8912692,
-    "ast_hash": "c55cc87592a47b67a504149e7c098e2c",
+    "mtime": 1789665322.3181913,
+    "seen": 1789666161.33316,
+    "ast_hash": "328533f1bf9b7c84a6a597666fd17b04",
     "semantic_hash": ""
   },
   "resources/views/blog/tag.blade.php": {
-    "mtime": 1790834496.0636597,
-    "seen": 1790834795.8912702,
-    "ast_hash": "8ec56e387203cbe876ffff118382318f",
+    "mtime": 1790233175.6072795,
+    "seen": 1790233305.3029668,
+    "ast_hash": "6659745868ae5c2b4514b367581b6236",
     "semantic_hash": ""
   },
   "resources/views/components/blog/category-filter.blade.php": {
-    "mtime": 1790834265.3169742,
-    "seen": 1790834795.891275,
-    "ast_hash": "ebbcc65d8a5a7c04c149fac0903ea816",
+    "mtime": 1789475682.7851782,
+    "seen": 1789476585.29256,
+    "ast_hash": "21068bfc83c7d19a0502fbc6a4e67db9",
     "semantic_hash": ""
   },
   "resources/views/components/blog/category-section.blade.php": {
@@ -4824,9 +4824,9 @@
     "semantic_hash": ""
   },
   "resources/views/layouts/blog.blade.php": {
-    "mtime": 1790834300.3675551,
-    "seen": 1790834795.8915007,
-    "ast_hash": "efaff4022d2a01e95004b0bd3d043798",
+    "mtime": 1790233194.0304358,
+    "seen": 1790233305.3034377,
+    "ast_hash": "dd78a75d0d46b2a2451a221e358df377",
     "semantic_hash": ""
   },
   "tests/Feature/PublicBlogTest.php": {
@@ -5166,9 +5166,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/PlatformSeoPagesTest.php": {
-    "mtime": 1790834627.0621688,
-    "seen": 1790834795.891658,
-    "ast_hash": "544b2de1c0924f8ccd26e4a1ace847ad",
+    "mtime": 1790232577.3006206,
+    "seen": 1790232801.6431339,
+    "ast_hash": "3defc03e700983a22562ba956d7d1d19",
     "semantic_hash": ""
   },
   "app/Http/Controllers/PaymentProofViewController.php": {
@@ -5313,12 +5313,6 @@
     "mtime": 1789989759.1296003,
     "seen": 1789989837.4133282,
     "ast_hash": "4339e80d6f84078bbabeef198e5a7ac6",
-    "semantic_hash": ""
-  },
-  "database/migrations/2026_10_01_130000_sanitize_broken_canonical_urls_in_blog_post_translations.php": {
-    "mtime": 1790834346.7746515,
-    "seen": 1790834795.8911755,
-    "ast_hash": "9988a288dc7eb7f50fecb1bd0e08ff23",
     "semantic_hash": ""
   }
 }

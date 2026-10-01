@@ -7,13 +7,16 @@
     $postTitle = $t?->meta_title ?: ($t?->title ?? 'Artikel Blog');
     $postDescription = $t?->meta_description ?: ($t?->excerpt ?: 'Baca artikel selengkapnya di blog kuliner.');
     $postOgImage = $image ? \App\Support\MediaUrl::public($image) : null;
-    $canonicalUrl = $t?->canonical_url ?: route('blog.show', ['slug' => $t?->slug ?? $post->slug]);
+    $rawCanonical = $t?->canonical_url;
+    $canonicalUrl = \App\Models\PlatformSetting::isValidExternalCanonical($rawCanonical)
+        ? \App\Models\PlatformSetting::canonicalizeUrl($rawCanonical)
+        : route('blog.show', ['locale' => $locale, 'slug' => $t?->slug ?? $post->slug]);
     $robotsDirective = $t?->robots ?: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
     $postKeywords = $t?->meta_keywords ?: ($t?->focus_keyword ?: '');
 
     $catT = ($post->relationLoaded('category') && $post->category) ? $post->category->translate($locale) : null;
     $categoryName = $catT?->name ?? 'Kuliner';
-    $categoryUrl = $catT ? route('blog.category', ['slug' => $catT->slug]) : null;
+    $categoryUrl = $catT ? route('blog.category', ['locale' => $locale, 'slug' => $catT->slug]) : null;
 
     $homeData = \App\Models\PlatformSetting::homeViewData();
 @endphp
@@ -33,15 +36,19 @@
 @endif
 
 @section('hreflang')
-    @foreach (['id', 'en'] as $langLoc)
-        @php $altT = $post->translate($langLoc); @endphp
-        @if ($altT && filled($altT->slug))
-            <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.show', ['locale' => $langLoc, 'slug' => $altT->slug]) }}" />
-        @endif
-    @endforeach
-    @php $idSlug = $post->translate('id')?->slug ?? $post->translations->first()?->slug; @endphp
-    @if ($idSlug)
-        <link rel="alternate" hreflang="x-default" href="{{ route('blog.show', ['locale' => 'id', 'slug' => $idSlug]) }}" />
+    @php
+        $idT = $post->translate('id');
+        $enT = $post->translate('en');
+        $hasMultipleTranslations = ($idT && filled($idT->slug)) && ($enT && filled($enT->slug));
+    @endphp
+    @if ($hasMultipleTranslations)
+        @foreach (['id', 'en'] as $langLoc)
+            @php $altT = $post->translate($langLoc); @endphp
+            @if ($altT && filled($altT->slug))
+                <link rel="alternate" hreflang="{{ $langLoc }}" href="{{ route('blog.show', ['locale' => $langLoc, 'slug' => $altT->slug]) }}" />
+            @endif
+        @endforeach
+        <link rel="alternate" hreflang="x-default" href="{{ route('blog.show', ['locale' => 'id', 'slug' => $idT->slug]) }}" />
     @endif
 @endsection
 
@@ -81,7 +88,7 @@
             '@type' => 'ListItem',
             'position' => 2,
             'name' => 'Blog',
-            'item' => route('blog.index'),
+            'item' => route('blog.index', ['locale' => $locale]),
         ],
     ];
 
@@ -122,7 +129,7 @@
         'author' => [
             '@type' => 'Person',
             'name' => $post->author?->name ?? 'Redaksi',
-            'url' => route('blog.index'),
+            'url' => route('blog.index', ['locale' => $locale]),
         ],
         'publisher' => [
             '@type' => 'Organization',
@@ -165,14 +172,14 @@
                             {{ __('portfolio.nav.home') ?? 'Beranda' }}
                         </a>
                         <span class="text-border-subtle" aria-hidden="true">/</span>
-                        <a href="{{ route('blog.index') }}" class="hover:text-primary transition-colors">
+                        <a href="{{ route('blog.index', ['locale' => $locale]) }}" class="hover:text-primary transition-colors">
                             Blog
                         </a>
                         @if ($post->relationLoaded('category') && $post->category)
                             @php $catT = $post->category->translate($locale); @endphp
                             @if ($catT)
                                 <span class="text-border-subtle" aria-hidden="true">/</span>
-                                <a href="{{ route('blog.category', ['slug' => $catT->slug]) }}" class="hover:text-primary transition-colors">
+                                <a href="{{ route('blog.category', ['locale' => $locale, 'slug' => $catT->slug]) }}" class="hover:text-primary transition-colors">
                                     {{ $catT->name }}
                                 </a>
                             @endif

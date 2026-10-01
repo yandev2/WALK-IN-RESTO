@@ -4,6 +4,7 @@
     $metaTitle = html_entity_decode($metaTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $metaDescription = trim($__env->yieldContent('description', $description ?? ($home['meta_description'] ?? 'Temukan restoran terdekat, lihat menu, dan datang langsung.')));
     $metaKeywords = $home['meta_keywords'] ?? 'restoran terdekat, kuliner terdekat, menu restoran, cafe terdekat, walk-in resto';
+    $metaRobots = trim($__env->yieldContent('robots', $robots ?? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'));
     $defaultCanonical = request()->routeIs('home') ? ($home['canonical_url'] ?? url()->current()) : url()->current();
     $canonicalUrl = \App\Models\PlatformSetting::canonicalizeUrl(trim($__env->yieldContent('canonical', $canonical ?? $defaultCanonical)));
     $faviconUrl = $home['favicon_url'] ?? ($home['logo_url'] ?? asset('favicon.ico'));
@@ -49,7 +50,7 @@
         @if (filled($metaKeywords))
             <meta name="keywords" content="{{ $metaKeywords }}">
         @endif
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <meta name="robots" content="{{ $metaRobots }}">
         <link rel="canonical" href="{{ $canonicalUrl }}">
 
         {{-- Favicon & App Icons --}}
