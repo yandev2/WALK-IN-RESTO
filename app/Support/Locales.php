@@ -49,4 +49,17 @@ class Locales
     {
         return self::labels()[$locale] ?? strtoupper($locale);
     }
+
+    public static function isEnglishBlogEnabled(): bool
+    {
+        return \App\Models\BlogHeroSetting::isEnglishEnabled();
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function blogLocales(): array
+    {
+        return self::isEnglishBlogEnabled() ? ['id', 'en'] : ['id'];
+    }
 }

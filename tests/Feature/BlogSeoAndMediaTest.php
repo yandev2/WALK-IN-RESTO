@@ -97,6 +97,7 @@ class BlogSeoAndMediaTest extends TestCase
             'content' => '<p>Draft konten rahasia.</p>',
         ]);
 
+        BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
         config(['app.sitemap_include_en_blog' => true]);
         $response = $this->get('/sitemap.xml');
 
@@ -112,9 +113,9 @@ class BlogSeoAndMediaTest extends TestCase
             ->assertSee(route('blog.category', ['locale' => 'en', 'slug' => 'indonesian-culinary']), false)
             ->assertSee('hreflang="id"', false)
             ->assertSee('hreflang="en"', false)
-            // Tag routes
-            ->assertSee(route('blog.tag', ['locale' => 'id', 'slug' => 'resep']), false)
-            ->assertSee(route('blog.tag', ['locale' => 'en', 'slug' => 'recipe']), false)
+            // Tag routes sengaja dikecualikan secara default untuk mencegah sindrom thin-content 'Ditemukan - saat ini tidak diindeks'
+            ->assertDontSee(route('blog.tag', ['locale' => 'id', 'slug' => 'resep']), false)
+            ->assertDontSee(route('blog.tag', ['locale' => 'en', 'slug' => 'recipe']), false)
             // Post routes & Google Images
             ->assertSee(route('blog.show', ['locale' => 'id', 'slug' => 'resep-sate-ayam-madura-asli']), false)
             ->assertSee(route('blog.show', ['locale' => 'en', 'slug' => 'authentic-madura-chicken-satay-recipe']), false)
@@ -123,6 +124,13 @@ class BlogSeoAndMediaTest extends TestCase
             ->assertSee('Foto Sate Ayam Madura', false)
             // Draft should not appear
             ->assertDontSee('artikel-rahasia-draft');
+
+        // Saat opsi tags diaktifkan secara eksplisit
+        config(['app.sitemap_include_tags' => true]);
+        $responseWithTags = $this->get('/sitemap.xml');
+        $responseWithTags->assertOk()
+            ->assertSee(route('blog.tag', ['locale' => 'id', 'slug' => 'resep']), false)
+            ->assertSee(route('blog.tag', ['locale' => 'en', 'slug' => 'recipe']), false);
     }
 
     public function test_robots_txt_allows_blog_and_disallows_blogger_panel(): void
@@ -182,6 +190,8 @@ class BlogSeoAndMediaTest extends TestCase
             'excerpt' => 'Tender beef rendang with aromatic spices.',
             'content' => '<p>Step by step beef rendang recipe.</p>',
         ]);
+
+        BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
 
         $response = $this->get('/id/blog/cara-memasak-rendang-daging-empuk');
 
@@ -367,6 +377,8 @@ class BlogSeoAndMediaTest extends TestCase
             'name' => 'Kopi Enak',
             'slug' => 'kopi-enak',
         ]);
+
+        BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
 
         // Set application locale to English ('en')
         app()->setLocale('en');

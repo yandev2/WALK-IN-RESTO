@@ -64,6 +64,8 @@ class BlogLocaleRoutingTest extends TestCase
             ],
         ]);
         $post->tags()->attach($tag->id);
+
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
     }
 
     public function test_localized_blog_index_returns_200_for_id_and_en(): void
@@ -123,6 +125,7 @@ class BlogLocaleRoutingTest extends TestCase
 
     public function test_sitemap_outputs_clean_localized_blog_paths(): void
     {
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => false]);
         $response = $this->get('/sitemap.xml');
         $response->assertOk();
         $response->assertHeader('Content-Type', 'application/xml; charset=utf-8');
@@ -133,8 +136,57 @@ class BlogLocaleRoutingTest extends TestCase
         $this->assertStringNotContainsString('?lang=', $content);
 
         // When English is explicitly enabled in sitemap
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
         config(['app.sitemap_include_en_blog' => true]);
         $responseEn = $this->get('/sitemap.xml');
         $this->assertStringContainsString('/en/blog', $responseEn->getContent());
+    }
+
+    public function test_when_english_is_disabled_switcher_is_hidden_and_en_routes_redirect_to_id(): void
+    {
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => false]);
+
+        // Public index hides English switcher
+        $responseId = $this->get('/id/blog');
+        $responseId->assertOk();
+        $responseId->assertDontSee('aria-label="English"', false);
+
+        // Visiting /en/blog redirects 301 to /id/blog
+        $responseEn = $this->get('/en/blog');
+        $responseEn->assertStatus(301);
+        $responseEn->assertRedirect('/id/blog');
+
+        // Visiting /en article redirects 301 to /id equivalent
+        $responseEnArticle = $this->get('/en/blog/guide-to-running-a-restaurant');
+        $responseEnArticle->assertStatus(301);
+        $responseEnArticle->assertRedirect('/id/blog/guide-to-running-a-restaurant');
+
+        // Legacy redirect with lang=en goes to /id/blog
+        $responseLegacy = $this->get('/blog?lang=en');
+        $responseLegacy->assertStatus(301);
+        $responseLegacy->assertRedirect('/id/blog');
+
+        // Sitemap excludes /en/blog completely (no EN index, article, category, or hreflang)
+        $sitemapResponse = $this->get('/sitemap.xml');
+        $sitemapResponse->assertOk();
+        $sitemapContent = $sitemapResponse->getContent();
+        $this->assertStringNotContainsString('/en/blog', $sitemapContent);
+        $this->assertStringNotContainsString('guide-to-running-a-restaurant', $sitemapContent);
+        $this->assertStringNotContainsString('indonesian-culinary', $sitemapContent);
+        $this->assertStringNotContainsString('hreflang="en"', $sitemapContent);
+        $this->assertStringNotContainsString('hreflang="x-default"', $sitemapContent);
+
+        // Indonesian URLs must still be present and valid
+        $this->assertStringContainsString('/id/blog', $sitemapContent);
+        $this->assertStringContainsString('panduan-menjalankan-resto', $sitemapContent);
+        $this->assertStringContainsString('kuliner-nusantara', $sitemapContent);
+
+        // Even if sitemap_include_tags is turned on, EN tags must never enter sitemap when EN is disabled
+        config(['app.sitemap_include_tags' => true]);
+        $sitemapWithTags = $this->get('/sitemap.xml');
+        $sitemapWithTagsContent = $sitemapWithTags->getContent();
+        $this->assertStringNotContainsString('/en/blog/tag', $sitemapWithTagsContent);
+        $this->assertStringNotContainsString('restaurant-tips', $sitemapWithTagsContent);
+        $this->assertStringContainsString('/id/blog/tag/tips-resto', $sitemapWithTagsContent);
     }
 }

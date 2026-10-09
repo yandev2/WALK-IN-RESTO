@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/SitemapController.php": {
-    "mtime": 1790834076.0636492,
-    "seen": 1790834795.8907292,
-    "ast_hash": "e66f3f813d8b1492b80e274fbde8501b",
+    "mtime": 1791542880.7199106,
+    "seen": 1791543407.3148293,
+    "ast_hash": "35a5c3806061b22acd2ec0a2f80944ce",
     "semantic_hash": ""
   },
   "app/Http/Middleware/ApplyPlatformBrandTheme.php": {
@@ -2964,9 +2964,9 @@
     "semantic_hash": ""
   },
   "routes/web.php": {
-    "mtime": 1790834315.5208488,
-    "seen": 1790834795.891549,
-    "ast_hash": "6b70d8fa6d6470ae320b5bbc346e3097",
+    "mtime": 1791543154.319753,
+    "seen": 1791543407.3168778,
+    "ast_hash": "f81479d618beef9f5f3e9a2cac5f4c45",
     "semantic_hash": ""
   },
   "tests/Concerns/CreatesGuestRestaurant.php": {
@@ -3252,9 +3252,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/PlatformSettingTest.php": {
-    "mtime": 1789615206.0046844,
-    "seen": 1789615276.1871624,
-    "ast_hash": "a63eac187714c747a383da365ae0f742",
+    "mtime": 1791541893.1297333,
+    "seen": 1791542013.6912599,
+    "ast_hash": "cfc5ca8971f086d105c01f9997170d7e",
     "semantic_hash": ""
   },
   "tests/Feature/ProfilePageTest.php": {
@@ -4314,9 +4314,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Forms/TranslationTabs.php": {
-    "mtime": 1789471224.8545983,
-    "seen": 1789472847.529626,
-    "ast_hash": "ff349d2069f837267f2da74d8f4ba1bd",
+    "mtime": 1791542600.4754274,
+    "seen": 1791543407.31408,
+    "ast_hash": "78f93ac5aa5cdac110bd20b0200c880e",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/Dashboard.php": {
@@ -4356,9 +4356,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Schemas/BlogCategoryForm.php": {
-    "mtime": 1789471475.038508,
-    "seen": 1789472847.5296438,
-    "ast_hash": "fcbd893f2f08ff2b559771bd2203be2a",
+    "mtime": 1791542694.8087254,
+    "seen": 1791543407.3141177,
+    "ast_hash": "748f51f897bb635be31e1ee9474c3b11",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogCategories/Schemas/BlogCategoryInfolist.php": {
@@ -4458,9 +4458,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Schemas/BlogPostForm.php": {
-    "mtime": 1789896094.4265409,
-    "seen": 1789896310.3062935,
-    "ast_hash": "be3ccbd5ddacef934b89595437e3e5c3",
+    "mtime": 1791542674.3968637,
+    "seen": 1791543407.3141727,
+    "ast_hash": "b2121f5773ae9f2fe3b88233b5c09a4d",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogPosts/Schemas/BlogPostInfolist.php": {
@@ -4506,9 +4506,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Schemas/BlogTagForm.php": {
-    "mtime": 1789471656.5312862,
-    "seen": 1789472847.5297036,
-    "ast_hash": "ea52a91e266b279b4b219820c4bdff29",
+    "mtime": 1791542701.7416956,
+    "seen": 1791543407.3141978,
+    "ast_hash": "8095ce7560141b5eb041c9073cc8e0f1",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Resources/BlogTags/Schemas/BlogTagInfolist.php": {
@@ -4578,9 +4578,9 @@
     "semantic_hash": ""
   },
   "app/Models/BlogPostTranslation.php": {
-    "mtime": 1789470704.4230146,
-    "seen": 1789472847.5303261,
-    "ast_hash": "a490644a59fa6615bdc86aadac78962a",
+    "mtime": 1791541708.541509,
+    "seen": 1791542013.6893487,
+    "ast_hash": "1770859e961517e6b34b8c0c78e47ef2",
     "semantic_hash": ""
   },
   "app/Models/BlogTag.php": {
@@ -4620,9 +4620,9 @@
     "semantic_hash": ""
   },
   "app/Support/Locales.php": {
-    "mtime": 1789470408.8542905,
-    "seen": 1789472847.5306616,
-    "ast_hash": "75f0d8d588584308e6052065dd3a23f7",
+    "mtime": 1791542505.5447574,
+    "seen": 1791543407.3156707,
+    "ast_hash": "ea89ea1c00752f9b21e6adf04fd4c79f",
     "semantic_hash": ""
   },
   "config/translatable.php": {
@@ -4644,9 +4644,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/BloggerResourceLivewireTest.php": {
-    "mtime": 1789653246.910899,
-    "seen": 1789653374.346497,
-    "ast_hash": "d9074e2cdcaa1f61bdf0c5ff24478272",
+    "mtime": 1791543094.8157935,
+    "seen": 1791543407.3169255,
+    "ast_hash": "9bc0df454573faff5a045c0116f0289f",
     "semantic_hash": ""
   },
   "app/Http/Controllers/BlogCommentController.php": {
@@ -4734,9 +4734,9 @@
     "semantic_hash": ""
   },
   "resources/views/blog/category.blade.php": {
-    "mtime": 1790834482.4939892,
-    "seen": 1790834795.891266,
-    "ast_hash": "8d85d4989d5c1b1ba84c00eb972974ae",
+    "mtime": 1791542896.6309545,
+    "seen": 1791543407.3162806,
+    "ast_hash": "0e20a1fcf531cc5c3f04ef2bebf95c9f",
     "semantic_hash": ""
   },
   "resources/views/blog/index.blade.php": {
@@ -4746,15 +4746,15 @@
     "semantic_hash": ""
   },
   "resources/views/blog/show.blade.php": {
-    "mtime": 1790834467.0172246,
-    "seen": 1790834795.8912692,
-    "ast_hash": "c55cc87592a47b67a504149e7c098e2c",
+    "mtime": 1791542887.164451,
+    "seen": 1791543407.3162863,
+    "ast_hash": "4d437fc103e77e7e4d3528fe9af93656",
     "semantic_hash": ""
   },
   "resources/views/blog/tag.blade.php": {
-    "mtime": 1790834496.0636597,
-    "seen": 1790834795.8912702,
-    "ast_hash": "8ec56e387203cbe876ffff118382318f",
+    "mtime": 1791542906.2560425,
+    "seen": 1791543407.316289,
+    "ast_hash": "229c157602aa30480161ed2448041745",
     "semantic_hash": ""
   },
   "resources/views/components/blog/category-filter.blade.php": {
@@ -4824,15 +4824,15 @@
     "semantic_hash": ""
   },
   "resources/views/layouts/blog.blade.php": {
-    "mtime": 1790834300.3675551,
-    "seen": 1790834795.8915007,
-    "ast_hash": "efaff4022d2a01e95004b0bd3d043798",
+    "mtime": 1791542734.7507677,
+    "seen": 1791543407.3167732,
+    "ast_hash": "82ccac9b1a9b2ba9cd8bdeb83cdf167a",
     "semantic_hash": ""
   },
   "tests/Feature/PublicBlogTest.php": {
-    "mtime": 1789665797.126852,
-    "seen": 1789666161.333527,
-    "ast_hash": "2558d4944d0f4b7fd083b427938590b4",
+    "mtime": 1791543036.32983,
+    "seen": 1791543407.317087,
+    "ast_hash": "51502dafbb9a89b9c2dd5c5296e09301",
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/ManageBlogHero.php": {
@@ -4842,9 +4842,9 @@
     "semantic_hash": ""
   },
   "app/Filament/Blogger/Pages/Schemas/BlogHeroFormSchema.php": {
-    "mtime": 1789618979.656593,
-    "seen": 1789619062.9844475,
-    "ast_hash": "00371e6f3996a3affd81da1580dd5a96",
+    "mtime": 1791542584.085091,
+    "seen": 1791543407.3140965,
+    "ast_hash": "99e275219fa8f7b8ddd04cd4a88084d7",
     "semantic_hash": ""
   },
   "app/Filament/Concerns/HandlesTranslatableForm.php": {
@@ -4860,9 +4860,9 @@
     "semantic_hash": ""
   },
   "app/Models/BlogHeroSetting.php": {
-    "mtime": 1789533217.2926054,
-    "seen": 1789533396.2285016,
-    "ast_hash": "11bb8bf2de6b446d8239cd8f40265f3f",
+    "mtime": 1791542485.3935158,
+    "seen": 1791543407.3150148,
+    "ast_hash": "995f95a5cde3fc5f3265dc5b88c30980",
     "semantic_hash": ""
   },
   "app/Models/BlogHeroSettingTranslation.php": {
@@ -5034,9 +5034,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/BlogSeoAndMediaTest.php": {
-    "mtime": 1790232553.878593,
-    "seen": 1790232801.6430411,
-    "ast_hash": "16792b372c9224a966a363a1d11a0ecd",
+    "mtime": 1791543077.3530746,
+    "seen": 1791543407.3169167,
+    "ast_hash": "03efb9248e40db367278965387cd0d86",
     "semantic_hash": ""
   },
   "resources/views/filament/components/panel-switcher.blade.php": {
@@ -5166,9 +5166,9 @@
     "semantic_hash": ""
   },
   "tests/Feature/PlatformSeoPagesTest.php": {
-    "mtime": 1790834627.0621688,
-    "seen": 1790834795.891658,
-    "ast_hash": "544b2de1c0924f8ccd26e4a1ace847ad",
+    "mtime": 1791543051.9752777,
+    "seen": 1791543407.3170798,
+    "ast_hash": "44c0aa5e0d3fbe9a2c6acb1f2237ad9e",
     "semantic_hash": ""
   },
   "app/Http/Controllers/PaymentProofViewController.php": {
@@ -5184,15 +5184,15 @@
     "semantic_hash": ""
   },
   "app/Http/Middleware/SetBlogLocale.php": {
-    "mtime": 1789665208.8092349,
-    "seen": 1789666161.3326666,
-    "ast_hash": "f201356ed8af1f58393260d75d2871a8",
+    "mtime": 1791542861.4545054,
+    "seen": 1791543407.3148618,
+    "ast_hash": "f7265b0ac37049d9f20f91442a61108c",
     "semantic_hash": ""
   },
   "tests/Feature/BlogLocaleRoutingTest.php": {
-    "mtime": 1790232537.9112527,
-    "seen": 1790232801.6430395,
-    "ast_hash": "b457e395ee0ca15712b855a228d21041",
+    "mtime": 1791543617.3130548,
+    "seen": 1791543679.378422,
+    "ast_hash": "fc3fd60da8ee6fa9f77c1c3dbc929d86",
     "semantic_hash": ""
   },
   "tests/Feature/GuestScanTableTest.php": {
@@ -5319,6 +5319,30 @@
     "mtime": 1790834346.7746515,
     "seen": 1790834795.8911755,
     "ast_hash": "9988a288dc7eb7f50fecb1bd0e08ff23",
+    "semantic_hash": ""
+  },
+  "doc/content/reels-bergabung-bersama-kami.md": {
+    "mtime": 1791318244.8813415,
+    "seen": 1791542013.6914117,
+    "ast_hash": "c91d35a4dab93337850e51719a9a4b9e",
+    "semantic_hash": ""
+  },
+  "doc/manual-book.md": {
+    "mtime": 1791312766.5726767,
+    "seen": 1791542013.69143,
+    "ast_hash": "10ff517bf25c54645e93adbc587ff072",
+    "semantic_hash": ""
+  },
+  "doc/proposal-investor.md": {
+    "mtime": 1791317434.738623,
+    "seen": 1791542013.6914392,
+    "ast_hash": "129dcb6aec80bbc0d8f20647f58e528f",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_10_09_180000_add_enable_english_to_blog_hero_settings_table.php": {
+    "mtime": 1791542464.4564166,
+    "seen": 1791543407.3160934,
+    "ast_hash": "84c2bf3e0394293f7799100958cd23c8",
     "semantic_hash": ""
   }
 }

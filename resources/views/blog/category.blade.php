@@ -18,7 +18,7 @@
     @php
         $idCat = $category->translate('id');
         $enCat = $category->translate('en');
-        $hasMultipleTranslations = ($idCat && filled($idCat->slug)) && ($enCat && filled($enCat->slug));
+        $hasMultipleTranslations = \App\Support\Locales::isEnglishBlogEnabled() && ($idCat && filled($idCat->slug)) && ($enCat && filled($enCat->slug));
     @endphp
     @if ($hasMultipleTranslations)
         @foreach (['id', 'en'] as $langLoc)

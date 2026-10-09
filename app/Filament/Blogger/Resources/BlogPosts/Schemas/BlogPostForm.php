@@ -13,6 +13,7 @@ use App\Support\FilamentTranslatable;
 use App\Support\Locales;
 use Carbon\Carbon;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -68,7 +69,7 @@ class BlogPostForm
                             };
 
                             $hasAnyLocaleContent = function (Get $get) use ($isFieldFilled): bool {
-                                foreach (Locales::all() as $loc) {
+                                foreach (Locales::blogLocales() as $loc) {
                                     if (
                                         $isFieldFilled($get("{$loc}.title"))
                                         || $isFieldFilled($get("{$loc}.slug"))
@@ -86,8 +87,8 @@ class BlogPostForm
                                     TextInput::make("{$locale}.title")
                                         ->label('Judul Artikel')
                                         ->live(onBlur: true)
-                                        ->afterStateUpdated(function (?string $state, Set $set, Get $get) use ($locale) {
-                                            if (blank($get("{$locale}.slug"))) {
+                                        ->afterStateUpdated(function (?string $state, Set $set, Get $get, ?string $operation) use ($locale) {
+                                            if ($operation === 'create' || blank($get("{$locale}.slug"))) {
                                                 $set("{$locale}.slug", Str::slug($state ?? ''));
                                             }
                                         })
@@ -105,7 +106,18 @@ class BlogPostForm
                                         ->label('Slug URL')
                                         ->required($isLocaleTouched)
                                         ->maxLength(255)
-                                        ->helperText('Bagian URL artikel (otomatis dari judul).'),
+                                        ->helperText('Bagian URL artikel (otomatis terisi dari judul menggunakan Str::slug).')
+                                        ->suffixAction(
+                                            Action::make('generateSlug')
+                                                ->icon(Heroicon::OutlinedArrowPath)
+                                                ->tooltip('Generate ulang slug dari judul artikel')
+                                                ->action(function (Set $set, Get $get) use ($locale) {
+                                                    $title = (string) ($get("{$locale}.title") ?? '');
+                                                    if (filled($title)) {
+                                                        $set("{$locale}.slug", Str::slug($title));
+                                                    }
+                                                })
+                                        ),
                                     TextInput::make("{$locale}.featured_image_alt")
                                         ->label('Teks Alt Gambar Utama')
                                         ->maxLength(255)
@@ -241,7 +253,7 @@ class BlogPostForm
                                             ->maxLength(255),
                                         Select::make('locale')
                                             ->label('Bahasa Tag')
-                                            ->options(collect(Locales::all())->mapWithKeys(fn ($loc) => [$loc => strtoupper($loc) . ' — ' . Locales::label($loc)]))
+                                            ->options(collect(Locales::blogLocales())->mapWithKeys(fn ($loc) => [$loc => strtoupper($loc) . ' — ' . Locales::label($loc)]))
                                             ->default(function ($livewire, ?BlogPost $record) {
                                                 return static::resolveActiveLocale($livewire, $record);
                                             })
@@ -393,7 +405,7 @@ class BlogPostForm
     public static function resolveActiveLocale(mixed $livewire = null, ?BlogPost $record = null): string
     {
         $queryLocale = request()->query('active_locale') ?? request()->query('tab');
-        if (filled($queryLocale) && in_array($queryLocale, Locales::all(), true)) {
+        if (filled($queryLocale) && in_array($queryLocale, Locales::blogLocales(), true)) {
             return $queryLocale;
         }
 
@@ -422,7 +434,7 @@ class BlogPostForm
         };
 
         if (is_array($data)) {
-            foreach (Locales::all() as $loc) {
+            foreach (Locales::blogLocales() as $loc) {
                 $localeData = $data[$loc] ?? null;
                 if (! is_array($localeData)) {
                     continue;
@@ -445,7 +457,7 @@ class BlogPostForm
 
         if ($targetRecord instanceof BlogPost) {
             $firstLocale = $targetRecord->translations()->pluck('locale')->first();
-            if ($firstLocale && in_array($firstLocale, Locales::all(), true)) {
+            if ($firstLocale && in_array($firstLocale, Locales::blogLocales(), true)) {
                 return $firstLocale;
             }
         }

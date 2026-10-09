@@ -29,6 +29,7 @@ class BlogHeroSetting extends Model implements TranslatableContract
         'banner_image',
         'overlay_opacity',
         'show_quick_categories',
+        'enable_english',
     ];
 
     protected function casts(): array
@@ -36,6 +37,7 @@ class BlogHeroSetting extends Model implements TranslatableContract
         return [
             'overlay_opacity' => 'integer',
             'show_quick_categories' => 'boolean',
+            'enable_english' => 'boolean',
         ];
     }
 
@@ -44,6 +46,12 @@ class BlogHeroSetting extends Model implements TranslatableContract
         return static::query()->first() ?? static::query()->create([
             'overlay_opacity' => 60,
             'show_quick_categories' => true,
+            'enable_english' => false,
         ]);
+    }
+
+    public static function isEnglishEnabled(): bool
+    {
+        return (bool) (static::getSingleton()->enable_english ?? false);
     }
 }

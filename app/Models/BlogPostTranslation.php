@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class BlogPostTranslation extends Model
 {
@@ -26,6 +27,17 @@ class BlogPostTranslation extends Model
         'robots',
         'focus_keyword',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $translation): void {
+            if (blank($translation->slug) && filled($translation->title)) {
+                $translation->slug = Str::slug($translation->title);
+            } elseif (filled($translation->slug)) {
+                $translation->slug = Str::slug($translation->slug);
+            }
+        });
+    }
 
     public function blogPost(): BelongsTo
     {

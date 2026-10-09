@@ -84,6 +84,18 @@ Route::middleware('identify.guest')->prefix('order')->group(function (): void {
     });
 });
 
+// SEO 301 Permanent Redirects for legacy / corrupted slugs yang sempat tercatat Google Search Console
+Route::redirect(
+    '/id/blog/nasi-uduk-nasi-gurih-betawi-yang-nasi-uduk-nasi-gurih-betawi-yang-sarat-aroma-rempahsarat-aroma-rempah',
+    '/id/blog/nasi-uduk-nasi-gurih-betawi-yang-sarat-aroma-rempah',
+    301
+);
+Route::redirect(
+    '/id/blog/tag/soto-banjarsoto-banjar',
+    '/id/blog/tag/soto-banjar',
+    301
+);
+
 // Localized blog routes: /{locale}/blog/... (e.g. /id/blog, /en/blog)
 Route::prefix('{locale}/blog')
     ->where(['locale' => 'id|en'])
@@ -106,7 +118,7 @@ Route::prefix('{locale}/blog')
 Route::prefix('blog')->group(function (): void {
     $redirectWithQuery = function (\Illuminate\Http\Request $request, string $pathTemplate, ?string $slug = null) {
         $locale = $request->query('lang') ?? $request->query('locale') ?? 'id';
-        if ($locale !== 'en') {
+        if ($locale !== 'en' || ! \App\Support\Locales::isEnglishBlogEnabled()) {
             $locale = 'id';
         }
 

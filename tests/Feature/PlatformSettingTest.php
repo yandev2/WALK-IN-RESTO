@@ -311,7 +311,8 @@ class PlatformSettingTest extends TestCase
             ->assertSee(route('home'), false)
             ->assertSee(route('page.about'), false)
             ->assertSee(route('page.terms'), false)
-            ->assertSee(route('register.restaurant'), false)
+            // route('register.restaurant') sengaja noindex sehingga tidak boleh ada di sitemap
+            ->assertDontSee(route('register.restaurant'), false)
             ->assertSee(url('/resto-sitemap-demo'), false)
             ->assertSee(url('/resto-sitemap-demo/menu'), false);
 

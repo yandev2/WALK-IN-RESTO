@@ -32,17 +32,13 @@ class SitemapController extends Controller
                 'changefreq' => 'monthly',
                 'priority' => '0.7',
             ],
-            [
-                'url' => route('register.restaurant'),
-                'lastmod' => now()->startOfMonth()->toAtomString(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-            ],
+            // Catatan SEO: route('register.restaurant') sengaja dikecualikan karena halaman
+            // pendaftaran memiliki direktif 'noindex, follow' untuk mencegah konflik di Google Search Console.
         ];
 
         // Blog Main & Archive Pages
-        // Tahan rute bahasa Inggris (/en) dari sitemap sementara konten sedang disiapkan
-        $includeEnBlog = (bool) config('app.sitemap_include_en_blog', false);
+        // Rute bahasa Inggris (/en) dikontrol dinamis oleh switch 'Aktifkan Blog Bahasa Inggris' di Pengaturan Landing Blog
+        $includeEnBlog = \App\Support\Locales::isEnglishBlogEnabled();
         $latestPost = BlogPost::query()->public()->latest('published_at')->first();
         $blogLastMod = ($latestPost?->updated_at ?? $latestPost?->published_at ?? now())->toAtomString();
 
@@ -145,13 +141,18 @@ class SitemapController extends Controller
             }
         }
 
-        // Blog Tags
+        // Blog Tags (Arsip Tag)
+        // Standar SEO Google: Tag dengan jumlah artikel sedikit (thin content) tidak boleh masuk sitemap
+        // untuk mencegah sindrom 'Ditemukan - saat ini tidak diindeks'. Tag diberi noindex, follow.
+        $includeTagsInSitemap = (bool) config('app.sitemap_include_tags', false);
         $blogTagPages = [];
-        $tags = BlogTag::query()
-            ->where('is_active', true)
-            ->whereHas('blogPosts', fn ($q) => $q->public())
-            ->with(['translations', 'blogPosts' => fn ($q) => $q->public()->with('translations')])
-            ->get();
+
+        if ($includeTagsInSitemap) {
+            $tags = BlogTag::query()
+                ->where('is_active', true)
+                ->whereHas('blogPosts', fn ($q) => $q->public())
+                ->with(['translations', 'blogPosts' => fn ($q) => $q->public()->with('translations')])
+                ->get();
 
         foreach ($tags as $tag) {
             $tagLastMod = ($tag->updated_at ?? now())->toAtomString();
@@ -206,6 +207,7 @@ class SitemapController extends Controller
                 }
             }
         }
+    }
 
         // Blog Articles (Posts)
         $blogPostPages = [];

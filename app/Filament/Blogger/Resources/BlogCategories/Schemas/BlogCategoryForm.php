@@ -31,7 +31,7 @@ class BlogCategoryForm
         };
 
         $hasAnyLocaleContent = function (Get $get): bool {
-            foreach (Locales::all() as $loc) {
+            foreach (Locales::blogLocales() as $loc) {
                 $name = trim((string) ($get("{$loc}.name") ?? ''));
                 $slug = trim((string) ($get("{$loc}.slug") ?? ''));
                 $metaTitle = trim((string) ($get("{$loc}.meta_title") ?? ''));

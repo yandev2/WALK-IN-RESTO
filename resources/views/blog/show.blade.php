@@ -39,7 +39,7 @@
     @php
         $idT = $post->translate('id');
         $enT = $post->translate('en');
-        $hasMultipleTranslations = ($idT && filled($idT->slug)) && ($enT && filled($enT->slug));
+        $hasMultipleTranslations = \App\Support\Locales::isEnglishBlogEnabled() && ($idT && filled($idT->slug)) && ($enT && filled($enT->slug));
     @endphp
     @if ($hasMultipleTranslations)
         @foreach (['id', 'en'] as $langLoc)

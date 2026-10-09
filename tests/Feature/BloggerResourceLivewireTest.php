@@ -72,6 +72,8 @@ class BloggerResourceLivewireTest extends TestCase
         $blogger->assignRole('blogger');
         $this->actingAs($blogger);
 
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
+
         Livewire::test(CreateBlogPost::class)
             ->set('data.id.title', 'Nasi Goreng Spesial')
             ->set('data.id.slug', 'nasi-goreng-spesial')
@@ -88,6 +90,29 @@ class BloggerResourceLivewireTest extends TestCase
         $this->assertEquals($blogger->id, $post->author_id);
         $this->assertEquals('Nasi Goreng Spesial', $post->translate('id')->title);
         $this->assertEquals('Special Fried Rice', $post->translate('en')->title);
+    }
+
+    public function test_blogger_creates_post_with_only_indonesian_when_english_disabled(): void
+    {
+        $blogger = User::factory()->create(['is_active' => true]);
+        $blogger->assignRole('blogger');
+        $this->actingAs($blogger);
+
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => false]);
+
+        Livewire::test(CreateBlogPost::class)
+            ->set('data.id.title', 'Soto Ayam Lamongan Enak Sekali')
+            ->set('data.id.content', '<p>Resep soto ayam kuah koya khas Lamongan.</p>')
+            ->set('data.status', 'draft')
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $post = \App\Models\BlogPost::latest('id')->first();
+        $this->assertNotNull($post);
+        $this->assertNotNull($post->translate('id'));
+        $this->assertEquals('Soto Ayam Lamongan Enak Sekali', $post->translate('id')->title);
+        $this->assertEquals('soto-ayam-lamongan-enak-sekali', $post->translate('id')->slug);
+        $this->assertNull($post->translate('en'));
     }
 
     public function test_founder_can_create_new_blogger_user(): void

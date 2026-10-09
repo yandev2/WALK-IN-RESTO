@@ -10,12 +10,13 @@
 @section('title', '#' . $tagName . ' · Blog · ' . (config('app.name', 'Cita Rasa Kita')))
 @section('description', __('blog.tag_label') . ' #' . $tagName)
 @section('canonical', $tagCanonical)
+@section('robots', 'noindex, follow')
 
 @section('hreflang')
     @php
         $idTag = $tag->translate('id');
         $enTag = $tag->translate('en');
-        $hasMultipleTranslations = ($idTag && filled($idTag->slug)) && ($enTag && filled($enTag->slug));
+        $hasMultipleTranslations = \App\Support\Locales::isEnglishBlogEnabled() && ($idTag && filled($idTag->slug)) && ($enTag && filled($enTag->slug));
     @endphp
     @if ($hasMultipleTranslations)
         @foreach (['id', 'en'] as $langLoc)

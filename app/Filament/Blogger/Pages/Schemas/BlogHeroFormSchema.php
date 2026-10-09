@@ -19,6 +19,17 @@ class BlogHeroFormSchema
         return $schema
             ->columns(1)
             ->components([
+                Section::make('Bahasa & Lokalisasi Blog')
+                    ->description('Atur ketersediaan bahasa Inggris (EN) pada seluruh platform blog, panel penulisan artikel, dan sitemap.')
+                    ->icon(Heroicon::OutlinedLanguage)
+                    ->schema([
+                        Toggle::make('enable_english')
+                            ->label('Aktifkan Bahasa Inggris (EN) pada Blog')
+                            ->helperText('Jika dimatikan: Tombol switcher bahasa di publik akan disembunyikan, rute /en/blog dialihkan ke /id/blog, dan form pembuatan/pengeditan artikel di panel admin hanya menampilkan Bahasa Indonesia (ID).')
+                            ->default(false)
+                            ->inline(false),
+                    ]),
+
                 Section::make('Tampilan Banner & Latar Belakang')
                     ->description('Atur gambar latar hero banner, kegelapan backdrop overlay, dan pill kategori.')
                     ->icon(Heroicon::OutlinedPhoto)

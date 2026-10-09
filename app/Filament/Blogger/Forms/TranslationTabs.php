@@ -16,7 +16,7 @@ class TranslationTabs
     {
         $tabs = [];
 
-        foreach (Locales::all() as $locale) {
+        foreach (Locales::blogLocales() as $locale) {
             $tabs[] = Tab::make(Locales::label($locale))
                 ->id($locale)
                 ->schema($fieldsForLocale($locale));

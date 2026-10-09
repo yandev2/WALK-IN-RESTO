@@ -89,6 +89,8 @@ class PublicBlogTest extends TestCase
             ['locale' => 'en', 'title' => 'English Article Title', 'slug' => 'english-title', 'content' => '<p>English Content</p>'],
         ]);
 
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
+
         $response = $this->get('/en/blog');
         $response->assertSuccessful();
         $response->assertSee('English Article Title');

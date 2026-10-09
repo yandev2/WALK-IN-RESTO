@@ -23,6 +23,17 @@ class SetBlogLocale
             $locale = session('blog_locale') ?? Locales::default();
         }
 
+        if ($locale === 'en' && ! Locales::isEnglishBlogEnabled()) {
+            $path = $request->path();
+            $idPath = '/' . preg_replace('#^en(/|$)#', 'id$1', $path);
+            $query = $request->getQueryString();
+            if (filled($query)) {
+                $idPath .= '?' . $query;
+            }
+
+            return redirect()->to($idPath, 301);
+        }
+
         app()->setLocale($locale);
         session(['blog_locale' => $locale]);
 

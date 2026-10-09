@@ -114,6 +114,8 @@ class PlatformSeoPagesTest extends TestCase
 
     public function test_english_blog_has_noindex_nofollow_meta(): void
     {
+        \App\Models\BlogHeroSetting::getSingleton()->update(['enable_english' => true]);
+
         $response = $this->get('/en/blog');
         $response->assertOk()
             ->assertSee('name="robots" content="noindex, nofollow"', false);
@@ -173,6 +175,48 @@ class PlatformSeoPagesTest extends TestCase
         $response->assertOk()
             ->assertDontSee('href="https://citarasakita/blog/artikel-tes-canonical"')
             ->assertSee('rel="canonical" href="'.route('blog.show', ['locale' => 'id', 'slug' => 'artikel-tes-canonical']).'"', false);
+    }
+
+    public function test_tag_pages_have_noindex_follow_meta(): void
+    {
+        $tag = \App\Models\BlogTag::query()->create(['is_active' => true]);
+        $tag->translations()->create([
+            'locale' => 'id',
+            'name' => 'Kuliner Tradisional',
+            'slug' => 'kuliner-tradisional',
+        ]);
+
+        $response = $this->get('/id/blog/tag/kuliner-tradisional');
+        $response->assertOk()
+            ->assertSee('name="robots" content="noindex, follow"', false);
+    }
+
+    public function test_corrupted_slugs_301_redirect_to_clean_slugs(): void
+    {
+        $nasiUdukResponse = $this->get('/id/blog/nasi-uduk-nasi-gurih-betawi-yang-nasi-uduk-nasi-gurih-betawi-yang-sarat-aroma-rempahsarat-aroma-rempah');
+        $nasiUdukResponse->assertStatus(301)
+            ->assertRedirect('/id/blog/nasi-uduk-nasi-gurih-betawi-yang-sarat-aroma-rempah');
+
+        $sotoResponse = $this->get('/id/blog/tag/soto-banjarsoto-banjar');
+        $sotoResponse->assertStatus(301)
+            ->assertRedirect('/id/blog/tag/soto-banjar');
+    }
+
+    public function test_blog_post_translation_auto_populates_and_sanitizes_slug(): void
+    {
+        $post = \App\Models\BlogPost::query()->create([
+            'status' => \App\Enums\BlogPostStatus::Published,
+            'is_active' => true,
+        ]);
+
+        $translation = $post->translations()->create([
+            'locale' => 'id',
+            'title' => 'Resep Soto Ayam Lamongan Gurih & Lezat!',
+            'slug' => '',
+            'content' => '<p>Konten soto ayam</p>',
+        ]);
+
+        $this->assertEquals('resep-soto-ayam-lamongan-gurih-lezat', $translation->fresh()->slug);
     }
 }
 

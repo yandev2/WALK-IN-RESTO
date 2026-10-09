@@ -30,7 +30,7 @@ class BlogTagForm
                         };
 
                         $hasAnyLocaleContent = function (Get $get): bool {
-                            foreach (Locales::all() as $loc) {
+                            foreach (Locales::blogLocales() as $loc) {
                                 $name = trim((string) ($get("{$loc}.name") ?? ''));
                                 $slug = trim((string) ($get("{$loc}.slug") ?? ''));
                                 if ($name !== '' || $slug !== '') {
