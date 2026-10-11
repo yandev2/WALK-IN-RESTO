@@ -2,10 +2,16 @@
 
 namespace App\Livewire\Landing;
 
+use App\Models\BlogPost;
+use App\Models\CmsBanner;
 use App\Models\Facility;
+use App\Models\MenuItem;
 use App\Models\PlatformSetting;
+use App\Support\CmsMedia;
+use App\Support\GeoDistance;
 use App\Support\RestaurantDirectory as DirectoryQuery;
 use App\Support\RestaurantTheme;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -180,6 +186,136 @@ class RestaurantDirectory extends Component
         return app(DirectoryQuery::class)->mapRecommendedCards();
     }
 
+    #[Computed]
+    public function activePromoBanner(): ?array
+    {
+        $banner = CmsBanner::query()
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $now = now();
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
+            })
+            ->where(function ($q) {
+                $now = now();
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
+            })
+            ->with('restaurant')
+            ->latest()
+            ->first();
+
+        if (! $banner) {
+            return null;
+        }
+
+        return [
+            'id' => $banner->id,
+            'title' => $banner->title,
+            'subtitle' => $banner->subtitle,
+            'badge_text' => $banner->badge_text ?: 'PROMO SPESIAL',
+            'price_label' => $banner->price_label,
+            'cta_label' => $banner->cta_label ?: 'Kunjungi Resto',
+            'image_url' => CmsMedia::url($banner->image_path),
+            'link_url' => $banner->link_url ?: ($banner->restaurant ? route('landing.show', $banner->restaurant) : null),
+            'restaurant_name' => $banner->restaurant?->name,
+        ];
+    }
+
+    #[Computed]
+    public function popularMenuItems(): array
+    {
+        $query = MenuItem::query()
+            ->where('is_active', true)
+            ->whereNotNull('photo_path')
+            ->whereHas('restaurant', fn (Builder $r) => $r->listedInDirectory())
+            ->with(['restaurant.defaultOutlet', 'restaurant.categories']);
+
+        if (! empty($this->categoryIds)) {
+            $query->whereHas('restaurant.categories', function (Builder $c) {
+                $c->whereIn('restaurant_categories.id', $this->categoryIds);
+            });
+        }
+
+        if (filled($this->search)) {
+            $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+            $likeOperator = $driver === 'pgsql' ? 'ilike' : 'like';
+            $term = '%' . trim($this->search) . '%';
+
+            $query->where(function (Builder $builder) use ($term, $likeOperator) {
+                $builder->where('name', $likeOperator, $term)
+                    ->orWhereHas('restaurant', fn (Builder $r) => $r->where('name', $likeOperator, $term));
+            });
+        }
+
+        $items = $query->orderByDesc('is_best_seller')->latest()->limit(50)->get();
+
+        if ($this->hasUserLocation()) {
+            $userLat = (float) $this->userLat;
+            $userLng = (float) $this->userLng;
+
+            $items = $items->map(function (MenuItem $item) use ($userLat, $userLng) {
+                $outlet = $item->restaurant?->defaultOutlet;
+                $dist = ($outlet && filled($outlet->latitude) && filled($outlet->longitude))
+                    ? GeoDistance::kilometers($userLat, $userLng, (float) $outlet->latitude, (float) $outlet->longitude)
+                    : null;
+                $item->setAttribute('_distance_km', $dist);
+
+                return $item;
+            });
+
+            if ($this->maxDistanceKm !== null) {
+                $items = $items->filter(function (MenuItem $item) {
+                    $dist = $item->getAttribute('_distance_km');
+
+                    return $dist !== null && $dist <= $this->maxDistanceKm;
+                });
+            }
+
+            $items = $items->sortBy(fn (MenuItem $item) => $item->getAttribute('_distance_km') ?? PHP_FLOAT_MAX);
+        }
+
+        return $items->take(8)
+            ->map(fn (MenuItem $item) => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'price' => $item->price,
+                'price_formatted' => 'Rp ' . number_format((float) $item->price, 0, ',', '.'),
+                'discount_percent' => $item->discount_percent,
+                'photo_url' => CmsMedia::url($item->photo_path),
+                'restaurant_name' => $item->restaurant?->name,
+                'landing_url' => $item->restaurant ? route('landing.show', $item->restaurant) : null,
+                'distance_km' => $item->getAttribute('_distance_km'),
+                'distance_label' => GeoDistance::label($item->getAttribute('_distance_km')),
+            ])
+            ->values()
+            ->all();
+    }
+
+    #[Computed]
+    public function latestArticles(): array
+    {
+        $locale = app()->getLocale() ?: 'id';
+
+        return BlogPost::query()
+            ->public()
+            ->forLocale($locale)
+            ->with(['category', 'translations'])
+            ->latest('published_at')
+            ->limit(4)
+            ->get()
+            ->map(fn (BlogPost $post) => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'excerpt' => $post->excerpt,
+                'slug' => $post->slug,
+                'image_url' => CmsMedia::url($post->featured_image),
+                'category_name' => $post->category?->name ?? 'Kuliner',
+                'published_at' => $post->published_at?->translatedFormat('d M Y') ?? $post->created_at?->format('d M Y'),
+                'reading_time' => ($post->reading_time_minutes ?: 4) . ' min baca',
+                'url' => route('blog.show', ['locale' => $locale, 'slug' => $post->slug]),
+            ])
+            ->all();
+    }
+
     public function render()
     {
         $directory = app(DirectoryQuery::class);
@@ -194,6 +330,9 @@ class RestaurantDirectory extends Component
             'facilityOptions' => Facility::activeOptions(),
             'cards' => $cards,
             'recommendedCards' => $this->recommendedCards,
+            'activePromoBanner' => $this->activePromoBanner,
+            'popularMenuItems' => $this->popularMenuItems,
+            'latestArticles' => $this->latestArticles,
             'paginator' => $paginator,
             'totalCount' => $paginator->total(),
             'mapPins' => $this->pinsFromCards($cards),

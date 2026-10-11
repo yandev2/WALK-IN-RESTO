@@ -66,7 +66,7 @@
             @endif
             <button
                 type="button"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-subtle bg-surface-raised text-body lg:hidden"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border-subtle bg-surface-raised text-body lg:hidden"
                 @click="open = ! open"
                 :aria-expanded="open.toString()"
                 aria-label="Menu navigasi"
@@ -104,7 +104,7 @@
                 <a href="{{ $anchor('faq') }}" class="rounded-xl px-3 py-2.5 hover:bg-surface-muted" @click="open = false">{{ $navCopy('faq') }}</a>
             @endif
             @if ($ctaUrl ?? null)
-                <a href="{{ $ctaUrl }}" class="mt-1 rounded-full bg-primary px-4 py-2.5 text-center text-white" @click="open = false">{{ $ctaLabel ?? 'Lihat lokasi' }}</a>
+                <a href="{{ $ctaUrl }}" class="mt-1 rounded-lg bg-primary px-4 py-2.5 text-center text-white" @click="open = false">{{ $ctaLabel ?? 'Lihat lokasi' }}</a>
             @endif
         </nav>
     </div>

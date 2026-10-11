@@ -31,7 +31,7 @@
     >
         <div class="mb-4 flex items-center justify-between gap-3">
             <h2 class="text-lg font-bold text-body">Filter</h2>
-            <button type="button" x-on:click="open = false" class="rounded-full bg-surface-muted px-3 py-1 text-sm font-semibold text-body">Tutup</button>
+            <button type="button" x-on:click="open = false" class="rounded-lg bg-surface-muted px-3 py-1 text-sm font-semibold text-body">Tutup</button>
         </div>
 
         <x-directory.filter-panel

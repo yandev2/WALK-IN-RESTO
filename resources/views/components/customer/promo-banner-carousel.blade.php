@@ -39,7 +39,7 @@
                 @if ($menuUrl)
                     <a
                         href="{{ $menuUrl }}"
-                        class="landing-interactive inline-flex shrink-0 items-center gap-2 rounded-full bg-surface-raised px-5 py-2.5 text-sm font-semibold text-body shadow-[var(--card-shadow)] ring-1 ring-[color:var(--border-subtle)] transition hover:text-primary hover:shadow-[var(--card-shadow-hover)]"
+                        class="landing-interactive inline-flex shrink-0 items-center gap-2 rounded-lg bg-surface-raised px-5 py-2.5 text-sm font-semibold text-body shadow-[var(--card-shadow)] ring-1 ring-[color:var(--border-subtle)] transition hover:text-primary hover:shadow-[var(--card-shadow-hover)]"
                     >
                         {{ $button }}
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -189,7 +189,7 @@
                                         @endif
 
                                         @if (filled($slide['price']))
-                                            <span class="mt-4 inline-flex w-fit rounded-full border border-white/35 bg-black/15 px-4 py-1 text-sm font-semibold text-white">
+                                            <span class="mt-4 inline-flex w-fit rounded-lg border border-white/35 bg-black/15 px-4 py-1 text-sm font-semibold text-white">
                                                 {{ $slide['price'] }}
                                             </span>
                                         @endif
@@ -200,7 +200,7 @@
                                                 @if (str_starts_with($slide['link'], 'http'))
                                                     target="_blank" rel="noopener noreferrer"
                                                 @endif
-                                                class="landing-btn-glow mt-5 inline-flex w-fit rounded-full bg-white px-6 py-2.5 text-sm font-bold text-primary transition hover:bg-surface-muted"
+                                                class="landing-btn-glow mt-5 inline-flex w-fit rounded-lg bg-white px-6 py-2.5 text-sm font-bold text-primary transition hover:bg-surface-muted"
                                             >
                                                 {{ $slide['cta'] }}
                                             </a>

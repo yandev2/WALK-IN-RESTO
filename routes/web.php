@@ -17,11 +17,13 @@ use App\Livewire\Guest\GuestPay;
 use App\Livewire\Guest\GuestReview;
 use App\Livewire\Guest\GuestStatus;
 use App\Livewire\Guest\ScanTable;
+use App\Livewire\Landing\GlobalMenuDirectory;
 use App\Livewire\Landing\RestaurantDirectory;
 use App\Livewire\Landing\RestaurantMenuCatalog;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', RestaurantDirectory::class)->name('home');
+Route::get('/daftar-menu', GlobalMenuDirectory::class)->name('directory.menus');
 
 Route::get('/tentang', [PlatformPageController::class, 'about'])->name('page.about');
 Route::get('/syarat-dan-ketentuan', [PlatformPageController::class, 'terms'])->name('page.terms');
@@ -140,7 +142,7 @@ Route::prefix('blog')->group(function (): void {
         ->middleware('throttle:30,1');
 });
 
-$landingSlugPattern = '^(?!admin$|blogger$|blog$|id$|en$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
+$landingSlugPattern = '^(?!admin$|blogger$|blog$|id$|en$|livewire$|storage$|up$|filament$|order$|api$|export-files$|founder$|daftar$|daftar-menu$|receipts$|tentang$|syarat-dan-ketentuan$|sitemap\.xml$|robots\.txt$)[A-Za-z0-9_-]+$';
 
 Route::get('/{restaurant:slug}/menu', RestaurantMenuCatalog::class)
     ->where('restaurant', $landingSlugPattern)

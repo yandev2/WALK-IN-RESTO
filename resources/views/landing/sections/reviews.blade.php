@@ -218,7 +218,7 @@
             <div class="mt-6 flex items-center justify-center gap-3" x-show="canCycle()" x-cloak>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
                     x-on:click="scrollPage(-1)"
                     aria-label="Ulasan sebelumnya"
                 >
@@ -228,7 +228,7 @@
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-raised text-body shadow-sm ring-1 ring-[color:var(--border-subtle)] transition hover:bg-surface-muted hover:shadow-md"
                     x-on:click="scrollPage(1); fetchNext()"
                     aria-label="Ulasan berikutnya"
                 >

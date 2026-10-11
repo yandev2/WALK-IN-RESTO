@@ -36,12 +36,12 @@
 
             <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
                 <span @class([
-                    'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm',
+                    'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm',
                     'bg-emerald-500/90 text-white' => $card['is_open_now'],
                     'bg-zinc-800/85 text-zinc-300 dark:bg-zinc-900/90' => ! $card['is_open_now'],
                 ])>
                     <span @class([
-                        'h-1.5 w-1.5 rounded-full',
+                        'h-1.5 w-1.5 rounded-lg',
                         'bg-white animate-pulse' => $card['is_open_now'],
                         'bg-zinc-400' => ! $card['is_open_now'],
                     ])></span>
@@ -51,7 +51,7 @@
 
             @if ($card['price_label'])
                 <div class="absolute right-2.5 top-2.5 z-10">
-                    <span itemprop="priceRange" class="inline-flex rounded-full bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
                         {{ $card['price_label'] }}
                     </span>
                 </div>

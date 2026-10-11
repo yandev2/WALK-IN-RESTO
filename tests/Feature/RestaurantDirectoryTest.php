@@ -3,10 +3,14 @@
 namespace Tests\Feature;
 
 use App\Livewire\Landing\RestaurantDirectory;
+use App\Models\DiningTable;
 use App\Models\Restaurant;
 use App\Models\RestaurantCategory;
+use App\Models\RestaurantReview;
+use App\Models\Visit;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -264,4 +268,216 @@ class RestaurantDirectoryTest extends TestCase
             ->assertSet('maxDistanceKm', null)
             ->assertSet('sort', 'distance');
     }
+
+    public function test_popular_menu_items_filter_by_category(): void
+    {
+        $kopiCategory = RestaurantCategory::query()->where('slug', 'kopi-kafe')->first();
+        $this->assertNotNull($kopiCategory);
+
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->set('categoryIds', [$kopiCategory->id]);
+
+        $items = $component->viewData('popularMenuItems');
+        $this->assertNotEmpty($items);
+
+        foreach ($items as $item) {
+            $menuModel = \App\Models\MenuItem::find($item['id']);
+            $this->assertTrue(
+                $menuModel->restaurant->categories->contains('id', $kopiCategory->id)
+            );
+        }
+    }
+
+    public function test_popular_menu_items_filter_by_distance(): void
+    {
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->call('setUserLocation', -6.2615, 106.8108, 20)
+            ->set('maxDistanceKm', 10);
+
+        $items = $component->viewData('popularMenuItems');
+        $this->assertNotEmpty($items);
+        foreach ($items as $item) {
+            $this->assertLessThanOrEqual(10.0, (float) $item['distance_km']);
+        }
+    }
+
+    public function test_popular_menu_items_link_to_restaurant_landing(): void
+    {
+        $component = Livewire::test(RestaurantDirectory::class);
+        $items = $component->viewData('popularMenuItems');
+        $this->assertNotEmpty($items);
+
+        foreach ($items as $item) {
+            $this->assertNotNull($item['landing_url']);
+            $this->assertStringStartsWith('http', $item['landing_url']);
+        }
+    }
+
+    public function test_directory_ratings_only_count_and_average_published_reviews(): void
+    {
+        $restaurant = Restaurant::query()->where('slug', 'sushi-haru')->firstOrFail();
+        $outlet = $restaurant->defaultOutlet;
+        $table = DiningTable::withoutRestaurantScope()->where('restaurant_id', $restaurant->id)->firstOrFail();
+
+        // Clear existing reviews for Sushi Haru to have an exact baseline
+        RestaurantReview::withoutRestaurantScope()->where('restaurant_id', $restaurant->id)->delete();
+
+        // 1. Create 1 published review with 5 stars
+        $visit1 = Visit::query()->create([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'table_id' => $table->id,
+            'status' => 'closed',
+            'public_id' => (string) Str::ulid(),
+            'join_pin' => '1111',
+            'claimed_at' => now()->subHours(2),
+            'claim_expires_at' => now()->subHour(),
+        ]);
+        RestaurantReview::query()->create([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'visit_id' => $visit1->id,
+            'customer_name' => 'Tamu Terbit',
+            'rating' => 5,
+            'comment' => 'Enak sekali.',
+            'is_published' => true,
+            'submitted_at' => now()->subHour(),
+        ]);
+
+        // 2. Create 1 unpublished review with 1 star (tayang di web = off)
+        $visit2 = Visit::query()->create([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'table_id' => $table->id,
+            'status' => 'closed',
+            'public_id' => (string) Str::ulid(),
+            'join_pin' => '2222',
+            'claimed_at' => now()->subHour(),
+            'claim_expires_at' => now()->subMinutes(30),
+        ]);
+        $unapprovedReview = RestaurantReview::query()->create([
+            'restaurant_id' => $restaurant->id,
+            'outlet_id' => $outlet->id,
+            'visit_id' => $visit2->id,
+            'customer_name' => 'Tamu Belum Disetujui',
+            'rating' => 1,
+            'comment' => 'Kurang suka.',
+            'is_published' => false,
+            'submitted_at' => now()->subMinutes(30),
+        ]);
+
+        // Verify in Livewire directory component
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->set('search', 'Sushi Haru');
+
+        $cards = $component->viewData('cards');
+        $this->assertNotEmpty($cards);
+        $card = collect($cards)->firstWhere('slug', 'sushi-haru');
+        $this->assertNotNull($card);
+
+        // Only the 1 published review should be counted, average should be 5.0 (NOT (5+1)/2 = 3.0)
+        $this->assertSame(1, $card['rating_count']);
+        $this->assertEquals(5.0, $card['rating_average']);
+
+        // Now activate/publish the second review (tayang di web = on)
+        $unapprovedReview->update(['is_published' => true]);
+
+        $componentAfterPublish = Livewire::test(RestaurantDirectory::class)
+            ->set('search', 'Sushi Haru');
+        $cardAfterPublish = collect($componentAfterPublish->viewData('cards'))->firstWhere('slug', 'sushi-haru');
+
+        // Now both reviews are counted: average (5 + 1) / 2 = 3.0, count = 2
+        $this->assertSame(2, $cardAfterPublish['rating_count']);
+        $this->assertEquals(3.0, $cardAfterPublish['rating_average']);
+    }
+
+    public function test_directory_sorting_by_rating_uses_only_published_reviews(): void
+    {
+        // Resto A has 1 review: 4 stars (published)
+        $restoA = Restaurant::query()->where('slug', 'sushi-haru')->firstOrFail();
+        // Resto B has 1 review: 5 stars (published)
+        $restoB = Restaurant::query()->where('slug', 'burger-street')->firstOrFail();
+
+        RestaurantReview::withoutRestaurantScope()->whereIn('restaurant_id', [$restoA->id, $restoB->id])->delete();
+
+        $tableA = DiningTable::withoutRestaurantScope()->where('restaurant_id', $restoA->id)->firstOrFail();
+        $visitA = Visit::query()->create([
+            'restaurant_id' => $restoA->id,
+            'outlet_id' => $restoA->defaultOutlet->id,
+            'table_id' => $tableA->id,
+            'status' => 'closed',
+            'public_id' => (string) Str::ulid(),
+            'join_pin' => '3333',
+            'claimed_at' => now()->subHour(),
+            'claim_expires_at' => now()->subMinutes(30),
+        ]);
+        RestaurantReview::query()->create([
+            'restaurant_id' => $restoA->id,
+            'outlet_id' => $restoA->defaultOutlet->id,
+            'visit_id' => $visitA->id,
+            'rating' => 4,
+            'comment' => 'Bagus',
+            'is_published' => true,
+            'submitted_at' => now(),
+        ]);
+
+        // Resto A also gets five 5-star reviews that are UNPUBLISHED (is_published = false)
+        foreach (range(1, 5) as $i) {
+            $unpubVisit = Visit::query()->create([
+                'restaurant_id' => $restoA->id,
+                'outlet_id' => $restoA->defaultOutlet->id,
+                'table_id' => $tableA->id,
+                'status' => 'closed',
+                'public_id' => (string) Str::ulid(),
+                'join_pin' => '444'.$i,
+                'claimed_at' => now()->subHour(),
+                'claim_expires_at' => now()->subMinutes(30),
+            ]);
+            RestaurantReview::query()->create([
+                'restaurant_id' => $restoA->id,
+                'outlet_id' => $restoA->defaultOutlet->id,
+                'visit_id' => $unpubVisit->id,
+                'rating' => 5,
+                'comment' => 'Rahasia '.$i,
+                'is_published' => false,
+                'submitted_at' => now(),
+            ]);
+        }
+
+        $tableB = DiningTable::withoutRestaurantScope()->where('restaurant_id', $restoB->id)->firstOrFail();
+        $visitB = Visit::query()->create([
+            'restaurant_id' => $restoB->id,
+            'outlet_id' => $restoB->defaultOutlet->id,
+            'table_id' => $tableB->id,
+            'status' => 'closed',
+            'public_id' => (string) Str::ulid(),
+            'join_pin' => '5555',
+            'claimed_at' => now()->subHour(),
+            'claim_expires_at' => now()->subMinutes(30),
+        ]);
+        RestaurantReview::query()->create([
+            'restaurant_id' => $restoB->id,
+            'outlet_id' => $restoB->defaultOutlet->id,
+            'visit_id' => $visitB->id,
+            'rating' => 5,
+            'comment' => 'Sempurna',
+            'is_published' => true,
+            'submitted_at' => now(),
+        ]);
+
+        // If unpublished reviews were counted, Resto A would have avg ~4.83 and 6 reviews.
+        // But only published reviews count: Resto B has avg 5.0, Resto A has avg 4.0.
+        // When sorting by 'rating', Resto B must be ranked higher than Resto A!
+        $component = Livewire::test(RestaurantDirectory::class)
+            ->set('sort', 'rating');
+
+        $cards = collect($component->viewData('cards'))->pluck('slug')->all();
+        $posB = array_search('burger-street', $cards, true);
+        $posA = array_search('sushi-haru', $cards, true);
+
+        $this->assertNotFalse($posB);
+        $this->assertNotFalse($posA);
+        $this->assertLessThan($posA, $posB, 'Resto B (5.0 stars published) should rank ahead of Resto A (4.0 stars published, despite having unpublished 5-star reviews)');
+    }
 }
+

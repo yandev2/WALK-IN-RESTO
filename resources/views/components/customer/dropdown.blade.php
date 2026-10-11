@@ -5,6 +5,7 @@
     'options' => [],
     'label' => null,
     'size' => 'default',
+    'align' => 'stretch',
 ])
 
 @php
@@ -26,7 +27,7 @@
         @class([
             'flex w-full items-center justify-between gap-3 bg-transparent text-left text-body transition hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30',
             'h-12 rounded-2xl px-4 text-sm' => $size !== 'compact',
-            'h-9 rounded-full px-3 text-xs font-semibold' => $size === 'compact',
+            'h-9 rounded-lg px-3 text-xs font-semibold' => $size === 'compact',
         ])
     >
         <span class="truncate">{{ $label }}</span>
@@ -48,7 +49,12 @@
         x-cloak
         x-show="open"
         x-transition.origin.top
-        class="absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-surface-raised dark:bg-zinc-900 py-1 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 border border-border-subtle dark:border-zinc-800"
+        @class([
+            'absolute z-50 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-surface-raised dark:bg-zinc-900 py-1 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 border border-border-subtle dark:border-zinc-800',
+            'left-0 right-0' => $align === 'stretch',
+            'right-0 min-w-full w-max max-w-[20rem]' => $align === 'right',
+            'left-0 min-w-full w-max max-w-[20rem]' => $align === 'left',
+        ])
         style="background-color: var(--surface-raised);"
     >
         @foreach ($options as $option)
@@ -68,12 +74,12 @@
                 @endif
                 x-on:click="open = false"
                 @class([
-                    'flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800',
+                    'flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer',
                     'font-semibold text-primary' => $isActive,
                     'text-body dark:text-zinc-200' => ! $isActive,
                 ])
             >
-                <span>{{ $option['label'] }}</span>
+                <span class="whitespace-nowrap">{{ $option['label'] }}</span>
                 @if ($isActive)
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>

@@ -15,8 +15,8 @@ class RestaurantController extends Controller
         $restaurants = Restaurant::query()
             ->listedInDirectory()
             ->with(['cmsProfile', 'defaultOutlet.operatingHours', 'defaultOutlet.closedDates', 'defaultOutlet.restaurant'])
-            ->withAvg('reviews', 'rating')
-            ->withCount('reviews')
+            ->withAvg(['reviews' => fn ($q) => $q->published()], 'rating')
+            ->withCount(['reviews' => fn ($q) => $q->published()])
             ->orderBy('name')
             ->get();
 
@@ -35,11 +35,11 @@ class RestaurantController extends Controller
             'cmsFaqs' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->orderBy('id'),
             'cmsGalleryImages' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->orderBy('id'),
             'cmsBanners' => fn ($query) => $query->currentlyLive()->orderBy('sort_order')->orderBy('id'),
-            'reviews' => fn ($query) => $query->latest('submitted_at')->latest('id')->limit(6),
+            'reviews' => fn ($query) => $query->published()->latest('submitted_at')->latest('id')->limit(6),
         ]);
 
-        $restaurant->loadAvg('reviews', 'rating');
-        $restaurant->loadCount('reviews');
+        $restaurant->loadAvg(['reviews' => fn ($q) => $q->published()], 'rating');
+        $restaurant->loadCount(['reviews' => fn ($q) => $q->published()]);
 
         return (new RestaurantResource($restaurant))->response();
     }

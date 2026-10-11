@@ -38,7 +38,7 @@
         <button
             type="button"
             wire:click="resetFilters"
-            class="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/10 transition duration-200"
+            class="inline-flex items-center gap-1 rounded-lg bg-surface-muted px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/10 transition duration-200"
         >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -76,18 +76,18 @@
                 <div class="flex items-center gap-1.5 shrink-0">
                     @if ($locationStatus === 'granted')
                         @if ($maxDistanceKm)
-                            <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary shadow-xs">
-                                <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+                            <span class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary shadow-xs">
+                                <span class="h-1.5 w-1.5 rounded-lg bg-primary animate-pulse"></span>
                                 {{ number_format($maxDistanceKm, 0, ',', '.') }} km
                             </span>
                         @else
-                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
-                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
+                                <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
                                 Semua
                             </span>
                         @endif
                     @else
-                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
                             Nonaktif
                         </span>
                     @endif

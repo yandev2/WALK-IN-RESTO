@@ -4,41 +4,98 @@
 
 @php
     $home = $home !== [] ? $home : \App\Models\PlatformSetting::homeViewData();
-    $heroImageUrl = $home['hero_image_url'] ?? null;
+    $heroImageUrl = $home['hero_image_url'] ?? 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80';
 @endphp
 
-<section class="directory-hero relative isolate min-h-[22rem] overflow-hidden bg-zinc-950 sm:min-h-[26rem] md:min-h-[28rem]">
-    @if (filled($heroImageUrl))
-        <img
-            src="{{ $heroImageUrl }}"
-            alt="{{ strip_tags($home['hero_title'] ?? $home['site_name']) }}"
-            class="directory-hero-media absolute inset-0 h-full w-full object-cover object-center scale-105 transition duration-700"
-            fetchpriority="high"
-        >
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/40" aria-hidden="true"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" aria-hidden="true"></div>
-    @else
-        <div class="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950"></div>
-    @endif
+<section class="directory-hero relative isolate overflow-hidden bg-gradient-to-b from-surface-muted/50 via-surface-base to-surface-base border-b border-border-subtle/50 py-10 sm:py-14 lg:py-16">
+    <div class="landing-container">
+        <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            {{-- Left Column: Copywriting & Headline --}}
+            <div class="lg:col-span-7">
+                @if (filled($home['hero_eyebrow'] ?? null))
+                    <div class="inline-flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-semibold text-primary shadow-xs">
+                        <span class="h-1.5 w-1.5 rounded-lg bg-primary animate-pulse"></span>
+                        <span class="font-medium tracking-wide uppercase">{{ $home['hero_eyebrow'] }}</span>
+                    </div>
+                @else
+                    <div class="inline-flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-semibold text-primary shadow-xs">
+                        <span class="h-1.5 w-1.5 rounded-lg bg-primary animate-pulse"></span>
+                        <span class="font-medium tracking-wide uppercase">Jelajahi Rasa, Temukan Favoritmu</span>
+                    </div>
+                @endif
 
-    <div class="landing-container relative z-10 flex min-h-[22rem] items-center py-12 sm:min-h-[26rem] sm:py-14 md:min-h-[28rem] md:py-16">
-        <div class="max-w-2xl">
-            @if (filled($home['hero_eyebrow'] ?? null))
-                <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-sm backdrop-blur-md border border-white/15">
-                    <span class="h-2 w-2 rounded-full bg-accent animate-pulse"></span>
-                    <span class="font-script text-lg text-white font-medium sm:text-xl">{{ $home['hero_eyebrow'] }}</span>
+                <h1 class="mt-4 font-display text-3xl font-extrabold leading-[1.15] tracking-tight text-body sm:text-4xl md:text-5xl">
+                    {!! \App\Models\PlatformSetting::heroTitleHtml($home) !!}
+                </h1>
+
+                @if (filled($home['hero_subtitle'] ?? null))
+                    <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:text-base md:text-lg">
+                        {{ $home['hero_subtitle'] }}
+                    </p>
+                @else
+                    <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:text-base md:text-lg">
+                        Temukan restoran terbaik di sekitarmu, nikmati menu favorit, dan rasakan pengalaman kuliner yang lebih mudah dan menyenangkan.
+                    </p>
+                @endif
+
+                {{-- Quick Value Props / Trust Badges --}}
+                <div class="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted sm:gap-6 sm:text-sm">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Restoran Terpercaya</span>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Dine-In QR Meja</span>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Promo & Diskon</span>
+                    </div>
                 </div>
-            @endif
+            </div>
 
-            <h1 class="mt-4 font-display text-3xl font-bold leading-[1.14] tracking-tight text-white sm:text-4xl md:text-5xl drop-shadow-sm">
-                {!! \App\Models\PlatformSetting::heroTitleHtml($home) !!}
-            </h1>
+            {{-- Right Column: Appetizing Food Showcase Card --}}
+            <div class="hidden lg:col-span-5 lg:block">
+                <div class="group relative overflow-hidden rounded-[2rem] bg-surface-raised p-2 shadow-xl ring-1 ring-[color:var(--border-subtle)] transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative aspect-[4/3] overflow-hidden rounded-[1.6rem]">
+                        <img
+                            src="{{ $heroImageUrl }}"
+                            alt="{{ strip_tags($home['hero_title'] ?? $home['site_name']) }}"
+                            class="directory-hero-media h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                            fetchpriority="high"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
-            @if (filled($home['hero_subtitle'] ?? null))
-                <p class="mt-4 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base md:text-lg">
-                    {{ $home['hero_subtitle'] }}
-                </p>
-            @endif
+                        {{-- Floating Tagline Overlay --}}
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <span class="inline-flex items-center gap-2 rounded-lg bg-black/70 backdrop-blur-md px-3.5 py-1.5 text-xs font-bold text-white shadow-md">
+                                <span class="h-2 w-2 rounded-lg bg-primary animate-pulse"></span>
+                                Rasa Enak Jadi Lebih Dekat
+                            </span>
+                            <span class="rounded-lg bg-white/20 backdrop-blur-md p-1.5 text-white">
+                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

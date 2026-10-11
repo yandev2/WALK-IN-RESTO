@@ -110,8 +110,8 @@ class RestaurantMenuCatalog extends Component
             'cta' => filled($mapsUrl) || filled($whatsappUrl),
         ]);
 
-        $this->restaurant->loadAvg('reviews', 'rating');
-        $this->restaurant->loadCount('reviews');
+        $this->restaurant->loadAvg(['reviews' => fn ($q) => $q->published()], 'rating');
+        $this->restaurant->loadCount(['reviews' => fn ($q) => $q->published()]);
 
         $ratingSummary = \App\Support\RestaurantRatingSummary::for($this->restaurant);
         $template = $profile?->landing_template ?: 'classic';

@@ -246,6 +246,11 @@ class Restaurant extends Model implements HasAvatar, HasName
         return $this->hasMany(RestaurantReview::class);
     }
 
+    public function publishedReviews(): HasMany
+    {
+        return $this->hasMany(RestaurantReview::class)->where('is_published', true);
+    }
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(RestaurantCategory::class, 'restaurant_restaurant_category')

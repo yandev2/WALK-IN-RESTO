@@ -89,7 +89,7 @@
                 {{-- Frosted Glass Category Pill Top Left --}}
                 @if ($category)
                     <div class="absolute top-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-full bg-black/45 dark:bg-black/60 backdrop-blur-xl px-3 py-1 text-[11px] font-semibold text-white border border-white/30 shadow-md">
+                        <span class="inline-flex items-center rounded-lg bg-black/45 dark:bg-black/60 backdrop-blur-xl px-3 py-1 text-[11px] font-semibold text-white border border-white/30 shadow-md">
                             {{ $category }}
                         </span>
                     </div>
@@ -98,7 +98,7 @@
                 {{-- Glass Red Discount Pill Top Right --}}
                 @if ($discountPercent)
                     <div class="absolute top-3 right-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-full bg-rose-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/30 shadow-md">
+                        <span class="inline-flex items-center rounded-lg bg-rose-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/30 shadow-md">
                             -{{ $discountPercent }}%
                         </span>
                     </div>
@@ -107,7 +107,7 @@
                 {{-- Frosted Glass Best Seller Badge Bottom Left --}}
                 @if ($showBestSeller)
                     <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/95 dark:bg-amber-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/40 shadow-lg">
+                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500/95 dark:bg-amber-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/40 shadow-lg">
                             <svg class="h-3 w-3 text-amber-100 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                             <span>Best Seller</span>
                         </span>
@@ -173,14 +173,14 @@
             @if ($href)
                 <a
                     href="{{ $href }}"
-                    class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
+                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
                 >
                     Pesan
                 </a>
             @else
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
+                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
                     @if ($gallery->isNotEmpty())
                         @click="openPreview(0)"
                     @endif
@@ -329,14 +329,14 @@
             @if ($href)
                 <a
                     href="{{ $href }}"
-                    class="inline-flex items-center justify-center rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
+                    class="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
                 >
                     Pesan
                 </a>
             @else
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-full bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
+                    class="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
                     @if ($gallery->isNotEmpty())
                         @click="openPreview(0)"
                     @endif
@@ -355,18 +355,19 @@
         @endif
     </article>
 @else
-    {{-- Classic Design Card --}}
+    {{-- Classic Design Card: Directory Style Inset Frame --}}
     <article
-        {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col overflow-hidden text-left shadow-sm hover:shadow-md transition-all duration-300 ring-1 ring-[color:var(--border-subtle)]']) }}
+        {{ $attributes->merge(['class' => 'customer-card landing-card-hover group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 sm:p-3 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-lg hover:ring-primary/40 hover:-translate-y-1 transition duration-200 text-left']) }}
         @if ($gallery->isNotEmpty())
             x-data="imagePreview(@js($previewImages))"
         @endif
     >
+        {{-- Inset Image Box --}}
         <div
             @class([
                 'relative shrink-0 overflow-hidden bg-surface-muted',
-                'mx-auto mt-5 h-28 w-28 rounded-full ring-2 ring-primary/20' => $circular,
-                'aspect-[4/3] w-full' => ! $circular,
+                'mx-auto mt-2 h-28 w-28 rounded-full ring-2 ring-primary/20' => $circular,
+                'aspect-square w-full rounded-xl' => ! $circular,
             ])
         >
             @if ($gallery->isNotEmpty())
@@ -391,47 +392,53 @@
                     >
                         <img
                             src="{{ $galleryPhoto }}"
-                            alt=""
+                            alt="{{ $name }}"
                             @class([
-                                'h-full w-full object-cover transition duration-500 group-hover:scale-105',
+                                'h-full w-full object-cover transition duration-300 group-hover:scale-105',
                                 'rounded-full' => $circular,
                             ])
+                            loading="lazy"
+                            onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
                         >
+                        {{-- Fallback SVG jika foto gagal dimuat --}}
+                        <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                            <svg class="h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </div>
                     </button>
                 @endforeach
             @else
-                <div class="flex h-full min-h-[8rem] items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/35">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                {{-- Fallback Placeholder jika menu tidak memiliki foto sama sekali --}}
+                <div class="flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                    <svg class="h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
                 </div>
             @endif
 
-            {{-- Top Left Discount Badge --}}
-            @if ($discountPercent)
-                <div class="pointer-events-none absolute left-3 top-3 z-10">
-                    <span class="rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm">-{{ $discountPercent }}%</span>
-                </div>
-            @endif
-
-            {{-- Bottom Left Best Seller Badge --}}
-            @if ($showBestSeller)
-                <div class="pointer-events-none absolute left-3 bottom-3 z-10">
-                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-md">
-                        <svg class="h-3 w-3 text-white fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <span>Best Seller</span>
+            {{-- Top Left Badges (Best Seller & Diskon) --}}
+            <div class="pointer-events-none absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
+                @if ($showBestSeller)
+                    <span class="rounded-lg bg-amber-500 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-xs">
+                        ★ Best Seller
                     </span>
-                </div>
-            @endif
+                @endif
+                @if ($discountPercent)
+                    <span class="rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-xs">
+                        -{{ $discountPercent }}%
+                    </span>
+                @endif
+            </div>
 
-            {{-- Gallery Thumbnails Bottom Right --}}
+            {{-- Multi-Photo Gallery Thumbnails Bottom Right --}}
             @if ($gallery->count() > 1)
                 <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
                     @foreach ($gallery as $thumbIndex => $thumbPhoto)
                         <button
                             type="button"
-                            class="h-9 w-9 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition sm:h-10 sm:w-10"
-                            :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : ''"
+                            class="h-7 w-7 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-lg border-2 border-white/95 bg-surface-muted shadow-md transition hover:scale-105"
+                            :class="index === {{ $thumbIndex }} ? 'border-primary ring-2 ring-primary/50' : 'opacity-85 hover:opacity-100'"
                             aria-label="Foto {{ $thumbIndex + 1 }}"
                             @click.stop="openPreview({{ $thumbIndex }})"
                         >
@@ -442,38 +449,61 @@
             @endif
         </div>
 
-        <div class="flex flex-1 flex-col p-5">
-            @if ($category)
-                <p class="text-xs font-bold uppercase tracking-wider text-primary mb-1">{{ $category }}</p>
-            @endif
-            <h3 class="font-display text-base sm:text-lg font-bold text-body group-hover:text-primary transition-colors duration-200">{{ $name }}</h3>
-            @if ($description)
-                <p class="mt-1.5 line-clamp-2 flex-1 text-xs sm:text-sm leading-relaxed text-muted">{{ $description }}</p>
-            @else
-                <div class="flex-1"></div>
-            @endif
+        {{-- Content Area --}}
+        <div class="mt-2.5 flex flex-1 flex-col justify-between">
+            <div>
+                @if ($category)
+                    <p class="truncate text-[11px] font-semibold uppercase tracking-wider text-primary mb-0.5">
+                        {{ $category }}
+                    </p>
+                @endif
+                <h3 class="truncate font-display text-xs sm:text-sm md:text-base font-bold text-body group-hover:text-primary transition-colors">
+                    {{ $name }}
+                </h3>
+                @if ($description)
+                    <p class="mt-1 line-clamp-2 text-[11px] sm:text-xs text-muted leading-relaxed">
+                        {{ $description }}
+                    </p>
+                @endif
+            </div>
 
-            <div class="mt-auto pt-3 flex items-end justify-between gap-3 border-t border-border-subtle/60">
+            {{-- Price & CTA Row --}}
+            <div class="mt-auto pt-3 flex items-center justify-between border-t border-border-subtle/50 gap-2">
                 <div>
                     @if ($discountPercent && $originalPrice)
-                        <p class="text-xs text-muted/80 line-through">{{ $originalPrice }}</p>
+                        <p class="text-[10px] sm:text-[11px] text-muted line-through">{{ $originalPrice }}</p>
                     @endif
                     @if ($price)
-                        <p class="text-base font-bold text-primary">{{ $price }}</p>
+                        <p class="text-xs sm:text-sm font-bold text-primary">{{ $price }}</p>
                     @endif
                 </div>
+
                 @if ($href)
                     <a
                         href="{{ $href }}"
-                        class="inline-flex rounded-full bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition hover:bg-primary hover:text-white shadow-sm"
+                        class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white shadow-2xs"
                     >
-                        Lihat
+                        <span>Lihat</span>
+                        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
                     </a>
+                @elseif ($gallery->isNotEmpty())
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white shadow-2xs"
+                        @click="openPreview(0)"
+                    >
+                        <span>Lihat</span>
+                        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
                 @endif
             </div>
 
             @if ($slot->isNotEmpty())
-                <div class="mt-4">{{ $slot }}</div>
+                <div class="mt-2">{{ $slot }}</div>
             @endif
         </div>
 

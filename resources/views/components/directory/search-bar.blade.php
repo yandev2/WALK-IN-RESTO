@@ -1,28 +1,20 @@
-@props([
-    'categories',
-    'categoryIds' => [],
-    'locationStatus' => 'idle',
-    'userAccuracyM' => null,
-    'home' => [],
-])
+@props(['categories', 'categoryIds' => [], 'locationStatus' => 'idle', 'userAccuracyM' => null, 'home' => []])
 
 @php
     $home = $home !== [] ? $home : \App\Models\PlatformSetting::homeViewData();
     $locationCta = $home['location_cta_label'] ?? 'Izinkan lokasi';
-    $categoryIds = collect($categoryIds)->map(fn ($id) => (int) $id)->values()->all();
+    $categoryIds = collect($categoryIds)->map(fn($id) => (int) $id)->values()->all();
     $selectedCategoryId = count($categoryIds) === 1 ? $categoryIds[0] : null;
     $categoryLabel = match (count($categoryIds)) {
         0 => 'Semua Kategori',
         1 => $categories->firstWhere('id', $selectedCategoryId)?->name ?? 'Kategori',
-        default => count($categoryIds).' kategori',
+        default => count($categoryIds) . ' kategori',
     };
     $categoryOptions = collect([['value' => null, 'label' => 'Semua Kategori']])
-        ->concat($categories->map(fn ($category) => ['value' => $category->id, 'label' => $category->name]))
+        ->concat($categories->map(fn($category) => ['value' => $category->id, 'label' => $category->name]))
         ->all();
     $locationLabel = match ($locationStatus) {
-        'granted' => filled($userAccuracyM) && $userAccuracyM > 500
-            ? 'Lokasi aktif (perkiraan)'
-            : 'Lokasi aktif',
+        'granted' => filled($userAccuracyM) && $userAccuracyM > 500 ? 'Lokasi aktif (perkiraan)' : 'Lokasi aktif',
         'pending' => 'Meminta izin lokasi...',
         'denied' => 'Izin lokasi ditolak',
         'unsupported' => 'Lokasi tidak didukung',
@@ -32,42 +24,52 @@
     };
 @endphp
 
-<div id="directory-search" role="search" aria-label="Pencarian direktori restoran" class="directory-search relative z-30 w-full pb-6">
+<div id="directory-search" role="search" aria-label="Pencarian direktori restoran"
+    class="directory-search relative z-30 w-full pb-6">
     <div class="customer-card w-full overflow-visible p-0 shadow-lg ring-1 ring-[color:var(--border-subtle)]">
         @if ($locationStatus === 'idle')
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle/80 bg-surface-muted/90 px-4 py-2.5 text-xs sm:text-sm">
+            <div
+                class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle/80 bg-surface-muted/90 px-4 py-2.5 text-xs sm:text-sm">
                 <div class="flex min-w-0 items-center gap-2 text-body">
-                    <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                        <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <span
+                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                        <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </span>
-                    <span class="text-muted leading-tight">Tampilkan restoran terdekat dari lokasi Anda. Klik tombol di samping — browser akan meminta izin.</span>
+                    <span class="text-muted leading-tight">Tampilkan restoran terdekat dari lokasi Anda. Klik tombol di
+                        samping — browser akan meminta izin.</span>
                 </div>
-                <button
-                    type="button"
-                    x-on:click="$dispatch('request-directory-location')"
-                    class="landing-btn-glow shrink-0 rounded-full bg-primary px-3.5 py-1.5 text-xs font-bold text-white transition hover:bg-primary-dark"
-                >
+                <button type="button" x-on:click="$dispatch('request-directory-location')"
+                    class="landing-btn-glow shrink-0 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white transition hover:bg-primary-dark">
                     {{ $locationCta }}
                 </button>
             </div>
         @elseif ($locationStatus === 'pending')
-            <div class="flex items-center gap-2 rounded-t-[1.5rem] border-b border-border-subtle bg-surface-muted px-4 py-2.5 text-xs sm:text-sm text-muted">
-                <svg class="h-4 w-4 shrink-0 animate-spin text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <div
+                class="flex items-center gap-2 rounded-t-[1.5rem] border-b border-border-subtle bg-surface-muted px-4 py-2.5 text-xs sm:text-sm text-muted">
+                <svg class="h-4 w-4 shrink-0 animate-spin text-primary" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
                 <span>Meminta izin lokasi — cek popup browser Anda...</span>
             </div>
         @elseif (in_array($locationStatus, ['denied', 'unsupported', 'insecure', 'error'], true))
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle bg-surface-muted px-4 py-2.5 text-xs text-muted">
+            <div
+                class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle bg-surface-muted px-4 py-2.5 text-xs text-muted">
                 <span>
                     @if ($locationStatus === 'denied')
                         Izin lokasi ditolak — menampilkan urutan default. Klik Coba lagi lalu Allow di popup browser.
                     @elseif ($locationStatus === 'insecure')
-                        Lokasi hanya tersedia di HTTPS atau <strong>http://localhost</strong>. Akses via IP LAN (HTTP) tidak didukung browser.
+                        Lokasi hanya tersedia di HTTPS atau <strong>http://localhost</strong>. Akses via IP LAN (HTTP)
+                        tidak didukung browser.
                     @elseif ($locationStatus === 'unsupported')
                         Browser Anda tidak mendukung deteksi lokasi.
                     @else
@@ -75,29 +77,27 @@
                     @endif
                 </span>
                 @if ($locationStatus !== 'insecure')
-                    <button
-                        type="button"
-                        x-on:click="$dispatch('request-directory-location')"
-                        class="rounded-full bg-surface-raised px-3 py-1 text-xs font-semibold text-primary ring-1 ring-[color:var(--border-subtle)] hover:bg-surface-muted"
-                    >
+                    <button type="button" x-on:click="$dispatch('request-directory-location')"
+                        class="rounded-lg bg-surface-raised px-3 py-1 text-xs font-semibold text-primary ring-1 ring-[color:var(--border-subtle)] hover:bg-surface-muted">
                         Coba lagi
                     </button>
                 @endif
             </div>
         @elseif ($locationStatus === 'granted')
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle bg-emerald-500/10 px-4 py-2.5 text-xs sm:text-sm text-emerald-700 dark:text-emerald-400">
+            <div
+                class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle bg-emerald-500/10 px-4 py-2.5 text-xs sm:text-sm text-emerald-700 dark:text-emerald-400">
                 <div class="flex min-w-0 items-center gap-2 font-medium">
-                    <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                    <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                            clip-rule="evenodd" />
                     </svg>
                     <span>Menampilkan restoran terdekat dari lokasi Anda.</span>
                 </div>
-                <button
-                    type="button"
-                    wire:click="disableLocationSearch"
+                <button type="button" wire:click="disableLocationSearch"
                     x-on:click="window.markDirectoryLocationSkipped?.()"
-                    class="shrink-0 rounded-full bg-surface-raised px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/20 hover:bg-surface-muted transition"
-                >
+                    class="shrink-0 rounded-lg bg-surface-raised px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/20 hover:bg-surface-muted transition">
                     Matikan lokasi
                 </button>
             </div>
@@ -106,43 +106,40 @@
         <div class="grid gap-2 overflow-visible p-2.5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.1fr)_13rem_8rem]">
             <label class="relative min-w-0 flex items-center">
                 <span class="sr-only">Cari restoran</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
                 </svg>
-                <input
-                    id="directory-search-input"
-                    name="search"
-                    type="search"
-                    wire:model.live.debounce.350ms="search"
+                <input id="directory-search-input" name="search" type="search" wire:model.live.debounce.350ms="search"
                     placeholder="{{ $home['search_placeholder'] }}"
-                    class="h-12 w-full rounded-2xl border-0 bg-transparent py-3 pl-11 pr-4 text-sm text-body placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                >
+                    class="h-12 w-full rounded-2xl border-0 bg-transparent py-3 pl-11 pr-4 text-sm text-body placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30">
             </label>
 
             <div @class([
                 'hidden items-center gap-2 rounded-2xl px-4 text-sm lg:flex transition border',
-                'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400' => $locationStatus === 'granted',
-                'bg-surface-muted/70 border-border-subtle text-muted' => $locationStatus !== 'granted',
+                'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400' =>
+                    $locationStatus === 'granted',
+                'bg-surface-muted/70 border-border-subtle text-muted' =>
+                    $locationStatus !== 'granted',
             ])>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M9.384 3.576a1 1 0 011.232 0l6.5 4.75A1 1 0 0117 9.25v6.5a1 1 0 01-1.384.926L10 15.382l-5.616 1.294A1 1 0 013 15.75v-6.5a1 1 0 01.384-.924l6.5-4.75z" clip-rule="evenodd" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 20 20"
+                    fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M9.384 3.576a1 1 0 011.232 0l6.5 4.75A1 1 0 0117 9.25v6.5a1 1 0 01-1.384.926L10 15.382l-5.616 1.294A1 1 0 013 15.75v-6.5a1 1 0 01.384-.924l6.5-4.75z"
+                        clip-rule="evenodd" />
                 </svg>
                 @if (in_array($locationStatus, ['idle', 'pending'], true))
-                    <button
-                        type="button"
-                        x-on:click="$dispatch('request-directory-location')"
-                        class="truncate font-semibold text-primary hover:underline text-left"
-                    >
+                    <button type="button" x-on:click="$dispatch('request-directory-location')"
+                        class="truncate font-semibold text-primary hover:underline text-left">
                         {{ $locationLabel }}
                     </button>
                 @elseif ($locationStatus === 'granted')
-                    <button
-                        type="button"
-                        wire:click="disableLocationSearch"
+                    <button type="button" wire:click="disableLocationSearch"
                         x-on:click="window.markDirectoryLocationSkipped?.()"
                         class="truncate font-semibold hover:underline text-left"
-                        title="Matikan pencarian berdasarkan lokasi"
-                    >
+                        title="Matikan pencarian berdasarkan lokasi">
                         {{ $locationLabel }}
                     </button>
                 @else
@@ -152,70 +149,57 @@
 
             <div class="hidden min-w-0 lg:block">
                 <span class="sr-only">Kategori</span>
-                <x-customer.dropdown
-                    class="rounded-2xl bg-surface-muted/70 border border-border-subtle"
-                    method="setCategoryFilter"
-                    :value="$selectedCategoryId"
-                    :label="$categoryLabel"
-                    :options="$categoryOptions"
-                />
+                <x-customer.dropdown class="rounded-2xl bg-surface-muted/70 border border-border-subtle"
+                    method="setCategoryFilter" :value="$selectedCategoryId" :label="$categoryLabel" :options="$categoryOptions" />
             </div>
 
-            <button
-                type="button"
-                wire:click="applySearch"
-                class="landing-btn-glow hidden h-12 rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-4 text-sm font-bold text-white shadow-md transition hover:from-primary-dark hover:to-primary-dark lg:inline-flex lg:items-center lg:justify-center"
-            >
+            <button type="button" wire:click="applySearch"
+                class="landing-btn-glow hidden h-12 rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-4 text-sm font-bold text-white shadow-md transition hover:from-primary-dark hover:to-primary-dark lg:inline-flex lg:items-center lg:justify-center">
                 {{ $home['search_button_label'] }}
             </button>
         </div>
     </div>
 
     <div class="mt-3 flex flex-wrap gap-2 lg:hidden">
-        <button
-            type="button"
-            @if ($locationStatus === 'granted')
-                wire:click="disableLocationSearch"
+        <button type="button"
+            @if ($locationStatus === 'granted') wire:click="disableLocationSearch"
                 x-on:click="window.markDirectoryLocationSkipped?.()"
             @else
-                x-on:click="$dispatch('request-directory-location')"
-            @endif
+                x-on:click="$dispatch('request-directory-location')" @endif
             @class([
-                'inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold ring-1 ring-[color:var(--border-subtle)] shadow-sm transition',
-                'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' => $locationStatus === 'granted',
-                'bg-primary text-white ring-primary' => in_array($locationStatus, ['idle', 'pending'], true),
-                'bg-surface-raised text-body' => ! in_array($locationStatus, ['granted', 'idle', 'pending'], true),
-            ])
-        >
+                'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold ring-1 ring-[color:var(--border-subtle)] shadow-sm transition',
+                'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' =>
+                    $locationStatus === 'granted',
+                'bg-primary text-white ring-primary' => in_array(
+                    $locationStatus,
+                    ['idle', 'pending'],
+                    true),
+                'bg-surface-raised text-body' => !in_array(
+                    $locationStatus,
+                    ['granted', 'idle', 'pending'],
+                    true),
+            ])>
             {{ $locationStatus === 'granted' ? 'Matikan lokasi' : 'Lokasi Saya' }}
         </button>
         <div class="min-w-[9.5rem]">
-            <x-customer.dropdown
-                class="rounded-full bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm"
-                size="compact"
-                method="setCategoryFilter"
-                :value="$selectedCategoryId"
-                :label="$categoryLabel"
-                :options="$categoryOptions"
-            />
+            <x-customer.dropdown class="rounded-lg bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm"
+                size="compact" method="setCategoryFilter" :value="$selectedCategoryId" :label="$categoryLabel" :options="$categoryOptions" />
         </div>
-        <button
-            type="button"
-            x-on:click="$dispatch('open-directory-filters')"
-            class="inline-flex items-center gap-2 rounded-full bg-surface-raised px-4 py-2 text-xs font-semibold text-body ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:bg-surface-muted transition"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+        <button type="button" x-on:click="$dispatch('open-directory-filters')"
+            class="inline-flex items-center gap-2 rounded-lg bg-surface-raised px-4 py-2 text-xs font-semibold text-body ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:bg-surface-muted transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-muted" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
             Filter
         </button>
-        <button
-            type="button"
-            x-on:click="$dispatch('open-directory-map')"
-            class="inline-flex items-center gap-2 rounded-full bg-surface-raised px-4 py-2 text-xs font-semibold text-primary ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:bg-surface-muted transition lg:hidden"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        <button type="button" x-on:click="$dispatch('open-directory-map')"
+            class="inline-flex items-center gap-2 rounded-lg bg-surface-raised px-4 py-2 text-xs font-semibold text-primary ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:bg-surface-muted transition lg:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
             Lihat di Peta
         </button>

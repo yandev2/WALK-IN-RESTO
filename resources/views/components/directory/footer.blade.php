@@ -51,6 +51,9 @@
                     <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Beranda</a>
                 </li>
                 <li>
+                    <a href="{{ route('directory.menus') }}" class="hover:text-primary transition-colors">Daftar Menu</a>
+                </li>
+                <li>
                     <a href="{{ route('blog.index', ['locale' => 'id']) }}" class="hover:text-primary transition-colors">Blog</a>
                 </li>
                 <li>

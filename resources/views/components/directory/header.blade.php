@@ -27,22 +27,27 @@
 
         <nav aria-label="Navigasi Utama" class="hidden items-center gap-2 md:flex">
             <a href="{{ route('home') }}" @class([
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
+                'rounded-lg px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('home'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('home'),
             ])>Beranda</a>
+            <a href="{{ route('directory.menus') }}" @class([
+                'rounded-lg px-4 py-2 text-sm font-semibold transition',
+                'bg-primary/10 font-bold text-primary' => request()->routeIs('directory.menus'),
+                'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('directory.menus'),
+            ])>Menu</a>
             <a href="{{ route('page.about') }}" @class([
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
+                'rounded-lg px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('page.about'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('page.about'),
             ])>Tentang</a>
             <a href="{{ route('page.terms') }}" @class([
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
+                'rounded-lg px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('page.terms'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('page.terms'),
             ])>Syarat & Ketentuan</a>
             <a href="{{ route('blog.index', ['locale' => 'id']) }}" @class([
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
+                'rounded-lg px-4 py-2 text-sm font-semibold transition',
                 'bg-primary/10 font-bold text-primary' => request()->routeIs('blog.*'),
                 'text-muted hover:bg-surface-muted hover:text-body' => ! request()->routeIs('blog.*'),
             ])>Blog</a>
@@ -53,13 +58,23 @@
                         ? url('/founder')
                         : ($authUser?->restaurants()->first() ? url('/admin/'.$authUser->restaurants()->first()->slug) : url('/admin'));
                 @endphp
-                <a href="{{ $panelUrl }}" rel="nofollow" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-primary-dark transition">Panel Admin</a>
+                <a href="{{ $panelUrl }}" rel="nofollow" class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-primary-dark transition">Panel Admin</a>
             @else
-                <a href="{{ route('register.restaurant') }}" class="rounded-full px-4 py-2 text-sm font-semibold text-muted hover:bg-surface-muted hover:text-body transition">{{ $home['cta_register_label'] }}</a>
+                <a href="{{ url('/admin/login') }}" rel="nofollow" class="rounded-lg px-4 py-2 text-sm font-semibold text-muted hover:bg-surface-muted hover:text-body transition">Login</a>
+                <a href="{{ route('register.restaurant') }}" class="rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 transition">{{ $home['cta_register_label'] }}</a>
             @endauth
         </nav>
 
         <div class="flex items-center gap-2">
+            @guest
+                <a
+                    href="{{ url('/admin/login') }}"
+                    rel="nofollow"
+                    class="md:hidden inline-flex items-center rounded-lg bg-surface-muted px-3 py-1.5 text-xs font-semibold text-body hover:bg-primary hover:text-white transition"
+                >
+                    Login
+                </a>
+            @endguest
             <x-customer.theme-toggle />
         </div>
     </div>

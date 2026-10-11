@@ -6,7 +6,7 @@
 
 <div {{ $attributes->merge(['class' => 'customer-card group landing-card-hover p-5']) }}>
     @if ($icon)
-        <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary transition group-hover:bg-primary/20">
+        <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary transition group-hover:bg-primary/20">
             {!! $icon !!}
         </div>
     @endif

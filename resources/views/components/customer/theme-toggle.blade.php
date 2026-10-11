@@ -1,7 +1,7 @@
 <button
     type="button"
     data-theme-toggle
-    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-body landing-interactive hover:scale-105 hover:shadow-[var(--card-shadow)]"
+    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted text-body landing-interactive hover:scale-105 hover:shadow-[var(--card-shadow)]"
     aria-label="Ganti tema terang atau gelap"
 >
     <svg data-theme-icon="light" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

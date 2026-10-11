@@ -14,7 +14,7 @@
     >
         <button
             type="button"
-            class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+            class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25"
             aria-label="Tutup"
             @click="closePreview()"
         >
@@ -25,7 +25,7 @@
 
         <button
             type="button"
-            class="absolute left-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 sm:left-3"
+            class="absolute left-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25 sm:left-3"
             aria-label="Sebelumnya"
             x-show="images.length > 1"
             x-cloak
@@ -51,7 +51,7 @@
 
         <button
             type="button"
-            class="absolute right-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 sm:right-3"
+            class="absolute right-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25 sm:right-3"
             aria-label="Berikutnya"
             x-show="images.length > 1"
             x-cloak

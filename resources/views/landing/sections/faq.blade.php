@@ -18,7 +18,7 @@
                     <summary class="cursor-pointer list-none font-semibold text-body marker:content-none focus:outline-none">
                         <span class="flex items-center justify-between gap-4 text-left">
                             <span class="font-display text-base sm:text-lg font-bold text-body group-hover:text-primary transition-colors">{{ $faq->question }}</span>
-                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg leading-none font-bold text-primary transition-all duration-300 group-open:rotate-45 group-open:bg-primary group-open:text-white shadow-sm">+</span>
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-lg leading-none font-bold text-primary transition-all duration-300 group-open:rotate-45 group-open:bg-primary group-open:text-white shadow-sm">+</span>
                         </span>
                     </summary>
                     <div class="landing-faq-content">

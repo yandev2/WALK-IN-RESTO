@@ -37,7 +37,7 @@
                 x-on:click="$dispatch('request-directory-location')"
             @endif
             @class([
-                'rounded-full px-3.5 py-1.5 text-xs font-semibold ring-1 transition shadow-sm',
+                'rounded-lg px-3.5 py-1.5 text-xs font-semibold ring-1 transition shadow-sm',
                 'bg-emerald-500/10 text-emerald-700 ring-emerald-500/20 hover:bg-emerald-500/20 dark:text-emerald-400' => $locationStatus === 'granted',
                 'bg-surface-raised text-body ring-[color:var(--border-subtle)] hover:bg-surface-muted' => $locationStatus !== 'granted',
             ])

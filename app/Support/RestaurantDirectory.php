@@ -103,8 +103,8 @@ final class RestaurantDirectory
                 'defaultOutlet.closedDates',
                 'defaultOutlet.restaurant',
             ])
-            ->withAvg('reviews', 'rating')
-            ->withCount('reviews')
+            ->withAvg(['reviews' => fn ($q) => $q->published()], 'rating')
+            ->withCount(['reviews' => fn ($q) => $q->published()])
             ->orderBy('name')
             ->limit($limit)
             ->get();
@@ -268,8 +268,8 @@ final class RestaurantDirectory
                 'defaultOutlet.closedDates',
                 'defaultOutlet.restaurant',
             ])
-            ->withAvg('reviews', 'rating')
-            ->withCount('reviews');
+            ->withAvg(['reviews' => fn ($q) => $q->published()], 'rating')
+            ->withCount(['reviews' => fn ($q) => $q->published()]);
 
         if ($search !== '') {
             $likeOperator = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';

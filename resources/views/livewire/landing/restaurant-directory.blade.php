@@ -15,15 +15,20 @@
             :home="$home"
         />
 
-        <div class="mb-6">
-            <x-directory.map-panel map-id="directory-map-desktop" :location-status="$locationStatus" />
-        </div>
         <script type="application/json" id="directory-map-pins">@json($mapPins)</script>
         <script type="application/json" id="directory-user-location">@json($locationStatus === 'granted' ? ['lat' => $userLat, 'lng' => $userLng] : null)</script>
 
+        {{-- Baris Kategori Text-Only Pills --}}
+        <x-directory.category-bar
+            :categories="$this->categories"
+            :category-ids="$categoryIds"
+        />
+
+        {{-- Slider Restoran Rekomendasi Pilihan --}}
         <x-directory.recommended-slider :cards="$recommendedCards" />
 
-        <div class="grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
+        {{-- Grid Utama: Filter & Daftar Restoran --}}
+        <div id="directory-results" class="mb-12 grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
             <x-directory.filter-panel
                 :categories="$this->categories"
                 :facility-options="$facilityOptions"
@@ -93,6 +98,34 @@
                 @endif
             </section>
         </div>
+
+        {{-- Mid-Section: Split Banner (Promo CmsBanner + Mini Map Radar) --}}
+        <x-directory.interactive-split-banner
+            :promo="$activePromoBanner"
+            :location-status="$locationStatus"
+        />
+
+        {{-- Section: Menu Populer "Yang Lagi Hits" & Banner B2B Bisnis Kuliner --}}
+        @php
+            $hasActiveFilters = ! empty($categoryIds) || filled($search) || filled($maxDistanceKm);
+        @endphp
+        @if (! empty($popularMenuItems) || $hasActiveFilters)
+            <div class="mb-12 grid gap-6 lg:grid-cols-12 items-stretch">
+                <div class="lg:col-span-8">
+                    <x-directory.popular-dishes :items="$popularMenuItems" :has-filters="$hasActiveFilters" />
+                </div>
+                <div class="lg:col-span-4 flex flex-col">
+                    <x-directory.b2b-banner :home="$home" />
+                </div>
+            </div>
+        @else
+            <div class="mb-12">
+                <x-directory.b2b-banner :home="$home" />
+            </div>
+        @endif
+
+        {{-- Section: Artikel & Tips Kuliner (Blog Highlights) --}}
+        <x-directory.blog-highlights :articles="$latestArticles" />
     </div>
 
     <x-directory.footer :home="$home" />
@@ -119,7 +152,7 @@
         >
             <div class="flex items-center justify-between border-b border-border-subtle px-4 py-3">
                 <h2 class="text-base font-bold text-body">Peta restoran</h2>
-                <button type="button" x-on:click="open = false" class="rounded-full bg-surface-muted px-3 py-1 text-sm font-semibold">Tutup</button>
+                <button type="button" x-on:click="open = false" class="rounded-lg bg-surface-muted px-3 py-1 text-sm font-semibold">Tutup</button>
             </div>
             <x-directory.map-panel map-id="directory-map-mobile" mobile :location-status="$locationStatus" />
         </div>
