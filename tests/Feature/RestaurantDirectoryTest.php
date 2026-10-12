@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BlogPostStatus;
 use App\Livewire\Landing\RestaurantDirectory;
+use App\Models\BlogPost;
 use App\Models\DiningTable;
 use App\Models\Restaurant;
 use App\Models\RestaurantCategory;
@@ -478,6 +480,88 @@ class RestaurantDirectoryTest extends TestCase
         $this->assertNotFalse($posB);
         $this->assertNotFalse($posA);
         $this->assertLessThan($posA, $posB, 'Resto B (5.0 stars published) should rank ahead of Resto A (4.0 stars published, despite having unpublished 5-star reviews)');
+    }
+
+    public function test_latest_articles_returns_posts_sorted_by_latest_update_without_time_limit(): void
+    {
+        // Bersihkan artikel seeder untuk pengujian terisolasi
+        BlogPost::query()->forceDelete();
+
+        $oldPostUpdatedRecently = BlogPost::query()->create([
+            'status' => BlogPostStatus::Published,
+            'is_active' => true,
+            'published_at' => now()->subDays(60),
+            'created_at' => now()->subDays(60),
+            'updated_at' => now(),
+        ]);
+        $oldPostUpdatedRecently->translations()->create([
+            'locale' => 'id',
+            'title' => 'Artikel Lawas Baru Saja Diupdate',
+            'slug' => 'artikel-lawas-update',
+            'content' => '<p>Konten artikel lawas</p>',
+        ]);
+
+        $olderPost = BlogPost::query()->create([
+            'status' => BlogPostStatus::Published,
+            'is_active' => true,
+            'published_at' => now()->subDays(90),
+            'created_at' => now()->subDays(90),
+            'updated_at' => now()->subDays(10),
+        ]);
+        $olderPost->translations()->create([
+            'locale' => 'id',
+            'title' => 'Artikel 90 Hari Lalu',
+            'slug' => 'artikel-90-hari-lalu',
+            'content' => '<p>Konten artikel 90 hari</p>',
+        ]);
+
+        $draftPost = BlogPost::query()->create([
+            'status' => BlogPostStatus::Draft,
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $draftPost->translations()->create([
+            'locale' => 'id',
+            'title' => 'Artikel Draf Rahasia',
+            'slug' => 'artikel-draf',
+            'content' => '<p>Konten draf</p>',
+        ]);
+
+        $component = Livewire::test(RestaurantDirectory::class);
+        $articles = $component->get('latestArticles');
+
+        $this->assertCount(2, $articles);
+        $this->assertSame('Artikel Lawas Baru Saja Diupdate', $articles[0]['title']);
+        $this->assertSame('Artikel 90 Hari Lalu', $articles[1]['title']);
+    }
+
+    public function test_latest_articles_falls_back_when_current_locale_has_no_translations(): void
+    {
+        BlogPost::query()->forceDelete();
+
+        $post = BlogPost::query()->create([
+            'status' => BlogPostStatus::Published,
+            'is_active' => true,
+            'published_at' => now()->subDays(20),
+        ]);
+        $post->translations()->create([
+            'locale' => 'id',
+            'title' => 'Hanya Bahasa Indonesia',
+            'slug' => 'hanya-bahasa-indonesia',
+            'content' => '<p>Konten bahasa Indonesia</p>',
+        ]);
+
+        app()->setLocale('en');
+
+        $component = Livewire::test(RestaurantDirectory::class);
+        $articles = $component->get('latestArticles');
+
+        $this->assertNotEmpty($articles);
+        $this->assertSame('Hanya Bahasa Indonesia', $articles[0]['title']);
+
+        // Kembalikan locale ke id
+        app()->setLocale('id');
     }
 }
 

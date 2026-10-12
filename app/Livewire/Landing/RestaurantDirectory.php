@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Landing;
 
+use App\Enums\BlogPostStatus;
 use App\Models\BlogPost;
 use App\Models\CmsBanner;
 use App\Models\Facility;
@@ -295,24 +296,68 @@ class RestaurantDirectory extends Component
     {
         $locale = app()->getLocale() ?: 'id';
 
-        return BlogPost::query()
-            ->public()
-            ->forLocale($locale)
-            ->with(['category', 'translations'])
-            ->latest('published_at')
-            ->limit(4)
-            ->get()
-            ->map(fn (BlogPost $post) => [
-                'id' => $post->id,
-                'title' => $post->title,
-                'excerpt' => $post->excerpt,
-                'slug' => $post->slug,
-                'image_url' => CmsMedia::url($post->featured_image),
-                'category_name' => $post->category?->name ?? 'Kuliner',
-                'published_at' => $post->published_at?->translatedFormat('d M Y') ?? $post->created_at?->format('d M Y'),
-                'reading_time' => ($post->reading_time_minutes ?: 4) . ' min baca',
-                'url' => route('blog.show', ['locale' => $locale, 'slug' => $post->slug]),
-            ])
+        // Query artikel yang siap tayang (bukan draft), tanpa batasan rentang waktu (misal 7 hari dll)
+        $query = BlogPost::query()
+            ->where(function (Builder $q) {
+                $q->where('status', BlogPostStatus::Published)
+                    ->orWhere(function (Builder $sub) {
+                        $sub->where('status', BlogPostStatus::Scheduled)
+                            ->where('published_at', '<=', now());
+                    })
+                    ->orWhere(function (Builder $sub) {
+                        $sub->where('is_active', true)
+                            ->where('status', '!=', BlogPostStatus::Draft);
+                    });
+            })
+            ->where(function (Builder $q) {
+                $q->where('is_active', true)
+                    ->orWhereNull('is_active');
+            })
+            ->with(['category', 'translations']);
+
+        // Prioritaskan artikel dengan translasi locale aktif, fallback ke translasi tersedia jika kosong
+        $localeQuery = (clone $query)->forLocale($locale);
+
+        $posts = $localeQuery->exists()
+            ? $localeQuery
+                ->orderByDesc('updated_at')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->limit(4)
+                ->get()
+            : $query
+                ->whereHas('translations')
+                ->orderByDesc('updated_at')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->limit(4)
+                ->get();
+
+        return $posts
+            ->map(function (BlogPost $post) use ($locale) {
+                $translation = $post->translate($locale)
+                    ?? $post->translate('id')
+                    ?? $post->translations->first();
+
+                $articleLocale = $translation?->locale ?: $locale;
+                $slug = $translation?->slug ?: $post->slug;
+                $title = $translation?->title ?: $post->title;
+                $excerpt = $translation?->excerpt ?: $post->excerpt;
+
+                $date = $post->published_at ?? $post->updated_at ?? $post->created_at;
+
+                return [
+                    'id' => $post->id,
+                    'title' => $title,
+                    'excerpt' => $excerpt,
+                    'slug' => $slug,
+                    'image_url' => CmsMedia::url($post->featured_image),
+                    'category_name' => $post->category?->name ?? 'Kuliner',
+                    'published_at' => $date?->translatedFormat('d M Y') ?? $date?->format('d M Y'),
+                    'reading_time' => ($post->reading_time_minutes ?: 4) . ' min baca',
+                    'url' => route('blog.show', ['locale' => $articleLocale, 'slug' => $slug]),
+                ];
+            })
             ->all();
     }
 

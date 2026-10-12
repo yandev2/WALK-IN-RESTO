@@ -2418,9 +2418,9 @@
     "semantic_hash": ""
   },
   "resources/views/components/directory/header.blade.php": {
-    "mtime": 1791782925.890081,
-    "seen": 1791783053.3789248,
-    "ast_hash": "13e2cedc585d9fb8ef6f31071560f099",
+    "mtime": 1791796679.014317,
+    "seen": 1791796787.4706037,
+    "ast_hash": "a9b4417e9e21a08801ef557de02cc2ab",
     "semantic_hash": ""
   },
   "resources/views/components/directory/hero.blade.php": {
@@ -5433,12 +5433,6 @@
     "mtime": 1791782058.3315463,
     "seen": 1791783053.3797214,
     "ast_hash": "25bf99bad82b5ab745c26f3d787b3f34",
-    "semantic_hash": ""
-  },
-  "scratch/test_browser_console.cjs": {
-    "mtime": 1791785274.0979953,
-    "seen": 1791785398.0686667,
-    "ast_hash": "72e778cc98a008982b49121861bb14dd",
     "semantic_hash": ""
   }
 }
