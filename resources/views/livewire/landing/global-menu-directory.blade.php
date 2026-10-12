@@ -178,13 +178,11 @@
         @if (! empty($items))
             <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
                 @foreach ($items as $item)
-                    @php
-                        $targetUrl = $item['landing_url'] ?: '#';
-                    @endphp
-                    <a
-                        href="{{ $targetUrl }}"
-                        class="group flex flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 sm:p-3 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-lg hover:ring-primary/40 transition duration-200"
-                        title="Kunjungi {{ $item['restaurant_name'] ?? 'Restoran' }}"
+                    <button
+                        type="button"
+                        @click="$dispatch('open-menu-modal', @js($item))"
+                        class="group flex flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 sm:p-3 text-left ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-lg hover:ring-primary/40 transition duration-200 cursor-pointer"
+                        title="Lihat detail {{ $item['name'] }}"
                         wire:key="global-dish-{{ $item['id'] }}"
                     >
                         <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
@@ -216,7 +214,7 @@
                                         ★ Best Seller
                                     </span>
                                 @endif
-                                @if (! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
+                                @if (empty($item['hide_price']) && ! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
                                     <span class="rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
                                         -{{ $item['discount_percent'] }}%
                                     </span>
@@ -244,15 +242,17 @@
                                     {{ $item['name'] }}
                                 </h2>
                                 @if (! empty($item['description']))
-                                    <p class="mt-1 line-clamp-2 text-[11px] text-muted leading-relaxed hidden sm:block">
+                                    <p class="mt-1 line-clamp-2 text-[11px] text-muted leading-relaxed">
                                         {{ $item['description'] }}
                                     </p>
                                 @endif
                             </div>
 
-                            <div class="mt-2.5 flex items-center justify-between border-t border-border-subtle/50 pt-2">
-                                <div>
-                                    @if (! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
+                            <div class="mt-2.5 flex items-center justify-between border-t border-border-subtle/50 pt-2 min-w-0">
+                                <div class="min-w-0 truncate">
+                                    @if (! empty($item['hide_price']))
+                                        <span class="truncate text-[11px] font-semibold text-primary">Kunjungi Restoran</span>
+                                    @elseif (! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
                                         <span class="text-[11px] text-muted line-through mr-1">{{ $item['price_formatted'] }}</span>
                                         <span class="text-xs sm:text-sm font-bold text-primary">{{ $item['effective_price_formatted'] }}</span>
                                     @else
@@ -260,15 +260,15 @@
                                     @endif
                                 </div>
 
-                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-muted group-hover:text-primary transition">
-                                    <span>Resto</span>
+                                <span class="shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                    <span>Detail</span>
                                     <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </span>
                             </div>
                         </div>
-                    </a>
+                    </button>
                 @endforeach
             </div>
 
@@ -294,6 +294,9 @@
             </div>
         @endif
     </main>
+
+    {{-- Reusable Modal Detail Menu --}}
+    <x-directory.menu-detail-modal />
 
     <x-directory.footer :home="$home" />
 </div>

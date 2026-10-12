@@ -228,7 +228,7 @@ class RestaurantDirectory extends Component
             ->where('is_active', true)
             ->whereNotNull('photo_path')
             ->whereHas('restaurant', fn (Builder $r) => $r->listedInDirectory())
-            ->with(['restaurant.defaultOutlet', 'restaurant.categories']);
+            ->with(['restaurant.defaultOutlet', 'restaurant.categories', 'photos']);
 
         if (! empty($this->categoryIds)) {
             $query->whereHas('restaurant.categories', function (Builder $c) {
@@ -275,18 +275,30 @@ class RestaurantDirectory extends Component
         }
 
         return $items->take(8)
-            ->map(fn (MenuItem $item) => [
-                'id' => $item->id,
-                'name' => $item->name,
-                'price' => $item->price,
-                'price_formatted' => 'Rp ' . number_format((float) $item->price, 0, ',', '.'),
-                'discount_percent' => $item->discount_percent,
-                'photo_url' => CmsMedia::url($item->photo_path),
-                'restaurant_name' => $item->restaurant?->name,
-                'landing_url' => $item->restaurant ? route('landing.show', $item->restaurant) : null,
-                'distance_km' => $item->getAttribute('_distance_km'),
-                'distance_label' => GeoDistance::label($item->getAttribute('_distance_km')),
-            ])
+            ->map(function (MenuItem $item) {
+                $hidePrices = (bool) ($item->restaurant?->defaultOutlet?->hide_landing_menu_prices ?? false);
+
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'hide_price' => $hidePrices,
+                    'price' => $hidePrices ? null : $item->price,
+                    'price_formatted' => $hidePrices ? null : 'Rp ' . number_format((float) $item->price, 0, ',', '.'),
+                    'has_discount' => ! $hidePrices && $item->hasDiscount(),
+                    'discount_percent' => ! $hidePrices ? $item->discount_percent : null,
+                    'effective_price' => $hidePrices ? null : $item->effectivePrice(),
+                    'effective_price_formatted' => $hidePrices ? null : 'Rp ' . number_format((float) $item->effectivePrice(), 0, ',', '.'),
+                    'is_best_seller' => (bool) $item->is_best_seller,
+                    'photo_url' => CmsMedia::url($item->photo_path),
+                    'photos' => $item->photoUrls(),
+                    'restaurant_name' => $item->restaurant?->name,
+                    'restaurant_categories' => $item->restaurant?->displayCategoriesLabel(),
+                    'landing_url' => $item->restaurant ? route('landing.show', $item->restaurant) : null,
+                    'distance_km' => $item->getAttribute('_distance_km'),
+                    'distance_label' => GeoDistance::label($item->getAttribute('_distance_km')),
+                ];
+            })
             ->values()
             ->all();
     }

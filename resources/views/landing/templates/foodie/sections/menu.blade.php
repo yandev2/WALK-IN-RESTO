@@ -59,7 +59,7 @@
             @endif
 
             {{-- Menu Grid from Real Database Items using Foodie Dish Card --}}
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div class="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($menuItems as $item)
                     <div
                         class="h-full"
@@ -82,6 +82,7 @@
                             template="foodie"
                             :rating="$avgRating"
                             :href="route('landing.menu', $restaurant)"
+                            :restaurant-name="$restaurant->name"
                         />
                     </div>
                 @endforeach

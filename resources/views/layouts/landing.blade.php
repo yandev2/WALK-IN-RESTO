@@ -116,6 +116,8 @@
         @endisset
         @stack('scripts')
         @include('partials.customer.image-preview-alpine')
+        {{-- Reusable Modal Detail Menu --}}
+        <x-directory.menu-detail-modal />
         @livewireScripts
     </body>
 </html>

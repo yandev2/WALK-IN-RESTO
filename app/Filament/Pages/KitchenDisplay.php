@@ -274,6 +274,9 @@ class KitchenDisplay extends Page implements HasTable
                 ->color(fn (OrderItem $record): string => $record->kds_status === 'ready' ? 'success' : 'primary')
                 ->visible(fn (OrderItem $record): bool => in_array($record->kds_status, ['queued', 'preparing', 'ready'], true)
                     && ($record->kds_status === 'ready' ? $this->canMarkServed() : $this->canAdvance()))
+                ->extraAttributes(fn (): array => SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
                 ->action(function (OrderItem $record): void {
                     $this->runKdsAction($record, fn (KdsItemService $kds, OrderItem $item, User $user) => $kds->advance($item, $user));
                 }),
@@ -283,6 +286,9 @@ class KitchenDisplay extends Page implements HasTable
                 ->color('gray')
                 ->outlined()
                 ->visible(fn (OrderItem $record): bool => $record->canRevertServed() && $this->canAdvance())
+                ->extraAttributes(fn (): array => SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
                 ->action(function (OrderItem $record): void {
                     $this->runKdsAction($record, fn (KdsItemService $kds, OrderItem $item, User $user) => $kds->revertServed($item, $user));
                 }),
@@ -412,6 +418,11 @@ class KitchenDisplay extends Page implements HasTable
      */
     private function runKdsAction(OrderItem $record, callable $callback): void
     {
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
+            return;
+        }
+
         abort_unless($record->restaurant_id === Filament::getTenant()?->getKey(), 403);
 
         if ($record->kds_status === 'ready') {

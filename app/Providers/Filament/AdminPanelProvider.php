@@ -234,11 +234,13 @@ HTML
                         return new HtmlString('');
                     }
 
-                    if (request()->routeIs('filament.admin.pages.kds')) {
-                        return new HtmlString('');
+                    $html = view('filament.hooks.subscription-lock-modal-hook')->render();
+
+                    if (! request()->routeIs('filament.admin.pages.kds')) {
+                        $html .= view('filament.hooks.cashier-sound-alert-hook')->render();
                     }
 
-                    return new HtmlString(view('filament.hooks.cashier-sound-alert-hook')->render());
+                    return new HtmlString($html);
                 },
             )
             ->middleware([

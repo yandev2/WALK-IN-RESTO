@@ -41,7 +41,7 @@
                 </div>
             @endif
 
-            <ul class="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <ul class="grid items-stretch grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($menuItems as $index => $item)
                     <li
                         class="h-full"
@@ -66,6 +66,7 @@
                                 :is-best-seller="(bool) $item->is_best_seller"
                                 :hide-price="(bool) ($outlet?->hide_landing_menu_prices ?? false)"
                                 :href="route('landing.menu', $restaurant)"
+                                :restaurant-name="$restaurant->name"
                             />
                         </div>
                     </li>

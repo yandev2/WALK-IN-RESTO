@@ -315,6 +315,42 @@ class RestaurantDirectoryTest extends TestCase
         }
     }
 
+    public function test_popular_menu_items_respects_hidden_price_and_includes_modal_payload(): void
+    {
+        $baseComponent = Livewire::test(RestaurantDirectory::class);
+        $initialItems = $baseComponent->viewData('popularMenuItems');
+        $this->assertNotEmpty($initialItems);
+
+        $targetItemData = $initialItems[0];
+        $menuItem = \App\Models\MenuItem::findOrFail($targetItemData['id']);
+        $outlet = $menuItem->restaurant->defaultOutlet;
+        $this->assertNotNull($outlet);
+
+        $outlet->update(['hide_landing_menu_prices' => true]);
+
+        $component = Livewire::test(RestaurantDirectory::class);
+        $items = $component->viewData('popularMenuItems');
+        $matched = collect($items)->firstWhere('id', $menuItem->id);
+
+        $this->assertNotNull($matched);
+        $this->assertTrue($matched['hide_price']);
+        $this->assertNull($matched['price']);
+        $this->assertNull($matched['price_formatted']);
+        $this->assertIsArray($matched['photos']);
+
+        // Kembalikan ke false
+        $outlet->update(['hide_landing_menu_prices' => false]);
+
+        $componentAfter = Livewire::test(RestaurantDirectory::class);
+        $itemsAfter = $componentAfter->viewData('popularMenuItems');
+        $matchedAfter = collect($itemsAfter)->firstWhere('id', $menuItem->id);
+
+        $this->assertNotNull($matchedAfter);
+        $this->assertFalse($matchedAfter['hide_price']);
+        $this->assertNotNull($matchedAfter['price']);
+        $this->assertNotNull($matchedAfter['price_formatted']);
+    }
+
     public function test_directory_ratings_only_count_and_average_published_reviews(): void
     {
         $restaurant = Restaurant::query()->where('slug', 'sushi-haru')->firstOrFail();

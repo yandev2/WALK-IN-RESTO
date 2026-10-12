@@ -95,7 +95,8 @@ class VisitResource extends Resource
                         'open' => 'Open',
                         'closed' => 'Closed',
                     ]),
-            ]);
+            ])
+            ->recordAction(fn (): ?string => \App\Support\SubscriptionAccess::isLocked() ? 'subscriptionLock' : null);
 
         return TableRightClick::apply($table, fn(): array => static::recordActions());
     }
@@ -106,10 +107,24 @@ class VisitResource extends Resource
     public static function recordActions(): array
     {
         return [
+            Action::make('subscriptionLock')
+                ->label('Terkunci')
+                ->action(function ($livewire): void {
+                    $livewire->dispatch('open-subscription-lock-modal');
+                }),
             Action::make('updateWa')
                 ->label('Ganti WA')
                 ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                 ->visible(fn(Visit $record): bool => $record->status === 'open')
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->form([
                     TextInput::make('customer_wa')
                         ->label('WhatsApp tamu')
@@ -125,6 +140,15 @@ class VisitResource extends Resource
                 ->icon(Heroicon::OutlinedKey)
                 ->visible(fn(Visit $record): bool => $record->status === 'open')
                 ->requiresConfirmation()
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->action(function (Visit $record, TableOpsService $ops): void {
                     $pin = $ops->resetPin($record, auth()->user());
                     Notification::make()
@@ -136,6 +160,15 @@ class VisitResource extends Resource
                 ->label('Pindah meja')
                 ->icon(Heroicon::OutlinedArrowsRightLeft)
                 ->visible(fn(Visit $record): bool => $record->status === 'open')
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->form([
                     Select::make('destination_table_id')
                         ->label('Meja tujuan')
@@ -156,6 +189,15 @@ class VisitResource extends Resource
                     ? 'Masih ada hidangan berjalan di KDS. Item sisa tetap dimasak sampai served/void. Meja masuk cleaning.'
                     : 'Visit ditutup. Meja masuk cleaning.')
                 ->visible(fn(Visit $record): bool => $record->status === 'open')
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->disabled(fn(Visit $record): bool => $record->orders()
                     ->whereIn('status', ['awaiting_cashier', 'pending_payment'])
                     ->exists())

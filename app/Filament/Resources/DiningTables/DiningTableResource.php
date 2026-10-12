@@ -180,6 +180,15 @@ class DiningTableResource extends Resource
                 ->label('Meja siap')
                 ->icon(Heroicon::OutlinedCheck)
                 ->visible(fn (DiningTable $record): bool => $record->needs_cleaning)
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->requiresConfirmation()
                 ->action(function (DiningTable $record): void {
                     $record->update(['needs_cleaning' => false]);
@@ -192,6 +201,15 @@ class DiningTableResource extends Resource
                 ->label('Reset PIN')
                 ->icon(Heroicon::OutlinedKey)
                 ->visible(fn (DiningTable $record): bool => filled($record->open_visit_id))
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->requiresConfirmation()
                 ->action(function (DiningTable $record, TableOpsService $ops): void {
                     $visit = $record->openVisit;
@@ -210,6 +228,15 @@ class DiningTableResource extends Resource
                 ->label('Pindah meja')
                 ->icon(Heroicon::OutlinedArrowsRightLeft)
                 ->visible(fn (DiningTable $record): bool => filled($record->open_visit_id))
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->form([
                     Select::make('destination_table_id')
                         ->label('Meja tujuan')
@@ -232,6 +259,15 @@ class DiningTableResource extends Resource
             Action::make('regenerateQr')
                 ->label('Regenerate QR')
                 ->icon(Heroicon::OutlinedArrowPath)
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->requiresConfirmation()
                 ->modalDescription('Token lama mati. Visit terbuka tetap jalan. Cetak stiker baru.')
                 ->action(function (DiningTable $record, TableOpsService $ops): void {
@@ -262,8 +298,26 @@ class DiningTableResource extends Resource
                         'Content-Type' => 'application/pdf',
                     ]);
                 }),
-            EditAction::make(),
+            EditAction::make()
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                }),
             DeleteAction::make()
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function ($action, $livewire): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $livewire->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                })
                 ->disabled(fn (DiningTable $record): bool => filled($record->open_visit_id))
                 ->after(function (DiningTable $record): void {
                     ActivityLogger::log('table.delete', [

@@ -319,7 +319,7 @@
                                 </template>
                             </div>
 
-                            <button type="button" @click="movementModal = true"
+                            <button type="button" @click="{{ \App\Support\SubscriptionAccess::isLocked() ? "\$dispatch('open-subscription-lock-modal')" : "movementModal = true" }}"
                                 class="inline-flex items-center gap-1 rounded-md bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200 shadow-xs transition whitespace-nowrap cursor-pointer"
                                 title="Catat Kas Masuk / Kas Keluar">
                                 <svg class="w-3.5 h-3.5 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
@@ -331,7 +331,7 @@
                     {{-- When Shift is NOT Active --}}
                     <template x-if="!$store.cashierPos.activeShift">
                         <div class="flex items-center gap-2 shrink-0">
-                            <button type="button" @click="openModal = true"
+                            <button type="button" @click="{{ \App\Support\SubscriptionAccess::isLocked() ? "\$dispatch('open-subscription-lock-modal')" : "openModal = true" }}"
                                 class="inline-flex items-center gap-2 rounded-md bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 border border-amber-300 dark:border-amber-700/80 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300 whitespace-nowrap shadow-xs transition cursor-pointer"
                                 title="Klik untuk membuka shift kasir">
                                 <span class="h-2 w-2 rounded-sm bg-amber-500 shrink-0"></span>
@@ -586,64 +586,95 @@
             @else
                 <div class="cashier-pos-grid">
                     @foreach ($catalog as $item)
-                        <article class="cashier-pos-card"
+                        <article class="cashier-pos-card group"
                             x-show="itemVisible({{ \Illuminate\Support\Js::from($item['name']) }}, {{ \Illuminate\Support\Js::from($item['category_id']) }})"
                             :class="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) > 0 && 'is-active'">
+                            {{-- Inset Frame Foto ala Directory --}}
                             <div class="cashier-pos-card__photo relative overflow-hidden">
                                 @if (filled($item['photo_url'] ?? null))
-                                    <img src="{{ $item['photo_url'] }}" alt="" loading="lazy" decoding="async"
-                                        width="240" height="160">
+                                    <img src="{{ $item['photo_url'] }}"
+                                        alt="{{ $item['name'] }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                        width="240"
+                                        height="180"
+                                        class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                        onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}">
+                                    <div class="hidden flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+                                        <svg class="h-8 w-8 opacity-40" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
                                 @else
-                                    <span>Menu</span>
+                                    <div class="flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400">
+                                        <svg class="h-8 w-8 opacity-40" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
                                 @endif
+
+                                {{-- Badge Diskon Pojok Kiri Atas --}}
+                                @if ((int) ($item['discount_percent'] ?? 0) > 0)
+                                    <span class="pointer-events-none absolute top-2 left-2 z-10 rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+                                        -{{ (int) $item['discount_percent'] }}%
+                                    </span>
+                                @endif
+
+                                {{-- Badge Best Seller --}}
                                 @if (!empty($item['is_best_seller']))
-                                    <span
-                                        class="pointer-events-none absolute bottom-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-sm">
+                                    <span class="pointer-events-none absolute bottom-2 left-2 z-10 inline-flex items-center gap-1 rounded-lg bg-amber-500 px-2 py-0.5 text-[10px] font-extrabold text-white shadow-xs">
                                         <svg class="h-2.5 w-2.5 text-white fill-current" viewBox="0 0 20 20">
-                                            <path
-                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
                                         <span class="text-white">Best Seller</span>
                                     </span>
                                 @endif
                             </div>
+
+                            {{-- Body Content ala Directory --}}
                             <div class="cashier-pos-card__body">
-                                <div class="cashier-pos-card__name">{{ $item['name'] }}</div>
-                                <div class="cashier-pos-card__price">
-                                    <span>{{ \App\Support\CmsMedia::formatIdr((int) $item['effective_price']) }}</span>
-                                    @if ((int) ($item['discount_percent'] ?? 0) > 0)
-                                        <span
-                                            class="cashier-pos-card__was">{{ \App\Support\CmsMedia::formatIdr((int) $item['price']) }}</span>
-                                        <span
-                                            class="cashier-pos-card__discount">-{{ (int) $item['discount_percent'] }}%</span>
+                                <div class="min-w-0">
+                                    <h3 class="cashier-pos-card__name font-display text-xs sm:text-sm font-bold truncate group-hover:text-primary transition-colors" title="{{ $item['name'] }}">
+                                        {{ $item['name'] }}
+                                    </h3>
+
+                                    <div class="cashier-pos-card__price mt-1">
+                                        <span>{{ \App\Support\CmsMedia::formatIdr((int) $item['effective_price']) }}</span>
+                                        @if ((int) ($item['discount_percent'] ?? 0) > 0)
+                                            <span class="cashier-pos-card__was">{{ \App\Support\CmsMedia::formatIdr((int) $item['price']) }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- Action Row (Pilih opsi / Tambah / Stepper) --}}
+                                <div class="cashier-pos-card__action mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                                    @if (!empty($item['has_variants']) || !empty($item['has_modifiers']))
+                                        <button type="button" class="cashier-pos-add"
+                                            @click="openExtra({{ (int) $item['id'] }})">
+                                            @if (!empty($item['has_variants']) && !empty($item['has_modifiers']))
+                                                Pilih opsi
+                                            @elseif (!empty($item['has_variants']))
+                                                Pilih varian
+                                            @else
+                                                Pilih extra
+                                            @endif
+                                        </button>
+                                    @else
+                                        <template x-if="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) > 0">
+                                            <div class="cashier-pos-stepper">
+                                                <button type="button" @click="bumpItem({{ (int) $item['id'] }}, -1)"
+                                                    aria-label="Kurangi">−</button>
+                                                <span x-text="$store.cashierPos.qtyOf({{ (int) $item['id'] }})"></span>
+                                                <button type="button" @click="bumpItem({{ (int) $item['id'] }}, 1)"
+                                                    aria-label="Tambah">+</button>
+                                            </div>
+                                        </template>
+                                        <template x-if="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) < 1">
+                                            <button type="button" class="cashier-pos-add"
+                                                @click="addPlain({{ (int) $item['id'] }})">Tambah</button>
+                                        </template>
                                     @endif
                                 </div>
-                                @if (!empty($item['has_variants']) || !empty($item['has_modifiers']))
-                                    <button type="button" class="cashier-pos-add"
-                                        @click="openExtra({{ (int) $item['id'] }})">
-                                        @if (!empty($item['has_variants']) && !empty($item['has_modifiers']))
-                                            Pilih opsi
-                                        @elseif (!empty($item['has_variants']))
-                                            Pilih varian
-                                        @else
-                                            Pilih extra
-                                        @endif
-                                    </button>
-                                @else
-                                    <template x-if="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) > 0">
-                                        <div class="cashier-pos-stepper">
-                                            <button type="button" @click="bumpItem({{ (int) $item['id'] }}, -1)"
-                                                aria-label="Kurangi">−</button>
-                                            <span x-text="$store.cashierPos.qtyOf({{ (int) $item['id'] }})"></span>
-                                            <button type="button" @click="bumpItem({{ (int) $item['id'] }}, 1)"
-                                                aria-label="Tambah">+</button>
-                                        </div>
-                                    </template>
-                                    <template x-if="$store.cashierPos.qtyOf({{ (int) $item['id'] }}) < 1">
-                                        <button type="button" class="cashier-pos-add"
-                                            @click="addPlain({{ (int) $item['id'] }})">Tambah</button>
-                                    </template>
-                                @endif
                             </div>
                         </article>
                     @endforeach
@@ -973,7 +1004,17 @@
 
                     </div>
                 </div>
-                <button type="button" class="cashier-pos-submit" wire:click="create">Buat pesanan</button>
+                @if (\App\Support\SubscriptionAccess::isLocked())
+                    <button type="button" class="cashier-pos-submit flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white shadow-md cursor-pointer"
+                        @click="$dispatch('open-subscription-lock-modal')">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+                        </svg>
+                        <span>Buat pesanan (Terkunci)</span>
+                    </button>
+                @else
+                    <button type="button" class="cashier-pos-submit" wire:click="create">Buat pesanan</button>
+                @endif
             </div>
         </aside>
     </div>

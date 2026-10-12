@@ -13,12 +13,17 @@
     'rating' => null,
     'isBestSeller' => false,
     'hidePrice' => false,
+    'restaurantName' => null,
+    'landingUrl' => null,
 ])
 
 @php
     $hidePrice = filter_var($hidePrice ?? false, FILTER_VALIDATE_BOOLEAN)
         || filter_var($attributes->get('hide-price'), FILTER_VALIDATE_BOOLEAN)
         || filter_var($attributes->get('hide_price'), FILTER_VALIDATE_BOOLEAN);
+
+    $rawPrice = $price;
+    $rawOriginalPrice = $originalPrice;
 
     if ($hidePrice) {
         $price = null;
@@ -41,24 +46,45 @@
     $showBestSeller = filter_var($isBestSeller ?? false, FILTER_VALIDATE_BOOLEAN)
         || filter_var($attributes->get('is-best-seller'), FILTER_VALIDATE_BOOLEAN)
         || filter_var($attributes->get('is_best_seller'), FILTER_VALIDATE_BOOLEAN);
+
+    $currentRestaurantName = $restaurantName ?? (isset($restaurant) && is_object($restaurant) ? ($restaurant->name ?? null) : null);
+    $isMenuPage = request()->routeIs('landing.menu');
+    $targetLandingUrl = $landingUrl ?: ($href ?: (isset($restaurant) && is_object($restaurant) ? route('landing.menu', $restaurant) : null));
+
+    $modalPayload = [
+        'name' => (string) $name,
+        'description' => (string) ($description ?? ''),
+        'hide_price' => (bool) $hidePrice,
+        'price_formatted' => $hidePrice ? null : (string) ($rawOriginalPrice ?: $rawPrice),
+        'effective_price_formatted' => $hidePrice ? null : (string) ($rawPrice ?? ''),
+        'has_discount' => (bool) $discountPercent,
+        'discount_percent' => $discountPercent,
+        'is_best_seller' => (bool) $showBestSeller,
+        'photo_url' => $gallery->first() ?: null,
+        'photos' => $gallery->all(),
+        'restaurant_name' => $currentRestaurantName,
+        'restaurant_categories' => $category,
+        'landing_url' => $isMenuPage ? null : $targetLandingUrl,
+        'cta_label' => $isMenuPage ? null : 'Lihat Menu Lengkap',
+    ];
 @endphp
 
 @if ($template === 'glassmorphism' || $template === 'glassmorp')
     {{-- True Glassmorphism iOS Card --}}
     <article
-        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-[2.2rem] bg-white/25 dark:bg-white/[0.06] backdrop-blur-2xl border border-white/50 dark:border-white/15 p-4 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.7)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-2xl hover:border-primary/50 hover:bg-white/35 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2']) }}
+        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[2.2rem] bg-white/25 dark:bg-white/[0.06] backdrop-blur-2xl border border-white/50 dark:border-white/15 p-3 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.06),inset_0_1px_1px_rgba(255,255,255,0.7)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-2xl hover:border-primary/50 hover:bg-white/35 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-2']) }}
         @if ($gallery->isNotEmpty())
             x-data="imagePreview(@js($previewImages))"
         @endif
     >
         <div>
             {{-- Image Box with Frosted Badges --}}
-            <div class="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-white/30 dark:bg-white/5 border border-white/40 dark:border-white/10 shadow-inner">
+            <div class="relative aspect-4/3 w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/30 dark:bg-white/5 border border-white/40 dark:border-white/10 shadow-inner">
                 @if ($gallery->isNotEmpty())
                     @foreach ($gallery as $galleryIndex => $galleryPhoto)
                         <button
                             type="button"
-                            class="absolute inset-0 cursor-zoom-in"
+                            class="absolute inset-0 cursor-pointer"
                             @if ($gallery->count() > 1)
                                 @if ($galleryIndex > 0)
                                     x-cloak
@@ -68,8 +94,8 @@
                                 x-transition:enter-start="opacity-0"
                                 x-transition:enter-end="opacity-100"
                             @endif
-                            aria-label="Perbesar foto {{ $name }}"
-                            @click="openPreview({{ $galleryIndex }})"
+                            aria-label="Lihat detail {{ $name }}"
+                            @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
                         >
                             <img
                                 src="{{ $galleryPhoto }}"
@@ -80,16 +106,19 @@
                         </button>
                     @endforeach
                 @else
-                    <div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center text-primary">
-                        <svg class="h-8 w-8 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <div
+                        class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary/10 to-accent/20 p-3 sm:p-4 text-center text-primary cursor-pointer"
+                        @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                    >
+                        <svg class="h-7 w-7 sm:h-8 sm:w-8 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         <span class="font-bold text-xs text-zinc-800 dark:text-zinc-200 line-clamp-2">{{ $name }}</span>
                     </div>
                 @endif
 
                 {{-- Frosted Glass Category Pill Top Left --}}
                 @if ($category)
-                    <div class="absolute top-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-lg bg-black/45 dark:bg-black/60 backdrop-blur-xl px-3 py-1 text-[11px] font-semibold text-white border border-white/30 shadow-md">
+                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center rounded-md sm:rounded-lg bg-black/45 dark:bg-black/60 backdrop-blur-xl px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-semibold text-white border border-white/30 shadow-md">
                             {{ $category }}
                         </span>
                     </div>
@@ -97,8 +126,8 @@
 
                 {{-- Glass Red Discount Pill Top Right --}}
                 @if ($discountPercent)
-                    <div class="absolute top-3 right-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-lg bg-rose-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/30 shadow-md">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center rounded-md sm:rounded-lg bg-rose-500/90 backdrop-blur-xl px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-extrabold text-white border border-white/30 shadow-md">
                             -{{ $discountPercent }}%
                         </span>
                     </div>
@@ -106,9 +135,9 @@
 
                 {{-- Frosted Glass Best Seller Badge Bottom Left --}}
                 @if ($showBestSeller)
-                    <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500/95 dark:bg-amber-500/90 backdrop-blur-xl px-3 py-1 text-[11px] font-extrabold text-white border border-white/40 shadow-lg">
-                            <svg class="h-3 w-3 text-amber-100 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center gap-0.5 sm:gap-1 rounded-md sm:rounded-lg bg-amber-500/95 dark:bg-amber-500/90 backdrop-blur-xl px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-extrabold text-white border border-white/40 shadow-lg">
+                            <svg class="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-100 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                             <span>Best Seller</span>
                         </span>
                     </div>
@@ -116,11 +145,11 @@
 
                 {{-- Gallery Thumbnails Bottom Right --}}
                 @if ($gallery->count() > 1)
-                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1 sm:gap-1.5 overflow-y-auto">
                         @foreach ($gallery as $thumbIndex => $thumbPhoto)
                             <button
                                 type="button"
-                                class="h-8 w-8 shrink-0 overflow-hidden rounded-lg border-2 border-white/90 bg-white/50 backdrop-blur-md shadow-sm transition"
+                                class="h-6 w-6 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-md sm:rounded-lg border-2 border-white/90 bg-white/50 backdrop-blur-md shadow-sm transition"
                                 :class="index === {{ $thumbIndex }} ? 'border-primary ring-2 ring-primary/40' : ''"
                                 aria-label="Foto {{ $thumbIndex + 1 }}"
                                 @click.stop="openPreview({{ $thumbIndex }})"
@@ -133,61 +162,60 @@
             </div>
 
             {{-- Info Block --}}
-            <div class="mt-4">
-                <h3 class="font-display font-bold text-base sm:text-lg text-zinc-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1">
+            <div class="mt-2.5 sm:mt-4">
+                <h3
+                    class="font-display font-bold text-xs sm:text-base md:text-lg text-zinc-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1 cursor-pointer"
+                    @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                >
                     {{ $name }}
                 </h3>
 
                 @if (filled($description))
-                    <p class="mt-1 text-xs text-zinc-600 dark:text-zinc-300 line-clamp-2 leading-relaxed">
+                    <p class="mt-1 text-[11px] sm:text-xs text-zinc-600 dark:text-zinc-300 line-clamp-2 leading-relaxed">
                         {{ $description }}
                     </p>
                 @endif
 
-                <div class="mt-2.5 flex items-center gap-1 text-xs text-amber-400">
+                <div class="mt-2 sm:mt-2.5 flex items-center gap-1 text-[11px] sm:text-xs text-amber-400">
                     <div class="flex">
                         @for ($s = 0; $s < 5; $s++)
-                            <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         @endfor
                     </div>
-                    <span class="font-bold text-zinc-800 dark:text-zinc-200 ml-1">{{ $rating ?: '5.0' }}</span>
+                    <span class="font-bold text-zinc-800 dark:text-zinc-200 ml-0.5">{{ $rating ?: '5.0' }}</span>
                 </div>
             </div>
         </div>
 
-        {{-- Price & iOS Order Pill --}}
-        <div class="mt-5 pt-3.5 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-3">
-            <div class="flex flex-col">
-                @if ($discountPercent && $originalPrice)
-                    <span class="text-[11px] text-zinc-400 dark:text-zinc-400 line-through">
-                        {{ $originalPrice }}
-                    </span>
-                @endif
-                @if (filled($price))
-                    <span class="font-display font-extrabold text-base sm:text-lg text-zinc-900 dark:text-white">
-                        {{ $price }}
-                    </span>
+        {{-- Price & iOS Detail Button --}}
+        <div class="mt-3 sm:mt-5 pt-2 sm:pt-3.5 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-1.5 sm:gap-3">
+            <div class="flex flex-col min-w-0">
+                @if ($hidePrice)
+                    <span class="text-[11px] sm:text-sm font-bold text-primary truncate">Kunjungi Restoran</span>
+                @else
+                    @if ($discountPercent && $originalPrice)
+                        <span class="text-[10px] sm:text-[11px] text-zinc-400 dark:text-zinc-400 line-through truncate">
+                            {{ $originalPrice }}
+                        </span>
+                    @endif
+                    @if (filled($price))
+                        <span class="font-display font-extrabold text-xs sm:text-base md:text-lg text-zinc-900 dark:text-white truncate">
+                            {{ $price }}
+                        </span>
+                    @endif
                 @endif
             </div>
 
-            @if ($href)
-                <a
-                    href="{{ $href }}"
-                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
-                >
-                    Pesan
-                </a>
-            @else
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-5 py-2.5 text-xs font-bold shadow-lg shadow-primary/25 transition-all hover:scale-105 border border-white/25"
-                    @if ($gallery->isNotEmpty())
-                        @click="openPreview(0)"
-                    @endif
-                >
-                    Pesan
-                </button>
-            @endif
+            <button
+                type="button"
+                class="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold shadow-md shadow-primary/25 transition-all hover:scale-105 border border-white/25 cursor-pointer shrink-0"
+                @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+            >
+                <span>Detail</span>
+                <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
         </div>
 
         @if ($slot->isNotEmpty())
@@ -201,19 +229,19 @@
 @elseif ($template === 'foodie')
     {{-- Foodie Design Card --}}
     <article
-        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-surface-raised dark:bg-zinc-900/90 border border-border-subtle dark:border-zinc-800 p-4 shadow-xs hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1.5 transition-all duration-300']) }}
+        {{ $attributes->merge(['class' => 'group flex h-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl bg-surface-raised dark:bg-zinc-900/90 border border-border-subtle dark:border-zinc-800 p-3 sm:p-4 shadow-xs hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1.5 transition-all duration-300']) }}
         @if ($gallery->isNotEmpty())
             x-data="imagePreview(@js($previewImages))"
         @endif
     >
         <div>
             {{-- Foodie Image with Floating Badges --}}
-            <div class="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-surface-muted shadow-inner">
+            <div class="relative aspect-4/3 w-full overflow-hidden rounded-xl sm:rounded-2xl bg-surface-muted shadow-inner">
                 @if ($gallery->isNotEmpty())
                     @foreach ($gallery as $galleryIndex => $galleryPhoto)
                         <button
                             type="button"
-                            class="absolute inset-0 cursor-zoom-in"
+                            class="absolute inset-0 cursor-pointer"
                             @if ($gallery->count() > 1)
                                 @if ($galleryIndex > 0)
                                     x-cloak
@@ -223,8 +251,8 @@
                                 x-transition:enter-start="opacity-0"
                                 x-transition:enter-end="opacity-100"
                             @endif
-                            aria-label="Perbesar foto {{ $name }}"
-                            @click="openPreview({{ $galleryIndex }})"
+                            aria-label="Lihat detail {{ $name }}"
+                            @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
                         >
                             <img
                                 src="{{ $galleryPhoto }}"
@@ -235,16 +263,19 @@
                         </button>
                     @endforeach
                 @else
-                    <div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center text-primary">
-                        <svg class="h-8 w-8 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <div
+                        class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-primary/10 to-accent/20 p-3 sm:p-4 text-center text-primary cursor-pointer"
+                        @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                    >
+                        <svg class="h-7 w-7 sm:h-8 sm:w-8 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         <span class="font-bold text-xs text-body line-clamp-2">{{ $name }}</span>
                     </div>
                 @endif
 
                 {{-- Floating Category Badge Top Left --}}
                 @if ($category)
-                    <div class="absolute top-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-1 text-[11px] font-semibold text-white shadow-xs">
+                    <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center rounded-md sm:rounded-lg bg-black/60 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold text-white shadow-xs">
                             {{ $category }}
                         </span>
                     </div>
@@ -252,8 +283,8 @@
 
                 {{-- Floating Discount Badge Top Right --}}
                 @if ($discountPercent)
-                    <div class="absolute top-3 right-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center rounded-lg bg-red-600 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-md">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center rounded-md sm:rounded-lg bg-red-600 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-extrabold text-white shadow-md">
                             -{{ $discountPercent }}%
                         </span>
                     </div>
@@ -261,9 +292,9 @@
 
                 {{-- Floating Best Seller Badge Bottom Left --}}
                 @if ($showBestSeller)
-                    <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
-                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500 px-2.5 py-1 text-[11px] font-extrabold text-white shadow-md">
-                            <svg class="h-3 w-3 text-white fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10 pointer-events-none">
+                        <span class="inline-flex items-center gap-0.5 sm:gap-1 rounded-md sm:rounded-lg bg-amber-500 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-extrabold text-white shadow-md">
+                            <svg class="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                             <span>Best Seller</span>
                         </span>
                     </div>
@@ -271,11 +302,11 @@
 
                 {{-- Multiple Photo Thumbnails Bottom Right --}}
                 @if ($gallery->count() > 1)
-                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                    <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1 sm:gap-1.5 overflow-y-auto">
                         @foreach ($gallery as $thumbIndex => $thumbPhoto)
                             <button
                                 type="button"
-                                class="h-8 w-8 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition-all duration-200 hover:scale-110"
+                                class="h-6 w-6 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-md border-2 border-white/90 bg-surface-muted shadow-sm transition-all duration-200 hover:scale-110"
                                 :class="index === {{ $thumbIndex }} ? 'border-primary ring-1 ring-primary' : 'hover:border-primary'"
                                 aria-label="Foto {{ $thumbIndex + 1 }}"
                                 @click.stop="openPreview({{ $thumbIndex }})"
@@ -288,62 +319,61 @@
             </div>
 
             {{-- Foodie Content --}}
-            <div class="mt-4">
-                <h3 class="font-display font-bold text-base sm:text-lg text-body group-hover:text-primary transition-colors duration-200 line-clamp-1">
+            <div class="mt-2.5 sm:mt-4">
+                <h3
+                    class="font-display font-bold text-xs sm:text-base md:text-lg text-body group-hover:text-primary transition-colors duration-200 line-clamp-1 cursor-pointer"
+                    @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                >
                     {{ $name }}
                 </h3>
 
                 @if (filled($description))
-                    <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed">
+                    <p class="mt-1 text-[11px] sm:text-xs text-muted line-clamp-2 leading-relaxed">
                         {{ $description }}
                     </p>
                 @endif
 
                 {{-- Star Ratings --}}
-                <div class="mt-2.5 flex items-center gap-1 text-xs text-amber-400">
+                <div class="mt-2 sm:mt-2.5 flex items-center gap-1 text-[11px] sm:text-xs text-amber-400">
                     <div class="flex">
                         @for ($s = 0; $s < 5; $s++)
-                            <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         @endfor
                     </div>
-                    <span class="font-bold text-body ml-1">{{ $rating ?: '5.0' }}</span>
+                    <span class="font-bold text-body ml-0.5">{{ $rating ?: '5.0' }}</span>
                 </div>
             </div>
         </div>
 
         {{-- Foodie Price & Action Row --}}
-        <div class="mt-5 pt-3.5 border-t border-border-subtle dark:border-zinc-800 flex items-center justify-between gap-3">
-            <div class="flex flex-col">
-                @if ($discountPercent && $originalPrice)
-                    <span class="text-[11px] text-muted line-through">
-                        {{ $originalPrice }}
-                    </span>
-                @endif
-                @if (filled($price))
-                    <span class="font-display font-extrabold text-base sm:text-lg text-body">
-                        {{ $price }}
-                    </span>
+        <div class="mt-3 sm:mt-5 pt-2 sm:pt-3.5 border-t border-border-subtle dark:border-zinc-800 flex items-center justify-between gap-1.5 sm:gap-3">
+            <div class="flex flex-col min-w-0">
+                @if ($hidePrice)
+                    <span class="text-[11px] sm:text-sm font-bold text-primary truncate">Kunjungi Restoran</span>
+                @else
+                    @if ($discountPercent && $originalPrice)
+                        <span class="text-[10px] sm:text-[11px] text-muted line-through truncate">
+                            {{ $originalPrice }}
+                        </span>
+                    @endif
+                    @if (filled($price))
+                        <span class="font-display font-extrabold text-xs sm:text-base md:text-lg text-body truncate">
+                            {{ $price }}
+                        </span>
+                    @endif
                 @endif
             </div>
 
-            @if ($href)
-                <a
-                    href="{{ $href }}"
-                    class="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
-                >
-                    Pesan
-                </a>
-            @else
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-primary to-accent hover:opacity-95 px-4 py-2 text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-108 active:scale-95 transition-all duration-200 border border-white/20"
-                    @if ($gallery->isNotEmpty())
-                        @click="openPreview(0)"
-                    @endif
-                >
-                    Pesan
-                </button>
-            @endif
+            <button
+                type="button"
+                class="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-linear-to-r from-primary to-accent hover:opacity-95 px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 cursor-pointer shrink-0"
+                @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+            >
+                <span>Detail</span>
+                <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
         </div>
 
         @if ($slot->isNotEmpty())
@@ -366,7 +396,7 @@
         <div
             @class([
                 'relative shrink-0 overflow-hidden bg-surface-muted',
-                'mx-auto mt-2 h-28 w-28 rounded-full ring-2 ring-primary/20' => $circular,
+                'mx-auto mt-2 h-20 w-20 sm:h-28 sm:w-28 rounded-full ring-2 ring-primary/20' => $circular,
                 'aspect-square w-full rounded-xl' => ! $circular,
             ])
         >
@@ -375,7 +405,7 @@
                     <button
                         type="button"
                         @class([
-                            'absolute inset-0 cursor-zoom-in',
+                            'absolute inset-0 cursor-pointer',
                             'rounded-full' => $circular,
                         ])
                         @if ($gallery->count() > 1)
@@ -387,8 +417,8 @@
                             x-transition:enter-start="opacity-0"
                             x-transition:enter-end="opacity-100"
                         @endif
-                        aria-label="Perbesar foto {{ $name }}"
-                        @click="openPreview({{ $galleryIndex }})"
+                        aria-label="Lihat detail {{ $name }}"
+                        @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
                     >
                         <img
                             src="{{ $galleryPhoto }}"
@@ -402,7 +432,7 @@
                         >
                         {{-- Fallback SVG jika foto gagal dimuat --}}
                         <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
-                            <svg class="h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="h-8 w-8 sm:h-10 sm:w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
                         </div>
@@ -410,22 +440,25 @@
                 @endforeach
             @else
                 {{-- Fallback Placeholder jika menu tidak memiliki foto sama sekali --}}
-                <div class="flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
-                    <svg class="h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div
+                    class="flex h-full w-full items-center justify-center bg-surface-muted text-muted/30 cursor-pointer"
+                    @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                >
+                    <svg class="h-8 w-8 sm:h-10 sm:w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
                 </div>
             @endif
 
             {{-- Top Left Badges (Best Seller & Diskon) --}}
-            <div class="pointer-events-none absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
+            <div class="pointer-events-none absolute top-1.5 left-1.5 sm:top-2 sm:left-2 z-10 flex flex-col gap-1 items-start">
                 @if ($showBestSeller)
-                    <span class="rounded-lg bg-amber-500 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-xs">
+                    <span class="rounded-md sm:rounded-lg bg-amber-500 px-1.5 py-0.5 sm:px-2 sm:py-0.5 text-[9px] sm:text-xs font-bold text-white shadow-xs">
                         ★ Best Seller
                     </span>
                 @endif
                 @if ($discountPercent)
-                    <span class="rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-xs">
+                    <span class="rounded-md sm:rounded-lg bg-rose-500 px-1.5 py-0.5 sm:px-2 sm:py-0.5 text-[9px] sm:text-xs font-bold text-white shadow-xs">
                         -{{ $discountPercent }}%
                     </span>
                 @endif
@@ -433,11 +466,11 @@
 
             {{-- Multi-Photo Gallery Thumbnails Bottom Right --}}
             @if ($gallery->count() > 1)
-                <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1.5 overflow-y-auto">
+                <div class="dish-card-thumbs absolute bottom-2 right-2 z-10 flex max-h-[72%] flex-col gap-1 sm:gap-1.5 overflow-y-auto">
                     @foreach ($gallery as $thumbIndex => $thumbPhoto)
                         <button
                             type="button"
-                            class="h-7 w-7 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-lg border-2 border-white/95 bg-surface-muted shadow-md transition hover:scale-105"
+                            class="h-6 w-6 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-md sm:rounded-lg border-2 border-white/95 bg-surface-muted shadow-md transition hover:scale-105"
                             :class="index === {{ $thumbIndex }} ? 'border-primary ring-2 ring-primary/50' : 'opacity-85 hover:opacity-100'"
                             aria-label="Foto {{ $thumbIndex + 1 }}"
                             @click.stop="openPreview({{ $thumbIndex }})"
@@ -453,11 +486,14 @@
         <div class="mt-2.5 flex flex-1 flex-col justify-between">
             <div>
                 @if ($category)
-                    <p class="truncate text-[11px] font-semibold uppercase tracking-wider text-primary mb-0.5">
+                    <p class="truncate text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-primary mb-0.5">
                         {{ $category }}
                     </p>
                 @endif
-                <h3 class="truncate font-display text-xs sm:text-sm md:text-base font-bold text-body group-hover:text-primary transition-colors">
+                <h3
+                    class="truncate font-display text-xs sm:text-sm md:text-base font-bold text-body group-hover:text-primary transition-colors cursor-pointer"
+                    @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                >
                     {{ $name }}
                 </h3>
                 @if ($description)
@@ -468,38 +504,30 @@
             </div>
 
             {{-- Price & CTA Row --}}
-            <div class="mt-auto pt-3 flex items-center justify-between border-t border-border-subtle/50 gap-2">
-                <div>
-                    @if ($discountPercent && $originalPrice)
-                        <p class="text-[10px] sm:text-[11px] text-muted line-through">{{ $originalPrice }}</p>
-                    @endif
-                    @if ($price)
-                        <p class="text-xs sm:text-sm font-bold text-primary">{{ $price }}</p>
+            <div class="mt-auto pt-3 flex items-center justify-between border-t border-border-subtle/50 gap-1.5 sm:gap-2 min-w-0">
+                <div class="min-w-0">
+                    @if ($hidePrice)
+                        <p class="text-[11px] sm:text-sm font-bold text-primary truncate">Kunjungi Restoran</p>
+                    @else
+                        @if ($discountPercent && $originalPrice)
+                            <p class="text-[10px] sm:text-[11px] text-muted line-through truncate">{{ $originalPrice }}</p>
+                        @endif
+                        @if ($price)
+                            <p class="text-xs sm:text-sm md:text-base font-bold text-primary truncate">{{ $price }}</p>
+                        @endif
                     @endif
                 </div>
 
-                @if ($href)
-                    <a
-                        href="{{ $href }}"
-                        class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white shadow-2xs"
-                    >
-                        <span>Lihat</span>
-                        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </a>
-                @elseif ($gallery->isNotEmpty())
-                    <button
-                        type="button"
-                        class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary transition hover:bg-primary hover:text-white shadow-2xs"
-                        @click="openPreview(0)"
-                    >
-                        <span>Lihat</span>
-                        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                        </svg>
-                    </button>
-                @endif
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-primary transition hover:bg-primary hover:text-white shadow-2xs shrink-0 cursor-pointer"
+                    @click.stop="$dispatch('open-menu-modal', @js($modalPayload))"
+                >
+                    <span>Detail</span>
+                    <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
 
             @if ($slot->isNotEmpty())

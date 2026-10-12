@@ -96,7 +96,9 @@ class MenuItem extends Model
 
     public function photos(): HasMany
     {
-        return $this->hasMany(MenuItemPhoto::class)->orderBy('sort_order');
+        return $this->hasMany(MenuItemPhoto::class)
+            ->withoutGlobalScope(\App\Models\Scopes\BelongsToRestaurantScope::class)
+            ->orderBy('sort_order');
     }
 
     /**
@@ -110,15 +112,14 @@ class MenuItem extends Model
             $urls[] = $url;
         }
 
-        if ($this->relationLoaded('photos')) {
-            foreach ($this->photos as $photo) {
-                if ($url = CmsMedia::url($photo->photo_path)) {
-                    $urls[] = $url;
-                }
+        $photos = $this->relationLoaded('photos') ? $this->photos : $this->photos()->get();
+        foreach ($photos as $photo) {
+            if ($url = CmsMedia::url($photo->photo_path)) {
+                $urls[] = $url;
             }
         }
 
-        return $urls;
+        return array_values(array_unique(array_filter($urls)));
     }
 
     public function modifierGroups(): BelongsToMany

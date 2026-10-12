@@ -102,7 +102,7 @@
                 <p class="mt-1 text-sm text-muted">Coba ubah kata kunci pencarian atau filter kategori.</p>
             </div>
         @else
-            <ul class="relative z-10 mt-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <ul class="relative z-10 mt-8 sm:mt-10 grid items-stretch grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($menuItems as $item)
                     <li wire:key="menu-item-{{ $item->id }}" class="h-full">
                         <x-customer.dish-card
@@ -118,6 +118,7 @@
                             :hide-price="$hidePrices"
                             :template="$template ?? 'classic'"
                             :rating="$ratingSummary['average'] ? number_format($ratingSummary['average'], 1) : '5.0'"
+                            :restaurant-name="$restaurant->name"
                         />
                     </li>
                 @endforeach

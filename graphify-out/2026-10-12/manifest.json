@@ -1044,9 +1044,9 @@
     "semantic_hash": "e4f19a2e125d14aaac48af597354dae6"
   },
   "app/Livewire/Landing/RestaurantDirectory.php": {
-    "mtime": 1791632160.8377697,
-    "seen": 1791632533.7051136,
-    "ast_hash": "e174708cd4ceed5d002a6bb6254bdcea",
+    "mtime": 1791812821.535823,
+    "seen": 1791813567.122779,
+    "ast_hash": "2735586822361e7dbda0c0bf040051dd",
     "semantic_hash": ""
   },
   "app/Livewire/Landing/RestaurantMenuCatalog.php": {
@@ -1134,9 +1134,9 @@
     "semantic_hash": "cf41aac906ee79eb93bcf4c9089338be"
   },
   "app/Models/MenuItem.php": {
-    "mtime": 1788418156.6796184,
-    "seen": 1788418215.7912178,
-    "ast_hash": "9c4b78ac4dcfc6acb895e43e52cfbf1a",
+    "mtime": 1791814604.571143,
+    "seen": 1791814804.4721785,
+    "ast_hash": "664023a31e029c518bf1183462d4fae1",
     "semantic_hash": ""
   },
   "app/Models/MenuItemPhoto.php": {
@@ -3288,9 +3288,9 @@
     "semantic_hash": "bbb39b298c290e4c7a24a650e0fbf06d"
   },
   "tests/Feature/RestaurantDirectoryTest.php": {
-    "mtime": 1791734057.608882,
-    "seen": 1791734152.4813902,
-    "ast_hash": "fdbbf5e128ca11c10ebc44eae0f2c27e",
+    "mtime": 1791813418.7155664,
+    "seen": 1791813567.1244657,
+    "ast_hash": "ca49a2d74e70f69cb467ff75cbe15880",
     "semantic_hash": ""
   },
   "tests/Feature/SecurityHardeningTest.php": {
@@ -5382,27 +5382,27 @@
     "semantic_hash": ""
   },
   "resources/views/components/directory/popular-dishes.blade.php": {
-    "mtime": 1791782800.75338,
-    "seen": 1791783053.3789392,
-    "ast_hash": "d953a201ec3b4aba90be01eca0e8854f",
+    "mtime": 1791814677.198822,
+    "seen": 1791814804.4725738,
+    "ast_hash": "4ccbf8718e6b4f448f2a0f3981d3ecec",
     "semantic_hash": ""
   },
   "app/Livewire/Landing/GlobalMenuDirectory.php": {
-    "mtime": 1791633158.7100236,
-    "seen": 1791633300.9990866,
-    "ast_hash": "e9a6fd49788828f22923692de894d261",
+    "mtime": 1791812862.8831873,
+    "seen": 1791813567.1227753,
+    "ast_hash": "a125d80f642261164a2892ecadcb3ce2",
     "semantic_hash": ""
   },
   "resources/views/livewire/landing/global-menu-directory.blade.php": {
-    "mtime": 1791731706.3419898,
-    "seen": 1791731750.9473813,
-    "ast_hash": "65e2beab76f1e4e42178800a5fe3165d",
+    "mtime": 1791814704.2694025,
+    "seen": 1791814804.4727411,
+    "ast_hash": "8da7e4a158bcdf5f718bc116a6dd297c",
     "semantic_hash": ""
   },
   "tests/Feature/GlobalMenuDirectoryTest.php": {
-    "mtime": 1791633231.3166168,
-    "seen": 1791633301.0006897,
-    "ast_hash": "a90c688705036a70175ac7ed8d3cd56f",
+    "mtime": 1791813362.943638,
+    "seen": 1791813567.1243393,
+    "ast_hash": "2b7d65c79d5801a523373d79b0f42fc4",
     "semantic_hash": ""
   },
   "doc/plan-responsif-mobile-directory.md": {
@@ -5433,6 +5433,12 @@
     "mtime": 1791782058.3315463,
     "seen": 1791783053.3797214,
     "ast_hash": "25bf99bad82b5ab745c26f3d787b3f34",
+    "semantic_hash": ""
+  },
+  "resources/views/components/directory/menu-detail-modal.blade.php": {
+    "mtime": 1791815512.5812,
+    "seen": 1791815638.3655396,
+    "ast_hash": "1097183e73b58dae1ac686cf655779b0",
     "semantic_hash": ""
   }
 }

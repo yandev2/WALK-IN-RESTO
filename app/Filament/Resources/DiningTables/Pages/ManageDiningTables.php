@@ -76,6 +76,10 @@ class ManageDiningTables extends ManageRecords
                 ->icon(fn (): Heroicon => $this->isEditingLayout ? Heroicon::OutlinedCheck : Heroicon::OutlinedArrowsPointingOut)
                 ->color(fn (): string => $this->isEditingLayout ? 'success' : 'gray')
                 ->action(function (): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $this->dispatch('open-subscription-lock-modal');
+                        return;
+                    }
                     $this->isEditingLayout = ! $this->isEditingLayout;
                 }),
             Action::make('autoLayout')
@@ -87,9 +91,22 @@ class ManageDiningTables extends ManageRecords
                 ->modalHeading('Atur ulang denah area ini?')
                 ->modalDescription('Semua meja di area aktif akan di-grid otomatis. Posisi manual saat ini akan diganti.')
                 ->action(function (): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $this->dispatch('open-subscription-lock-modal');
+                        return;
+                    }
                     $this->autoLayoutCurrentArea();
                 }),
-            CreateAction::make(),
+            CreateAction::make()
+                ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                    'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                ] : [])
+                ->before(function (CreateAction $action): void {
+                    if (\App\Support\SubscriptionAccess::isLocked()) {
+                        $this->dispatch('open-subscription-lock-modal');
+                        $action->cancel();
+                    }
+                }),
         ];
     }
 

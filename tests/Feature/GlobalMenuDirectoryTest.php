@@ -138,4 +138,36 @@ class GlobalMenuDirectoryTest extends TestCase
             ->assertSee('href="'.url('/admin/login').'"', false)
             ->assertSee('Login', false);
     }
+
+    public function test_menu_directory_respects_hidden_price_and_renders_modal(): void
+    {
+        $item = MenuItem::query()->where('is_active', true)->whereHas('restaurant', fn ($r) => $r->listedInDirectory())->first();
+        $this->assertNotNull($item);
+
+        $outlet = $item->restaurant->defaultOutlet;
+        $this->assertNotNull($outlet);
+
+        $outlet->update(['hide_landing_menu_prices' => true]);
+
+        $component = Livewire::test(GlobalMenuDirectory::class)
+            ->set('search', $item->name);
+
+        $items = $component->viewData('items');
+        $matched = collect($items)->firstWhere('id', $item->id);
+
+        $this->assertNotNull($matched);
+        $this->assertTrue($matched['hide_price']);
+        $this->assertNull($matched['price']);
+        $this->assertNull($matched['price_formatted']);
+        $this->assertIsArray($matched['photos']);
+
+        // Pastikan halaman HTML memuat modal dan trigger dispatch
+        $this->get(route('directory.menus'))
+            ->assertOk()
+            ->assertSee('open-menu-modal', false)
+            ->assertSee('Kunjungi Restoran', false);
+
+        // Kembalikan ke false
+        $outlet->update(['hide_landing_menu_prices' => false]);
+    }
 }

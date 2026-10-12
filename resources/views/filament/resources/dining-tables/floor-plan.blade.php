@@ -274,6 +274,11 @@
                 return;
             }
 
+            @if (\App\Support\SubscriptionAccess::isLocked())
+                window.dispatchEvent(new CustomEvent('open-subscription-lock-modal'));
+                return;
+            @endif
+
             $wire.mountTableAction('edit', tableId);
         },
     }"
@@ -330,101 +335,113 @@
                             <p class="floor-plan-card__capacity">{{ $record->capacity }} org</p>
                         </div>
 
-                        <div data-floor-plan-menu x-on:click.stop>
-                            <x-filament::dropdown placement="bottom-end">
-                                <x-slot name="trigger">
-                                    <button
-                                        type="button"
-                                        style="border-radius: 0.375rem; padding: 0.25rem; opacity: 0.7;"
-                                        aria-label="Aksi meja {{ $record->code }}"
-                                    >
-                                        <x-filament::icon icon="heroicon-m-ellipsis-vertical" class="h-4 w-4" />
-                                    </button>
-                                </x-slot>
-
-                                <x-filament::dropdown.list>
-                                    <x-filament::dropdown.list.item
-                                        icon="heroicon-m-pencil-square"
-                                        wire:click="mountTableAction('edit', '{{ $record->id }}')"
-                                    >
-                                        Edit
-                                    </x-filament::dropdown.list.item>
-
-                                    <x-filament::dropdown.list.item
-                                        tag="a"
-                                        href="{{ \App\Support\TableQrToken::url($record) }}"
-                                        target="_blank"
-                                        icon="heroicon-m-qr-code"
-                                    >
-                                        Buka pemesanan
-                                    </x-filament::dropdown.list.item>
-
-                                    <x-filament::dropdown.list.item
-                                        icon="heroicon-m-clipboard-document"
-                                        x-on:click="if (window.navigator?.clipboard?.writeText) { window.navigator.clipboard.writeText('{{ addslashes(\App\Support\TableQrToken::url($record)) }}').catch(() => {}); }"
-                                        wire:click="mountTableAction('copyGuestOrder', '{{ $record->id }}')"
-                                    >
-                                        Salin tautan QR
-                                    </x-filament::dropdown.list.item>
-
-                                    @if ($record->needs_cleaning)
-                                        <x-filament::dropdown.list.item
-                                            icon="heroicon-m-check"
-                                            wire:click="mountTableAction('markReady', '{{ $record->id }}')"
+                        @if (\App\Support\SubscriptionAccess::isLocked())
+                            <div data-floor-plan-menu x-on:click.stop="window.dispatchEvent(new CustomEvent('open-subscription-lock-modal'))">
+                                <button
+                                    type="button"
+                                    style="border-radius: 0.375rem; padding: 0.25rem; opacity: 0.7;"
+                                    aria-label="Aksi meja {{ $record->code }}"
+                                >
+                                    <x-filament::icon icon="heroicon-m-ellipsis-vertical" class="h-4 w-4" />
+                                </button>
+                            </div>
+                        @else
+                            <div data-floor-plan-menu x-on:click.stop>
+                                <x-filament::dropdown placement="bottom-end">
+                                    <x-slot name="trigger">
+                                        <button
+                                            type="button"
+                                            style="border-radius: 0.375rem; padding: 0.25rem; opacity: 0.7;"
+                                            aria-label="Aksi meja {{ $record->code }}"
                                         >
-                                            Meja siap
-                                        </x-filament::dropdown.list.item>
-                                    @endif
+                                            <x-filament::icon icon="heroicon-m-ellipsis-vertical" class="h-4 w-4" />
+                                        </button>
+                                    </x-slot>
 
-                                    @if (filled($record->open_visit_id))
+                                    <x-filament::dropdown.list>
                                         <x-filament::dropdown.list.item
-                                            icon="heroicon-m-key"
-                                            wire:click="mountTableAction('resetPin', '{{ $record->id }}')"
+                                            icon="heroicon-m-pencil-square"
+                                            wire:click="mountTableAction('edit', '{{ $record->id }}')"
                                         >
-                                            Reset PIN
+                                            Edit
                                         </x-filament::dropdown.list.item>
 
                                         <x-filament::dropdown.list.item
-                                            icon="heroicon-m-arrows-right-left"
-                                            wire:click="mountTableAction('moveVisit', '{{ $record->id }}')"
+                                            tag="a"
+                                            href="{{ \App\Support\TableQrToken::url($record) }}"
+                                            target="_blank"
+                                            icon="heroicon-m-qr-code"
                                         >
-                                            Pindah meja
+                                            Buka pemesanan
                                         </x-filament::dropdown.list.item>
-                                    @endif
 
-                                    <x-filament::dropdown.list.item
-                                        icon="heroicon-m-arrow-path"
-                                        wire:click="mountTableAction('regenerateQr', '{{ $record->id }}')"
-                                    >
-                                        Regenerate QR
-                                    </x-filament::dropdown.list.item>
-
-                                    <x-filament::dropdown.list.item
-                                        icon="heroicon-m-arrow-down-tray"
-                                        wire:click="mountTableAction('downloadQr', '{{ $record->id }}')"
-                                    >
-                                        Unduh QR PNG
-                                    </x-filament::dropdown.list.item>
-
-                                    <x-filament::dropdown.list.item
-                                        icon="heroicon-m-document"
-                                        wire:click="mountTableAction('downloadQrPdf', '{{ $record->id }}')"
-                                    >
-                                        Unduh QR PDF
-                                    </x-filament::dropdown.list.item>
-
-                                    @if (! filled($record->open_visit_id))
                                         <x-filament::dropdown.list.item
-                                            color="danger"
-                                            icon="heroicon-m-trash"
-                                            wire:click="mountTableAction('delete', '{{ $record->id }}')"
+                                            icon="heroicon-m-clipboard-document"
+                                            x-on:click="if (window.navigator?.clipboard?.writeText) { window.navigator.clipboard.writeText('{{ addslashes(\App\Support\TableQrToken::url($record)) }}').catch(() => {}); }"
+                                            wire:click="mountTableAction('copyGuestOrder', '{{ $record->id }}')"
                                         >
-                                            Hapus
+                                            Salin tautan QR
                                         </x-filament::dropdown.list.item>
-                                    @endif
-                                </x-filament::dropdown.list>
-                            </x-filament::dropdown>
-                        </div>
+
+                                        @if ($record->needs_cleaning)
+                                            <x-filament::dropdown.list.item
+                                                icon="heroicon-m-check"
+                                                wire:click="mountTableAction('markReady', '{{ $record->id }}')"
+                                            >
+                                                Meja siap
+                                            </x-filament::dropdown.list.item>
+                                        @endif
+
+                                        @if (filled($record->open_visit_id))
+                                            <x-filament::dropdown.list.item
+                                                icon="heroicon-m-key"
+                                                wire:click="mountTableAction('resetPin', '{{ $record->id }}')"
+                                            >
+                                                Reset PIN
+                                            </x-filament::dropdown.list.item>
+
+                                            <x-filament::dropdown.list.item
+                                                icon="heroicon-m-arrows-right-left"
+                                                wire:click="mountTableAction('moveVisit', '{{ $record->id }}')"
+                                            >
+                                                Pindah meja
+                                            </x-filament::dropdown.list.item>
+                                        @endif
+
+                                        <x-filament::dropdown.list.item
+                                            icon="heroicon-m-arrow-path"
+                                            wire:click="mountTableAction('regenerateQr', '{{ $record->id }}')"
+                                        >
+                                            Regenerate QR
+                                        </x-filament::dropdown.list.item>
+
+                                        <x-filament::dropdown.list.item
+                                            icon="heroicon-m-arrow-down-tray"
+                                            wire:click="mountTableAction('downloadQr', '{{ $record->id }}')"
+                                        >
+                                            Unduh QR PNG
+                                        </x-filament::dropdown.list.item>
+
+                                        <x-filament::dropdown.list.item
+                                            icon="heroicon-m-document"
+                                            wire:click="mountTableAction('downloadQrPdf', '{{ $record->id }}')"
+                                        >
+                                            Unduh QR PDF
+                                        </x-filament::dropdown.list.item>
+
+                                        @if (! filled($record->open_visit_id))
+                                            <x-filament::dropdown.list.item
+                                                color="danger"
+                                                icon="heroicon-m-trash"
+                                                wire:click="mountTableAction('delete', '{{ $record->id }}')"
+                                            >
+                                                Hapus
+                                            </x-filament::dropdown.list.item>
+                                        @endif
+                                    </x-filament::dropdown.list>
+                                </x-filament::dropdown>
+                            </div>
+                        @endif
                     </div>
 
                     <span class="floor-plan-card__badge">{{ $status['label'] }}</span>

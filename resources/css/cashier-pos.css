@@ -212,48 +212,61 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     min-width: 0;
     overflow: hidden;
-    border-radius: 1rem;
+    border-radius: 1.125rem;
     border: 1px solid rgb(226 232 240);
     background: rgb(255 255 255);
+    padding: 0.625rem;
     cursor: pointer;
     transform-origin: center;
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04);
 }
 
 .dark .cashier-pos-card {
     border-color: rgb(51 65 85);
     background: rgb(15 23 42);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
 }
 
 .cashier-pos-card.is-active {
-    border-color: var(--primary-500, #6366f1);
-    box-shadow: 0 0 0 1px var(--primary-500, #6366f1);
+    border-color: var(--primary-500, #f97316);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-500, #f97316) 40%, transparent);
+    background: color-mix(in srgb, var(--primary-500, #f97316) 4%, white);
+}
+
+.dark .cashier-pos-card.is-active {
+    background: color-mix(in srgb, var(--primary-500, #f97316) 8%, rgb(15 23 42));
 }
 
 @media (hover: hover) {
     .cashier-pos-card:hover {
         z-index: 1;
-        transform: translateY(-4px) scale(1.035);
+        transform: translateY(-2px);
         border-color: var(--primary-400, #fb923c);
-        box-shadow: 0 16px 32px -18px rgb(15 23 42 / 0.45);
+        box-shadow: 0 10px 24px -12px rgb(15 23 42 / 0.2);
     }
 
     .dark .cashier-pos-card:hover {
-        box-shadow: 0 16px 32px -16px rgb(0 0 0 / 0.7);
+        box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.6);
     }
 
     .cashier-pos-card:hover .cashier-pos-card__photo img {
-        transform: scale(1.08);
+        transform: scale(1.05);
     }
 }
 
 .cashier-pos-card__photo {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 7.5rem;
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
     background: rgb(241 245 249);
     overflow: hidden;
 }
@@ -267,7 +280,7 @@
     height: 100%;
     object-fit: cover;
     transform: scale(1);
-    transition: transform 220ms ease;
+    transition: transform 250ms ease;
 }
 
 .cashier-pos-card__ph {
@@ -286,13 +299,13 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    border-radius: 9999px;
+    border-radius: 0.5rem;
     background-color: #f59e0b;
-    padding: 0.15rem 0.55rem;
+    padding: 0.15rem 0.5rem;
     font-size: 0.65rem;
     font-weight: 800;
     color: #ffffff !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     letter-spacing: 0.01em;
     text-transform: none !important;
     pointer-events: none;
@@ -317,23 +330,38 @@
     display: flex;
     flex: 1;
     flex-direction: column;
+    justify-content: space-between;
     gap: 0.35rem;
-    padding: 0.75rem 0.8rem 0.85rem;
+    padding: 0.5rem 0.15rem 0.1rem;
+    min-width: 0;
 }
 
 .cashier-pos-card__name {
-    font-size: 0.800rem;
-    font-weight: 500;
-    line-height: 1.3;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: rgb(15 23 42);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dark .cashier-pos-card__name {
+    color: rgb(241 245 249);
 }
 
 .cashier-pos-card__price {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.35rem;
-    font-size: 0.840rem;
+    gap: 0.4rem;
+    font-size: 0.875rem;
     font-weight: 700;
+    color: var(--primary-600, #ea580c);
+}
+
+.dark .cashier-pos-card__price {
+    color: var(--primary-400, #fb923c);
 }
 
 .cashier-pos-card__was {
@@ -355,43 +383,58 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-top: auto;
     border: 0;
-    border-radius: 0.75rem;
-    background: var(--primary-600, #4f46e5);
+    border-radius: 0.65rem;
+    background: var(--primary-600, #ea580c);
     color: #fff;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    padding: 0.55rem 0.7rem;
+    padding: 0.5rem 0.65rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    cursor: pointer;
+}
+
+.cashier-pos-add:hover,
+.cashier-pos-submit:hover {
+    background: var(--primary-700, #c2410c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px -2px var(--primary-600, #ea580c);
 }
 
 .cashier-pos-stepper {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: auto;
-    border-radius: 0.75rem;
-    background: var(--primary-600, #4f46e5);
+    border-radius: 0.65rem;
+    background: var(--primary-600, #ea580c);
     color: #fff;
-    padding: 0.2rem;
+    padding: 0.15rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .cashier-pos-stepper button {
     display: inline-flex;
-    width: 2rem;
-    height: 2rem;
+    width: 1.85rem;
+    height: 1.85rem;
     align-items: center;
     justify-content: center;
     border: 0;
-    border-radius: 0.55rem;
-    background: rgb(255 255 255 / 0.14);
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 0.18);
     color: inherit;
     font-size: 1rem;
     font-weight: 700;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.cashier-pos-stepper button:hover {
+    background: rgb(255 255 255 / 0.28);
 }
 
 .cashier-pos-stepper span {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 700;
 }
 

@@ -20,10 +20,31 @@ class EnsureRestaurantOperations
             return $next($request);
         }
 
-        if (app(SubscriptionGate::class)->hasFeature($restaurant, 'operations')) {
+        $gate = app(SubscriptionGate::class);
+        $hasOperations = $gate->hasFeature($restaurant, 'operations');
+        $isLocked = \App\Support\SubscriptionAccess::isLocked($restaurant);
+
+        if ($hasOperations && ! $isLocked) {
             return $next($request);
         }
 
+        // Jika restoran terkunci karena tunggakan atau langganan habis:
+        // Tampilkan halaman ramah dan sopan kepada tamu yang scan QR meja
+        if ($isLocked) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Layanan pemesanan mandiri di meja sedang diistirahatkan sejenak. Silakan pesan langsung ke kasir.',
+                    'code' => 'operations_paused',
+                ], 403);
+            }
+
+            return response()->view('guest.operations-paused', [
+                'restaurant' => $restaurant,
+                'theme' => \App\Support\RestaurantTheme::for($restaurant),
+            ], 200);
+        }
+
+        // Restoran pada paket Landing Only (memang tidak berlangganan fitur operasional)
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
                 'message' => 'Pemesanan online tidak tersedia untuk restoran ini.',

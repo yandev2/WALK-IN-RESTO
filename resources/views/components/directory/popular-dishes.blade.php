@@ -27,13 +27,11 @@
     @if (! empty($items))
         <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             @foreach ($items as $item)
-                @php
-                    $targetUrl = $item['landing_url'] ?: '#';
-                @endphp
-                <a
-                    href="{{ $targetUrl }}"
-                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
-                    title="Kunjungi {{ $item['restaurant_name'] ?? 'Restoran' }}"
+                <button
+                    type="button"
+                    @click="$dispatch('open-menu-modal', @js($item))"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 text-left ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200 cursor-pointer"
+                    title="Lihat detail {{ $item['name'] }}"
                 >
                     <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
                         @if (! empty($item['photo_url']))
@@ -57,7 +55,7 @@
                             </div>
                         @endif
 
-                        @if (! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
+                        @if (empty($item['hide_price']) && ! empty($item['discount_percent']) && (int) $item['discount_percent'] > 0)
                             <span class="absolute top-2 left-2 rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
                                 -{{ $item['discount_percent'] }}%
                             </span>
@@ -78,19 +76,33 @@
                             <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
                                 {{ $item['name'] }}
                             </h3>
+                            @if (! empty($item['description']))
+                                <p class="mt-1 line-clamp-2 text-[11px] text-muted leading-relaxed">
+                                    {{ $item['description'] }}
+                                </p>
+                            @endif
                         </div>
 
                         <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
-                            <span class="truncate text-xs font-bold text-primary sm:text-sm">{{ $item['price_formatted'] }}</span>
+                            @if (! empty($item['hide_price']))
+                                <span class="truncate text-[11px] font-semibold text-primary">Kunjungi Restoran</span>
+                            @elseif (! empty($item['has_discount']) && ! empty($item['effective_price_formatted']))
+                                <div class="min-w-0 truncate">
+                                    <span class="text-[10px] text-muted line-through mr-1">{{ $item['price_formatted'] }}</span>
+                                    <span class="text-xs sm:text-sm font-bold text-primary">{{ $item['effective_price_formatted'] }}</span>
+                                </div>
+                            @else
+                                <span class="truncate text-xs font-bold text-primary sm:text-sm">{{ $item['price_formatted'] }}</span>
+                            @endif
                             <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
-                                <span>Resto</span>
+                                <span>Detail</span>
                                 <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                 </svg>
                             </span>
                         </div>
                     </div>
-                </a>
+                </button>
             @endforeach
         </div>
     @elseif ($hasFilters)
@@ -107,4 +119,7 @@
             @endif
         </div>
     @endif
+
+    {{-- Reusable Modal Detail Menu --}}
+    <x-directory.menu-detail-modal />
 </div>

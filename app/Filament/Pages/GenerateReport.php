@@ -182,6 +182,9 @@ class GenerateReport extends Page
                             Action::make('generate')
                                 ->label('Antrikan ekspor')
                                 ->icon(Heroicon::OutlinedArrowDownTray)
+                                ->extraAttributes(fn (): array => SubscriptionAccess::isLocked() ? [
+                                    'x-on:click.prevent.stop' => "\$dispatch('open-subscription-lock-modal')",
+                                ] : [])
                                 ->submit('generate'),
                         ]),
                     ]),
@@ -190,6 +193,11 @@ class GenerateReport extends Page
 
     public function generate(): void
     {
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
+            return;
+        }
+
         $restaurant = $this->restaurant();
         $user = auth()->user();
 

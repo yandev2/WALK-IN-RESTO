@@ -123,6 +123,15 @@ class CustomerResource extends Resource
                     ->label('Sesuaikan Poin')
                     ->icon(Heroicon::OutlinedPlusCircle)
                     ->color('warning')
+                    ->extraAttributes(fn (): array => \App\Support\SubscriptionAccess::isLocked() ? [
+                        'x-on:click.stop' => "\$dispatch('open-subscription-lock-modal')",
+                    ] : [])
+                    ->before(function ($action, $livewire): void {
+                        if (\App\Support\SubscriptionAccess::isLocked()) {
+                            $livewire->dispatch('open-subscription-lock-modal');
+                            $action->cancel();
+                        }
+                    })
                     ->visible(function (): bool {
                         if (! static::isLoyaltyEnabled()) {
                             return false;

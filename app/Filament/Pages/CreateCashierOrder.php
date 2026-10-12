@@ -94,10 +94,17 @@ class CreateCashierOrder extends Page
                 ->icon(Heroicon::OutlinedPlusCircle)
                 ->color('success')
                 ->visible(fn (): bool => $this->activeShift === null)
-                ->extraAttributes([
+                ->extraAttributes(fn (): array => SubscriptionAccess::isLocked() ? [
+                    'x-on:click' => "window.dispatchEvent(new CustomEvent('open-subscription-lock-modal'))",
+                ] : [
                     'x-on:click' => "window.dispatchEvent(new CustomEvent('open-cashier-shift-modal'))",
                 ])
                 ->action(function (array $arguments = []): void {
+                    if (SubscriptionAccess::isLocked()) {
+                        $this->dispatch('open-subscription-lock-modal');
+                        return;
+                    }
+
                     if (! empty($arguments['starting_cash'])) {
                         $this->openShift($arguments['starting_cash'], $arguments['notes'] ?? null);
 
@@ -142,6 +149,11 @@ class CreateCashierOrder extends Page
         $user = auth()->user();
 
         if (! $tenant instanceof Restaurant || ! $user instanceof User) {
+            return;
+        }
+
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
             return;
         }
 
@@ -916,6 +928,11 @@ class CreateCashierOrder extends Page
 
     public function openShift(mixed $startingCash, ?string $notes = null): ?array
     {
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
+            return null;
+        }
+
         $user = auth()->user();
         $outlet = TenantContext::outlet();
         if (! $user instanceof User || ! $outlet) {
@@ -944,6 +961,11 @@ class CreateCashierOrder extends Page
     #[Renderless]
     public function recordCashMovement(string $type, mixed $amount, string $category = 'lainnya', ?string $notes = null): ?array
     {
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
+            return null;
+        }
+
         $user = auth()->user();
         $outlet = TenantContext::outlet();
         if (! $user instanceof User || ! $outlet) {
@@ -979,6 +1001,11 @@ class CreateCashierOrder extends Page
 
     public function closeShift(mixed $actualEndingCash, ?string $differenceReason = null, ?string $notes = null): ?array
     {
+        if (SubscriptionAccess::isLocked()) {
+            $this->dispatch('open-subscription-lock-modal');
+            return null;
+        }
+
         $user = auth()->user();
         $outlet = TenantContext::outlet();
         if (! $user instanceof User || ! $outlet) {
