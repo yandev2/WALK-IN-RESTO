@@ -13,7 +13,7 @@
                 <img
                     src="{{ $home['logo_url'] }}"
                     alt="{{ $home['site_name'] }}"
-                    class="h-8 sm:h-9 w-auto max-w-[130px] sm:max-w-[220px] object-contain"
+                    class="h-9 w-auto max-w-[220px] object-contain"
                 >
             @else
                 <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-[var(--card-shadow)]">
