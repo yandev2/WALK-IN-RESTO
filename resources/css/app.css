@@ -43,8 +43,16 @@
 
 .landing-container {
     margin-inline: auto;
+    width: 100%;
     max-width: 72rem;
-    padding-inline: 1.25rem;
+    padding-inline: 1rem;
+    box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+    .landing-container {
+        padding-inline: 1.25rem;
+    }
 }
 
 .landing-hero-clip {
@@ -655,6 +663,8 @@ html.dark .landing-testimonial-star.is-filled {
 .directory-map-canvas {
     position: relative;
     z-index: 0;
+    overflow: hidden;
+    max-width: 100%;
     background: var(--surface-muted);
 }
 
@@ -673,6 +683,13 @@ html.dark .landing-testimonial-star.is-filled {
     transform: translateY(-0.25rem);
     box-shadow: var(--card-shadow-hover);
     border-color: color-mix(in srgb, var(--brand-primary) 35%, var(--border-subtle));
+}
+
+@media (max-width: 420px) {
+    .directory-card:not(.directory-card-grid) {
+        grid-template-columns: 7rem minmax(0, 1fr);
+        min-height: 10rem;
+    }
 }
 
 @media (min-width: 640px) {

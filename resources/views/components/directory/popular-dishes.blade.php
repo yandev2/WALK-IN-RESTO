@@ -4,8 +4,8 @@
 ])
 
 <div class="popular-dishes-container">
-    <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
-        <div>
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-2.5 sm:gap-3">
+        <div class="min-w-0">
             <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Menu Populer</span>
             <h2 class="text-lg font-bold text-body font-display sm:text-xl">Yang Lagi Hits</h2>
         </div>
@@ -13,7 +13,7 @@
         @if (Route::has('directory.menus'))
             <a
                 href="{{ route('directory.menus') }}"
-                class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover transition group/btn"
+                class="shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover transition group/btn"
                 id="link-all-menus"
             >
                 <span>Lihat Semua Menu</span>
@@ -32,7 +32,7 @@
                 @endphp
                 <a
                     href="{{ $targetUrl }}"
-                    class="group flex flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
                     title="Kunjungi {{ $item['restaurant_name'] ?? 'Restoran' }}"
                 >
                     <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
@@ -70,8 +70,8 @@
                         @endif
                     </div>
 
-                    <div class="mt-2.5 flex flex-1 flex-col justify-between">
-                        <div>
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
                             @if (! empty($item['restaurant_name']))
                                 <p class="truncate text-[11px] font-medium text-muted">{{ $item['restaurant_name'] }}</p>
                             @endif
@@ -80,9 +80,9 @@
                             </h3>
                         </div>
 
-                        <div class="mt-2 flex items-center justify-between border-t border-border-subtle/50 pt-2">
-                            <span class="text-xs font-bold text-primary sm:text-sm">{{ $item['price_formatted'] }}</span>
-                            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">{{ $item['price_formatted'] }}</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
                                 <span>Resto</span>
                                 <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>

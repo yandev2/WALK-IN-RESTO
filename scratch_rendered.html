@@ -1,0 +1,2892 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+    <head>
+        <script>
+    (function () {
+        try {
+            var stored = localStorage.getItem('theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var isDark = stored === 'dark' || (!stored && prefersDark);
+            var root = document.documentElement;
+            if (isDark) {
+                root.classList.add('dark');
+                root.style.colorScheme = 'dark';
+            } else {
+                root.style.colorScheme = 'light';
+            }
+        } catch (e) {}
+    })();
+</script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Temukan Restoran Terdekat &amp; Kuliner Terbaik - RestoTerdekat</title>
+        <meta name="description" content="Jelajahi restoran terbaik dan rekomendasi kuliner terdekat di sekitar Anda. Lihat menu lezat, jam buka, fasilitas, dan langsung pesan dari meja tanpa antre.">
+                    <meta name="keywords" content="restoran terdekat, kuliner terdekat, menu restoran, cafe terdekat, walk-in resto, pesan dari meja, direktori restoran">
+                <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <link rel="canonical" href="http://walk-in-resto.test">
+
+        
+                    <link rel="icon" href="http://walk-in-resto.test/favicon.ico">
+            <link rel="shortcut icon" href="http://walk-in-resto.test/favicon.ico">
+            <link rel="apple-touch-icon" href="http://walk-in-resto.test/favicon.ico">
+        
+        
+        <meta property="og:locale" content="id_ID">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="RestoTerdekat">
+        <meta property="og:title" content="Temukan Restoran Terdekat &amp; Kuliner Terbaik - RestoTerdekat">
+        <meta property="og:description" content="Jelajahi restoran terbaik dan rekomendasi kuliner terdekat di sekitar Anda. Lihat menu lezat, jam buka, fasilitas, dan langsung pesan dari meja tanpa antre.">
+        <meta property="og:url" content="http://walk-in-resto.test">
+                    <meta property="og:image" content="http://walk-in-resto.test/storage/platform/hero/01M4JF4WDPC5SXE4KV1A3NFSBA.jpg">
+            <meta property="og:image:alt" content="RestoTerdekat">
+        
+        
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Temukan Restoran Terdekat &amp; Kuliner Terbaik - RestoTerdekat">
+        <meta name="twitter:description" content="Jelajahi restoran terbaik dan rekomendasi kuliner terdekat di sekitar Anda. Lihat menu lezat, jam buka, fasilitas, dan langsung pesan dari meja tanpa antre.">
+                    <meta name="twitter:image" content="http://walk-in-resto.test/storage/platform/hero/01M4JF4WDPC5SXE4KV1A3NFSBA.jpg">
+        
+        
+        <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": "http://walk-in-resto.test#website",
+            "url": "http://walk-in-resto.test",
+            "name": "RestoTerdekat",
+            "description": "Jelajahi restoran terbaik dan rekomendasi kuliner terdekat di sekitar Anda. Lihat menu lezat, jam buka, fasilitas, dan langsung pesan dari meja tanpa antre.",
+            "inLanguage": "id-ID"
+        },
+        {
+            "@type": "Organization",
+            "@id": "http://walk-in-resto.test#organization",
+            "name": "RestoTerdekat",
+            "url": "http://walk-in-resto.test",
+            "email": "founder@restoterdekat.id",
+            "description": "RestoTerdekat membantu tamu menemukan restoran terdekat dan membantu resto menerima tamu walk-in."
+        }
+    ]
+}</script>
+
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=fraunces:500,600,700|dm-sans:400,500,600,700|caveat:500,600,700" rel="stylesheet" />
+        <style>
+    :root {
+        color-scheme: light;
+        --brand-primary: #F97316;
+        --brand-primary-dark: #D66313;
+        --brand-accent: #FA8C40;
+
+        --surface-base: #fafaf9;
+        --surface-raised: #ffffff;
+        --surface-muted: #f4f3f0;
+        --surface-section: #f7f6f3;
+        --border-subtle: #e7e5e2;
+        --text-body: #1c1917;
+        --text-muted: #716c66;
+        --glow-primary: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+        --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 4px 14px -2px rgba(0, 0, 0, 0.05);
+        --card-shadow-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+    }
+
+    html.dark {
+        color-scheme: dark;
+        --surface-base: #0f1115;
+        --surface-raised: #171920;
+        --surface-muted: #1e222b;
+        --surface-section: #13151a;
+        --border-subtle: #262b36;
+        --text-body: #f3f4f6;
+        --text-muted: #9ca3af;
+        --glow-primary: color-mix(in srgb, var(--brand-primary) 30%, transparent);
+        --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 10px 24px -4px rgba(0, 0, 0, 0.5);
+        --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.45), 0 18px 36px -6px rgba(0, 0, 0, 0.65);
+    }
+</style>
+        <script type="module" src="http://localhost:5173/@vite/client" data-navigate-track="reload"></script><link rel="stylesheet" href="http://localhost:5173/resources/css/app.css" data-navigate-track="reload" /><script type="module" src="http://localhost:5173/resources/js/app.js" data-navigate-track="reload"></script>        <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.list-item][wire\:loading\.list-item], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}dialog#livewire-error::backdrop {background-color: rgba(0, 0, 0, .6);}</style>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+        <style>[x-cloak]{display:none!important}</style>
+                    </head>
+    <body class="min-h-screen w-full overflow-x-hidden bg-surface-base text-body antialiased transition-colors duration-300">
+                    <div wire:snapshot="{&quot;data&quot;:{&quot;search&quot;:&quot;&quot;,&quot;categoryIds&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;facilityFilters&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;sort&quot;:&quot;newest&quot;,&quot;viewMode&quot;:&quot;grid&quot;,&quot;userLat&quot;:null,&quot;userLng&quot;:null,&quot;userAccuracyM&quot;:null,&quot;locationStatus&quot;:&quot;idle&quot;,&quot;maxDistanceKm&quot;:null,&quot;paginators&quot;:[{&quot;page&quot;:1},{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;RtMyen9mNupHkxJhq6dk&quot;,&quot;name&quot;:&quot;landing.restaurant-directory&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;release&quot;:&quot;a-a-a&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;id&quot;,&quot;islands&quot;:[]},&quot;checksum&quot;:&quot;faed1ba7a751583bfc5c2d7c0281e8bae7158b01c5d80ab84189e6ecdcc66655&quot;}" wire:effects="{&quot;partials&quot;:[],&quot;url&quot;:{&quot;search&quot;:{&quot;as&quot;:&quot;search&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:&quot;&quot;},&quot;categoryIds&quot;:{&quot;as&quot;:&quot;kategori&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:[]},&quot;facilityFilters&quot;:{&quot;as&quot;:&quot;fasilitas&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:[]},&quot;sort&quot;:{&quot;as&quot;:&quot;sort&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:&quot;newest&quot;},&quot;viewMode&quot;:{&quot;as&quot;:&quot;tampilan&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:&quot;grid&quot;},&quot;maxDistanceKm&quot;:{&quot;as&quot;:&quot;jarak&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:null},&quot;paginators.page&quot;:{&quot;as&quot;:&quot;page&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:null}}}" wire:id="RtMyen9mNupHkxJhq6dk" wire:name="landing.restaurant-directory"
+    class="directory-shell flex min-h-screen w-full overflow-x-hidden flex-col bg-surface-base"
+    x-on:request-directory-location.window="window.requestDirectoryLocation?.()"
+>
+    <header role="banner" x-data="{ mobileMenuOpen: false }" class="directory-header sticky top-0 z-40 border-b border-border-subtle/80 bg-surface-base/85 backdrop-blur-md transition-colors duration-200">
+    <div class="landing-container flex h-16 items-center justify-between gap-4">
+        <a href="http://walk-in-resto.test" class="inline-flex min-w-0 items-center gap-2.5" aria-label="Beranda RestoTerdekat">
+            <!--[if BLOCK]><![endif]-->                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-[var(--card-shadow)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9.384 3.576a1 1 0 011.232 0l6.5 4.75A1 1 0 0117 9.25v6.5a1 1 0 01-1.384.926L10 15.382l-5.616 1.294A1 1 0 013 15.75v-6.5a1 1 0 01.384-.924l6.5-4.75z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+                <span class="truncate font-display text-lg font-bold text-body">RestoTerdekat</span>
+            <!--[if ENDBLOCK]><![endif]-->        </a>
+
+        <nav aria-label="Navigasi Utama" class="hidden items-center gap-2 md:flex">
+            <a href="http://walk-in-resto.test" class="rounded-lg px-4 py-2 text-sm font-semibold transition bg-primary/10 font-bold text-primary">Beranda</a>
+            <a href="http://walk-in-resto.test/daftar-menu" class="rounded-lg px-4 py-2 text-sm font-semibold transition text-muted hover:bg-surface-muted hover:text-body">Menu</a>
+            <a href="http://walk-in-resto.test/tentang" class="rounded-lg px-4 py-2 text-sm font-semibold transition text-muted hover:bg-surface-muted hover:text-body">Tentang</a>
+            <a href="http://walk-in-resto.test/syarat-dan-ketentuan" class="rounded-lg px-4 py-2 text-sm font-semibold transition text-muted hover:bg-surface-muted hover:text-body">Syarat & Ketentuan</a>
+            <a href="http://walk-in-resto.test/id/blog" class="rounded-lg px-4 py-2 text-sm font-semibold transition text-muted hover:bg-surface-muted hover:text-body">Blog</a>
+            <!--[if BLOCK]><![endif]-->                <a href="http://walk-in-resto.test/admin/login" rel="nofollow" class="rounded-lg px-4 py-2 text-sm font-semibold text-muted hover:bg-surface-muted hover:text-body transition">Login</a>
+                <a href="http://walk-in-resto.test/daftar" class="rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 transition">Daftarkan restoran</a>
+            <!--[if ENDBLOCK]><![endif]-->        </nav>
+
+        <div class="flex items-center gap-1.5 sm:gap-2">
+            <!--[if BLOCK]><![endif]-->                <a
+                    href="http://walk-in-resto.test/admin/login"
+                    rel="nofollow"
+                    class="md:hidden inline-flex items-center rounded-lg bg-surface-muted px-2.5 py-1.5 text-xs font-semibold text-body hover:bg-primary hover:text-white transition"
+                >
+                    Login
+                </a>
+            <!--[if ENDBLOCK]><![endif]-->            <button
+    type="button"
+    data-theme-toggle
+    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted text-body landing-interactive hover:scale-105 hover:shadow-[var(--card-shadow)]"
+    aria-label="Ganti tema terang atau gelap"
+>
+    <svg data-theme-icon="light" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+    </svg>
+    <svg data-theme-icon="dark" hidden xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+    </svg>
+</button>
+
+            
+            <button
+                type="button"
+                x-on:click="mobileMenuOpen = ! mobileMenuOpen"
+                class="inline-flex md:hidden items-center justify-center rounded-lg p-1.5 text-muted hover:bg-surface-muted hover:text-body transition"
+                aria-label="Buka menu navigasi"
+                :aria-expanded="mobileMenuOpen.toString()"
+            >
+                <svg x-show="! mobileMenuOpen" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg x-show="mobileMenuOpen" x-cloak class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    
+    <div
+        x-show="mobileMenuOpen"
+        x-cloak
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="border-b border-border-subtle bg-surface-base/95 backdrop-blur-lg px-4 py-4 md:hidden shadow-lg"
+    >
+        <nav aria-label="Navigasi Mobile" class="flex flex-col gap-1.5 text-sm font-semibold">
+            <a href="http://walk-in-resto.test" class="rounded-lg px-3 py-2 transition bg-primary/10 text-primary font-bold">Beranda</a>
+            <a href="http://walk-in-resto.test/daftar-menu" class="rounded-lg px-3 py-2 transition text-body hover:bg-surface-muted">Menu Kuliner</a>
+            <a href="http://walk-in-resto.test/tentang" class="rounded-lg px-3 py-2 transition text-body hover:bg-surface-muted">Tentang</a>
+            <a href="http://walk-in-resto.test/syarat-dan-ketentuan" class="rounded-lg px-3 py-2 transition text-body hover:bg-surface-muted">Syarat & Ketentuan</a>
+            <a href="http://walk-in-resto.test/id/blog" class="rounded-lg px-3 py-2 transition text-body hover:bg-surface-muted">Blog</a>
+
+            <div class="my-2 border-t border-border-subtle/70 pt-2 flex flex-col gap-2">
+                <!--[if BLOCK]><![endif]-->                    <a href="http://walk-in-resto.test/daftar" class="rounded-lg bg-primary/10 px-3 py-2 text-center text-sm font-semibold text-primary hover:bg-primary/20 transition">Daftarkan restoran</a>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </nav>
+    </div>
+</header>
+
+    <section class="directory-hero relative isolate overflow-hidden bg-gradient-to-b from-surface-muted/50 via-surface-base to-surface-base border-b border-border-subtle/50 py-8 sm:py-12 lg:py-16">
+    <div class="landing-container">
+        <div class="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            
+            <div class="lg:col-span-7">
+                <!--[if BLOCK]><![endif]-->                    <div class="inline-flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-semibold text-primary shadow-xs">
+                        <span class="h-1.5 w-1.5 rounded-lg bg-primary animate-pulse"></span>
+                        <span class="font-medium tracking-wide uppercase">Walk-in</span>
+                    </div>
+                <!--[if ENDBLOCK]><![endif]-->
+                <h1 class="mt-3 sm:mt-4 font-display text-2xl sm:text-4xl md:text-5xl font-extrabold leading-[1.15] tracking-tight text-body">
+                    Temukan restoran <span class="text-primary">terdekat</span> &amp; terbaik
+                </h1>
+
+                <!--[if BLOCK]><![endif]-->                    <p class="mt-3 sm:mt-4 max-w-xl text-xs sm:text-base md:text-lg leading-relaxed text-muted">
+                        Jelajahi restoran di sekitar Anda, lihat menu, jam buka, dan langsung datang ke meja pilihan.
+                    </p>
+                <!--[if ENDBLOCK]><![endif]-->
+                
+                <div class="mt-5 sm:mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted sm:gap-6 sm:text-sm">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Restoran Terpercaya</span>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Dine-In QR Meja</span>
+                    </div>
+
+                    <div class="inline-flex items-center gap-2">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </span>
+                        <span class="font-medium text-body">Promo & Diskon</span>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="hidden lg:col-span-5 lg:block">
+                <div class="group relative overflow-hidden rounded-[2rem] bg-surface-raised p-2 shadow-xl ring-1 ring-[color:var(--border-subtle)] transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative aspect-[4/3] overflow-hidden rounded-[1.6rem]">
+                        <img
+                            src="http://walk-in-resto.test/storage/platform/hero/01M4JF4WDPC5SXE4KV1A3NFSBA.jpg"
+                            alt="Temukan restoran terdekat &amp; terbaik"
+                            class="directory-hero-media h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                            fetchpriority="high"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                        
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                            <span class="inline-flex items-center gap-2 rounded-lg bg-black/70 backdrop-blur-md px-3.5 py-1.5 text-xs font-bold text-white shadow-md">
+                                <span class="h-2 w-2 rounded-lg bg-primary animate-pulse"></span>
+                                Rasa Enak Jadi Lebih Dekat
+                            </span>
+                            <span class="rounded-lg bg-white/20 backdrop-blur-md p-1.5 text-white">
+                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <div class="landing-container relative z-30 mt-2 sm:-mt-6 lg:-mt-10 flex-1 pb-16">
+        <div id="directory-search" role="search" aria-label="Pencarian direktori restoran"
+    class="directory-search relative z-30 w-full pb-6">
+    <div class="customer-card w-full overflow-visible p-0 shadow-lg ring-1 ring-[color:var(--border-subtle)]">
+        <!--[if BLOCK]><![endif]-->            <div
+                class="flex flex-wrap items-center justify-between gap-3 rounded-t-[1.5rem] border-b border-border-subtle/80 bg-surface-muted/90 px-4 py-2.5 text-xs sm:text-sm">
+                <div class="flex min-w-0 items-center gap-2 text-body">
+                    <span
+                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                        <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </span>
+                    <span class="text-muted leading-tight">Tampilkan restoran terdekat dari lokasi Anda. Klik tombol di
+                        samping — browser akan meminta izin.</span>
+                </div>
+                <button type="button" x-on:click="$dispatch('request-directory-location')"
+                    class="landing-btn-glow shrink-0 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white transition hover:bg-primary-dark">
+                    Izinkan lokasi
+                </button>
+            </div>
+        <!--[if ENDBLOCK]><![endif]-->
+        <div class="grid gap-2 overflow-visible p-2.5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.1fr)_13rem_8rem]">
+            <label class="relative min-w-0 flex items-center">
+                <span class="sr-only">Cari restoran</span>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+                </svg>
+                <input id="directory-search-input" name="search" type="search" wire:model.live.debounce.350ms="search"
+                    placeholder="Cari restoran, masakan, atau menu..."
+                    class="h-12 w-full rounded-2xl border-0 bg-transparent py-3 pl-11 pr-4 text-sm text-body placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30">
+            </label>
+
+            <div class="hidden items-center gap-2 rounded-2xl px-4 text-sm lg:flex transition border bg-surface-muted/70 border-border-subtle text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 20 20"
+                    fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M9.384 3.576a1 1 0 011.232 0l6.5 4.75A1 1 0 0117 9.25v6.5a1 1 0 01-1.384.926L10 15.382l-5.616 1.294A1 1 0 013 15.75v-6.5a1 1 0 01.384-.924l6.5-4.75z"
+                        clip-rule="evenodd" />
+                </svg>
+                <!--[if BLOCK]><![endif]-->                    <button type="button" x-on:click="$dispatch('request-directory-location')"
+                        class="truncate font-semibold text-primary hover:underline text-left">
+                        Izinkan lokasi
+                    </button>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="hidden min-w-0 lg:block">
+                <span class="sr-only">Kategori</span>
+                <div
+    class="relative rounded-2xl bg-surface-muted/70 border border-border-subtle"
+    x-data="{ open: false }"
+    x-bind:class="{ 'z-50': open, 'z-10': ! open }"
+    x-on:keydown.escape.window="open = false"
+    x-on:click.outside="open = false"
+>
+    <button
+        type="button"
+        x-on:click="open = ! open"
+        x-bind:aria-expanded="open.toString()"
+        class="flex w-full items-center justify-between gap-3 bg-transparent text-left text-body transition hover:bg-surface-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 h-12 rounded-2xl px-4 text-sm"
+    >
+        <span class="truncate">Semua Kategori</span>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 shrink-0 text-muted transition"
+            x-bind:class="open ? 'rotate-180' : ''"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+        >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    <div
+        x-cloak
+        x-show="open"
+        x-transition.origin.top
+        class="absolute z-50 mt-2 max-h-72 overflow-y-auto rounded-2xl bg-surface-raised dark:bg-zinc-900 py-1 shadow-2xl ring-1 ring-black/5 dark:ring-white/10 border border-border-subtle dark:border-zinc-800 left-0 right-0"
+        style="background-color: var(--surface-raised);"
+    >
+        <!--[if BLOCK]><![endif]-->                        <button
+                type="button"
+                                    wire:click="setCategoryFilter(null)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer font-semibold text-primary"
+            >
+                <span class="whitespace-nowrap">Semua Kategori</span>
+                <!--[if BLOCK]><![endif]-->                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                <!--[if ENDBLOCK]><![endif]-->            </button>
+                                <button
+                type="button"
+                                    wire:click="setCategoryFilter(1)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer text-body dark:text-zinc-200"
+            >
+                <span class="whitespace-nowrap">Indonesia</span>
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </button>
+                                <button
+                type="button"
+                                    wire:click="setCategoryFilter(2)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer text-body dark:text-zinc-200"
+            >
+                <span class="whitespace-nowrap">Kopi &amp; Kafe</span>
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </button>
+                                <button
+                type="button"
+                                    wire:click="setCategoryFilter(3)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer text-body dark:text-zinc-200"
+            >
+                <span class="whitespace-nowrap">Jepang</span>
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </button>
+                                <button
+                type="button"
+                                    wire:click="setCategoryFilter(4)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer text-body dark:text-zinc-200"
+            >
+                <span class="whitespace-nowrap">Cepat Saji</span>
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </button>
+                                <button
+                type="button"
+                                    wire:click="setCategoryFilter(5)"
+                                x-on:click="open = false"
+                class="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-xs sm:text-sm transition hover:bg-surface-muted dark:hover:bg-zinc-800 cursor-pointer text-body dark:text-zinc-200"
+            >
+                <span class="whitespace-nowrap">Bar &amp; Lounge</span>
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </button>
+        <!--[if ENDBLOCK]><![endif]-->    </div>
+</div>
+            </div>
+
+            <button type="button" wire:click="applySearch"
+                class="landing-btn-glow hidden h-12 rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-4 text-sm font-bold text-white shadow-md transition hover:from-primary-dark hover:to-primary-dark lg:inline-flex lg:items-center lg:justify-center">
+                Cari
+            </button>
+        </div>
+    </div>
+
+    <div class="mt-3 grid grid-cols-3 gap-2 lg:hidden">
+        
+        <button type="button"
+                            x-on:click="$dispatch('request-directory-location')"
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold ring-1 shadow-xs transition truncate bg-primary text-white ring-primary"
+            title="Gunakan lokasi saya">
+            <svg class="h-3.5 w-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="truncate">Lokasi</span>
+        </button>
+
+        
+        <button type="button" x-on:click="$dispatch('open-directory-filters')"
+            class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-surface-raised px-2 py-2.5 text-xs font-semibold text-body ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:bg-surface-muted transition truncate">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-muted" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span class="truncate">Filter</span>
+        </button>
+
+        
+        <button type="button" x-on:click="$dispatch('open-directory-map')"
+            class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-surface-raised px-2 py-2.5 text-xs font-semibold text-primary ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:bg-surface-muted transition truncate">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <span class="truncate">Peta</span>
+        </button>
+    </div>
+</div>
+
+        <script type="application/json" id="directory-map-pins">[{"slug":"burger-street","name":"Burger Street","lat":-6.2448,"lng":106.7995,"url":"http:\/\/walk-in-resto.test\/burger-street"},{"slug":"kopi-nusantara","name":"Kopi Nusantara","lat":-6.2615,"lng":106.8108,"url":"http:\/\/walk-in-resto.test\/kopi-nusantara"},{"slug":"ramen-lab","name":"Ramen Lab","lat":-6.2489,"lng":106.7997,"url":"http:\/\/walk-in-resto.test\/ramen-lab"},{"slug":"sky-lounge-88","name":"Sky Lounge 88","lat":-6.2251,"lng":106.8094,"url":"http:\/\/walk-in-resto.test\/sky-lounge-88"},{"slug":"sushi-haru","name":"Sushi Haru","lat":-6.2354,"lng":106.8076,"url":"http:\/\/walk-in-resto.test\/sushi-haru"},{"slug":"warung-nusantara","name":"Warung Nusantara","lat":-6.2297,"lng":106.8523,"url":"http:\/\/walk-in-resto.test\/warung-nusantara"}]</script>
+        <script type="application/json" id="directory-user-location">null</script>
+
+        
+        <section aria-label="Kategori Kuliner" class="directory-category-bar mb-6 sm:mb-8">
+    <div class="mb-3 flex items-center justify-between gap-3">
+        <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Kategori</span>
+            <h2 class="text-base font-bold text-body font-display sm:text-xl">Jelajahi Berdasarkan Kategori</h2>
+        </div>
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    </div>
+
+    
+    <div class="flex w-full max-w-full items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none touch-pan-x pr-4">
+        <button type="button" wire:click="setCategoryFilter(null)" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-primary text-white shadow-sm ring-1 ring-primary">
+            Semua
+        </button>
+
+        <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="setCategoryFilter(1)"
+                wire:key="category-pill-1" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-surface-raised text-body hover:bg-surface-muted ring-1 ring-[color:var(--border-subtle)]">
+                Indonesia
+            </button>
+                                <button type="button" wire:click="setCategoryFilter(2)"
+                wire:key="category-pill-2" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-surface-raised text-body hover:bg-surface-muted ring-1 ring-[color:var(--border-subtle)]">
+                Kopi &amp; Kafe
+            </button>
+                                <button type="button" wire:click="setCategoryFilter(3)"
+                wire:key="category-pill-3" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-surface-raised text-body hover:bg-surface-muted ring-1 ring-[color:var(--border-subtle)]">
+                Jepang
+            </button>
+                                <button type="button" wire:click="setCategoryFilter(4)"
+                wire:key="category-pill-4" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-surface-raised text-body hover:bg-surface-muted ring-1 ring-[color:var(--border-subtle)]">
+                Cepat Saji
+            </button>
+                                <button type="button" wire:click="setCategoryFilter(5)"
+                wire:key="category-pill-5" class="shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer bg-surface-raised text-body hover:bg-surface-muted ring-1 ring-[color:var(--border-subtle)]">
+                Bar &amp; Lounge
+            </button>
+        <!--[if ENDBLOCK]><![endif]-->    </div>
+</section>
+
+        
+        <!--[if BLOCK]><![endif]-->    <section aria-label="Restoran Rekomendasi Pilihan" aria-roledescription="carousel"
+        class="recommended-slider-container relative mb-8 overflow-hidden rounded-[2rem] bg-zinc-950 text-white shadow-2xl ring-1 ring-white/10 select-none"
+        x-data="{
+            active: 0,
+            total: 1,
+            timer: null,
+            touchStartX: 0,
+            next() {
+                this.active = (this.active + 1) % this.total;
+            },
+            prev() {
+                this.active = (this.active - 1 + this.total) % this.total;
+            },
+            startAutoplay() {
+                if (this.total > 1) {
+                    this.timer = setInterval(() => this.next(), 6500);
+                }
+            },
+            stopAutoplay() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+            },
+            handleTouchStart(e) {
+                this.touchStartX = e.changedTouches[0].screenX;
+            },
+            handleTouchEnd(e) {
+                const diff = e.changedTouches[0].screenX - this.touchStartX;
+                if (diff < -40) this.next();
+                if (diff > 40) this.prev();
+            }
+        }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()"
+        @touchstart.passive="handleTouchStart($event)" @touchend.passive="handleTouchEnd($event)"
+        @keydown.arrow-left.window="prev()" @keydown.arrow-right.window="next()">
+        <div class="relative min-h-[440px] sm:min-h-[480px] md:min-h-[520px]">
+            <!--[if BLOCK]><![endif]-->                <div x-show="active === 0"
+                    x-transition:enter="transition-opacity duration-700 ease-out" x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition-opacity duration-700 ease-in absolute inset-0 pointer-events-none"
+                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                    class="absolute inset-0 h-full w-full" aria-roledescription="slide"
+                    aria-label="1 dari 1"
+                    >
+                    
+                    <!--[if BLOCK]><![endif]-->                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                            alt="Burger Street - Cepat Saji"
+                            class="recommended-hero-img" loading="eager">
+                    <!--[if ENDBLOCK]><![endif]-->
+                    
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 via-50% to-zinc-950/20 sm:bg-gradient-to-r sm:from-zinc-950 sm:from-25% sm:via-zinc-950/60 sm:via-50% sm:to-transparent">
+                    </div>
+                    <div
+                        class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-zinc-950/90 via-zinc-950/50 to-transparent pointer-events-none">
+                    </div>
+
+                    
+                    <div class="absolute right-4 top-4 sm:right-8 sm:top-8 z-20">
+                        <span
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/35 px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[10px] sm:text-xs font-bold text-emerald-400 backdrop-blur-md shadow-sm">
+                            <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-lg bg-emerald-400 animate-pulse"></span>
+                            Populer
+                        </span>
+                    </div>
+
+                    
+                    <div
+                        class="relative z-10 flex h-full min-h-[460px] sm:min-h-[480px] md:min-h-[520px] flex-col justify-between p-5 sm:p-10 md:p-12 max-w-2xl">
+                        
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 border border-primary/40 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-primary shadow-sm backdrop-blur-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 fill-primary text-primary"
+                                    viewBox="0 0 20 20">
+                                    <path
+                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                Rekomendasi Spesial
+                            </span>
+                        </div>
+
+                        
+                        <div class="my-auto py-4 sm:py-6" x-show="active === 0"
+                            x-transition:enter="transition ease-out duration-700 delay-100"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0">
+                            <h2
+                                class="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.15]">
+                                Burger Street
+                            </h2>
+
+                            <!--[if BLOCK]><![endif]-->                                <div class="mt-2.5 sm:mt-3 flex items-center gap-2 text-xs sm:text-sm font-bold text-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                    <span>Cepat Saji</span>
+                                </div>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <p
+                                class="mt-2.5 sm:mt-3 text-xs sm:text-sm md:text-base leading-relaxed text-zinc-300 line-clamp-3 max-w-xl">
+                                Smash burger &amp; milkshake favorit anak muda
+                            </p>
+
+                            
+                            <div
+                                class="mt-4 sm:mt-5 inline-flex items-center gap-2.5 sm:gap-3 rounded-lg bg-white/10 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-sm border border-white/10 shadow-inner w-fit">
+                                <span class="flex items-center gap-1.5 font-bold text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-amber-400 text-amber-400" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    5.0
+                                    <span class="font-normal text-zinc-400">(1)</span>
+                                </span>
+                                <span class="h-3.5 w-px bg-white/20"></span>
+                                <span
+                                    class="text-zinc-300">1+ ulasan</span>
+                            </div>
+
+                            
+                            <div class="mt-5 sm:mt-6">
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                                    <a href="http://walk-in-resto.test/burger-street"
+                                        class="inline-flex items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-primary to-primary-dark px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-lg hover:shadow-primary/30 transition hover:scale-[1.02] active:scale-[0.98]">
+                                        <span>Lihat Detail Restoran</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </a>
+                                </div>
+
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    </section>
+<!--[if ENDBLOCK]><![endif]-->
+        
+        <div id="directory-results" class="mb-12 grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
+            <aside
+    aria-label="Filter Pencarian Restoran"
+    class="directory-filter customer-card relative z-10 overflow-visible p-5 ring-1 ring-[color:var(--border-subtle)] shadow-sm hidden lg:block"
+>
+    <div class="mb-5 flex items-center justify-between gap-3 border-b border-border-subtle/70 pb-3.5">
+        <div class="flex items-center gap-2">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-dark text-white shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+            </span>
+            <h2 class="font-display text-base font-bold text-body">Filter</h2>
+        </div>
+        <button
+            type="button"
+            wire:click="resetFilters"
+            class="inline-flex items-center gap-1 rounded-lg bg-surface-muted px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/10 transition duration-200"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Reset
+        </button>
+    </div>
+
+    <div class="space-y-5">
+        <div>
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Urutkan</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="newest"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Terbaru</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="rating"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Rating tertinggi</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="name"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Nama A–Z</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <div class="mb-3 flex items-center justify-between gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-muted whitespace-nowrap">Jarak Maksimal</p>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <!--[if BLOCK]><![endif]-->                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                            Nonaktif
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="mb-3 rounded-xl bg-amber-500/5 p-2.5 border border-amber-500/20 text-[11px] leading-relaxed text-muted flex items-start gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-amber-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <span>Aktifkan izin lokasi untuk filter radius jarak.</span>
+                        <button type="button" x-on:click="$dispatch('request-directory-location')" class="block font-bold text-primary hover:underline mt-0.5">Izinkan Lokasi →</button>
+                    </div>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->
+            
+            <div class="mb-3 space-y-1.5">
+                
+                <button
+                    type="button"
+                    wire:click="$set('maxDistanceKm', null)"
+                    disabled                    class="w-full flex items-center justify-center gap-1.5 rounded-lg py-1.5 px-3 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    <span>Semua Jarak</span>
+                </button>
+
+                
+                <div class="grid grid-cols-4 gap-1.5">
+                    <!--[if BLOCK]><![endif]-->                                                <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 5)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            5 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 10)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            10 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 25)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            25 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 50)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            50 km
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+            </div>
+
+                        <div
+                class="px-1 py-1"
+                x-data="{
+                    fillPercent: 100,
+                    sliderVal: 50,
+                    init() {
+                        this.$watch('$wire.maxDistanceKm', (val) => {
+                            if (val === null || val === undefined || val === '') {
+                                this.sliderVal = 50;
+                                this.fillPercent = 100;
+                            } else {
+                                const num = Number(val);
+                                this.sliderVal = num;
+                                this.fillPercent = Math.max(0, Math.min(100, ((num - 1) / 49) * 100));
+                            }
+                        });
+                    },
+                    handleInput(e) {
+                        const val = Number(e.target.value);
+                        this.sliderVal = val;
+                        this.fillPercent = Math.max(0, Math.min(100, ((val - 1) / 49) * 100));
+                    },
+                    handleChange(e) {
+                        const val = Number(e.target.value);
+                        $wire.set('maxDistanceKm', val);
+                    }
+                }"
+            >
+                <input
+                    type="range"
+                    min="1"
+                    max="50"
+                    step="1"
+                    :value="sliderVal"
+                    value="50"
+                    disabled                    class="directory-range-slider"
+                    aria-label="Filter radius jarak"
+                    x-on:input="handleInput($event)"
+                    x-on:input.debounce.300ms="handleChange($event)"
+                    x-on:change="handleChange($event)"
+                    :style="`--slider-fill: ${fillPercent}%`"
+                    style="--slider-fill: 100%"
+                >
+            </div>
+            <div class="mt-1 flex items-center justify-between px-1 text-[11px] font-semibold text-muted">
+                <span>1 km</span>
+                <span class="text-[10px] text-muted/60">25 km</span>
+                <span>50 km</span>
+            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Kategori</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="1"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Indonesia</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="2"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Kopi &amp; Kafe</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="3"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Jepang</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="4"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Cepat Saji</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="5"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Bar &amp; Lounge</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Fasilitas</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="wifi"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Wifi</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="parking"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Parkir</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="musholla"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Musholla</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="child_friendly"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Ramah Anak</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="outdoor"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Outdoor</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+    </div>
+</aside>
+
+
+            <section aria-label="Daftar Restoran" class="min-w-0">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-body">Restoran ditemukan</h2>
+                        <p class="text-sm text-muted">7 restoran</p>
+                    </div>
+
+                    <div class="hidden items-center gap-1 rounded-xl bg-surface-muted p-1 ring-1 ring-[color:var(--border-subtle)] sm:flex">
+                        <button
+                            type="button"
+                            wire:click="setViewMode('list')"
+                            class="rounded-lg px-3 py-1.5 text-xs font-semibold transition text-muted"
+                        >
+                            List
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="setViewMode('grid')"
+                            class="rounded-lg px-3 py-1.5 text-xs font-semibold transition bg-surface-raised text-body shadow-[var(--card-shadow)]"
+                        >
+                            Grid
+                        </button>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <div
+                        wire:key="directory-results-grid-newest-all"
+                        class="grid items-start gap-4 grid-cols-1 sm:grid-cols-2"
+                    >
+                        <!--[if BLOCK]><![endif]-->                            <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/burger-street"
+        itemprop="url"
+        aria-label="Lihat detail restoran Burger Street"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Burger Street - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $$
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Cepat Saji</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Burger Street</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Smash burger &amp; milkshake favorit anak muda</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 5.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="5.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            5.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                                                    <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/kopi-nusantara"
+        itemprop="url"
+        aria-label="Lihat detail restoran Kopi Nusantara"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Kopi Nusantara - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $$
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Indonesia • Kopi &amp; Kafe</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Kopi Nusantara</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Kopi single origin &amp; pastry rumahan</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 4.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="4.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            4.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                                                    <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/ramen-lab"
+        itemprop="url"
+        aria-label="Lihat detail restoran Ramen Lab"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1569718212165-3a8278dfe799?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Ramen Lab - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $$
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Jepang • Cepat Saji</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Ramen Lab</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Ramen rich broth dengan topping premium</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 5.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="5.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            5.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                                                    <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/sky-lounge-88"
+        itemprop="url"
+        aria-label="Lihat detail restoran Sky Lounge 88"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Sky Lounge 88 - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $$$$
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Bar &amp; Lounge</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Sky Lounge 88</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Cocktail bar dengan pemandangan kota</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 4.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="4.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            4.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]-->                                                            <!--[if ENDBLOCK]><![endif]-->                                                    <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/sushi-haru"
+        itemprop="url"
+        aria-label="Lihat detail restoran Sushi Haru"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Sushi Haru - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $$$
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Jepang</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Sushi Haru</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Sushi bar modern dengan counter omakase</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 5.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="5.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            5.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                                                    <article
+    itemscope
+    itemtype="https://schema.org/Restaurant"
+    class="relative h-full"
+>
+    <a
+        href="http://walk-in-resto.test/warung-nusantara"
+        itemprop="url"
+        aria-label="Lihat detail restoran Warung Nusantara"
+        class="directory-card group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-surface-raised ring-1 ring-[color:var(--border-subtle)] shadow-sm hover:shadow-md transition-all duration-300 directory-card-grid"
+    >
+        <div class="directory-card-media relative overflow-hidden bg-surface-muted">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="Warung Nusantara - Foto Restoran"
+                    itemprop="image"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                >
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="absolute left-2.5 top-2.5 z-10 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-bold backdrop-blur-md shadow-sm bg-emerald-500/90 text-white">
+                    <span class="h-1.5 w-1.5 rounded-lg bg-white animate-pulse"></span>
+                    Buka
+                </span>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="absolute right-2.5 top-2.5 z-10">
+                    <span itemprop="priceRange" class="inline-flex rounded-lg bg-black/60 px-2.5 py-0.5 text-[11px] font-bold text-white backdrop-blur-md shadow-sm">
+                        $
+                    </span>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="directory-card-body flex min-w-0 flex-1 flex-col justify-between p-4">
+            <div>
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <!--[if BLOCK]><![endif]-->                            <p itemprop="servesCuisine" class="truncate text-xs font-semibold text-primary mb-1">Indonesia</p>
+                        <!--[if ENDBLOCK]><![endif]-->                        <h3 itemprop="name" class="truncate font-display text-base font-bold text-body sm:text-lg group-hover:text-primary transition-colors duration-200">Warung Nusantara</h3>
+                    </div>
+                </div>
+
+                <!--[if BLOCK]><![endif]-->                    <p itemprop="description" class="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted">Masakan rumahan Indonesia autentik</p>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border-subtle/60 pt-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]-->                        <span
+                            itemprop="aggregateRating"
+                            itemscope
+                            itemtype="https://schema.org/AggregateRating"
+                            class="inline-flex items-center gap-1 font-bold text-body"
+                            aria-label="Rating 4.0 dari 5 bintang (1 ulasan)"
+                        >
+                            <meta itemprop="ratingValue" content="4.0">
+                            <meta itemprop="bestRating" content="5">
+                            <meta itemprop="ratingCount" content="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            4.0
+                            <span class="font-normal text-muted">(1)</span>
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+
+                <div class="flex items-center gap-2">
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    <span class="hidden items-center text-xs font-bold text-primary group-hover:translate-x-1 transition-transform sm:inline-flex" aria-hidden="true">
+                        Buka →
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-8">
+                        <!--[if BLOCK]><![endif]-->    <nav role="navigation" aria-label="Pagination" class="flex items-center justify-center gap-2">
+        <!--[if BLOCK]><![endif]-->            <span class="rounded-full px-4 py-2 text-sm text-muted/50">Sebelumnya</span>
+        <!--[if ENDBLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]-->            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            <!--[if BLOCK]><![endif]-->                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <span class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white">1</span>
+                    <!--[if ENDBLOCK]><![endif]-->                                    <!--[if BLOCK]><![endif]-->                        <button
+                            type="button"
+                            wire:click="gotoPage(2, 'page')"
+                            class="landing-interactive rounded-full border border-border-subtle bg-surface-raised px-4 py-2 text-sm font-semibold text-body transition hover:border-primary hover:text-primary"
+                        >
+                            2
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->            <!--[if ENDBLOCK]><![endif]-->        <!--[if ENDBLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]-->            <button
+                type="button"
+                wire:click="nextPage('page')"
+                wire:loading.attr="disabled"
+                class="landing-interactive rounded-full border border-border-subtle bg-surface-raised px-4 py-2 text-sm font-semibold text-body transition hover:border-primary hover:text-primary"
+            >
+                Berikutnya
+            </button>
+        <!--[if ENDBLOCK]><![endif]-->    </nav>
+<!--[if ENDBLOCK]><![endif]-->
+                    </div>
+                <!--[if ENDBLOCK]><![endif]-->            </section>
+        </div>
+
+        
+        <section aria-label="Penawaran Spesial & Peta Lokasi" class="directory-split-banner mb-10">
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-stretch">
+        
+        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-surface-raised p-6 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
+            <!--[if BLOCK]><![endif]-->                <img
+                    src="https://images.unsplash.com/photo-1603133872878-684f208fb274?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                    alt="Nasi Goreng Spesial"
+                    class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                >
+                <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/40"></div>
+            <!--[if ENDBLOCK]><![endif]-->
+            <div class="relative z-10">
+                <span class="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 backdrop-blur-md border border-primary/30 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
+                    Baru!
+                </span>
+
+                <h3 class="mt-3 font-display text-xl sm:text-2xl font-bold leading-snug text-white">
+                    Nasi Goreng Spesial
+                </h3>
+
+                <p class="mt-2 text-xs sm:text-sm leading-relaxed text-white/80">
+                    Telur matang, ayam suwir, dan sambal pedas khas dapur kami. Porsi hangat siap dinikmati.
+                </p>
+            </div>
+
+            <div class="relative z-10 mt-6 pt-2">
+                <!--[if BLOCK]><![endif]-->                    <a
+                        href="/resto-demo/menu"
+                        class="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-primary-dark transition"
+                    >
+                        <span>Lihat menu</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </a>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+
+        
+        <div class="hidden lg:flex flex-col h-full min-w-0">
+            <div class="directory-map customer-card overflow-hidden ring-1 ring-[color:var(--border-subtle)] shadow-md transition-shadow hidden lg:block">
+    <div class="flex items-center justify-between gap-3 border-b border-border-subtle/80 bg-surface-muted/60 px-5 py-3.5">
+        <div class="flex items-center gap-2.5">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </span>
+            <div>
+                <h2 class="text-sm font-bold text-body">Peta restoran</h2>
+                <p class="text-xs text-muted">
+                    <!--[if BLOCK]><![endif]-->                        Pin dari lokasi outlet default
+                    <!--[if ENDBLOCK]><![endif]-->                </p>
+            </div>
+        </div>
+        <button
+            type="button"
+                            x-on:click="$dispatch('request-directory-location')"
+                        class="rounded-lg px-3.5 py-1.5 text-xs font-semibold ring-1 transition shadow-sm bg-surface-raised text-body ring-[color:var(--border-subtle)] hover:bg-surface-muted"
+        >
+            Gunakan lokasi saya
+        </button>
+    </div>
+    <div id="directory-map-desktop" class="directory-map-canvas w-full h-56 md:h-64 lg:h-72"></div>
+</div>
+        </div>
+    </div>
+</section>
+
+        
+                <!--[if BLOCK]><![endif]-->            <div class="mb-12 grid gap-6 lg:grid-cols-12 items-stretch">
+                <div class="min-w-0 lg:col-span-8">
+                    <div class="popular-dishes-container">
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
+        <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Menu Populer</span>
+            <h2 class="text-lg font-bold text-body font-display sm:text-xl">Yang Lagi Hits</h2>
+        </div>
+
+        <!--[if BLOCK]><![endif]-->            <a
+                href="http://walk-in-resto.test/daftar-menu"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover transition group/btn"
+                id="link-all-menus"
+            >
+                <span>Lihat Semua Menu</span>
+                <svg class="h-3.5 w-3.5 transition group-hover/btn:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </a>
+        <!--[if ENDBLOCK]><![endif]-->    </div>
+
+    <!--[if BLOCK]><![endif]-->        <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            <!--[if BLOCK]><![endif]-->                                <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Nasi Goreng"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]-->                            <span class="absolute top-2 left-2 rounded-lg bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+                                -20%
+                            </span>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Nasi Goreng
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 28.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Es Teh Manis"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Es Teh Manis
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 8.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Mie Goreng"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Mie Goreng
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 25.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Ayam Bakar"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Ayam Bakar
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 32.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1529042410759-befb1204b916?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Sate Ayam"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Sate Ayam
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 35.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1622597467836-fbc0e840eaff?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Es Jeruk"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Es Jeruk
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 12.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                                            <a
+                    href="http://walk-in-resto.test/resto-demo"
+                    class="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl bg-surface-raised p-2.5 ring-1 ring-[color:var(--border-subtle)] shadow-xs hover:shadow-md hover:ring-primary/40 transition duration-200"
+                    title="Kunjungi Resto Demo"
+                >
+                    <div class="relative aspect-square overflow-hidden rounded-xl bg-surface-muted">
+                        <!--[if BLOCK]><![endif]-->                            <img
+                                src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                                alt="Kopi Susu"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.classList.add('hidden');if(this.nextElementSibling){this.nextElementSibling.classList.remove('hidden');}"
+                            >
+                            <div class="hidden flex h-full w-full items-center justify-center bg-surface-muted text-muted/30">
+                                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </div>
+                        <!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="mt-2.5 flex min-w-0 flex-1 flex-col justify-between">
+                        <div class="min-w-0">
+                            <!--[if BLOCK]><![endif]-->                                <p class="truncate text-[11px] font-medium text-muted">Resto Demo</p>
+                            <!--[if ENDBLOCK]><![endif]-->                            <h3 class="truncate font-display text-xs font-bold text-body sm:text-sm group-hover:text-primary transition-colors">
+                                Kopi Susu
+                            </h3>
+                        </div>
+
+                        <div class="mt-2 flex items-center justify-between gap-1 border-t border-border-subtle/50 pt-2 min-w-0">
+                            <span class="truncate text-xs font-bold text-primary sm:text-sm">Rp 18.000</span>
+                            <span class="shrink-0 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] font-semibold text-muted group-hover:text-primary transition">
+                                <span>Resto</span>
+                                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+    <!--[if ENDBLOCK]><![endif]--></div>
+                </div>
+                <div class="min-w-0 lg:col-span-4 flex flex-col">
+                    <div class="b2b-callout-card group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-gradient-to-br from-surface-raised via-surface-section to-surface-muted p-5 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
+    <div class="relative z-10">
+        <span class="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
+            Untuk Pelaku Bisnis Kuliner
+        </span>
+
+        <h3 class="mt-4 font-display text-xl sm:text-2xl font-bold text-body leading-snug">
+            Sistem Walk-In Cerdas: QR Meja, KDS & Kasir POS
+        </h3>
+
+        <p class="mt-2.5 text-xs sm:text-sm leading-relaxed text-muted">
+            Tingkatkan efisiensi dan omzet restoran Anda. Tamu duduk, scan stiker QR di meja, langsung pesan tanpa antre, dan pesanan otomatis masuk ke layar dapur.
+        </p>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium text-body">
+            <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
+                <span>Self-Order QR Meja</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
+                <span>Kitchen Display (KDS)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
+                <span>Kasir & Laporan Omzet</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
+                <span>CRM & Kepuasan Tamu</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative z-10 mt-6 pt-2">
+        <a
+            href="http://walk-in-resto.test/daftar"
+            class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary to-primary-dark px-5 py-2.5 text-xs font-bold text-white shadow-md hover:from-primary-dark hover:to-primary-dark transition"
+        >
+            <span>Daftarkan restoran</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+        </a>
+    </div>
+</div>
+                </div>
+            </div>
+        <!--[if ENDBLOCK]><![endif]-->
+        
+        <!--[if BLOCK]><![endif]-->    <section aria-label="Artikel & Tips Kuliner" class="directory-blog-highlights mb-12">
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Artikel & Tips Kuliner</span>
+                <h2 class="text-lg font-bold text-body font-display sm:text-xl md:text-2xl">Jelajahi Cerita di Balik Rasa</h2>
+            </div>
+            <a
+                href="http://walk-in-resto.test/id/blog"
+                class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+            >
+                <span>Lihat Semua Artikel</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <!--[if BLOCK]><![endif]-->                <article class="blog-card group relative flex min-w-0 flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
+                    <a href="http://walk-in-resto.test/id/blog/tren-sambal-nusantara-2026-matah-gami" class="block">
+                        <div class="blog-card-media relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
+                            <!--[if BLOCK]><![endif]-->                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/30 transition-all duration-500 group-hover:scale-105 group-hover:text-primary/50 group-hover:from-surface-muted group-hover:to-primary/5">
+                                    <svg class="h-8 w-8 transition-transform duration-500 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                </div>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="absolute top-2.5 left-2.5 rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                                    Kuliner Nusantara
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="mt-3">
+                            <h3 class="blog-card-title line-clamp-2 font-display text-sm font-bold text-body group-hover:text-primary transition-colors duration-200 leading-snug">
+                                Tren Sambal Nusantara 2026: Dari Matah Hingga Sambal Gami Bakar
+                            </h3>
+
+                            <!--[if BLOCK]><![endif]-->                                <p class="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+                                    Melihat evolusi sambal tradisional di kalangan pecinta kuliner pedas nusantara.
+                                </p>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </a>
+
+                    <div class="mt-3 flex items-center justify-between border-t border-border-subtle/50 pt-2.5 text-[11px] text-muted transition-colors duration-300 group-hover:border-primary/20">
+                        <span>26 Sep 2026</span>
+                        <span class="inline-flex items-center gap-1 font-medium transition-colors duration-300 group-hover:text-primary">
+                            <span>5 min baca</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </article>
+                            <article class="blog-card group relative flex min-w-0 flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
+                    <a href="http://walk-in-resto.test/id/blog/racikan-mocktail-buah-segar-laris-manis-siang-hari" class="block">
+                        <div class="blog-card-media relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
+                            <!--[if BLOCK]><![endif]-->                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/30 transition-all duration-500 group-hover:scale-105 group-hover:text-primary/50 group-hover:from-surface-muted group-hover:to-primary/5">
+                                    <svg class="h-8 w-8 transition-transform duration-500 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                </div>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="absolute top-2.5 left-2.5 rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                                    Resep &amp; Inovasi Menu
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="mt-3">
+                            <h3 class="blog-card-title line-clamp-2 font-display text-sm font-bold text-body group-hover:text-primary transition-colors duration-200 leading-snug">
+                                Racikan Mocktail Buah Segar yang Laris Manis di Jam Panas Terik Siang Hari
+                            </h3>
+
+                            <!--[if BLOCK]><![endif]-->                                <p class="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+                                    Paduan sirup rempah dingin, soda, dan ekstrak buah tropis yang memberikan margin kotor di atas 70%.
+                                </p>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </a>
+
+                    <div class="mt-3 flex items-center justify-between border-t border-border-subtle/50 pt-2.5 text-[11px] text-muted transition-colors duration-300 group-hover:border-primary/20">
+                        <span>19 Sep 2026</span>
+                        <span class="inline-flex items-center gap-1 font-medium transition-colors duration-300 group-hover:text-primary">
+                            <span>3 min baca</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </article>
+                            <article class="blog-card group relative flex min-w-0 flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
+                    <a href="http://walk-in-resto.test/id/blog/standar-higienitas-dapur-profesional-checklist-harian" class="block">
+                        <div class="blog-card-media relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
+                            <!--[if BLOCK]><![endif]-->                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/30 transition-all duration-500 group-hover:scale-105 group-hover:text-primary/50 group-hover:from-surface-muted group-hover:to-primary/5">
+                                    <svg class="h-8 w-8 transition-transform duration-500 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                </div>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="absolute top-2.5 left-2.5 rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                                    Tips Bisnis Resto
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="mt-3">
+                            <h3 class="blog-card-title line-clamp-2 font-display text-sm font-bold text-body group-hover:text-primary transition-colors duration-200 leading-snug">
+                                Standar Higienitas Dapur Profesional: Panduan Praktis Checklist Harian
+                            </h3>
+
+                            <!--[if BLOCK]><![endif]-->                                <p class="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+                                    Checklist sanitasi yang mudah diterapkan chef dan kru kitchen untuk menjaga standar kebersihan tertinggi.
+                                </p>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </a>
+
+                    <div class="mt-3 flex items-center justify-between border-t border-border-subtle/50 pt-2.5 text-[11px] text-muted transition-colors duration-300 group-hover:border-primary/20">
+                        <span>18 Sep 2026</span>
+                        <span class="inline-flex items-center gap-1 font-medium transition-colors duration-300 group-hover:text-primary">
+                            <span>4 min baca</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </article>
+                            <article class="blog-card group relative flex min-w-0 flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
+                    <a href="http://walk-in-resto.test/id/blog/membangun-vibe-aesthetic-kafe-minimalis-ramah-konten" class="block">
+                        <div class="blog-card-media relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
+                            <!--[if BLOCK]><![endif]-->                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface-muted to-surface-section text-muted/30 transition-all duration-500 group-hover:scale-105 group-hover:text-primary/50 group-hover:from-surface-muted group-hover:to-primary/5">
+                                    <svg class="h-8 w-8 transition-transform duration-500 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                </div>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="absolute top-2.5 left-2.5 rounded-lg bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                                    Tren Kafe &amp; Kopi
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="mt-3">
+                            <h3 class="blog-card-title line-clamp-2 font-display text-sm font-bold text-body group-hover:text-primary transition-colors duration-200 leading-snug">
+                                Membangun Vibe Aesthetic Kafe Minimalis yang Ramah Konten TikTok &amp; Instagram
+                            </h3>
+
+                            <!--[if BLOCK]><![endif]-->                                <p class="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+                                    Ciptakan spot foto instagenic dan alur duduk yang membuat pengunjung betah nongkrong sekaligus mempromosikan tempat Anda secara organik.
+                                </p>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </a>
+
+                    <div class="mt-3 flex items-center justify-between border-t border-border-subtle/50 pt-2.5 text-[11px] text-muted transition-colors duration-300 group-hover:border-primary/20">
+                        <span>14 Sep 2026</span>
+                        <span class="inline-flex items-center gap-1 font-medium transition-colors duration-300 group-hover:text-primary">
+                            <span>4 min baca</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transform transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </article>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+    </section>
+<!--[if ENDBLOCK]><![endif]-->    </div>
+
+    <footer role="contentinfo" class="directory-footer mt-auto border-t border-border-subtle/80 bg-surface-section">
+    <div class="landing-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-16">
+        <div class="min-w-0 sm:col-span-2 lg:col-span-6 lg:pr-4">
+            <a href="http://walk-in-resto.test" class="group inline-flex min-w-0 items-center gap-2.5">
+                <!--[if BLOCK]><![endif]-->                    <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-dark text-white shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M9.384 3.576a1 1 0 011.232 0l6.5 4.75A1 1 0 0117 9.25v6.5a1 1 0 01-1.384.926L10 15.382l-5.616 1.294A1 1 0 013 15.75v-6.5a1 1 0 01.384-.924l6.5-4.75z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <span class="truncate font-display text-base font-bold text-body group-hover:text-primary transition-colors">RestoTerdekat</span>
+                <!--[if ENDBLOCK]><![endif]-->            </a>
+            <!--[if BLOCK]><![endif]-->                <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted">RestoTerdekat membantu tamu menemukan restoran terdekat dan membantu resto menerima tamu walk-in.</p>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+
+        <div class="lg:col-span-2">
+            <p class="text-xs font-bold uppercase tracking-wider text-primary">Jelajah</p>
+            <ul class="mt-4 space-y-2.5 text-sm text-muted">
+                <li>
+                    <a href="http://walk-in-resto.test" class="hover:text-primary transition-colors">Beranda</a>
+                </li>
+                <li>
+                    <a href="http://walk-in-resto.test/daftar-menu" class="hover:text-primary transition-colors">Daftar Menu</a>
+                </li>
+                <li>
+                    <a href="http://walk-in-resto.test/id/blog" class="hover:text-primary transition-colors">Blog</a>
+                </li>
+                <li>
+                    <a href="http://walk-in-resto.test/tentang" class="hover:text-primary transition-colors">Tentang kami</a>
+                </li>
+                <!--[if BLOCK]><![endif]-->                    <li>
+                        <a href="http://walk-in-resto.test/daftar" class="hover:text-primary transition-colors">Daftarkan restoran</a>
+                    </li>
+                <!--[if ENDBLOCK]><![endif]-->            </ul>
+        </div>
+
+        <!--[if BLOCK]><![endif]-->            <div class="lg:col-span-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Kontak</p>
+                <ul class="mt-4 space-y-2.5 text-sm leading-relaxed text-muted">
+                    <!--[if BLOCK]><![endif]-->                        <li>
+                            <a href="mailto:founder@restoterdekat.id" class="hover:text-primary transition-colors">founder@restoterdekat.id</a>
+                        </li>
+                    <!--[if ENDBLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                </ul>
+            </div>
+        <!--[if ENDBLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]-->            <div class="lg:col-span-2">
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <p class="text-xs font-bold uppercase tracking-wider text-primary">Kebijakan</p>
+                    <ul class="mt-4 space-y-2.5 text-sm text-muted">
+                        <li>
+                            <a href="http://walk-in-resto.test/syarat-dan-ketentuan" class="hover:text-primary transition-colors">Syarat & ketentuan</a>
+                        </li>
+                        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    </ul>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        <!--[if ENDBLOCK]><![endif]-->    </div>
+
+    <div class="border-t border-border-subtle/80">
+        <p class="landing-container py-5 text-center text-xs text-muted">
+            © 2026 RestoTerdekat. Semua hak dilindungi.
+        </p>
+    </div>
+</footer>
+
+    <div
+    x-data="{ open: false }"
+    x-on:open-directory-filters.window="open = true"
+    x-on:keydown.escape.window="open = false"
+    x-cloak
+>
+    <div
+        x-show="open"
+        x-transition.opacity
+        class="fixed inset-0 z-50 bg-black/45 lg:hidden"
+        x-on:click="open = false"
+    ></div>
+
+    <div
+        x-show="open"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="translate-y-full"
+        x-transition:enter-end="translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="translate-y-0"
+        x-transition:leave-end="translate-y-full"
+        class="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-[1.75rem] bg-surface-base p-5 shadow-[var(--card-shadow-hover)] lg:hidden"
+    >
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <h2 class="text-lg font-bold text-body">Filter</h2>
+            <button type="button" x-on:click="open = false" class="rounded-lg bg-surface-muted px-3 py-1 text-sm font-semibold text-body">Tutup</button>
+        </div>
+
+        <aside
+    aria-label="Filter Pencarian Restoran"
+    class="directory-filter customer-card relative z-10 overflow-visible p-5 ring-1 ring-[color:var(--border-subtle)] shadow-sm"
+>
+    <div class="mb-5 flex items-center justify-between gap-3 border-b border-border-subtle/70 pb-3.5">
+        <div class="flex items-center gap-2">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-dark text-white shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+            </span>
+            <h2 class="font-display text-base font-bold text-body">Filter</h2>
+        </div>
+        <button
+            type="button"
+            wire:click="resetFilters"
+            class="inline-flex items-center gap-1 rounded-lg bg-surface-muted px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/10 transition duration-200"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Reset
+        </button>
+    </div>
+
+    <div class="space-y-5">
+        <div>
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Urutkan</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="newest"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Terbaru</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="rating"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Rating tertinggi</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-radio-box">
+                                <input
+                                    type="radio"
+                                    wire:model.live="sort"
+                                    value="name"
+                                    class="sr-only"
+                                >
+                                <span class="filter-radio-dot"></span>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Nama A–Z</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <div class="mb-3 flex items-center justify-between gap-2">
+                <p class="text-xs font-bold uppercase tracking-wider text-muted whitespace-nowrap">Jarak Maksimal</p>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <!--[if BLOCK]><![endif]-->                        <span class="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                            Nonaktif
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+            </div>
+
+            <!--[if BLOCK]><![endif]-->                <div class="mb-3 rounded-xl bg-amber-500/5 p-2.5 border border-amber-500/20 text-[11px] leading-relaxed text-muted flex items-start gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-amber-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <span>Aktifkan izin lokasi untuk filter radius jarak.</span>
+                        <button type="button" x-on:click="$dispatch('request-directory-location')" class="block font-bold text-primary hover:underline mt-0.5">Izinkan Lokasi →</button>
+                    </div>
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->
+            
+            <div class="mb-3 space-y-1.5">
+                
+                <button
+                    type="button"
+                    wire:click="$set('maxDistanceKm', null)"
+                    disabled                    class="w-full flex items-center justify-center gap-1.5 rounded-lg py-1.5 px-3 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                    <span>Semua Jarak</span>
+                </button>
+
+                
+                <div class="grid grid-cols-4 gap-1.5">
+                    <!--[if BLOCK]><![endif]-->                                                <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 5)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            5 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 10)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            10 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 25)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            25 km
+                        </button>
+                                                                    <button
+                            type="button"
+                            wire:click="$set('maxDistanceKm', 50)"
+                            disabled                            class="flex items-center justify-center rounded-lg py-1.5 text-xs font-semibold transition shadow-xs bg-surface-muted text-muted hover:bg-surface-raised hover:text-body ring-1 ring-border-subtle opacity-50 cursor-not-allowed"
+                        >
+                            50 km
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+            </div>
+
+                        <div
+                class="px-1 py-1"
+                x-data="{
+                    fillPercent: 100,
+                    sliderVal: 50,
+                    init() {
+                        this.$watch('$wire.maxDistanceKm', (val) => {
+                            if (val === null || val === undefined || val === '') {
+                                this.sliderVal = 50;
+                                this.fillPercent = 100;
+                            } else {
+                                const num = Number(val);
+                                this.sliderVal = num;
+                                this.fillPercent = Math.max(0, Math.min(100, ((num - 1) / 49) * 100));
+                            }
+                        });
+                    },
+                    handleInput(e) {
+                        const val = Number(e.target.value);
+                        this.sliderVal = val;
+                        this.fillPercent = Math.max(0, Math.min(100, ((val - 1) / 49) * 100));
+                    },
+                    handleChange(e) {
+                        const val = Number(e.target.value);
+                        $wire.set('maxDistanceKm', val);
+                    }
+                }"
+            >
+                <input
+                    type="range"
+                    min="1"
+                    max="50"
+                    step="1"
+                    :value="sliderVal"
+                    value="50"
+                    disabled                    class="directory-range-slider"
+                    aria-label="Filter radius jarak"
+                    x-on:input="handleInput($event)"
+                    x-on:input.debounce.300ms="handleChange($event)"
+                    x-on:change="handleChange($event)"
+                    :style="`--slider-fill: ${fillPercent}%`"
+                    style="--slider-fill: 100%"
+                >
+            </div>
+            <div class="mt-1 flex items-center justify-between px-1 text-[11px] font-semibold text-muted">
+                <span>1 km</span>
+                <span class="text-[10px] text-muted/60">25 km</span>
+                <span>50 km</span>
+            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Kategori</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="1"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Indonesia</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="2"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Kopi &amp; Kafe</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="3"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Jepang</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="4"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Cepat Saji</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="categoryIds"
+                                    value="5"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Bar &amp; Lounge</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+
+        <div class="border-t border-border-subtle/70 pt-4">
+            <p class="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">Fasilitas</p>
+            <div class="space-y-1">
+                <!--[if BLOCK]><![endif]-->                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="wifi"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Wifi</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="parking"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Parkir</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="musholla"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Musholla</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="child_friendly"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Ramah Anak</span>
+                        </div>
+                    </label>
+                                    <label class="filter-option-row group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="filter-checkbox-box">
+                                <input
+                                    type="checkbox"
+                                    wire:model.live="facilityFilters"
+                                    value="outdoor"
+                                    class="sr-only"
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="filter-checkbox-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            <span class="filter-option-label truncate text-sm text-body">Outdoor</span>
+                        </div>
+                    </label>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+    </div>
+</aside>
+
+    </div>
+</div>
+
+    <div
+        x-data="{ open: false }"
+        x-on:open-directory-map.window="open = true; $nextTick(() => window.refreshDirectoryMap?.('directory-map-mobile', true))"
+        x-on:keydown.escape.window="open = false"
+        x-cloak
+    >
+        <div x-show="open" x-transition.opacity class="fixed inset-0 z-50 bg-black/50 lg:hidden" x-on:click="open = false"></div>
+        <div
+            x-show="open"
+            x-transition
+            class="fixed inset-x-3 top-10 bottom-10 z-50 overflow-hidden rounded-[1.5rem] bg-surface-base shadow-[var(--card-shadow-hover)] lg:hidden"
+        >
+            <div class="flex items-center justify-between border-b border-border-subtle px-4 py-3">
+                <h2 class="text-base font-bold text-body">Peta restoran</h2>
+                <button type="button" x-on:click="open = false" class="rounded-lg bg-surface-muted px-3 py-1 text-sm font-semibold">Tutup</button>
+            </div>
+            <div class="directory-map customer-card overflow-hidden ring-1 ring-[color:var(--border-subtle)] shadow-md transition-shadow h-full">
+    <div class="flex items-center justify-between gap-3 border-b border-border-subtle/80 bg-surface-muted/60 px-5 py-3.5">
+        <div class="flex items-center gap-2.5">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </span>
+            <div>
+                <h2 class="text-sm font-bold text-body">Peta restoran</h2>
+                <p class="text-xs text-muted">
+                    <!--[if BLOCK]><![endif]-->                        Pin dari lokasi outlet default
+                    <!--[if ENDBLOCK]><![endif]-->                </p>
+            </div>
+        </div>
+        <button
+            type="button"
+                            x-on:click="$dispatch('request-directory-location')"
+                        class="rounded-lg px-3.5 py-1.5 text-xs font-semibold ring-1 transition shadow-sm bg-surface-raised text-body ring-[color:var(--border-subtle)] hover:bg-surface-muted"
+        >
+            Gunakan lokasi saya
+        </button>
+    </div>
+    <div id="directory-map-mobile" class="directory-map-canvas w-full h-full min-h-[20rem]"></div>
+</div>
+        </div>
+    </div>
+</div>
+                <script>
+    window.readDirectoryMapPayload = window.readDirectoryMapPayload || function () {
+        const pinsHost = document.getElementById('directory-map-pins');
+        const userHost = document.getElementById('directory-user-location');
+        let pins = [];
+        let userLocation = null;
+
+        if (pinsHost) {
+            try {
+                pins = JSON.parse(pinsHost.textContent || '[]');
+            } catch (error) {
+                pins = [];
+            }
+        }
+
+        if (userHost) {
+            try {
+                userLocation = JSON.parse(userHost.textContent || 'null');
+            } catch (error) {
+                userLocation = null;
+            }
+        }
+
+        return { pins, userLocation };
+    };
+
+    window.initDirectoryMap = window.initDirectoryMap || function (mapId, pins, options = {}) {
+        if (! window.L || ! document.getElementById(mapId)) {
+            return;
+        }
+
+        const host = document.getElementById(mapId);
+        const force = options.force === true;
+        const userLocation = options.userLocation ?? null;
+
+        if (host.dataset.initialized === '1' && ! force) {
+            return;
+        }
+
+        if (host._leafletMap) {
+            host._leafletMap.remove();
+            host._leafletMap = null;
+            host._userMarker = null;
+        }
+
+        const validPins = (pins || []).filter((pin) => pin.lat && pin.lng);
+        const hasUser = userLocation && userLocation.lat && userLocation.lng;
+
+        // Batas wilayah kepulauan Indonesia (Sabang hingga Merauke)
+        const indonesiaBounds = [[-11.0, 95.0], [6.0, 141.0]];
+        const indonesiaCenter = [-2.5489, 118.0149];
+        const indonesiaDefaultZoom = 5;
+
+        const map = L.map(mapId, { scrollWheelZoom: false });
+        host._leafletMap = map;
+        host.dataset.initialized = '1';
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap',
+        }).addTo(map);
+
+        validPins.forEach((pin) => {
+            L.marker([pin.lat, pin.lng])
+                .addTo(map)
+                .bindPopup(`<strong>${pin.name}</strong><br><a href="${pin.url}">Lihat restoran</a>`);
+        });
+
+        if (hasUser) {
+            host._userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+                radius: 8,
+                color: '#2563eb',
+                weight: 2,
+                fillColor: '#3b82f6',
+                fillOpacity: 0.95,
+            })
+                .addTo(map)
+                .bindPopup('Lokasi Anda');
+
+            const bounds = L.latLngBounds([[userLocation.lat, userLocation.lng]]);
+            validPins.forEach((pin) => bounds.extend([pin.lat, pin.lng]));
+
+            if (bounds.isValid()) {
+                map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
+            }
+        } else {
+            map.setView(indonesiaCenter, indonesiaDefaultZoom);
+            map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+        }
+
+        setTimeout(() => {
+            map.invalidateSize();
+            if (! hasUser) {
+                map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+            }
+        }, 200);
+    };
+
+    window.refreshDirectoryMap = window.refreshDirectoryMap || function (mapId, force = false) {
+        const payload = window.readDirectoryMapPayload();
+        window.initDirectoryMap(mapId, payload.pins, {
+            userLocation: payload.userLocation,
+            force,
+        });
+    };
+
+    window.directoryLocationSkipKey = window.directoryLocationSkipKey || 'directory-skip-location';
+
+    window.markDirectoryLocationSkipped = window.markDirectoryLocationSkipped || function () {
+        try {
+            sessionStorage.setItem(window.directoryLocationSkipKey, '1');
+        } catch (error) {}
+    };
+
+    window.clearDirectoryLocationSkip = window.clearDirectoryLocationSkip || function () {
+        try {
+            sessionStorage.removeItem(window.directoryLocationSkipKey);
+        } catch (error) {}
+    };
+
+    const getDirectoryComponent = () => {
+        try {
+            return (typeof Livewire !== 'undefined' && typeof Livewire.find === 'function') ? window.Livewire.find('RtMyen9mNupHkxJhq6dk') : null;
+        } catch (e) {
+            return null;
+        }
+    };
+
+    window.requestDirectoryLocation = window.requestDirectoryLocation || function () {
+        const component = getDirectoryComponent();
+        window.clearDirectoryLocationSkip();
+
+        if (! component) {
+            return;
+        }
+
+        if (! window.isSecureContext) {
+            if (typeof component.reportLocationInsecure === 'function') {
+                component.reportLocationInsecure();
+            }
+            return;
+        }
+
+        if (! navigator.geolocation) {
+            if (typeof component.reportLocationUnsupported === 'function') {
+                component.reportLocationUnsupported();
+            }
+            return;
+        }
+
+        if (typeof component.beginLocationRequest === 'function') {
+            component.beginLocationRequest();
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                if (typeof component.setUserLocation === 'function') {
+                    component.setUserLocation(
+                        position.coords.latitude,
+                        position.coords.longitude,
+                        position.coords.accuracy,
+                    );
+                }
+            },
+            (error) => {
+                if (error.code === error.PERMISSION_DENIED) {
+                    if (typeof component.clearUserLocation === 'function') {
+                        component.clearUserLocation('denied');
+                    }
+                    return;
+                }
+
+                if (typeof component.reportLocationError === 'function') {
+                    component.reportLocationError();
+                }
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+        );
+    };
+
+    window.bootstrapDirectoryLocation = window.bootstrapDirectoryLocation || function () {
+        try {
+            if (sessionStorage.getItem(window.directoryLocationSkipKey) === '1') {
+                return;
+            }
+        } catch (error) {}
+
+        const component = getDirectoryComponent();
+        if (! component) {
+            return;
+        }
+
+        if (! window.isSecureContext) {
+            if (typeof component.reportLocationInsecure === 'function') {
+                component.reportLocationInsecure();
+            }
+            return;
+        }
+
+        if (! navigator.geolocation) {
+            if (typeof component.reportLocationUnsupported === 'function') {
+                component.reportLocationUnsupported();
+            }
+            return;
+        }
+
+        // Langsung minta izin lokasi ke pengguna di lingkungan HTTPS / Secure Context
+        if (navigator.permissions?.query) {
+            navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+                if (result.state === 'denied') {
+                    if (typeof component.clearUserLocation === 'function') {
+                        component.clearUserLocation('denied');
+                    }
+                    return;
+                }
+
+                // Status 'granted' atau 'prompt': langsung picu dialog izin lokasi browser
+                window.requestDirectoryLocation();
+            }).catch(() => {
+                window.requestDirectoryLocation();
+            });
+        } else {
+            window.requestDirectoryLocation();
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.refreshDirectoryMap('directory-map-desktop');
+        if (typeof Livewire !== 'undefined' && Livewire.find) {
+            window.bootstrapDirectoryLocation();
+        }
+    });
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.hook('morph.updated', ({ component }) => {
+            if (component.name !== 'landing.restaurant-directory') {
+                return;
+            }
+
+            window.refreshDirectoryMap('directory-map-desktop', true);
+        });
+
+        setTimeout(() => {
+            window.bootstrapDirectoryLocation();
+        }, 100);
+    });
+</script>
+        <!-- Livewire Scripts -->
+<script src="http://walk-in-resto.test/livewire-5a4f5b12/livewire.js?id=2d027ffb"   data-csrf="YMSB0rG5YL1FEAMNRKkp43Edwlav0HLYpU8NB9eU" data-module-url="http://walk-in-resto.test/livewire-5a4f5b12" data-update-uri="http://walk-in-resto.test/livewire-5a4f5b12/update" data-navigate-once="true"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    </body>
+</html>

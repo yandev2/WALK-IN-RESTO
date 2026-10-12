@@ -93,7 +93,7 @@
         @stack('head')
         <x-ads.head />
     </head>
-    <body class="min-h-screen bg-surface-base text-body antialiased transition-colors duration-300">
+    <body class="min-h-screen w-full overflow-x-hidden bg-surface-base text-body antialiased transition-colors duration-300">
         @isset($slot)
             {{ $slot }}
         @else

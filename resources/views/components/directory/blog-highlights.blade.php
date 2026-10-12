@@ -4,14 +4,14 @@
 
 @if (! empty($articles))
     <section aria-label="Artikel & Tips Kuliner" class="directory-blog-highlights mb-12">
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div>
+        <div class="mb-5 flex flex-wrap items-end justify-between gap-2.5 sm:gap-3">
+            <div class="min-w-0">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Artikel & Tips Kuliner</span>
                 <h2 class="text-lg font-bold text-body font-display sm:text-xl md:text-2xl">Jelajahi Cerita di Balik Rasa</h2>
             </div>
             <a
                 href="{{ route('blog.index', ['locale' => app()->getLocale() ?: 'id']) }}"
-                class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+                class="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
             >
                 <span>Lihat Semua Artikel</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -22,7 +22,7 @@
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ($articles as $article)
-                <article class="blog-card group relative flex flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
+                <article class="blog-card group relative flex min-w-0 flex-col justify-between overflow-hidden !rounded-[1.35rem] !p-3.5 border border-border-subtle hover:border-primary/50 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 ease-out">
                     <a href="{{ $article['url'] }}" class="block">
                         <div class="blog-card-media relative aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
                             @if ($article['image_url'])

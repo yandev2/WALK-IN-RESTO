@@ -7,13 +7,13 @@
     $ctaLabel = $home['cta_register_label'] ?? 'Daftarkan Restoran';
 @endphp
 
-<div class="b2b-callout-card group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-gradient-to-br from-surface-raised via-surface-section to-surface-muted p-6 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
+<div class="b2b-callout-card group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-gradient-to-br from-surface-raised via-surface-section to-surface-muted p-4 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
     <div class="relative z-10">
         <span class="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 border border-primary/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
             Untuk Pelaku Bisnis Kuliner
         </span>
 
-        <h3 class="mt-4 font-display text-xl sm:text-2xl font-bold text-body leading-snug">
+        <h3 class="mt-3 sm:mt-4 font-display text-lg sm:text-2xl font-bold text-body leading-snug">
             Sistem Walk-In Cerdas: QR Meja, KDS & Kasir POS
         </h3>
 
@@ -21,7 +21,7 @@
             Tingkatkan efisiensi dan omzet restoran Anda. Tamu duduk, scan stiker QR di meja, langsung pesan tanpa antre, dan pesanan otomatis masuk ke layar dapur.
         </p>
 
-        <div class="mt-4 grid grid-cols-2 gap-2 text-xs font-medium text-body">
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium text-body">
             <div class="flex items-center gap-2">
                 <span class="h-1.5 w-1.5 rounded-lg bg-emerald-500"></span>
                 <span>Self-Order QR Meja</span>

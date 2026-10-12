@@ -6,7 +6,7 @@
 <section aria-label="Penawaran Spesial & Peta Lokasi" class="directory-split-banner mb-10">
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-stretch">
         {{-- Promo Card (Kiri) --}}
-        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-surface-raised p-6 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
+        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-surface-raised p-5 sm:p-8 ring-1 ring-[color:var(--border-subtle)] shadow-sm">
             @if ($promo && filled($promo['image_url'] ?? null))
                 <img
                     src="{{ $promo['image_url'] }}"
@@ -63,7 +63,7 @@
         </div>
 
         {{-- Map Panel Card (Kanan) --}}
-        <div class="flex flex-col h-full">
+        <div class="flex flex-col h-full min-w-0">
             <x-directory.map-panel map-id="directory-map-desktop" :location-status="$locationStatus" />
         </div>
     </div>

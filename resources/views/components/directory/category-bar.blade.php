@@ -5,22 +5,22 @@
     $selectedId = count($categoryIds) === 1 ? $categoryIds[0] : null;
 @endphp
 
-<section aria-label="Kategori Kuliner" class="directory-category-bar mb-8">
-    <div class="mb-3.5 flex items-center justify-between gap-3">
-        <div>
+<section aria-label="Kategori Kuliner" class="directory-category-bar mb-6 sm:mb-8">
+    <div class="mb-3 flex items-center justify-between gap-2.5 sm:gap-3">
+        <div class="min-w-0">
             <span class="text-[11px] font-bold uppercase tracking-wider text-primary">Kategori</span>
-            <h2 class="text-lg font-bold text-body font-display sm:text-xl">Jelajahi Berdasarkan Kategori</h2>
+            <h2 class="text-base font-bold text-body font-display sm:text-xl truncate sm:overflow-visible">Jelajahi Berdasarkan Kategori</h2>
         </div>
         @if (count($categoryIds) > 0)
             <button type="button" wire:click="setCategoryFilter(null)"
-                class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition duration-200">
+                class="shrink-0 inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition duration-200">
                 Reset Filter
             </button>
         @endif
     </div>
 
     {{-- Text-Only Pills: Padat, Bersih, dan Responsif --}}
-    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+    <div class="flex w-full min-w-0 max-w-full items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none touch-pan-x">
         <button type="button" wire:click="setCategoryFilter(null)" @class([
             'shrink-0 rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer',
             'bg-primary text-white shadow-sm ring-1 ring-primary' => empty(

@@ -7,9 +7,9 @@
     $heroImageUrl = $home['hero_image_url'] ?? 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80';
 @endphp
 
-<section class="directory-hero relative isolate overflow-hidden bg-gradient-to-b from-surface-muted/50 via-surface-base to-surface-base border-b border-border-subtle/50 py-10 sm:py-14 lg:py-16">
+<section class="directory-hero relative isolate overflow-hidden bg-gradient-to-b from-surface-muted/50 via-surface-base to-surface-base border-b border-border-subtle/50 py-8 sm:py-12 lg:py-16">
     <div class="landing-container">
-        <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+        <div class="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
             {{-- Left Column: Copywriting & Headline --}}
             <div class="lg:col-span-7">
                 @if (filled($home['hero_eyebrow'] ?? null))
@@ -24,22 +24,22 @@
                     </div>
                 @endif
 
-                <h1 class="mt-4 font-display text-3xl font-extrabold leading-[1.15] tracking-tight text-body sm:text-4xl md:text-5xl">
+                <h1 class="mt-3 sm:mt-4 font-display text-2xl sm:text-4xl md:text-5xl font-extrabold leading-[1.15] tracking-tight text-body">
                     {!! \App\Models\PlatformSetting::heroTitleHtml($home) !!}
                 </h1>
 
                 @if (filled($home['hero_subtitle'] ?? null))
-                    <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:text-base md:text-lg">
+                    <p class="mt-3 sm:mt-4 max-w-xl text-xs sm:text-base md:text-lg leading-relaxed text-muted">
                         {{ $home['hero_subtitle'] }}
                     </p>
                 @else
-                    <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:text-base md:text-lg">
+                    <p class="mt-3 sm:mt-4 max-w-xl text-xs sm:text-base md:text-lg leading-relaxed text-muted">
                         Temukan restoran terbaik di sekitarmu, nikmati menu favorit, dan rasakan pengalaman kuliner yang lebih mudah dan menyenangkan.
                     </p>
                 @endif
 
                 {{-- Quick Value Props / Trust Badges --}}
-                <div class="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted sm:gap-6 sm:text-sm">
+                <div class="mt-5 sm:mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted sm:gap-6 sm:text-sm">
                     <div class="inline-flex items-center gap-2">
                         <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                             <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -70,9 +70,9 @@
             </div>
 
             {{-- Right Column: Appetizing Food Showcase Card --}}
-            <div class="hidden lg:col-span-5 lg:block">
-                <div class="group relative overflow-hidden rounded-[2rem] bg-surface-raised p-2 shadow-xl ring-1 ring-[color:var(--border-subtle)] transition-all duration-300 hover:shadow-2xl">
-                    <div class="relative aspect-[4/3] overflow-hidden rounded-[1.6rem]">
+            <div class="mt-6 lg:mt-0 lg:col-span-5">
+                <div class="group relative overflow-hidden rounded-[1.6rem] sm:rounded-[2rem] bg-surface-raised p-2 shadow-xl ring-1 ring-[color:var(--border-subtle)] transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative aspect-[16/10] sm:aspect-[4/3] overflow-hidden rounded-[1.3rem] sm:rounded-[1.6rem]">
                         <img
                             src="{{ $heroImageUrl }}"
                             alt="{{ strip_tags($home['hero_title'] ?? $home['site_name']) }}"
@@ -82,13 +82,13 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
                         {{-- Floating Tagline Overlay --}}
-                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                            <span class="inline-flex items-center gap-2 rounded-lg bg-black/70 backdrop-blur-md px-3.5 py-1.5 text-xs font-bold text-white shadow-md">
-                                <span class="h-2 w-2 rounded-lg bg-primary animate-pulse"></span>
+                        <div class="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg bg-black/70 backdrop-blur-md px-3 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-white shadow-md">
+                                <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-lg bg-primary animate-pulse"></span>
                                 Rasa Enak Jadi Lebih Dekat
                             </span>
-                            <span class="rounded-lg bg-white/20 backdrop-blur-md p-1.5 text-white">
-                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <span class="rounded-lg bg-white/20 backdrop-blur-md p-1 sm:p-1.5 text-white">
+                                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                                 </svg>
                             </span>

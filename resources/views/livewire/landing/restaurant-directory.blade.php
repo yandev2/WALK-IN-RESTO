@@ -1,12 +1,12 @@
 <div
-    class="directory-shell flex min-h-screen flex-col bg-surface-base"
+    class="directory-shell flex min-h-screen w-full overflow-x-hidden flex-col bg-surface-base"
     x-on:request-directory-location.window="window.requestDirectoryLocation?.()"
 >
     <x-directory.header :home="$home" />
 
     <x-directory.hero :home="$home" />
 
-    <div class="landing-container relative z-30 -mt-10 flex-1 pb-16">
+    <div class="landing-container w-full max-w-full min-w-0 relative z-30 mt-2 sm:-mt-6 lg:-mt-10 flex-1 pb-16">
         <x-directory.search-bar
             :categories="$this->categories"
             :category-ids="$categoryIds"
@@ -111,10 +111,10 @@
         @endphp
         @if (! empty($popularMenuItems) || $hasActiveFilters)
             <div class="mb-12 grid gap-6 lg:grid-cols-12 items-stretch">
-                <div class="lg:col-span-8">
+                <div class="min-w-0 lg:col-span-8">
                     <x-directory.popular-dishes :items="$popularMenuItems" :has-filters="$hasActiveFilters" />
                 </div>
-                <div class="lg:col-span-4 flex flex-col">
+                <div class="min-w-0 lg:col-span-4 flex flex-col">
                     <x-directory.b2b-banner :home="$home" />
                 </div>
             </div>
@@ -186,84 +186,183 @@
         return { pins, userLocation };
     };
 
-    window.initDirectoryMap = window.initDirectoryMap || function (mapId, pins, options = {}) {
-        if (! window.L || ! document.getElementById(mapId)) {
+    window._directoryMapDebounceTimers = window._directoryMapDebounceTimers || {};
+
+    window.initDirectoryMap = function (mapId, pins, options = {}) {
+        if (! window.L) {
             return;
         }
 
         const host = document.getElementById(mapId);
-        const force = options.force === true;
-        const userLocation = options.userLocation ?? null;
-
-        if (host.dataset.initialized === '1' && ! force) {
+        if (! host) {
             return;
         }
 
-        if (host._leafletMap) {
-            host._leafletMap.remove();
-            host._leafletMap = null;
-            host._userMarker = null;
-        }
-
+        const force = options.force === true;
+        const userLocation = options.userLocation ?? null;
         const validPins = (pins || []).filter((pin) => pin.lat && pin.lng);
-        const hasUser = userLocation && userLocation.lat && userLocation.lng;
+        const hasUser = !! (userLocation && userLocation.lat && userLocation.lng);
 
         // Batas wilayah kepulauan Indonesia (Sabang hingga Merauke)
         const indonesiaBounds = [[-11.0, 95.0], [6.0, 141.0]];
         const indonesiaCenter = [-2.5489, 118.0149];
         const indonesiaDefaultZoom = 5;
 
-        const map = L.map(mapId, { scrollWheelZoom: false });
-        host._leafletMap = map;
-        host.dataset.initialized = '1';
+        const safeApplyBounds = (mapInstance, bounds, fitOptions) => {
+            try {
+                if (mapInstance && mapInstance._mapPane && bounds) {
+                    mapInstance.fitBounds(bounds, fitOptions);
+                }
+            } catch (err) {}
+        };
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap',
-        }).addTo(map);
+        const safeSetView = (mapInstance, center, zoom) => {
+            try {
+                if (mapInstance && mapInstance._mapPane) {
+                    mapInstance.setView(center, zoom);
+                }
+            } catch (err) {}
+        };
 
-        validPins.forEach((pin) => {
-            L.marker([pin.lat, pin.lng])
-                .addTo(map)
-                .bindPopup(`<strong>${pin.name}</strong><br><a href="${pin.url}">Lihat restoran</a>`);
-        });
+        let map = host._leafletMap;
 
-        if (hasUser) {
-            host._userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-                radius: 8,
-                color: '#2563eb',
-                weight: 2,
-                fillColor: '#3b82f6',
-                fillOpacity: 0.95,
-            })
-                .addTo(map)
-                .bindPopup('Lokasi Anda');
-
-            const bounds = L.latLngBounds([[userLocation.lat, userLocation.lng]]);
-            validPins.forEach((pin) => bounds.extend([pin.lat, pin.lng]));
-
-            if (bounds.isValid()) {
-                map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
+        // Jika peta sudah ada dan sehat, perbarui layer pin tanpa merusak dan membuat ulang map instance
+        if (map && map._mapPane) {
+            if (host._markerGroup) {
+                host._markerGroup.clearLayers();
+            } else {
+                host._markerGroup = L.layerGroup().addTo(map);
             }
-        } else {
-            map.setView(indonesiaCenter, indonesiaDefaultZoom);
-            map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+
+            validPins.forEach((pin) => {
+                L.marker([pin.lat, pin.lng])
+                    .addTo(host._markerGroup)
+                    .bindPopup(`<strong>${pin.name}</strong><br><a href="${pin.url}">Lihat restoran</a>`);
+            });
+
+            if (host._userMarker) {
+                try {
+                    map.removeLayer(host._userMarker);
+                } catch (e) {}
+                host._userMarker = null;
+            }
+
+            if (hasUser) {
+                host._userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+                    radius: 8,
+                    color: '#2563eb',
+                    weight: 2,
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.95,
+                })
+                    .addTo(map)
+                    .bindPopup('Lokasi Anda');
+
+                const bounds = L.latLngBounds([[userLocation.lat, userLocation.lng]]);
+                validPins.forEach((pin) => bounds.extend([pin.lat, pin.lng]));
+
+                if (bounds.isValid()) {
+                    safeApplyBounds(map, bounds, { padding: [28, 28], maxZoom: 15 });
+                }
+            } else if (force) {
+                safeSetView(map, indonesiaCenter, indonesiaDefaultZoom);
+                safeApplyBounds(map, indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+            }
+
+            if (host._invalidateTimer) {
+                clearTimeout(host._invalidateTimer);
+            }
+            host._invalidateTimer = setTimeout(() => {
+                try {
+                    if (host._leafletMap === map && map._mapPane) {
+                        map.invalidateSize();
+                    }
+                } catch (e) {}
+            }, 100);
+
+            return;
         }
 
-        setTimeout(() => {
-            map.invalidateSize();
-            if (! hasUser) {
-                map.fitBounds(indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+        // Bersihkan instance lama jika ada yang rusak
+        if (map) {
+            try {
+                map.remove();
+            } catch (err) {}
+            host._leafletMap = null;
+            host._userMarker = null;
+            host._markerGroup = null;
+        }
+
+        try {
+            map = L.map(mapId, { scrollWheelZoom: false });
+            host._leafletMap = map;
+            host.dataset.initialized = '1';
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap',
+            }).addTo(map);
+
+            host._markerGroup = L.layerGroup().addTo(map);
+
+            validPins.forEach((pin) => {
+                L.marker([pin.lat, pin.lng])
+                    .addTo(host._markerGroup)
+                    .bindPopup(`<strong>${pin.name}</strong><br><a href="${pin.url}">Lihat restoran</a>`);
+            });
+
+            if (hasUser) {
+                host._userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+                    radius: 8,
+                    color: '#2563eb',
+                    weight: 2,
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.95,
+                })
+                    .addTo(map)
+                    .bindPopup('Lokasi Anda');
+
+                const bounds = L.latLngBounds([[userLocation.lat, userLocation.lng]]);
+                validPins.forEach((pin) => bounds.extend([pin.lat, pin.lng]));
+
+                if (bounds.isValid()) {
+                    safeApplyBounds(map, bounds, { padding: [28, 28], maxZoom: 15 });
+                }
+            } else {
+                safeSetView(map, indonesiaCenter, indonesiaDefaultZoom);
+                safeApplyBounds(map, indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
             }
-        }, 200);
+
+            if (host._invalidateTimer) {
+                clearTimeout(host._invalidateTimer);
+            }
+            host._invalidateTimer = setTimeout(() => {
+                try {
+                    if (host._leafletMap === map && map._mapPane) {
+                        map.invalidateSize();
+                        if (! hasUser) {
+                            safeApplyBounds(map, indonesiaBounds, { padding: [16, 16], maxZoom: 5 });
+                        }
+                    }
+                } catch (e) {}
+            }, 200);
+        } catch (err) {
+            console.warn('Leaflet map init warning:', err);
+        }
     };
 
-    window.refreshDirectoryMap = window.refreshDirectoryMap || function (mapId, force = false) {
-        const payload = window.readDirectoryMapPayload();
-        window.initDirectoryMap(mapId, payload.pins, {
-            userLocation: payload.userLocation,
-            force,
-        });
+    window.refreshDirectoryMap = function (mapId, force = false) {
+        if (window._directoryMapDebounceTimers[mapId]) {
+            clearTimeout(window._directoryMapDebounceTimers[mapId]);
+        }
+
+        window._directoryMapDebounceTimers[mapId] = setTimeout(() => {
+            const payload = window.readDirectoryMapPayload();
+            window.initDirectoryMap(mapId, payload.pins, {
+                userLocation: payload.userLocation,
+                force,
+            });
+        }, 50);
     };
 
     window.directoryLocationSkipKey = window.directoryLocationSkipKey || 'directory-skip-location';
@@ -394,17 +493,39 @@
     });
 
     document.addEventListener('livewire:init', () => {
-        Livewire.hook('morph.updated', ({ component }) => {
+        // Livewire 3 commit hook: dipanggil 1 kali per update selesai (bukan per node DOM)
+        Livewire.hook('commit', ({ component, succeed }) => {
             if (component.name !== 'landing.restaurant-directory') {
                 return;
             }
 
-            window.refreshDirectoryMap('directory-map-desktop', true);
+            succeed(() => {
+                window.refreshDirectoryMap('directory-map-desktop', true);
+                const mobileModal = document.getElementById('directory-map-mobile');
+                if (mobileModal && mobileModal.offsetParent !== null) {
+                    window.refreshDirectoryMap('directory-map-mobile', true);
+                }
+            });
         });
 
         setTimeout(() => {
             window.bootstrapDirectoryLocation();
         }, 100);
+    });
+
+    window.addEventListener('resize', () => {
+        const desktopMap = document.getElementById('directory-map-desktop');
+        if (desktopMap && desktopMap._leafletMap && desktopMap._leafletMap._mapPane) {
+            try {
+                desktopMap._leafletMap.invalidateSize();
+            } catch (e) {}
+        }
+        const mobileMap = document.getElementById('directory-map-mobile');
+        if (mobileMap && mobileMap._leafletMap && mobileMap._leafletMap._mapPane) {
+            try {
+                mobileMap._leafletMap.invalidateSize();
+            } catch (e) {}
+        }
     });
 </script>
 @endpush
